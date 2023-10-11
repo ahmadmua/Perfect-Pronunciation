@@ -14,7 +14,6 @@ import FirebaseAuth
         
         var body: some View {
             
-            NavigationView {
                 
                 VStack(spacing: 30){
                     
@@ -93,7 +92,7 @@ import FirebaseAuth
                 }
             }
 
-        }
+        
         
         func login(){
             Auth.auth().signIn(withEmail: email, password: password){result, error in

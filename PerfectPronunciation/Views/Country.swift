@@ -58,28 +58,31 @@ struct Country: View {
         }
         .navigationBarBackButtonHidden(true)
     }
-}
+    
+    func updateData(){
+        
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
 
-func updateData(){
-    if let user = Auth.auth().currentUser {
-        let userID = user.uid
-        let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            // Define the data you want to update
+            let updatedData = ["Country": selectedCountry]
 
-        // Define the data you want to update
-        let updatedData = ["Country": selectedCountry]
-
-        // Update the specific field in the user's document
-        userDocRef.updateData(updatedData) { error in
-            if let error = error {
-                print("Error updating document: \(error)")
-            } else {
-                print("Document updated successfully")
+            // Update the specific field in the user's document
+            userDocRef.updateData(updatedData) { error in
+                if let error = error {
+                    print("Error updating document: \(error)")
+                } else {
+                    print("Document updated successfully")
+                }
             }
+        } else {
+            // Handle the case where the user is not authenticated
         }
-    } else {
-        // Handle the case where the user is not authenticated
     }
+    
 }
+
 
 
 struct ContentView_Previews: PreviewProvider {

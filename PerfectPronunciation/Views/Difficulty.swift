@@ -5,6 +5,8 @@
 //  Created by Muaz on 2023-10-10.
 //
 
+import Firebase
+import FirebaseAuth
 import SwiftUI
 
 struct Difficulty: View {
@@ -65,6 +67,28 @@ struct Difficulty: View {
             
             Spacer()
             
+        }
+    }
+    
+    func updateData(){
+        
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+
+            // Define the data you want to update
+            let updatedData = ["Difficulty": selectedDifficulty]
+
+            // Update the specific field in the user's document
+            userDocRef.updateData(updatedData) { error in
+                if let error = error {
+                    print("Error updating document: \(error)")
+                } else {
+                    print("Document updated successfully")
+                }
+            }
+        } else {
+            // Handle the case where the user is not authenticated
         }
     }
 }

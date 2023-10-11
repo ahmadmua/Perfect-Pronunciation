@@ -7,25 +7,26 @@ struct ContentView: View {
     @State private var selection: Int? = nil
 
     var body: some View {
-
-
+        
+        NavigationView {
+            
             VStack{
-
+                
                 NavigationLink(destination: Login(), tag: 1, selection: self.$selection){}
-
+                
                 NavigationLink(destination: Register(), tag: 2, selection: self.$selection){}
-
+                
                 Spacer()
-
+                
                 Image("Image")
                     .resizable()
                     .frame(width: 350, height: 350)
-
+                
                 Spacer()
-
+                
                 Button(action: {
                     self.selection = 1
-
+                    
                 }){
                     //appearance
                     Text("LOGIN")
@@ -41,10 +42,10 @@ struct ContentView: View {
                 .background(Color.indigo)
                 .cornerRadius(20)
                 .padding(.bottom, 20)
-
-
-
-
+                
+                
+                
+                
                 Button(action: {
                     self.selection = 2
                 }){
@@ -61,15 +62,15 @@ struct ContentView: View {
                 }//Sign In Button ends
                 .background(Color.indigo)
                 .cornerRadius(20)
-
-
-
-
-
+                
+                
+                
+                
+                
             }.padding(.bottom, 75) //vstack
-
-        }//nav stack
-        //.navigationBarBackButtonHidden()
+            
+        }.navigationBarBackButtonHidden(true)
+    }
 
 
 

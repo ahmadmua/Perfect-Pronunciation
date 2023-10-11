@@ -10,7 +10,7 @@ import FirebaseAuth
 import SwiftUI
 
 struct Difficulty: View {
-    @State private var selectedDifficulty: String?
+    @State private var selectedDifficulty: String? = "I've been learning English and I want to enhance my pronunciation and fluency."
     @State private var selection: Int? = nil
     @EnvironmentObject private var userData: UserData
     

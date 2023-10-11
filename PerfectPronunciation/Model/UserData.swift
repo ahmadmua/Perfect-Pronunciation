@@ -8,18 +8,25 @@
 import SwiftUI
 
 class UserData: ObservableObject {
+    
     @Published var registeredEmail: String = ""
-}
-
-class User: Identifiable{
+    @Published var country: String = ""
+    @Published var difficulty: String = ""
     
-    var country: String = ""
-    var difficulty: String = ""
-    
-    
-    init(country: String, difficulty: String){
-        self.country = country
-        self.difficulty = difficulty
+    func setCountry(country: String){
+        self.country  = country
     }
     
+    func setDifficulty(difficulty: String){
+        self.difficulty  = difficulty
+    }
+    
+    func getCountry() -> String{
+        return country
+    }
+    
+    func getDifficulty() -> String{
+        return difficulty
+    }
 }
+

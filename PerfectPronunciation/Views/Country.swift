@@ -7,6 +7,7 @@ struct Country: View {
     var countriesData: [(name: String, flag: String)] = []
     @State private var selectedCountry: String = ""
     @State private var selection: Int? = nil
+    @EnvironmentObject private var userData: UserData
     
     init() {
         for code in NSLocale.isoCountryCodes {
@@ -65,8 +66,9 @@ struct Country: View {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
 
-            // Define the data you want to update
-            let updatedData = ["Country": selectedCountry]
+            userData.setCountry(country: selectedCountry)
+            
+            let updatedData = ["Country": userData.getCountry()]
 
             // Update the specific field in the user's document
             userDocRef.updateData(updatedData) { error in

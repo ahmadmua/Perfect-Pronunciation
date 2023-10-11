@@ -12,6 +12,7 @@ import SwiftUI
 struct Difficulty: View {
     @State private var selectedDifficulty: String?
     @State private var selection: Int? = nil
+    @EnvironmentObject private var userData: UserData
     
 
     let difficulties = ["I'm new to English and want to work on my basic pronunciation skills.",
@@ -77,8 +78,9 @@ struct Difficulty: View {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
 
-            // Define the data you want to update
-            let updatedData = ["Difficulty": selectedDifficulty]
+            userData.setDifficulty(difficulty: (selectedDifficulty)!)
+            
+            let updatedData = ["Difficulty": userData.getDifficulty()]
 
             // Update the specific field in the user's document
             userDocRef.updateData(updatedData) { error in

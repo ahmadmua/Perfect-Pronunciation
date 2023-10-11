@@ -54,6 +54,7 @@ struct Difficulty: View {
             
             Button(action: {
                 self.selection = 1
+                updateData()
             })
             {
                 Text("Next")

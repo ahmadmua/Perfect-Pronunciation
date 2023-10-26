@@ -5,7 +5,9 @@ import FirebaseAuth
 struct Country: View {
     
     var countriesData: [(name: String, flag: String)] = []
+    var languageData: [(String)] = ["English", "Spanish", "French", "German", "Chinese", "Japanese", "Other"]
     @State private var selectedCountry: String = ""
+    @State private var selectedLanugage: String = ""
     @State private var selection: Int? = nil
     @EnvironmentObject private var userData: UserData
     
@@ -18,6 +20,19 @@ struct Country: View {
                 countriesData.append((name: name, flag: flag ?? ""))
             }
         }
+        
+        let langIds = Bundle.main.localizations
+        var languages = [String:String]()
+        for langId in langIds {
+            let loc = Locale(identifier: langId)
+            if let name = loc.localizedString(forLanguageCode: langId) {
+                languages[langId] = name
+            } else {
+                // this should never be reached
+            }
+        }
+        
+        
     }
     
     var body: some View {
@@ -26,7 +41,7 @@ struct Country: View {
             
             NavigationLink(destination: Difficulty(), tag: 1, selection: self.$selection){}
             
-            Text("Select Your Nationality")
+            Text("Select Your Native Country/Language")
                 .fontWeight(.bold)
                 .font(Font.system(size: 40))
                 .foregroundColor(Color.yellow)
@@ -38,7 +53,16 @@ struct Country: View {
                         .tag(country.name)
                 }
             }
-            .pickerStyle(WheelPickerStyle()) // You can choose a different style if you prefer
+            .pickerStyle(WheelPickerStyle())
+            
+            
+            Picker("Select Your Native Language", selection: $selectedLanugage) {
+                            ForEach(languageData, id: \.self) { language in
+                                Text(language)
+                                    .tag(language)
+                            }
+                        }
+                        .pickerStyle(WheelPickerStyle())
             
             
             Button(action: {

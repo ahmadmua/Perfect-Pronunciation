@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		028364712AE9FBC300E88DCB /* StatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364702AE9FBC300E88DCB /* StatData.swift */; };
+		028364732AEA504000E88DCB /* AccuracyGraphModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364722AEA504000E88DCB /* AccuracyGraphModel.swift */; };
+		028364752AEA513E00E88DCB /* VoiceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364742AEA513E00E88DCB /* VoiceData.swift */; };
+		028364772AEA528F00E88DCB /* BarGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364762AEA528F00E88DCB /* BarGraph.swift */; };
+		028364792AEA534800E88DCB /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364782AEA534800E88DCB /* Sequence.swift */; };
+		0283647B2AEA547900E88DCB /* TextValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0283647A2AEA547900E88DCB /* TextValue.swift */; };
 		02E2B65F2AD6131100F1FACA /* PerfectPronunciationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B65E2AD6131100F1FACA /* PerfectPronunciationApp.swift */; };
 		02E2B6612AD6131100F1FACA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B6602AD6131100F1FACA /* ContentView.swift */; };
 		02E2B6632AD6131300F1FACA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02E2B6622AD6131300F1FACA /* Assets.xcassets */; };
@@ -36,6 +42,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		028364702AE9FBC300E88DCB /* StatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatData.swift; sourceTree = "<group>"; };
+		028364722AEA504000E88DCB /* AccuracyGraphModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccuracyGraphModel.swift; sourceTree = "<group>"; };
+		028364742AEA513E00E88DCB /* VoiceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceData.swift; sourceTree = "<group>"; };
+		028364762AEA528F00E88DCB /* BarGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarGraph.swift; sourceTree = "<group>"; };
+		028364782AEA534800E88DCB /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
+		0283647A2AEA547900E88DCB /* TextValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextValue.swift; sourceTree = "<group>"; };
 		02E2B65B2AD6131100F1FACA /* PerfectPronunciation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PerfectPronunciation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		02E2B65E2AD6131100F1FACA /* PerfectPronunciationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfectPronunciationApp.swift; sourceTree = "<group>"; };
 		02E2B6602AD6131100F1FACA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -132,6 +144,8 @@
 				02E2B6942AD61E6600F1FACA /* Homepage.swift */,
 				02E2B6992AD6250700F1FACA /* Country.swift */,
 				02E2B69B2AD63BA300F1FACA /* Difficulty.swift */,
+				028364702AE9FBC300E88DCB /* StatData.swift */,
+				028364762AEA528F00E88DCB /* BarGraph.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -140,6 +154,8 @@
 			isa = PBXGroup;
 			children = (
 				02E2B6922AD6188500F1FACA /* Components.swift */,
+				028364782AEA534800E88DCB /* Sequence.swift */,
+				0283647A2AEA547900E88DCB /* TextValue.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -148,6 +164,8 @@
 			isa = PBXGroup;
 			children = (
 				02E2B6972AD6237000F1FACA /* UserData.swift */,
+				028364722AEA504000E88DCB /* AccuracyGraphModel.swift */,
+				028364742AEA513E00E88DCB /* VoiceData.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -246,9 +264,15 @@
 				02E2B69C2AD63BA300F1FACA /* Difficulty.swift in Sources */,
 				02E2B6932AD6188500F1FACA /* Components.swift in Sources */,
 				02E2B6982AD6237000F1FACA /* UserData.swift in Sources */,
+				028364712AE9FBC300E88DCB /* StatData.swift in Sources */,
+				028364772AEA528F00E88DCB /* BarGraph.swift in Sources */,
 				02E2B68B2AD615FC00F1FACA /* FireDBHelper.swift in Sources */,
+				028364792AEA534800E88DCB /* Sequence.swift in Sources */,
 				02E2B65F2AD6131100F1FACA /* PerfectPronunciationApp.swift in Sources */,
+				028364752AEA513E00E88DCB /* VoiceData.swift in Sources */,
 				02E2B68E2AD617F900F1FACA /* Login.swift in Sources */,
+				0283647B2AEA547900E88DCB /* TextValue.swift in Sources */,
+				028364732AEA504000E88DCB /* AccuracyGraphModel.swift in Sources */,
 				02E2B6902AD6180500F1FACA /* Register.swift in Sources */,
 				02E2B6952AD61E6600F1FACA /* Homepage.swift in Sources */,
 			);
@@ -387,6 +411,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -416,6 +441,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -16,62 +16,127 @@ struct VoiceRecorder: View {
     var timer: Timer?
     
     var body: some View {
-            VStack {
+        NavigationStack{
+            ZStack{
                 
+                Image("AppBackground")
+                               .resizable()
+                               .aspectRatio(contentMode: .fill)
+                               .edgesIgnoringSafeArea(.all)
                 
-                Text("Recording")
-                    .padding(.top, 20)
-                
-                Text(timeString(time: elapsedTime))
-                    .font(.system(size: 40, weight: .bold, design: .rounded))
-                    .padding(.top, 10)
-                
-                WaveformView(audioLevels: $audioLevels)
-                    .frame(height: 350)
-                    .background(Color.gray.opacity(0.2))
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                    .padding(.top, 20)
-                
-                HStack(spacing: 40) {
+                VStack {
                     
-                    if !isRecording{
-                        Button(action: {
-                            // Implement reset/cancel action
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .font(.system(size: 50))
-                                .foregroundColor(.red)
-                        }
-                    }
                     
-                    Button(action: {
-                        if isRecording {
-                            stopRecording() //TODO
-                        } else {
-                            startRecording() //TODO
-                        }
-                    }) {
-                        Image(systemName: isRecording ? "pause.circle.fill" : "play.circle.fill")
-                            .font(.system(size: 75))
-                            .foregroundColor(.red)
-                    }
+                    Text("Recording")
+                        .padding(.top, 20)
                     
-                    if !isRecording{
-                        Button(action: {
-                            // Implement save/finish action
-                        }) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .font(.system(size: 50))
-                                .foregroundColor(.green)
+                    Text(timeString(time: elapsedTime))
+                        .font(.system(size: 40, weight: .bold, design: .rounded))
+                        .padding(.top, 10)
+                    
+                    WaveformView(audioLevels: $audioLevels)
+                        .frame(width: UIScreen.main.bounds.width - 25 , height: 350)
+                        .background(Color.black.opacity(0.6))
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .padding(.top, 20)
+                    
+                    
+                    ZStack{
+                        VisualEffectView(effect: UIBlurEffect(style: .dark))
+                            .frame(width: UIScreen.main.bounds.width - 25, height: 150)
+                        
+                                       .clipShape(RoundedRectangle(cornerRadius: 20))
+                        HStack(spacing: 40) {
+                            
+                            if !isRecording{
+                                Button(action: {
+                                    // Implement reset/cancel action
+                                }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .font(.system(size: 50))
+                                        .foregroundColor(.red)
+                                }
+                                .overlay(Circle().stroke(Color.black, lineWidth: 2))
+                            }
+                            
+                            Button(action: {
+                                if isRecording {
+                                    stopRecording()
+                                } else {
+                                    startRecording()
+                                }
+                            }) {
+                                Image(systemName: isRecording ? "pause.circle.fill" : "play.circle.fill")
+                                    .font(.system(size: 75))
+                                    .foregroundColor(.yellow)
+                            }
+                            .overlay(Circle().stroke(Color.black, lineWidth: 2))
+                            
+                            if !isRecording{
+                                Button(action: {
+                                    // Implement save/finish action
+                                }) {
+                                    Image(systemName: "checkmark.circle.fill")
+                                        .font(.system(size: 50))
+                                        .foregroundColor(.green)
+                                }
+                                .overlay(Circle().stroke(Color.black, lineWidth: 2))
+                            }
                         }
+                        
                     }
+                    .padding(.top, 40)
+                    
+                    
+                  
                 }
-                .padding(.top, 40)
+                .padding()
+                }
             }
-            .padding()
         }
 
+    func startRecording() {
+        let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.caf")
+        let settings = [
+            AVFormatIDKey: Int(kAudioFormatLinearPCM),
+            AVSampleRateKey: 44100.0,
+            AVNumberOfChannelsKey: 1,
+            AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+        ] as [String : Any]
 
+        do {
+            audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
+            audioRecorder?.delegate = nil
+            audioRecorder?.isMeteringEnabled = true
+            audioRecorder?.record()
+
+            isRecording = true
+
+            // Update UI for audio levels
+            Timer.scheduledTimer(withTimeInterval: 0.02, repeats: true) { timer in
+                if !self.isRecording {
+                    timer.invalidate()
+                }
+                audioRecorder?.updateMeters()
+                let level = CGFloat(audioRecorder?.averagePower(forChannel: 0) ?? 0)
+                audioLevels.append((level + 160) / 160)
+                audioLevels.removeFirst()
+            }
+        } catch {
+            print("Could not start recording")
+        }
+    }
+
+    func stopRecording() {
+        audioRecorder?.stop()
+        isRecording = false
+    }
+
+    func getDocumentsDirectory() -> URL {
+        let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+        return paths[0]
+    }
+}
 
 struct WaveformView: View {
     @Binding var audioLevels: [CGFloat]
@@ -89,7 +154,8 @@ struct BarView: View {
     var value: CGFloat
     var body: some View {
         RoundedRectangle(cornerRadius: 4)
-            .fill(Color.blue)
+            .fill(Color.yellow)
+            .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.black, lineWidth: 1))
             .frame(width: 4, height: value * 10)
     }
 }

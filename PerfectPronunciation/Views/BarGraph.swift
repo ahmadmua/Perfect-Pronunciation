@@ -3,6 +3,8 @@ import Charts
 
 struct AccuracyBarChart: View {
     
+    @State private var selection: Int? = nil
+    
     var data: [Accuracy]
     
     var range: ClosedRange<Int>
@@ -10,6 +12,9 @@ struct AccuracyBarChart: View {
     var body: some View {
         
         VStack{
+            
+            NavigationLink(destination: Details(), tag: 1, selection: self.$selection){}
+            
             Chart {
                 ForEach(data) { item in
                     BarMark(
@@ -50,7 +55,7 @@ struct AccuracyBarChart: View {
             Spacer()
             
             Button(action: {
-                
+                self.selection = 1
             }){
                 Text("Details")
                     .modifier(CustomTextM(fontName: "MavenPro-Bold", fontSize: 16, fontColor: Color.black))

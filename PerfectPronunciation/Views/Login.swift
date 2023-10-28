@@ -2,6 +2,7 @@ import SwiftUI
 import Firebase
 import FirebaseAuth
 
+
 struct Login: View {
     
     @State var email: String = ""

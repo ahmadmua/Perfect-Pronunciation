@@ -14,6 +14,7 @@
 		028364792AEA534800E88DCB /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364782AEA534800E88DCB /* Sequence.swift */; };
 		0283647B2AEA547900E88DCB /* TextValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0283647A2AEA547900E88DCB /* TextValue.swift */; };
 		0283647D2AED807600E88DCB /* Details.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0283647C2AED807600E88DCB /* Details.swift */; };
+		0283647F2AEDB25900E88DCB /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0283647E2AEDB25900E88DCB /* Settings.swift */; };
 		02E2B65F2AD6131100F1FACA /* PerfectPronunciationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B65E2AD6131100F1FACA /* PerfectPronunciationApp.swift */; };
 		02E2B6612AD6131100F1FACA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B6602AD6131100F1FACA /* ContentView.swift */; };
 		02E2B6632AD6131300F1FACA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02E2B6622AD6131300F1FACA /* Assets.xcassets */; };
@@ -50,6 +51,7 @@
 		028364782AEA534800E88DCB /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
 		0283647A2AEA547900E88DCB /* TextValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextValue.swift; sourceTree = "<group>"; };
 		0283647C2AED807600E88DCB /* Details.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Details.swift; sourceTree = "<group>"; };
+		0283647E2AEDB25900E88DCB /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		02E2B65B2AD6131100F1FACA /* PerfectPronunciation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PerfectPronunciation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		02E2B65E2AD6131100F1FACA /* PerfectPronunciationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfectPronunciationApp.swift; sourceTree = "<group>"; };
 		02E2B6602AD6131100F1FACA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 				028364702AE9FBC300E88DCB /* StatData.swift */,
 				028364762AEA528F00E88DCB /* BarGraph.swift */,
 				0283647C2AED807600E88DCB /* Details.swift */,
+				0283647E2AEDB25900E88DCB /* Settings.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -268,6 +271,7 @@
 				02E2B6932AD6188500F1FACA /* Components.swift in Sources */,
 				02E2B6982AD6237000F1FACA /* UserData.swift in Sources */,
 				028364712AE9FBC300E88DCB /* StatData.swift in Sources */,
+				0283647F2AEDB25900E88DCB /* Settings.swift in Sources */,
 				028364772AEA528F00E88DCB /* BarGraph.swift in Sources */,
 				02E2B68B2AD615FC00F1FACA /* FireDBHelper.swift in Sources */,
 				028364792AEA534800E88DCB /* Sequence.swift in Sources */,

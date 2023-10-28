@@ -2,28 +2,70 @@ import SwiftUI
 import Charts
 
 struct AccuracyBarChart: View {
+    
     var data: [Accuracy]
     
     var range: ClosedRange<Int>
     
     var body: some View {
-        Chart {
-            ForEach(data) { item in
-                BarMark(
-                    x: .value("Accuracy", item.weekday),
-                    y: .value("Words", item.accuracy)
-                )
-                .annotation(position: AnnotationPosition.top) {
-                    Text("\(item.accuracy, format: .number.precision(.fractionLength(2)))")
+        
+        VStack{
+            Chart {
+                ForEach(data) { item in
+                    BarMark(
+                        x: .value("Accuracy", item.weekday),
+                        y: .value("Words", item.accuracy)
+                    )
+                    .annotation(position: AnnotationPosition.top) {
+                        Text("\(item.accuracy, format: .number.precision(.fractionLength(2)))")
                         // Add minimum width to avoid truncation artifacts
                         // when value changes
-                        .frame(minWidth: 100)
-                        .font(.caption2)
+                            .frame(minWidth: 100)
+                            .font(.caption2)
+                    }
+                    .foregroundStyle(.yellow.gradient)
                 }
-                .foregroundStyle(.blue.gradient)
             }
-        }
+            .frame(height: 400)
+            
+            Text("Recent Results")
+                .underline()
+            
+            Spacer()
+            
+            HStack {
+                Text("Word 1 - 40%")
+                Spacer()
+                Text("Word 2 - 74%")
+            }
+            
+            Spacer()
+            
+            HStack {
+                Text("Word 3 - 92%")
+                Spacer()
+                Text("Word 4 - 37%")
+            }
+            
+            Spacer()
+            
+            Button(action: {
+                
+            }){
+                Text("Details")
+                    .modifier(CustomTextM(fontName: "MavenPro-Bold", fontSize: 16, fontColor: Color.black))
+                
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 56, alignment: .leading)
+                    .background(Color.yellow)
+                    .cornerRadius(10)
+                    .bold()
+            }
+            
+        
+        
         .chartYScale(domain: range)
+    }
     }
 }
 

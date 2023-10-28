@@ -4,9 +4,9 @@ import Foundation
 class AccuracyViewModel: ObservableObject {
     @Published var selectedIndex = 0
     
-    var pickerOptions = [
-        PickerOption(name: "Average Accuracy %", tag: 0),
-    ]
+//    var pickerOptions = [
+//        PickerOption(name: "Average Accuracy %", tag: 0),
+//    ]
     
     private let voiceData = [
         Voice(

@@ -13,6 +13,7 @@
 		028364772AEA528F00E88DCB /* BarGraph.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364762AEA528F00E88DCB /* BarGraph.swift */; };
 		028364792AEA534800E88DCB /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364782AEA534800E88DCB /* Sequence.swift */; };
 		0283647B2AEA547900E88DCB /* TextValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0283647A2AEA547900E88DCB /* TextValue.swift */; };
+		0283647D2AED807600E88DCB /* Details.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0283647C2AED807600E88DCB /* Details.swift */; };
 		02E2B65F2AD6131100F1FACA /* PerfectPronunciationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B65E2AD6131100F1FACA /* PerfectPronunciationApp.swift */; };
 		02E2B6612AD6131100F1FACA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B6602AD6131100F1FACA /* ContentView.swift */; };
 		02E2B6632AD6131300F1FACA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02E2B6622AD6131300F1FACA /* Assets.xcassets */; };
@@ -48,6 +49,7 @@
 		028364762AEA528F00E88DCB /* BarGraph.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarGraph.swift; sourceTree = "<group>"; };
 		028364782AEA534800E88DCB /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
 		0283647A2AEA547900E88DCB /* TextValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextValue.swift; sourceTree = "<group>"; };
+		0283647C2AED807600E88DCB /* Details.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Details.swift; sourceTree = "<group>"; };
 		02E2B65B2AD6131100F1FACA /* PerfectPronunciation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PerfectPronunciation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		02E2B65E2AD6131100F1FACA /* PerfectPronunciationApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerfectPronunciationApp.swift; sourceTree = "<group>"; };
 		02E2B6602AD6131100F1FACA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -146,6 +148,7 @@
 				02E2B69B2AD63BA300F1FACA /* Difficulty.swift */,
 				028364702AE9FBC300E88DCB /* StatData.swift */,
 				028364762AEA528F00E88DCB /* BarGraph.swift */,
+				0283647C2AED807600E88DCB /* Details.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -272,6 +275,7 @@
 				028364752AEA513E00E88DCB /* VoiceData.swift in Sources */,
 				02E2B68E2AD617F900F1FACA /* Login.swift in Sources */,
 				0283647B2AEA547900E88DCB /* TextValue.swift in Sources */,
+				0283647D2AED807600E88DCB /* Details.swift in Sources */,
 				028364732AEA504000E88DCB /* AccuracyGraphModel.swift in Sources */,
 				02E2B6902AD6180500F1FACA /* Register.swift in Sources */,
 				02E2B6952AD61E6600F1FACA /* Homepage.swift in Sources */,

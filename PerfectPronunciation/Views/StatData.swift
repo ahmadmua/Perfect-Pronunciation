@@ -26,10 +26,10 @@ struct StatData: View {
                 range: viewModel.accuracyRange
             )
             
-            StatPicker(
-                options: viewModel.pickerOptions,
-                selection: $viewModel.selectedIndex.animation(.easeInOut(duration: 0.6))
-            )
+//            StatPicker(
+//                options: viewModel.pickerOptions,
+//                selection: $viewModel.selectedIndex.animation(.easeInOut(duration: 0.6))
+//            )
             
             
         }.padding()

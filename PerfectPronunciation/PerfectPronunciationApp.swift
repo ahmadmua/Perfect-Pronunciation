@@ -23,7 +23,8 @@ struct PerfectPronunciationApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView().environmentObject(fireDBHelper).environmentObject(userData)
+//            ContentView().environmentObject(fireDBHelper).environmentObject(userData)
+            WeeklyGamePage()
         }
     }
 }

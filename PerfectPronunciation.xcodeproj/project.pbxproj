@@ -42,6 +42,11 @@
 		02E2B69A2AD6250700F1FACA /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B6992AD6250700F1FACA /* Country.swift */; };
 		02E2B69C2AD63BA300F1FACA /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B69B2AD63BA300F1FACA /* Difficulty.swift */; };
 		4D6170602AEC5D0C002A02C1 /* VoiceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */; };
+		C58B99F22AECDACB003C0288 /* LessonsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F12AECDACB003C0288 /* LessonsPage.swift */; };
+		C58B99F42AED7CC4003C0288 /* IndividualLesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F32AED7CC4003C0288 /* IndividualLesson.swift */; };
+		C58B99F62AED94E5003C0288 /* StorePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F52AED94E5003C0288 /* StorePage.swift */; };
+		C58B99F82AED9F5C003C0288 /* AchievementPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F72AED9F5C003C0288 /* AchievementPage.swift */; };
+		C58B99FA2AEDAE2B003C0288 /* WeeklyGamePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F92AEDAE2B003C0288 /* WeeklyGamePage.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -69,6 +74,11 @@
 		02E2B6992AD6250700F1FACA /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
 		02E2B69B2AD63BA300F1FACA /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
 		4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorder.swift; sourceTree = "<group>"; };
+		C58B99F12AECDACB003C0288 /* LessonsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonsPage.swift; sourceTree = "<group>"; };
+		C58B99F32AED7CC4003C0288 /* IndividualLesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndividualLesson.swift; sourceTree = "<group>"; };
+		C58B99F52AED94E5003C0288 /* StorePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorePage.swift; sourceTree = "<group>"; };
+		C58B99F72AED9F5C003C0288 /* AchievementPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementPage.swift; sourceTree = "<group>"; };
+		C58B99F92AEDAE2B003C0288 /* WeeklyGamePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyGamePage.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,6 +166,11 @@
 				028364762AEA528F00E88DCB /* BarGraph.swift */,
 				0283647C2AED807600E88DCB /* Details.swift */,
 				0283647E2AEDB25900E88DCB /* Settings.swift */,
+				C58B99F12AECDACB003C0288 /* LessonsPage.swift */,
+				C58B99F32AED7CC4003C0288 /* IndividualLesson.swift */,
+				C58B99F52AED94E5003C0288 /* StorePage.swift */,
+				C58B99F72AED9F5C003C0288 /* AchievementPage.swift */,
+				C58B99F92AEDAE2B003C0288 /* WeeklyGamePage.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -287,6 +302,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				02E2B6612AD6131100F1FACA /* ContentView.swift in Sources */,
+				C58B99FA2AEDAE2B003C0288 /* WeeklyGamePage.swift in Sources */,
+				C58B99F62AED94E5003C0288 /* StorePage.swift in Sources */,
 				02E2B69A2AD6250700F1FACA /* Country.swift in Sources */,
 				02E2B69C2AD63BA300F1FACA /* Difficulty.swift in Sources */,
 				02E2B6932AD6188500F1FACA /* Components.swift in Sources */,
@@ -296,6 +313,9 @@
 				028364772AEA528F00E88DCB /* BarGraph.swift in Sources */,
 				02E2B68B2AD615FC00F1FACA /* FireDBHelper.swift in Sources */,
 				028364792AEA534800E88DCB /* Sequence.swift in Sources */,
+				C58B99F42AED7CC4003C0288 /* IndividualLesson.swift in Sources */,
+				C58B99F82AED9F5C003C0288 /* AchievementPage.swift in Sources */,
+				C58B99F22AECDACB003C0288 /* LessonsPage.swift in Sources */,
 				02E2B65F2AD6131100F1FACA /* PerfectPronunciationApp.swift in Sources */,
 				028364752AEA513E00E88DCB /* VoiceData.swift in Sources */,
 				02E2B68E2AD617F900F1FACA /* Login.swift in Sources */,

@@ -13,7 +13,7 @@ struct LessonsPage: View {
     
     
     var body: some View {
-        NavigationStack{
+//        NavigationStack{
 
             NavigationLink(destination: IndividualLesson(), tag: 1, selection: self.$selection){}
   
@@ -130,10 +130,10 @@ struct LessonsPage: View {
                 .toolbarBackground(Color("CustYell"), for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
             
-        }//nav view
+//        }//nav view
     }
 }
 
-#Preview {
-    LessonsPage()
-}
+//#Preview {
+//    LessonsPage()
+//}

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AchievementPage: View {
     var body: some View {
-        NavigationStack{
+//        NavigationStack{
             List{
                 Grid{
                     VStack{
@@ -125,8 +125,8 @@ struct AchievementPage: View {
             .toolbarBackground(.visible, for: .navigationBar)
         }
     }
-}
+//}
 
-#Preview {
-    AchievementPage()
-}
+//#Preview {
+//    AchievementPage()
+//}

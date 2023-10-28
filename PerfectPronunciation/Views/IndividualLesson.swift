@@ -9,10 +9,15 @@ import SwiftUI
 
 struct IndividualLesson: View {
     //    @Binding var msgTaken: String
+    
+    @State private var selection: Int? = nil
 
     var body: some View {
-        NavigationStack{
+//        NavigationStack{
             ZStack{
+                
+                NavigationLink(destination: VoiceRecorder(), tag: 1, selection: self.$selection){}
+                
                 Color("background")
             Grid{
                 Spacer()
@@ -43,6 +48,7 @@ struct IndividualLesson: View {
                     Button(action: {
                         //nav to the next word
                         print("record btn press")
+                        self.selection = 1
                         //                            self.selection = 1
                     }){
                         Image(systemName: "record.circle.fill")
@@ -69,7 +75,7 @@ struct IndividualLesson: View {
         }//nanstack
         .background(Color("Background"))
     }
-    }//view
+//    }//view
     
 
 }//view

@@ -11,10 +11,17 @@ struct Homepage: View {
     let data = ["Lessons", "Weekly", "Badges", "Store"]
     
     @State var pronunciationPoints : Int = 0
+    @State private var selection: Int? = nil
     
     var body: some View {
         NavigationView { // Use NavigationView
             ZStack{
+                
+                NavigationLink(destination: LessonsPage(), tag: 1, selection: self.$selection){}
+                NavigationLink(destination: WeeklyGamePage(), tag: 2, selection: self.$selection){}
+                NavigationLink(destination: AchievementPage(), tag: 3, selection: self.$selection){}
+                NavigationLink(destination: StorePage(), tag: 4, selection: self.$selection){}
+                
                 Image("AppBackground")
                     .resizable()
                     .scaledToFill()
@@ -38,18 +45,74 @@ struct Homepage: View {
                             
                             VStack(alignment: .leading) {
                                 
-                                
                                 ScrollView(.horizontal, showsIndicators: false) {
                                     HStack(spacing: 20) {
-                                        ForEach(data, id: \.self) { item in
-                                            Text(item)
+//                                        ForEach(data, id: \.self) { item in
+//                                            Text(item)
+//                                                .font(.headline)
+//                                                .padding()
+//                                                .frame(width: 150, height: 75)
+//                                                .background(Color.yellow)
+//                                                .cornerRadius(10)
+//                                                .shadow(radius: 5)
+//                                        }
+                                        
+                                        
+                                        Button(action: {
+                                            self.selection = 1
+                                        }){
+                                            Text("Lessons")
                                                 .font(.headline)
                                                 .padding()
-                                                .frame(width: 150, height: 75)
-                                                .background(Color.yellow)
-                                                .cornerRadius(10)
-                                                .shadow(radius: 5)
+                                               .frame(width: 150, height: 75)
+                                               .background(Color("CustYell"))
+                                               .foregroundStyle(Color.black)
+                                               .cornerRadius(10)
+                                               .shadow(radius: 5)
+                                            
                                         }
+                                        
+                                        Button(action: {
+                                            self.selection = 2
+                                        }){
+                                            Text("Weekly")
+                                                .font(.headline)
+                                                .padding()
+                                               .frame(width: 150, height: 75)
+                                               .background(Color("CustYell"))
+                                               .cornerRadius(10)
+                                               .foregroundStyle(Color.black)
+                                               .shadow(radius: 5)
+                                            
+                                        }
+                                        
+                                        Button(action: {
+                                            self.selection = 3
+                                        }){
+                                            Text("Achievments")
+                                                .font(.headline)
+                                                .padding()
+                                               .frame(width: 150, height: 75)
+                                               .background(Color("CustYell"))
+                                               .cornerRadius(10)
+                                               .foregroundStyle(Color.black)
+                                               .shadow(radius: 5)
+                                            
+                                        }
+                                        
+                                        Button(action: {
+                                            self.selection = 4
+                                        }){
+                                            Text("Store")
+                                                .font(.headline)
+                                                .padding()
+                                               .frame(width: 150, height: 75)
+                                               .background(Color("CustYell"))
+                                               .cornerRadius(10)
+                                               .foregroundStyle(Color.black)
+                                               .shadow(radius: 5)
+                                        }
+                                        
                                     }
                                     .frame(maxWidth: .infinity)
                                 }

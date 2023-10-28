@@ -15,7 +15,7 @@ struct StorePage: View {
         
         
         
-        NavigationStack{
+//        NavigationStack{
             
 //            NavigationLink(destination: IndividualLesson(), tag: 1, selection: self.$selection){}
   
@@ -206,8 +206,8 @@ struct StorePage: View {
             
         }
     }
-}
+//}
 
-#Preview {
-    StorePage()
-}
+////#Preview {
+//    StorePage()
+//}

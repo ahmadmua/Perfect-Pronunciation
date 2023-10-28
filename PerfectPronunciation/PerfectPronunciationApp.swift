@@ -30,9 +30,8 @@ struct PerfectPronunciationApp: App {
     
     var body: some Scene {
         WindowGroup {
-            Login().environmentObject(fireDBHelper).environmentObject(userData)
+            Homepage().environmentObject(fireDBHelper).environmentObject(userData)
 //            ContentView().environmentObject(fireDBHelper).environmentObject(userData)
-            WeeklyGamePage()
         }
     }
 }

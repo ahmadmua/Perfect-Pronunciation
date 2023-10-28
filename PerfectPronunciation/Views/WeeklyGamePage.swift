@@ -13,7 +13,7 @@ struct WeeklyGamePage: View {
     @State private var selection: Int? = nil
     
     var body: some View {
-        NavigationStack{
+//        NavigationStack{
             
             NavigationLink(destination: IndividualLesson(), tag: 1, selection: self.$selection){}
             
@@ -106,7 +106,7 @@ struct WeeklyGamePage: View {
                 //
             }
             
-}
+//}
         
    
     

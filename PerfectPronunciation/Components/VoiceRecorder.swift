@@ -16,84 +16,87 @@ struct VoiceRecorder: View {
     var timer: Timer?
     
     var body: some View {
-        NavigationStack{
-            ZStack{
+        //        NavigationStack{
+        
+        ZStack{
+            
+            Image("AppBackground")
+                .resizable()
+//                .aspectRatio(contentMode: .fill)
+//                .edgesIgnoringSafeArea(.all)
+            
+            VStack {
                 
-                Image("AppBackground")
-                               .resizable()
-                               .aspectRatio(contentMode: .fill)
-                               .edgesIgnoringSafeArea(.all)
                 
-                VStack {
+                Text("Recording")
+                    .padding(.top, 20)
+                
+                Text(timeString(time: elapsedTime))
+                    .font(.system(size: 40, weight: .bold, design: .rounded))
+                    .padding(.top, 10)
+                
+                WaveformView(audioLevels: $audioLevels)
+                    .frame(width: UIScreen.main.bounds.width - 25 , height: 350)
+                    .background(Color.black.opacity(0.6))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .padding(.top, 20)
+                
+                
+                ZStack{
+                    VisualEffectView(effect: UIBlurEffect(style: .dark))
+                        .frame(width: UIScreen.main.bounds.width - 25, height: 150)
                     
-                    
-                    Text("Recording")
-                        .padding(.top, 20)
-                    
-                    Text(timeString(time: elapsedTime))
-                        .font(.system(size: 40, weight: .bold, design: .rounded))
-                        .padding(.top, 10)
-                    
-                    WaveformView(audioLevels: $audioLevels)
-                        .frame(width: UIScreen.main.bounds.width - 25 , height: 350)
-                        .background(Color.black.opacity(0.6))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .padding(.top, 20)
-                    
-                    
-                    ZStack{
-                        VisualEffectView(effect: UIBlurEffect(style: .dark))
-                            .frame(width: UIScreen.main.bounds.width - 25, height: 150)
+                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                    HStack(spacing: 40) {
                         
-                                       .clipShape(RoundedRectangle(cornerRadius: 20))
-                        HStack(spacing: 40) {
-                            
-                            if !isRecording{
-                                Button(action: {
-                                    // Implement reset/cancel action
-                                }) {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .font(.system(size: 50))
-                                        .foregroundColor(.red)
-                                }
-                                .overlay(Circle().stroke(Color.black, lineWidth: 2))
-                            }
-                            
+                        if !isRecording{
                             Button(action: {
-                                if isRecording {
-                                    stopRecording()
-                                } else {
-                                    startRecording()
-                                }
+                                // Implement reset/cancel action
                             }) {
-                                Image(systemName: isRecording ? "pause.circle.fill" : "play.circle.fill")
-                                    .font(.system(size: 75))
-                                    .foregroundColor(.yellow)
+                                Image(systemName: "xmark.circle.fill")
+                                    .font(.system(size: 50))
+                                    .foregroundColor(.red)
                             }
                             .overlay(Circle().stroke(Color.black, lineWidth: 2))
-                            
-                            if !isRecording{
-                                Button(action: {
-                                    // Implement save/finish action
-                                }) {
-                                    Image(systemName: "checkmark.circle.fill")
-                                        .font(.system(size: 50))
-                                        .foregroundColor(.green)
-                                }
-                                .overlay(Circle().stroke(Color.black, lineWidth: 2))
-                            }
                         }
                         
+                        Button(action: {
+                            if isRecording {
+                                stopRecording()
+                            } else {
+                                startRecording()
+                            }
+                        }) {
+                            Image(systemName: isRecording ? "pause.circle.fill" : "play.circle.fill")
+                                .font(.system(size: 75))
+                                .foregroundColor(.yellow)
+                        }
+                        .overlay(Circle().stroke(Color.black, lineWidth: 2))
+                        
+                        if !isRecording{
+                            Button(action: {
+                                // Implement save/finish action
+                            }) {
+                                Image(systemName: "checkmark.circle.fill")
+                                    .font(.system(size: 50))
+                                    .foregroundColor(.green)
+                            }
+                            .overlay(Circle().stroke(Color.black, lineWidth: 2))
+                        }
                     }
-                    .padding(.top, 40)
                     
-                    
-                  
                 }
-                .padding()
-                }
+                .padding(.top, 40)
+                
+                
+                
             }
+            .padding()
         }
+        .frame(width: 30)
+        
+            }
+//        }
 
     func startRecording() {
         let audioFilename = getDocumentsDirectory().appendingPathComponent("recording.caf")

@@ -17,13 +17,20 @@ struct PerfectPronunciationApp: App {
     @StateObject private var userData = UserData()
     
     init() {
+        
+        let appearance = UINavigationBarAppearance()
+        appearance.backgroundColor = UIColor.darkGray
+                UINavigationBar.appearance().standardAppearance = appearance
+                UINavigationBar.appearance().scrollEdgeAppearance = appearance
+        UINavigationBar.appearance().frame
+        
         FirebaseApp.configure()
 //        fireDBHelper = FireDBHelper(database: Firestore.firestore())
     }
     
     var body: some Scene {
         WindowGroup {
-            StatData().environmentObject(fireDBHelper).environmentObject(userData)
+            Homepage().environmentObject(fireDBHelper).environmentObject(userData)
         }
     }
 }

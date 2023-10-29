@@ -7,16 +7,13 @@
 
 import SwiftUI
 
-
 struct LessonsPage: View {
 //    @State private var msg = ""
     @State private var selection: Int? = nil
     
     
     var body: some View {
-        //        NavigationStack{
-        
-        NavigationLink(destination: IndividualLesson(), tag: 1, selection: self.$selection){}
+//        NavigationStack{
 
             NavigationLink(destination: IndividualLesson(), tag: 1, selection: self.$selection){}
         NavigationLink(destination: LessonsPage(), tag: 2, selection: self.$selection){}
@@ -120,88 +117,8 @@ struct LessonsPage: View {
                                     .font(.system(size: 50, weight: .light))
                             }//btn food 4
                             .buttonStyle(.borderless)
-                            
-                            
-                        }//grid row 2
+                        }//grid row
                         .padding()
-                    }//Vstack
-                    
-                    VStack{
-                        GridRow{
-                            Text("Basics")
-                        }//grid row 3
-                    }//vstack
-                    
-                    Divider()
-                    
-                    GridRow{
-                        Button(action: {
-                            print("basic1 btn press")
-                            self.selection = 1
-                        }){
-                            Image(systemName: "mic.circle.fill")
-                                .font(.system(size: 50, weight: .light))
-                        }//btn
-                        
-                        Button(action: {
-                            print("basic2 btn press")
-                            self.selection = 1
-                        }){
-                            Image(systemName: "mic.circle.fill")
-                                .font(.system(size: 50, weight: .light))
-                        }//btn basic2
-                        .buttonStyle(.borderless)
-                    }//grid row 4
-                    .padding()
-                    
-                    VStack{
-                        GridRow{
-                            Text("Food")
-                        }//grid row 3
-                    }//vstack
-                    
-                    Divider()
-                    
-                    GridRow{
-                        Button(action: {
-                            print("food1 btn press")
-                            self.selection = 1
-                        }){
-                            Image(systemName: "birthday.cake.fill")
-                                .font(.system(size: 50, weight: .light))
-                        }//btn
-                        
-                        Button(action: {
-                            print("food2 btn press")
-                            self.selection = 1
-                        }){
-                            Image(systemName: "birthday.cake.fill")
-                                .font(.system(size: 50, weight: .light))
-                        }//btn food 2
-                        .buttonStyle(.borderless)
-                    }//grid row
-                    .padding()
-                    GridRow{
-                        Button(action: {
-                            print("food3 btn press")
-                            self.selection = 1
-                        }){
-                            Image(systemName: "birthday.cake.fill")
-                                .font(.system(size: 50, weight: .light))
-                        }//btn3
-                        
-                        Button(action: {
-                            print("food4 btn press")
-                            self.selection = 1
-                        }){
-                            Image(systemName: "birthday.cake.fill")
-                                .font(.system(size: 50, weight: .light))
-                        }//btn food 4
-                        .buttonStyle(.borderless)
-                    }//grid row
-                    .padding()
-                    
-                }//grid
                         
                     }//grid
                     .background(Color("Background"))
@@ -242,66 +159,12 @@ struct LessonsPage: View {
         
         
                 .background(Color("Background"))
-                .padding(.vertical, -15)
-                .padding(.horizontal, -20)
-                
-            }//list
-            .background(Color("Background"))
-            .scrollContentBackground(.hidden)
+                .scrollContentBackground(.hidden)
             
-            .navigationTitle("Lessons")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(Color("CustYell"), for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            
-            
-            
-            //            LessonsPage()
-            //                .tabItem{
-            //                    Image(systemName: "book.fill")
-            //                }
-            
-            
-        HStack {
-            Spacer()
-            
-            Button(action: {
-                self.selection = 1
-            }) {
-                Image(systemName: "person.circle")
-                    .imageScale(.large) // Adjust icon size
-            }
-            
-            Spacer()
-            
-            Button(action: {
-                self.selection = 2
-            }) {
-                Image(systemName: "person.circle")
-                    .imageScale(.large) // Adjust icon size
-            }
-            
-            Spacer()
-            
-            Button(action: {
-                self.selection = 3
-            }) {
-                Image(systemName: "person.circle")
-                    .imageScale(.large) // Adjust icon size
-            }
-            
-            Spacer()
-            
-            Button(action: {
-                self.selection = 4
-            }) {
-                Image(systemName: "person.circle")
-                    .imageScale(.large) // Adjust icon size
-            }
-            
-            Spacer()
-        }
-
+                .navigationTitle("Lessons")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(Color("CustYell"), for: .navigationBar)
+                .toolbarBackground(.visible, for: .navigationBar)
         
         HStack {
                     Spacer()
@@ -349,13 +212,7 @@ struct LessonsPage: View {
             
 //        }//nav view
     }
-            
-        }
-
-            
-//        }//nav view
-    
-
+}
 
 //#Preview {
 //    LessonsPage()

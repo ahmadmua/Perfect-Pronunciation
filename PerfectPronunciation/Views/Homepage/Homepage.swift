@@ -163,8 +163,7 @@ struct Homepage: View {
                         }
                     }
                     
-                   
-                }
+                                    }
                 .padding(.top, 20)
                 .padding(.horizontal, 20)
                 .navigationBarItems(leading:
@@ -199,12 +198,17 @@ struct Homepage: View {
                 }
                 )
                 
+                
+                
+
                 Spacer()
             }
             
+                       
         }
         .navigationBarBackButtonHidden(true)
         
+
         Spacer()
     }
 }

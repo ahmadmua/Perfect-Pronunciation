@@ -16,7 +16,11 @@ struct LessonsPage: View {
 //        NavigationStack{
 
             NavigationLink(destination: IndividualLesson(), tag: 1, selection: self.$selection){}
-        
+        NavigationLink(destination: LessonsPage(), tag: 2, selection: self.$selection){}
+        NavigationLink(destination: WeeklyGamePage(), tag: 3, selection: self.$selection){}
+        NavigationLink(destination: AchievementPage(), tag: 5, selection: self.$selection){}
+        NavigationLink(destination: StorePage(), tag: 4, selection: self.$selection){}
+        NavigationLink(destination: Homepage(), tag: 6, selection: self.$selection){}
                 List{
                     Grid{
                         VStack{
@@ -121,7 +125,39 @@ struct LessonsPage: View {
                     .padding(.vertical, -15)
                     .padding(.horizontal, -20)
                     
+                    
+                    
+                    
+//                    HStack{
+////                                    Spacer()
+//                                    VStack{
+//                                        Image(systemName: "play.rectangle")
+//                                        Text("Lesson")
+//                                            .padding(.top, 1)
+//                                    }
+//                                    .foregroundColor(selection == 1 ? Color("fontLink") : Color("fontBody"))
+//                                    .onTapGesture {
+//                                        self.selection = 2
+//                                    }
+//
+////                                    Spacer()
+//                                    VStack{
+//                                        Image(systemName: "book")
+//                                        Text("Weekly Game")
+//                                            .padding(.top, 1)
+//                                    }
+//                                    .foregroundColor(selection == 2 ? Color("fontLink") : Color("fontBody"))
+//                                    .onTapGesture {
+//                                        self.selection = 3
+//                                    }
+////                                    Spacer()
+//                                }
+    
+
                 }//list
+        
+        
+        
                 .background(Color("Background"))
                 .scrollContentBackground(.hidden)
             
@@ -130,24 +166,48 @@ struct LessonsPage: View {
                 .toolbarBackground(Color("CustYell"), for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
         
-//        TabView{
-//            //            LessonsPage()
-//            //                .tabItem{
-//            //                    Image(systemName: "book.fill")
-//            //                }
-//                        WeeklyGamePage()
-//                            .tabItem{
-//                                Image(systemName: "gamecontroller.fill")
-//                            }
-//                        StorePage()
-//                            .tabItem{
-//                                Image(systemName: "dollarsign.fill")
-//                            }
-//                        AchievementPage()
-//                            .tabItem{
-//                                Image(systemName: "trophy.fill")
-//                            }
-//                    }
+        HStack {
+                    Spacer()
+                    
+                    Button(action: {
+                        self.selection = 6
+                    }) {
+                        Image(systemName: "book.fill")
+                            .imageScale(.large) // Adjust icon size
+                    }
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        self.selection = 3
+                    }) {
+                        Image(systemName: "gamecontroller.fill")
+                            .imageScale(.large) // Adjust icon size
+                    }
+                    
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        self.selection = 4
+                    }) {
+                        Image(systemName: "dollarsign.circle.fill")
+                            .imageScale(.large) // Adjust icon size
+                    }
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        self.selection = 5
+                    }) {
+                        Image(systemName: "trophy.fill")
+                            .imageScale(.large) // Adjust icon size
+                    }
+                    
+                    Spacer()
+                }
+        
+
 
             
 //        }//nav view

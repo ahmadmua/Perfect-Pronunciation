@@ -9,12 +9,16 @@ import SwiftUI
 
 struct StorePage: View {
     
-//    @State private var selection: Int? = nil
+    @State private var selection: Int? = nil
     
     var body: some View {
         
         
-        
+        NavigationLink(destination: LessonsPage(), tag: 2, selection: self.$selection){}
+        NavigationLink(destination: WeeklyGamePage(), tag: 3, selection: self.$selection){}
+        NavigationLink(destination: AchievementPage(), tag: 5, selection: self.$selection){}
+        NavigationLink(destination: StorePage(), tag: 4, selection: self.$selection){}
+        NavigationLink(destination: Homepage(), tag: 6, selection: self.$selection){}
 //        NavigationStack{
             
 //            NavigationLink(destination: IndividualLesson(), tag: 1, selection: self.$selection){}
@@ -204,6 +208,46 @@ struct StorePage: View {
                 .toolbarBackground(Color("CustYell"), for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
             
+        HStack {
+                    Spacer()
+                    
+                    Button(action: {
+                        self.selection = 2
+                    }) {
+                        Image(systemName: "book.fill")
+                            .imageScale(.large) // Adjust icon size
+                    }
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        self.selection = 3
+                    }) {
+                        Image(systemName: "gamecontroller.fill")
+                            .imageScale(.large) // Adjust icon size
+                    }
+                    
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        self.selection = 6
+                    }) {
+                        Image(systemName: "dollarsign.circle.fill")
+                            .imageScale(.large) // Adjust icon size
+                    }
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        self.selection = 5
+                    }) {
+                        Image(systemName: "trophy.fill")
+                            .imageScale(.large) // Adjust icon size
+                    }
+                    
+                    Spacer()
+                }
         }
     }
 //}

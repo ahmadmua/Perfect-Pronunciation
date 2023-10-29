@@ -16,7 +16,7 @@ struct LessonsPage: View {
 //        NavigationStack{
 
             NavigationLink(destination: IndividualLesson(), tag: 1, selection: self.$selection){}
-  
+        
                 List{
                     Grid{
                         VStack{
@@ -129,6 +129,26 @@ struct LessonsPage: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(Color("CustYell"), for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
+        
+//        TabView{
+//            //            LessonsPage()
+//            //                .tabItem{
+//            //                    Image(systemName: "book.fill")
+//            //                }
+//                        WeeklyGamePage()
+//                            .tabItem{
+//                                Image(systemName: "gamecontroller.fill")
+//                            }
+//                        StorePage()
+//                            .tabItem{
+//                                Image(systemName: "dollarsign.fill")
+//                            }
+//                        AchievementPage()
+//                            .tabItem{
+//                                Image(systemName: "trophy.fill")
+//                            }
+//                    }
+
             
 //        }//nav view
     }

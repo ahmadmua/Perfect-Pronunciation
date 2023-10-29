@@ -36,91 +36,96 @@ struct Homepage: View {
                         Text("Hello Name-Placehold")
                             .font(.headline)
                             .bold()
-                        
-                        
-                        VStack(alignment: .leading){
-                            Text("Explore")
-                                .font(.largeTitle)
-                                .bold()
-                            ZStack{
-                                VisualEffectView(effect: UIBlurEffect(style: .systemThinMaterialDark))
-                                    .frame(width: UIScreen.main.bounds.width - 10, height: 150)
-                                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                        ZStack{
+//                            VisualEffectView(effect: UIBlurEffect(style: .systemThinMaterialDark))
+//                                .frame(width: UIScreen.main.bounds.width - 10, height: 150)
+//                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                            
+                            VStack(alignment: .leading) {
                                 
-                                VStack(alignment: .leading) {
-                                    
-                                    ScrollView(.horizontal, showsIndicators: false) {
-                                        HStack(spacing: 20) {
-                                            //                                        ForEach(data, id: \.self) { item in
-                                            //                                            Text(item)
-                                            //                                                .font(.headline)
-                                            //                                                .padding()
-                                            //                                                .frame(width: 150, height: 75)
-                                            //                                                .background(Color.yellow)
-                                            //                                                .cornerRadius(10)
-                                            //                                                .shadow(radius: 5)
-                                            //                                        }
+//                                ScrollView(.horizontal, showsIndicators: false) {
+//                                    HStack(spacing: 20) {
+//                                        ForEach(data, id: \.self) { item in
+//                                            Text(item)
+//                                                .font(.headline)
+//                                                .padding()
+//                                                .frame(width: 150, height: 75)
+//                                                .background(Color.yellow)
+//                                                .cornerRadius(10)
+//                                                .shadow(radius: 5)
+//                                        }
+                                        
+                                        Grid{
+                                            GridRow{
+                                                HStack{
+                                                    Button(action: {
+                                                        self.selection = 1
+                                                    }){
+                                                        Text("Lessons")
+                                                            .font(.headline)
+                                                            .padding()
+                                                           .frame(width: 185, height: 75)
+                                                           .background(Color("CustYell"))
+                                                           .foregroundStyle(Color.black)
+                                                           .cornerRadius(10)
+                                                           .shadow(radius: 5)
+                                                        
+                                                    }
+                                                    
+                                                    Button(action: {
+                                                        self.selection = 2
+                                                    }){
+                                                        Text("Weekly")
+                                                            .font(.headline)
+                                                            .padding()
+                                                           .frame(width: 185, height: 75)
+                                                           .background(Color("CustYell"))
+                                                           .cornerRadius(10)
+                                                           .foregroundStyle(Color.black)
+                                                           .shadow(radius: 5)
+                                                        
+                                                    }
+                                                }//hstack
+                                            }//grid row
                                             
-                                            
-                                            Button(action: {
-                                                self.selection = 1
-                                            }){
-                                                Text("Lessons")
-                                                    .font(.headline)
-                                                    .padding()
-                                                    .frame(width: 150, height: 75)
-                                                    .background(Color("CustYell"))
-                                                    .foregroundStyle(Color.black)
-                                                    .cornerRadius(10)
-                                                    .shadow(radius: 5)
-                                                
+                                            GridRow{
+                                                HStack{
+                                                    Button(action: {
+                                                        self.selection = 3
+                                                    }){
+                                                        Text("Achievments")
+                                                            .font(.headline)
+                                                            .padding()
+                                                           .frame(width: 185, height: 75)
+                                                           .background(Color("CustYell"))
+                                                           .cornerRadius(10)
+                                                           .foregroundStyle(Color.black)
+                                                           .shadow(radius: 5)
+                                                        
+                                                    }
+                                                    
+                                                    Button(action: {
+                                                        self.selection = 4
+                                                    }){
+                                                        Text("Store")
+                                                            .font(.headline)
+                                                            .padding()
+                                                           .frame(width: 185, height: 75)
+                                                           .background(Color("CustYell"))
+                                                           .cornerRadius(10)
+                                                           .foregroundStyle(Color.black)
+                                                           .shadow(radius: 5)
+                                                    }
+                                                }
                                             }
-                                            
-                                            Button(action: {
-                                                self.selection = 2
-                                            }){
-                                                Text("Weekly")
-                                                    .font(.headline)
-                                                    .padding()
-                                                    .frame(width: 150, height: 75)
-                                                    .background(Color("CustYell"))
-                                                    .cornerRadius(10)
-                                                    .foregroundStyle(Color.black)
-                                                    .shadow(radius: 5)
-                                                
-                                            }
-                                            
-                                            Button(action: {
-                                                self.selection = 3
-                                            }){
-                                                Text("Achievments")
-                                                    .font(.headline)
-                                                    .padding()
-                                                    .frame(width: 150, height: 75)
-                                                    .background(Color("CustYell"))
-                                                    .cornerRadius(10)
-                                                    .foregroundStyle(Color.black)
-                                                    .shadow(radius: 5)
-                                                
-                                            }
-                                            
-                                            Button(action: {
-                                                self.selection = 4
-                                            }){
-                                                Text("Store")
-                                                    .font(.headline)
-                                                    .padding()
-                                                    .frame(width: 150, height: 75)
-                                                    .background(Color("CustYell"))
-                                                    .cornerRadius(10)
-                                                    .foregroundStyle(Color.black)
-                                                    .shadow(radius: 5)
-                                            }
-                                            
-                                        }
-                                        .frame(maxWidth: .infinity)
-                                    }
-                                }
+                                        }//grid
+                                        
+                                        
+                                        
+                                        
+//                                    }
+//                                    .frame(maxWidth: .infinity)
+//                                }
                             }
                         }
                         
@@ -218,6 +223,7 @@ struct Homepage: View {
                     Spacer()
                 }
             }
+            
         }
         .navigationBarBackButtonHidden(true)
         

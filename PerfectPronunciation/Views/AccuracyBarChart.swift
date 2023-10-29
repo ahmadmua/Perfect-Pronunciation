@@ -74,6 +74,45 @@ struct AccuracyBarChart: View {
     }
 }
 
+struct BarChart: View {
+    
+    @State private var selection: Int? = nil
+    
+    var data: [Accuracy]
+    
+    var range: ClosedRange<Int>
+    
+    var body: some View {
+        
+        VStack{
+            
+            NavigationLink(destination: Details(), tag: 1, selection: self.$selection){}
+            
+            Chart {
+                ForEach(data) { item in
+                    BarMark(
+                        x: .value("Accuracy", item.weekday),
+                        y: .value("Words", item.accuracy)
+                    )
+                    .annotation(position: AnnotationPosition.top) {
+                        Text("\(item.accuracy, format: .number.precision(.fractionLength(2)))")
+                        // Add minimum width to avoid truncation artifacts
+                        // when value changes
+                            .frame(minWidth: 100)
+                            .font(.caption2)
+                    }
+                    .foregroundStyle(.yellow.gradient)
+                }
+            }
+            .frame(height: 400)
+            
+        
+        .chartYScale(domain: range)
+    }
+    }
+}
+
+
 
 struct Words: View {
     

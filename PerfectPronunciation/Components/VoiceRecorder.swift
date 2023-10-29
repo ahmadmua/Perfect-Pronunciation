@@ -9,11 +9,13 @@ import SwiftUI
 import AVFoundation
 
 struct VoiceRecorder: View {
+    
     @State private var audioRecorder: AVAudioRecorder?
     @State private var isRecording = false
     @State private var audioLevels: [CGFloat] = Array(repeating: 0.5, count: 50)
     @State private var elapsedTime = TimeInterval(0)
     var timer: Timer?
+    
     
     var body: some View {
         //        NavigationStack{

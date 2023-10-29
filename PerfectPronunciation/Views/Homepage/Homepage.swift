@@ -185,6 +185,36 @@ struct Homepage: View {
                     .padding(.horizontal, 20)
                     .navigationBarItems(leading:
                                             Image("Alpaca")
+                    }
+                    
+                                    }
+                .padding(.top, 20)
+                .padding(.horizontal, 20)
+                .navigationBarItems(leading:
+                                        Image("Alpaca")
+                    .resizable()
+                    .padding(4)
+                    .frame(width: 45, height: 40)
+                    .clipShape(Circle())
+                    .background(Circle().fill(Color.yellow))
+                    .overlay(Circle().stroke(Color.black, lineWidth: 2)),
+                                    trailing:
+                                        HStack(spacing: 20){
+                    HStack{
+                        Image(systemName: "music.mic.circle")
+                            .resizable()
+                            .frame(width: 25, height: 25)
+                            .foregroundColor(.black)
+                        
+                        Text(" \(String(pronunciationPoints)) pts")
+                            .foregroundColor(.black)
+                    }
+                    .padding(.horizontal, 25)
+                    .padding(.vertical, 6)
+                    .background(RoundedRectangle(cornerRadius: 30).fill(Color.yellow))
+                    .overlay(RoundedRectangle(cornerRadius: 30).stroke(Color.black, lineWidth: 2))
+                    
+                    Image(systemName: "person.circle")
                         .resizable()
                         .padding(4)
                         .frame(width: 45, height: 40)
@@ -222,11 +252,20 @@ struct Homepage: View {
                     
                     Spacer()
                 }
+                )
+                
+                
+                
+
+                Spacer()
             }
             
 //        }
+                       
+        }
         .navigationBarBackButtonHidden(true)
         
+
         Spacer()
     }
 }

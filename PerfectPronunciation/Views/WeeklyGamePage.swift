@@ -115,6 +115,7 @@ struct WeeklyGamePage: View {
                     }) {
                         Image(systemName: "book.fill")
                             .imageScale(.large) // Adjust icon size
+                            .foregroundStyle(Color.gray)
                     }
                     
                     Spacer()
@@ -124,6 +125,7 @@ struct WeeklyGamePage: View {
                     }) {
                         Image(systemName: "gamecontroller.fill")
                             .imageScale(.large) // Adjust icon size
+                            .foregroundStyle(Color("CustYell"))
                     }
                     
                     Spacer()
@@ -133,6 +135,7 @@ struct WeeklyGamePage: View {
                     }) {
                         Image(systemName: "dollarsign.circle.fill")
                             .imageScale(.large) // Adjust icon size
+                            .foregroundStyle(Color.gray)
                     }
                     
                     Spacer()
@@ -142,6 +145,7 @@ struct WeeklyGamePage: View {
                     }) {
                         Image(systemName: "trophy.fill")
                             .imageScale(.large) // Adjust icon size
+                            .foregroundStyle(Color.gray)
                     }
                     
                     Spacer()

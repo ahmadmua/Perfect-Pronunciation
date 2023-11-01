@@ -15,7 +15,7 @@ struct Homepage: View {
     @ObservedObject private var viewModel = AccuracyViewModel()
     
     var body: some View {
-//        NavigationView { // Use NavigationView
+        NavigationView { // Use NavigationView
             ScrollView(.vertical, showsIndicators: false) {
                 ZStack{
                     
@@ -224,7 +224,8 @@ struct Homepage: View {
                 }
             }
             
-//        }
+        }
+        .background(Color("Background"))
         .navigationBarBackButtonHidden(true)
         
         Spacer()

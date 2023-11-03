@@ -12,6 +12,7 @@ import FirebaseAuth
 struct Settings: View {
     @State private var notiOn = true
     @State private var selection: Int? = nil
+    @State var email: String = ""
     
     var body: some View {
         VStack{
@@ -51,6 +52,7 @@ struct Settings: View {
             
             Button(action:{
                signOut()
+                selection = 1
             }){
                Text("Sign Out")
                     .bold()
@@ -70,7 +72,6 @@ struct Settings: View {
     func signOut() {
         do {
             try Auth.auth().signOut()
-            selection = 1
         } catch let error as NSError {
             print("Error signing out: \(error.localizedDescription)")
         }

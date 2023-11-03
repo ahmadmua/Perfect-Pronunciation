@@ -133,18 +133,13 @@ struct AchievementPage: View {
         .toolbarBackground(Color("CustYell"), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         
+        
         ZStack{
             Rectangle()
                 .fill(Color("Background"))
                 .shadow(color: .gray, radius: 3, x: -2, y: 2)
                 .frame(maxWidth: .infinity, maxHeight: 50)
             HStack {
-                
-                
-                
-                
-                
-                
                 
                 Spacer()
                 
@@ -170,44 +165,46 @@ struct AchievementPage: View {
                 
                 Spacer()
                 
-                ZStack{
-                    Circle()
-                        .fill(Color("WhiteDiff"))
-                        .frame(width: 50, height: 50)
-                    Button(action: {
-                        self.selection = 6
-                    }) {
-                        Image(systemName: "house.fill")
-                            .imageScale(.large) // Adjust icon size
-                            .foregroundStyle(Color("Background"))
-                    }
-                }
-                
-                
-                Spacer()
-                
-                Button(action: {
-                    self.selection = 4
+                Group {
                     
-                }) {
-                    Image(systemName: "dollarsign.circle.fill")
-                        .imageScale(.large) // Adjust icon size
-                        .foregroundStyle(Color.gray)
+                    ZStack{
+                        Circle()
+                            .fill(Color("WhiteDiff"))
+                            .frame(width: 50, height: 50)
+                        Button(action: {
+                            self.selection = 6
+                        }) {
+                            Image(systemName: "house.fill")
+                                .imageScale(.large) // Adjust icon size
+                                .foregroundStyle(Color("Background"))
+                        }
+                    }
+                    
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        self.selection = 4
+                        
+                    }) {
+                        Image(systemName: "dollarsign.circle.fill")
+                            .imageScale(.large) // Adjust icon size
+                            .foregroundStyle(Color.gray)
+                    }
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        //                self.selection = 5
+                    }) {
+                        Image(systemName: "trophy.fill")
+                            .imageScale(.large) // Adjust icon size
+                            .foregroundStyle(Color("CustYell"))
+                    }
+                    
+                    Spacer()
+                    
                 }
-                
-                Spacer()
-                
-                Button(action: {
-                    //                self.selection = 5
-                }) {
-                    Image(systemName: "trophy.fill")
-                        .imageScale(.large) // Adjust icon size
-                        .foregroundStyle(Color("CustYell"))
-                }
-                
-                Spacer()
-                
-                
                 
             }
             .background(Color("Background"))

@@ -12,7 +12,8 @@ import SwiftUI
 struct Difficulty: View {
     @State private var selectedDifficulty: String? = "I've been learning English and I want to enhance my pronunciation and fluency."
     @State private var selection: Int? = nil
-    @EnvironmentObject private var userData: UserData
+    @State var userData = UserData()
+    @EnvironmentObject var fireDBHelper: FireDBHelper
     
 
     let difficulties = ["I'm new to English and want to work on my basic pronunciation skills.",
@@ -54,7 +55,6 @@ struct Difficulty: View {
             Spacer()
             
             Button(action: {
-                self.selection = 1
                 updateData()
             })
             {
@@ -72,27 +72,33 @@ struct Difficulty: View {
         }
     }
     
+//    func updateData(){
+//
+//        if let user = Auth.auth().currentUser {
+//            let userID = user.uid
+//            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+//
+//            userData.setDifficulty(difficulty: (selectedDifficulty)!)
+//
+//            let updatedData = ["Difficulty": selectedDifficulty]
+//
+//            // Update the specific field in the user's document
+//            userDocRef.updateData(updatedData as [AnyHashable : Any]) { error in
+//                if let error = error {
+//                    print("Error updating document: \(error)")
+//                } else {
+//                    print("Document updated successfully")
+//                }
+//            }
+//        } else {
+//            // Handle the case where the user is not authenticated
+//        }
+//
+//        self.selection = 1
+//    }
+    
     func updateData(){
-        
-        if let user = Auth.auth().currentUser {
-            let userID = user.uid
-            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-
-            userData.setDifficulty(difficulty: (selectedDifficulty)!)
-            
-            let updatedData = ["Difficulty": userData.getDifficulty()]
-
-            // Update the specific field in the user's document
-            userDocRef.updateData(updatedData) { error in
-                if let error = error {
-                    print("Error updating document: \(error)")
-                } else {
-                    print("Document updated successfully")
-                }
-            }
-        } else {
-            // Handle the case where the user is not authenticated
-        }
+        fireDBHelper.updateDifficulty(selectedDifficulty: selectedDifficulty!, userData: &userData, selection: &selection)
     }
 }
 

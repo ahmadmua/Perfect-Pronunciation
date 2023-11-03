@@ -11,7 +11,7 @@ struct Login: View {
     @State private var userLoggedIn = false
     @State private var showingAlert = false
     @State private var msg = ""
-    @EnvironmentObject private var userData: UserData
+    @State var userData = UserData()
     
     var body: some View {
         
@@ -94,6 +94,8 @@ struct Login: View {
                     }
                 }
             }
+            
+            
         }
         .navigationBarBackButtonHidden(true)
     }
@@ -120,7 +122,7 @@ struct Login: View {
                 } else {
                     
                     let ref = Firestore.firestore().collection("UserData")
-                    ref.whereField("Country", isEqualTo: "").getDocuments { (querySnapshot, error) in
+                    ref.whereField("Country", isEqualTo: "").whereField("Difficulty", isEqualTo: "").whereField("Language", isEqualTo: "").getDocuments { (querySnapshot, error) in
                         if error != nil {
                             // Handle error
                         } else {

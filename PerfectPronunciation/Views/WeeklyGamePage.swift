@@ -144,44 +144,47 @@ struct WeeklyGamePage: View {
             
             Spacer()
             
-            ZStack{
-                Circle()
-                    .fill(Color("WhiteDiff"))
-                    .frame(width: 50, height: 50)
-                Button(action: {
-                    self.selection = 6
-                }) {
-                    Image(systemName: "house.fill")
-                        .imageScale(.large) // Adjust icon size
-                        .foregroundStyle(Color("Background"))
+            Group {
+                
+                ZStack{
+                    Circle()
+                        .fill(Color("WhiteDiff"))
+                        .frame(width: 50, height: 50)
+                    Button(action: {
+                        self.selection = 6
+                    }) {
+                        Image(systemName: "house.fill")
+                            .imageScale(.large) // Adjust icon size
+                            .foregroundStyle(Color("Background"))
+                    }
                 }
+                
+                
+                Spacer()
+                
+                Button(action: {
+                    self.selection = 4
+                    print("buttpress")
+                }) {
+                    Image(systemName: "dollarsign.circle.fill")
+                        .imageScale(.large) // Adjust icon size
+                        .foregroundStyle(Color.gray)
+                }
+                
+                Spacer()
+                
+                Button(action: {
+                    self.selection = 5
+                }) {
+                    Image(systemName: "trophy.fill")
+                        .imageScale(.large) // Adjust icon size
+                        .foregroundStyle(Color.gray)
+                }
+                
+                
+                Spacer()
+                
             }
-            
-            
-            Spacer()
-            
-            Button(action: {
-                self.selection = 4
-                print("buttpress")
-            }) {
-                Image(systemName: "dollarsign.circle.fill")
-                    .imageScale(.large) // Adjust icon size
-                    .foregroundStyle(Color.gray)
-            }
-            
-            Spacer()
-            
-            Button(action: {
-                self.selection = 5
-            }) {
-                Image(systemName: "trophy.fill")
-                    .imageScale(.large) // Adjust icon size
-                    .foregroundStyle(Color.gray)
-            }
-            
-            Spacer()
-            
-            
             
         }
         .background(Color("Background"))

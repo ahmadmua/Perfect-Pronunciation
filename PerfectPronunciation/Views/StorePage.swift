@@ -263,15 +263,29 @@ struct StorePage: View {
             
             Spacer()
             
-            ZStack{
-                Circle()
-                    .fill(Color("WhiteDiff"))
-                    .frame(width: 50, height: 50)
+            Group {
+                
+                ZStack{
+                    Circle()
+                        .fill(Color("WhiteDiff"))
+                        .frame(width: 50, height: 50)
+                    Button(action: {
+                        self.selection = 6
+                    }) {
+                        Image(systemName: "house.fill")
+                            .imageScale(.large) // Adjust icon size
+                            .foregroundStyle(Color("Background"))
+                    }
+                }
+                
+                
+                Spacer()
+                
                 Button(action: {
 //                    self.selection = 6
                     self.showHome.toggle()
                 }) {
-                    Image(systemName: "house.fill")
+                    Image(systemName: "dollarsign.circle.fill")
                         .imageScale(.large) // Adjust icon size
                         .foregroundStyle(Color("Background"))
                 }

@@ -10,7 +10,7 @@ struct Register: View {
     @State private var userLoggedIn = false
     @State private var showingAlert = false
     @State private var msg = ""
-    @EnvironmentObject private var userData: UserData
+    @State private var userData = UserData()
 
     
     var body: some View {
@@ -91,7 +91,7 @@ struct Register: View {
                 msg = error!.localizedDescription
             } else {
                 
-           Firestore.firestore().collection("UserData").document(Auth.auth().currentUser!.uid).setData(["Country": "", "Difficulty": ""])
+                Firestore.firestore().collection("UserData").document(Auth.auth().currentUser!.uid).setData(["Country": "", "Language" : "", "Difficulty": ""])
                 self.selection = 1
             }
             

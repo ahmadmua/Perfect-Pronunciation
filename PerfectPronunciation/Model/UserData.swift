@@ -7,18 +7,23 @@
 
 import SwiftUI
 
-class UserData: ObservableObject {
+struct UserData  {
     
-    @Published var registeredEmail: String = ""
-    @Published var country: String = ""
-    @Published var difficulty: String = ""
+     var registeredEmail: String = ""
+     var country: String = ""
+     var difficulty: String = ""
+     var language: String = ""
     
-    func setCountry(country: String){
+    mutating func setCountry(country: String){
         self.country  = country
     }
     
-    func setDifficulty(difficulty: String){
+    mutating func setDifficulty(difficulty: String){
         self.difficulty  = difficulty
+    }
+    
+    mutating func setLanguage(language: String){
+        self.language  = language
     }
     
     func getCountry() -> String{
@@ -27,6 +32,10 @@ class UserData: ObservableObject {
     
     func getDifficulty() -> String{
         return difficulty
+    }
+    
+    func getLanguage() -> String {
+        return language
     }
 }
 

@@ -6,16 +6,18 @@
 //
 
 import SwiftUI
+import Firebase
+import FirebaseAuth
 
 struct Homepage: View {
     let data = ["Lessons", "Weekly", "Badges", "Store"]
-    
+    @State private var userEmail: String = ""
     @State var pronunciationPoints : Int = 0
     @State private var selection: Int? = nil
     @ObservedObject private var viewModel = AccuracyViewModel()
     
     var body: some View {
-        NavigationStack { // Use NavigationView
+        //NavigationView { // Use NavigationView
             ScrollView(.vertical, showsIndicators: false) {
                 ZStack{
                     
@@ -33,7 +35,7 @@ struct Homepage: View {
 //                        //.edgesIgnoringSafeArea(.all)
                     
                     VStack(spacing: 20) {
-                        Text("Hello Name-Placehold")
+                        Text("Hello, \(userEmail)")
                             .font(.headline)
                             .bold()
                         ZStack{
@@ -224,9 +226,17 @@ struct Homepage: View {
                 }
             }
             
-        }
+        //}
         .background(Color("Background"))
         .navigationBarBackButtonHidden(true)
+        .onAppear {
+            if let user = Auth.auth().currentUser {
+                if let email = user.email {
+                    userEmail = email.components(separatedBy: "@").first ?? ""
+                } else {
+                }
+            }
+        }
         
         Spacer()
     }

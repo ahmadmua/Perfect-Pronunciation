@@ -9,7 +9,8 @@ struct Country: View {
     @State private var selectedCountry: String = ""
     @State private var selectedLanugage: String = ""
     @State private var selection: Int? = nil
-    @EnvironmentObject private var userData: UserData
+    @State var userData = UserData()
+    @EnvironmentObject var fireDBHelper: FireDBHelper
     
     init() {
         for code in NSLocale.isoCountryCodes {
@@ -31,6 +32,7 @@ struct Country: View {
                 // this should never be reached
             }
         }
+        
         
         
     }
@@ -66,8 +68,8 @@ struct Country: View {
             
             
             Button(action: {
-                self.selection = 1
-               updateData()
+               updateCountry()
+                updateLanguage()
 
             })
             {
@@ -84,27 +86,37 @@ struct Country: View {
         .navigationBarBackButtonHidden(true)
     }
     
-    func updateData(){
-        
-        if let user = Auth.auth().currentUser {
-            let userID = user.uid
-            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-
-            userData.setCountry(country: selectedCountry)
-            
-            let updatedData = ["Country": userData.getCountry()]
-
-            // Update the specific field in the user's document
-            userDocRef.updateData(updatedData) { error in
-                if let error = error {
-                    print("Error updating document: \(error)")
-                } else {
-                    print("Document updated successfully")
-                }
-            }
-        } else {
-            // Handle the case where the user is not authenticated
-        }
+//    func updateData(){
+//
+//        if let user = Auth.auth().currentUser {
+//            let userID = user.uid
+//            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+//
+//            userData.setCountry(country: selectedCountry)
+//
+//            let updatedData = ["Country": userData.getCountry()]
+//
+//            // Update the specific field in the user's document
+//            userDocRef.updateData(updatedData) { error in
+//                if let error = error {
+//                    print("Error updating document: \(error)")
+//                } else {
+//                    print("Document updated successfully")
+//                }
+//            }
+//        } else {
+//            // Handle the case where the user is not authenticated
+//        }
+//
+//        self.selection = 1
+//    }
+    
+    func updateCountry(){
+        fireDBHelper.updateCountry(selectedCountry: selectedCountry, userData: &userData, selection: &selection)
+    }
+    
+    func updateLanguage(){
+        fireDBHelper.updateLanguage(selectedLanguage: selectedLanugage, userData: &userData, selection: &selection)
     }
     
 }

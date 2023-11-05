@@ -9,15 +9,24 @@ import SwiftUI
 
 struct AchievementPage: View {
     @State private var selection: Int? = nil
+    @State private var showLesson = false
+    @State private var showIndiLesson = false
+    @State private var showWeekly = false
+    @State private var showAchievement = false
+    @State private var showStore = false
+    @State private var showHome = false
+    
+    
     var body: some View {
         
         //        NavigationStack{
         
-        NavigationLink(destination: LessonsPage(), tag: 2, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-        NavigationLink(destination: WeeklyGamePage(), tag: 3, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-        NavigationLink(destination: AchievementPage(), tag: 5, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-        NavigationLink(destination: StorePage(), tag: 4, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-        NavigationLink(destination: Homepage(), tag: 6, selection: self.$selection){}.navigationBarBackButtonHidden(true)
+        
+//        NavigationLink(destination: LessonsPage(), tag: 2, selection: self.$selection){}.navigationBarBackButtonHidden(true)
+//        NavigationLink(destination: WeeklyGamePage(), tag: 3, selection: self.$selection){}.navigationBarBackButtonHidden(true)
+//        NavigationLink(destination: AchievementPage(), tag: 5, selection: self.$selection){}.navigationBarBackButtonHidden(true)
+//        NavigationLink(destination: StorePage(), tag: 4, selection: self.$selection){}.navigationBarBackButtonHidden(true)
+//        NavigationLink(destination: Homepage(), tag: 6, selection: self.$selection){}.navigationBarBackButtonHidden(true)
         
         List{
             Grid{
@@ -149,23 +158,32 @@ struct AchievementPage: View {
                 Spacer()
                 
                 Button(action: {
-                    self.selection = 2
+    //                                        self.selection = 2
+                    self.showLesson.toggle()
                     
                 }) {
                     Image(systemName: "book.fill")
                         .imageScale(.large) // Adjust icon size
                         .foregroundStyle(Color.gray)
-                    
+                }
+                .navigationDestination(isPresented: $showLesson){
+                    LessonsPage()
+                        .navigationBarBackButtonHidden(true)
                 }
                 
                 Spacer()
                 
                 Button(action: {
-                    self.selection = 3
+    //                self.selection = 3
+                    self.showWeekly.toggle()
                 }) {
                     Image(systemName: "gamecontroller.fill")
                         .imageScale(.large) // Adjust icon size
                         .foregroundStyle(Color.gray)
+                }
+                .navigationDestination(isPresented: $showWeekly){
+                    WeeklyGamePage()
+                        .navigationBarBackButtonHidden(true)
                 }
                 
                 Spacer()
@@ -175,11 +193,16 @@ struct AchievementPage: View {
                         .fill(Color("WhiteDiff"))
                         .frame(width: 50, height: 50)
                     Button(action: {
-                        self.selection = 6
+    //                    self.selection = 6
+                        self.showHome.toggle()
                     }) {
                         Image(systemName: "house.fill")
                             .imageScale(.large) // Adjust icon size
                             .foregroundStyle(Color("Background"))
+                    }
+                    .navigationDestination(isPresented: $showHome){
+                        Homepage()
+                            .navigationBarBackButtonHidden(true)
                     }
                 }
                 
@@ -187,12 +210,16 @@ struct AchievementPage: View {
                 Spacer()
                 
                 Button(action: {
-                    self.selection = 4
-                    
+    //                self.selection = 4
+                    self.showStore.toggle()
                 }) {
                     Image(systemName: "dollarsign.circle.fill")
                         .imageScale(.large) // Adjust icon size
                         .foregroundStyle(Color.gray)
+                }
+                .navigationDestination(isPresented: $showStore){
+                    StorePage()
+                        .navigationBarBackButtonHidden(true)
                 }
                 
                 Spacer()

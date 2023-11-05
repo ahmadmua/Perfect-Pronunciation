@@ -15,7 +15,7 @@ struct Homepage: View {
     @ObservedObject private var viewModel = AccuracyViewModel()
     
     var body: some View {
-        NavigationView { // Use NavigationView
+        NavigationStack { // Use NavigationView
             ScrollView(.vertical, showsIndicators: false) {
                 ZStack{
                     

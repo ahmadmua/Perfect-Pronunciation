@@ -270,29 +270,23 @@ struct StorePage: View {
                         .fill(Color("WhiteDiff"))
                         .frame(width: 50, height: 50)
                     Button(action: {
-                        self.selection = 6
+    //                    self.selection = 6
+                        self.showHome.toggle()
                     }) {
-                        Image(systemName: "house.fill")
+                        Image(systemName: "dollarsign.circle.fill")
                             .imageScale(.large) // Adjust icon size
                             .foregroundStyle(Color("Background"))
+                    }
+                    .navigationDestination(isPresented: $showHome){
+                        Homepage()
+                            .navigationBarBackButtonHidden(true)
                     }
                 }
                 
                 
-                Spacer()
+//                Spacer()
                 
-                Button(action: {
-//                    self.selection = 6
-                    self.showHome.toggle()
-                }) {
-                    Image(systemName: "dollarsign.circle.fill")
-                        .imageScale(.large) // Adjust icon size
-                        .foregroundStyle(Color("Background"))
-                }
-                .navigationDestination(isPresented: $showHome){
-                    Homepage()
-                        .navigationBarBackButtonHidden(true)
-                }
+                
             }
             
             

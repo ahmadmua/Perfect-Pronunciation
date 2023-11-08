@@ -14,6 +14,7 @@ import SwiftUI
 struct PerfectPronunciationApp: App {
     
     let fireDBHelper = FireDBHelper()
+    @StateObject private var sharedData = SharedData()
     
     
     init() {
@@ -30,7 +31,7 @@ struct PerfectPronunciationApp: App {
     
     var body: some Scene {
         WindowGroup {
-            TestView().environmentObject(fireDBHelper)
+            Login().environmentObject(fireDBHelper).environmentObject(sharedData)
 //            ContentView().environmentObject(fireDBHelper).environmentObject(userData)
             //Homepage()
         }

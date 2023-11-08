@@ -24,21 +24,22 @@ struct Details: View {
     }
     
     @State private var selectedDay: String = "Mo"
+    @State private var str: String = ""
     
     @EnvironmentObject var fireDBHelper: FireDBHelper
     
     let dateFormatter = DateFormatter()
     
         
-    @State var days: [Day] = [
-            Day(name: "Mo", items: []),
-            Day(name: "Tu", items: []),
-            Day(name: "We", items: []),
-            Day(name: "Th", items: []),
-            Day(name: "Fr", items: []),
-            Day(name: "Sa", items: []),
-            Day(name: "Su", items: []),
-        ]
+//    @State var days: [Day] = [
+//            Day(name: "Mo", items: []),
+//            Day(name: "Tu", items: []),
+//            Day(name: "We", items: []),
+//            Day(name: "Th", items: []),
+//            Day(name: "Fr", items: []),
+//            Day(name: "Sa", items: []),
+//            Day(name: "Su", items: []),
+//        ]
     
     
     var body: some View {
@@ -63,38 +64,35 @@ struct Details: View {
             
             CalendarView()
             
-
-            
             ItemsListView()
             
             
-            Text("Needs Improvement")
+            Text("\(calculateAccuracyOutput())")
                 .bold()
             Text("Current Difficulty: Intermediate \n Expected Difficulty: Beginner")
             
             Button(action: {
+                
+                
                 
 //                dateFormatter.dateFormat = "E"
 //                let currentDayOfWeek = dateFormatter.string(from: Date())
 //
                //fireDBHelper.addItemToUserDataCollection(itemName: "Word11", dayOfWeek: "Mon", accuracy: "74.4")
                 
-                getItemsForDayOfWeek(dayOfWeek: "Tue") { (documents, error) in
-                    if let documents = documents {
-                        for document in documents {
-                            if let word = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? String {
-                                print("\(word) - \(accuracy)%")
-                            }
-                        }
-                    } else if let error = error {
-                        // Handle the error
-                        print("Error: \(error)")
-                    }
-                }
-
-
-
+//                getItemsForDayOfWeek(dayOfWeek: "Tue") { (documents, error) in
+//                    if let documents = documents {
+//                        for document in documents {
+//                            if let word = document.get("Name") as? String,
+//                               let accuracy = document.get("Accuracy") as? String {
+//                                print("\(word) - \(accuracy)%")
+//                            }
+//                        }
+//                    } else if let error = error {
+//                        // Handle the error
+//                        print("Error: \(error)")
+//                    }
+//                }
                 
 //                print(returnDate())
 //
@@ -107,7 +105,6 @@ struct Details: View {
                     .cornerRadius(10)
                 
             }
-            
           
         }
         
@@ -139,6 +136,31 @@ struct Details: View {
             completion(nil, error)
         }
     }
+    
+    
+    func calculateAccuracyOutput() -> String{
+        
+        let input = PronunciationModelInput(Feature1: 1, Feature2: 2, Feature3: 3, Feature4: 4, Feature5: 5)
+        
+        do {
+            let prediction = try model.prediction(input: input)
+            let outputClass = prediction.OutputClass
+            
+            if(outputClass == 1){
+                return "Your're Pronunciation is Great"
+            }
+            else {
+               return "Your Pronunciation Needs Improvement"
+            }
+            
+            //print("Predicted Output Class: \(str)")
+        } catch {
+            print("Error making prediction: \(error)")
+        }
+        
+        return "No result found"
+    }
+    
 
 
 

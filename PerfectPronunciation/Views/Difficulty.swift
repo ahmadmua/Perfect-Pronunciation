@@ -10,15 +10,15 @@ import FirebaseAuth
 import SwiftUI
 
 struct Difficulty: View {
-    @State private var selectedDifficulty: String? = "I've been learning English and I want to enhance my pronunciation and fluency."
+    @State private var selectedDifficulty: String? = "Intermediate"
     @State private var selection: Int? = nil
     @State var userData = UserData()
     @EnvironmentObject var fireDBHelper: FireDBHelper
     
 
-    let difficulties = ["I'm new to English and want to work on my basic pronunciation skills.",
-        "I've been learning English and I want to enhance my pronunciation and fluency.",
-        "I'm an advanced English learner aiming for near-native pronunciation and fluency refinement."]
+    let difficulties = ["Beginner",
+        "Intermediate",
+        "Advanced."]
 
     var body: some View {
         VStack{

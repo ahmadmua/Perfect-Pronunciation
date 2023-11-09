@@ -233,57 +233,59 @@ struct LessonsPage: View {
             
             Spacer()
             
-            ZStack{
-                Circle()
-                    .fill(Color("WhiteDiff"))
-                    .frame(width: 50, height: 50)
-                Button(action: {
-//                    self.selection = 6
-                    self.showHome.toggle()
-                }) {
-                    Image(systemName: "house.fill")
-                        .imageScale(.large) // Adjust icon size
-                        .foregroundStyle(Color("Background"))
+            Group {
+                
+                ZStack{
+                    Circle()
+                        .fill(Color("WhiteDiff"))
+                        .frame(width: 50, height: 50)
+                    Button(action: {
+                        //                    self.selection = 6
+                        self.showHome.toggle()
+                    }) {
+                        Image(systemName: "house.fill")
+                            .imageScale(.large) // Adjust icon size
+                            .foregroundStyle(Color("Background"))
+                    }
+                    .navigationDestination(isPresented: $showHome){
+                        Homepage()
+                            .navigationBarBackButtonHidden(true)
+                    }
                 }
-                .navigationDestination(isPresented: $showHome){
-                    Homepage()
+                
+                
+                Spacer()
+                
+                Button(action: {
+                    //                self.selection = 4
+                    self.showStore.toggle()
+                }) {
+                    Image(systemName: "dollarsign.circle.fill")
+                        .imageScale(.large) // Adjust icon size
+                        .foregroundStyle(Color.gray)
+                }
+                .navigationDestination(isPresented: $showStore){
+                    StorePage()
                         .navigationBarBackButtonHidden(true)
                 }
+                
+                Spacer()
+                
+                Button(action: {
+                    //                self.selection = 5
+                    self.showAchievement.toggle()
+                }) {
+                    Image(systemName: "trophy.fill")
+                        .imageScale(.large) // Adjust icon size
+                        .foregroundStyle(Color.gray)
+                }
+                .navigationDestination(isPresented: $showAchievement){
+                    AchievementPage()
+                        .navigationBarBackButtonHidden(true)
+                }
+                
+                Spacer()
             }
-            
-            
-            Spacer()
-            
-            Button(action: {
-//                self.selection = 4
-                self.showStore.toggle()
-            }) {
-                Image(systemName: "dollarsign.circle.fill")
-                    .imageScale(.large) // Adjust icon size
-                    .foregroundStyle(Color.gray)
-            }
-            .navigationDestination(isPresented: $showStore){
-                StorePage()
-                    .navigationBarBackButtonHidden(true)
-            }
-            
-            Spacer()
-            
-            Button(action: {
-//                self.selection = 5
-                self.showAchievement.toggle()
-            }) {
-                Image(systemName: "trophy.fill")
-                    .imageScale(.large) // Adjust icon size
-                    .foregroundStyle(Color.gray)
-            }
-            .navigationDestination(isPresented: $showAchievement){
-                AchievementPage()
-                    .navigationBarBackButtonHidden(true)
-            }
-            
-            Spacer()
-            
 //            Group {
 //                
 //                ZStack{

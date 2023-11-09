@@ -270,7 +270,7 @@ struct StorePage: View {
                         .fill(Color("WhiteDiff"))
                         .frame(width: 50, height: 50)
                     Button(action: {
-    //                    self.selection = 6
+                        //                    self.selection = 6
                         self.showHome.toggle()
                     }) {
                         Image(systemName: "dollarsign.circle.fill")
@@ -284,42 +284,42 @@ struct StorePage: View {
                 }
                 
                 
-//                Spacer()
+                //                Spacer()
                 
                 
-            }
-            
-            
-            Spacer()
-            
-            Button(action: {
-//                self.selection = 4
-                print("buttpress")
-            }) {
-                Image(systemName: "dollarsign.circle.fill")
-                    .imageScale(.large) // Adjust icon size
+                
+                
+                
+                Spacer()
+                
+                Button(action: {
+                    //                self.selection = 4
+                    print("buttpress")
+                }) {
+                    Image(systemName: "dollarsign.circle.fill")
+                        .imageScale(.large) // Adjust icon size
                     
-                    .foregroundStyle(Color("CustYell"))
+                        .foregroundStyle(Color("CustYell"))
+                }
+                
+                Spacer()
+                
+                Button(action: {
+                    //                self.selection = 5
+                    self.showAchievement.toggle()
+                }) {
+                    Image(systemName: "trophy.fill")
+                        .imageScale(.large) // Adjust icon size
+                        .foregroundStyle(Color.gray)
+                }
+                .navigationDestination(isPresented: $showAchievement){
+                    AchievementPage()
+                        .navigationBarBackButtonHidden(true)
+                }
+                
+                Spacer()
+                
             }
-            
-            Spacer()
-            
-            Button(action: {
-//                self.selection = 5
-                self.showAchievement.toggle()
-            }) {
-                Image(systemName: "trophy.fill")
-                    .imageScale(.large) // Adjust icon size
-                    .foregroundStyle(Color.gray)
-            }
-            .navigationDestination(isPresented: $showAchievement){
-                AchievementPage()
-                    .navigationBarBackButtonHidden(true)
-            }
-            
-            Spacer()
-            
-            
             
         }
         .background(Color("Background"))

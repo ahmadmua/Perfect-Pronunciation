@@ -25,7 +25,7 @@ struct Homepage: View {
     @State private var showHome = false
     
     var body: some View {
-        NavigationStack { // Use NavigationView
+       //NavigationStack { // Use NavigationView
             ScrollView(.vertical, showsIndicators: false) {
                 ZStack{
                     
@@ -263,7 +263,7 @@ struct Homepage: View {
                 }
             }
             
-        }
+        //}
         .background(Color("Background"))
         .navigationBarBackButtonHidden(true)
         .onAppear {

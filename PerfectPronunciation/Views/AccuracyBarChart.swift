@@ -9,11 +9,13 @@ struct AccuracyBarChart: View {
     
     var range: ClosedRange<Int>
     
+    @State var showDetails = false
+    
     var body: some View {
         
         VStack{
             
-            NavigationLink(destination: Details(), tag: 1, selection: self.$selection){}
+            //NavigationLink(destination: Details(), tag: 1, selection: self.$selection){}
             
             Chart {
                 ForEach(data) { item in
@@ -55,7 +57,7 @@ struct AccuracyBarChart: View {
             Spacer()
             
             Button(action: {
-                self.selection = 1
+                self.showDetails.toggle()
             }){
                 Text("Details")
                     .modifier(CustomTextM(fontName: "MavenPro-Bold", fontSize: 16, fontColor: Color.black))
@@ -65,6 +67,9 @@ struct AccuracyBarChart: View {
                     .background(Color.yellow)
                     .cornerRadius(10)
                     .bold()
+            }
+            .navigationDestination(isPresented: $showDetails){
+                Details()
             }
             
         

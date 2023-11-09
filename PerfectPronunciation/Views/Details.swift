@@ -78,7 +78,7 @@ struct Details: View {
 //                dateFormatter.dateFormat = "E"
 //                let currentDayOfWeek = dateFormatter.string(from: Date())
 //
-               //fireDBHelper.addItemToUserDataCollection(itemName: "Word13", dayOfWeek: "Mon", accuracy: 55)
+               //fireDBHelper.addItemToUserDataCollection(itemName: "Word15", dayOfWeek: "Tue", accuracy: 75)
                 
 //                getItemsForDayOfWeek(dayOfWeek: "Tue") { (documents, error) in
 //                    if let documents = documents {
@@ -148,8 +148,6 @@ struct Details: View {
             }
         }
     }
-
-
     
     
     func getItemsForDayOfWeek(dayOfWeek: String, completion: @escaping ([DocumentSnapshot]?, Error?) -> Void) {
@@ -177,10 +175,10 @@ struct Details: View {
         }
     }
     
-    
+    //uses the pronunciation model to predict
     func calculateAccuracyOutput() -> String{
         
-        let input = PronunciationModelInput(Feature1: 1, Feature2: 2, Feature3: 3, Feature4: 4, Feature5: 5)
+        let input = PronunciationModelInput(Feature1: 75, Feature2: 80, Feature3: 95, Feature4: 80, Feature5: 90)
         
         do {
             let prediction = try model.prediction(input: input)

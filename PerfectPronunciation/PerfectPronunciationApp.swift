@@ -35,7 +35,7 @@ struct PerfectPronunciationApp: App {
             Login().environmentObject(fireDBHelper).environmentObject(sharedData)
 //            ContentView().environmentObject(fireDBHelper).environmentObject(userData)
 //            TestFirebaseView()
-            Homepage()
+            //Homepage()
         }
     }
 }

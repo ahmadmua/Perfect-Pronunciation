@@ -16,17 +16,25 @@ struct Homepage: View {
     @State private var selection: Int? = nil
     @ObservedObject private var viewModel = AccuracyViewModel()
     
+    @State private var showLesson = false
+    @State private var showStats = false
+    @State private var showSettings = false
+    @State private var showWeekly = false
+    @State private var showAchievement = false
+    @State private var showStore = false
+    @State private var showHome = false
+    
     var body: some View {
-        //NavigationView { // Use NavigationView
+        NavigationStack { // Use NavigationView
             ScrollView(.vertical, showsIndicators: false) {
                 ZStack{
                     
-                    NavigationLink(destination: LessonsPage(), tag: 1, selection: self.$selection){}
-                    NavigationLink(destination: WeeklyGamePage(), tag: 2, selection: self.$selection){}
-                    NavigationLink(destination: AchievementPage(), tag: 3, selection: self.$selection){}
-                    NavigationLink(destination: StorePage(), tag: 4, selection: self.$selection){}
-                    NavigationLink(destination: StatData(), tag: 5, selection: self.$selection){}
-                    NavigationLink(destination: Settings(), tag: 6, selection: self.$selection){}
+//                    NavigationLink(destination: LessonsPage(), tag: 1, selection: self.$selection){}
+//                    NavigationLink(destination: WeeklyGamePage(), tag: 2, selection: self.$selection){}
+//                    NavigationLink(destination: AchievementPage(), tag: 3, selection: self.$selection){}
+//                    NavigationLink(destination: StorePage(), tag: 4, selection: self.$selection){}
+//                    NavigationLink(destination: StatData(), tag: 5, selection: self.$selection){}
+//                    NavigationLink(destination: Settings(), tag: 6, selection: self.$selection){}
                     
 //                    Image("AppBackground")
 //                        //.resizable()
@@ -61,7 +69,7 @@ struct Homepage: View {
                                             GridRow{
                                                 HStack{
                                                     Button(action: {
-                                                        self.selection = 1
+                                                        self.showLesson.toggle()
                                                     }){
                                                         Text("Lessons")
                                                             .font(.headline)
@@ -73,9 +81,14 @@ struct Homepage: View {
                                                            .shadow(radius: 5)
                                                         
                                                     }
+                                                    .navigationDestination(isPresented: $showLesson){
+                                                        LessonsPage()
+                                                            .navigationBarBackButtonHidden(true)
+                                                    }
                                                     
                                                     Button(action: {
-                                                        self.selection = 2
+//                                                        self.selection = 2
+                                                        self.showWeekly.toggle()
                                                     }){
                                                         Text("Weekly")
                                                             .font(.headline)
@@ -87,13 +100,18 @@ struct Homepage: View {
                                                            .shadow(radius: 5)
                                                         
                                                     }
+                                                    .navigationDestination(isPresented: $showWeekly){
+                                                        WeeklyGamePage()
+                                                            .navigationBarBackButtonHidden(true)
+                                                    }
                                                 }//hstack
                                             }//grid row
                                             
                                             GridRow{
                                                 HStack{
                                                     Button(action: {
-                                                        self.selection = 3
+//                                                        self.selection = 3
+                                                        self.showAchievement.toggle()
                                                     }){
                                                         Text("Achievments")
                                                             .font(.headline)
@@ -105,9 +123,14 @@ struct Homepage: View {
                                                            .shadow(radius: 5)
                                                         
                                                     }
+                                                    .navigationDestination(isPresented: $showAchievement){
+                                                        AchievementPage()
+                                                            .navigationBarBackButtonHidden(true)
+                                                    }
                                                     
                                                     Button(action: {
-                                                        self.selection = 4
+//                                                        self.selection = 4
+                                                        self.showStore.toggle()
                                                     }){
                                                         Text("Store")
                                                             .font(.headline)
@@ -117,6 +140,10 @@ struct Homepage: View {
                                                            .cornerRadius(10)
                                                            .foregroundStyle(Color.black)
                                                            .shadow(radius: 5)
+                                                    }
+                                                    .navigationDestination(isPresented: $showStore){
+                                                        StorePage()
+                                                            .navigationBarBackButtonHidden(true)
                                                     }
                                                 }
                                             }
@@ -159,13 +186,18 @@ struct Homepage: View {
         
                                         
                                         Button(action: {
-                                            self.selection = 5
+//                                            self.selection = 5
+                                            self.showStats.toggle()
                                         }){
                                             BarChart(
                                                 data: viewModel.word.data,
                                                 range: viewModel.accuracyRange
                                             )
                                             
+                                        }
+                                        .navigationDestination(isPresented: $showStats){
+                                            StatData()
+//                                                .navigationBarBackButtonHidden(true)
                                         }
     
                                         VStack(alignment: .center, spacing: 10){
@@ -210,7 +242,8 @@ struct Homepage: View {
                         .overlay(RoundedRectangle(cornerRadius: 30).stroke(Color.black, lineWidth: 2))
                         
                         Button(action: {
-                            self.selection = 6
+//                            self.selection = 6
+                            self.showSettings.toggle()
                         }){
                 
                             Image(systemName: "person.circle")
@@ -219,6 +252,10 @@ struct Homepage: View {
                                 .foregroundColor(.black)
                                 .background(Circle().fill(Color.yellow))
                         }
+                        .navigationDestination(isPresented: $showSettings){
+                            Settings()
+//                                .navigationBarBackButtonHidden(true)
+                        }
                     }
                     )
                     
@@ -226,7 +263,7 @@ struct Homepage: View {
                 }
             }
             
-        //}
+        }
         .background(Color("Background"))
         .navigationBarBackButtonHidden(true)
         .onAppear {

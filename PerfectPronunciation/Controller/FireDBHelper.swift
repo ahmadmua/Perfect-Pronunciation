@@ -91,7 +91,7 @@ class FireDBHelper: ObservableObject {
         selection = 1
     }
     
-    func addItemToUserDataCollection(itemName: String, dayOfWeek: String, accuracy: String) {
+    func addItemToUserDataCollection(itemName: String, dayOfWeek: String, accuracy: Float) {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
@@ -101,7 +101,7 @@ class FireDBHelper: ObservableObject {
                 "Name": itemName,
                 "DayOfWeek": dayOfWeek,
                 "Accuracy": accuracy
-            ]
+            ] as [String : Any]
             
             // Add a new document to the "Items" subcollection
             itemsCollectionRef.addDocument(data: itemData) { error in

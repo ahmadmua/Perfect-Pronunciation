@@ -12,7 +12,6 @@
 		028364752AEA513E00E88DCB /* VoiceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364742AEA513E00E88DCB /* VoiceData.swift */; };
 		028364772AEA528F00E88DCB /* AccuracyBarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364762AEA528F00E88DCB /* AccuracyBarChart.swift */; };
 		028364792AEA534800E88DCB /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364782AEA534800E88DCB /* Sequence.swift */; };
-		0283647B2AEA547900E88DCB /* TextValue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0283647A2AEA547900E88DCB /* TextValue.swift */; };
 		0283647D2AED807600E88DCB /* Details.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0283647C2AED807600E88DCB /* Details.swift */; };
 		0283647F2AEDB25900E88DCB /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0283647E2AEDB25900E88DCB /* Settings.swift */; };
 		02E2B65F2AD6131100F1FACA /* PerfectPronunciationApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B65E2AD6131100F1FACA /* PerfectPronunciationApp.swift */; };
@@ -57,7 +56,6 @@
 		028364742AEA513E00E88DCB /* VoiceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceData.swift; sourceTree = "<group>"; };
 		028364762AEA528F00E88DCB /* AccuracyBarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccuracyBarChart.swift; sourceTree = "<group>"; };
 		028364782AEA534800E88DCB /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
-		0283647A2AEA547900E88DCB /* TextValue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextValue.swift; sourceTree = "<group>"; };
 		0283647C2AED807600E88DCB /* Details.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Details.swift; sourceTree = "<group>"; };
 		0283647E2AEDB25900E88DCB /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		028364802AEDB79700E88DCB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -185,7 +183,6 @@
 			children = (
 				02E2B6922AD6188500F1FACA /* Components.swift */,
 				028364782AEA534800E88DCB /* Sequence.swift */,
-				0283647A2AEA547900E88DCB /* TextValue.swift */,
 				4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */,
 			);
 			path = Components;
@@ -326,7 +323,6 @@
 				02E2B65F2AD6131100F1FACA /* PerfectPronunciationApp.swift in Sources */,
 				028364752AEA513E00E88DCB /* VoiceData.swift in Sources */,
 				02E2B68E2AD617F900F1FACA /* Login.swift in Sources */,
-				0283647B2AEA547900E88DCB /* TextValue.swift in Sources */,
 				0283647D2AED807600E88DCB /* Details.swift in Sources */,
 				028364732AEA504000E88DCB /* AccuracyGraphModel.swift in Sources */,
 				02E2B6902AD6180500F1FACA /* Register.swift in Sources */,

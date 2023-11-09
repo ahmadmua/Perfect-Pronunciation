@@ -9,13 +9,14 @@ import Foundation
 
 struct Voice {
     let name: String
-    let data: [Accuracy]
+    var data: [Accuracy]
 }
 
 struct Accuracy: Identifiable {
-    let timestamp: Date
-    let weekday: String
-    let accuracy: Double
+    
+    var timestamp: Date
+    var weekday: String
+    var accuracy: Float
     
     var id: String { weekday }
 }

@@ -17,6 +17,7 @@ struct PerfectPronunciationApp: App {
     @StateObject private var sharedData = SharedData()
     
     
+    
     init() {
         
         let appearance = UINavigationBarAppearance()
@@ -31,7 +32,7 @@ struct PerfectPronunciationApp: App {
     
     var body: some Scene {
         WindowGroup {
-            Details().environmentObject(fireDBHelper).environmentObject(sharedData)
+            Login().environmentObject(fireDBHelper).environmentObject(sharedData)
 //            ContentView().environmentObject(fireDBHelper).environmentObject(userData)
             //Homepage()
         }

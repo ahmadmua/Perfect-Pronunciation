@@ -73,12 +73,12 @@ struct Details: View {
             
             Button(action: {
                 
-                
+                getAvgAccuracy(dayOfWeek: "Mon")
                 
 //                dateFormatter.dateFormat = "E"
 //                let currentDayOfWeek = dateFormatter.string(from: Date())
 //
-               //fireDBHelper.addItemToUserDataCollection(itemName: "Word11", dayOfWeek: "Mon", accuracy: "74.4")
+               //fireDBHelper.addItemToUserDataCollection(itemName: "Word13", dayOfWeek: "Mon", accuracy: 55)
                 
 //                getItemsForDayOfWeek(dayOfWeek: "Tue") { (documents, error) in
 //                    if let documents = documents {
@@ -111,6 +111,46 @@ struct Details: View {
         Spacer()
         
     }
+    
+    func getAvgAccuracy(dayOfWeek: String) {
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+            
+            // Create a query to filter documents where "dayofweek" is "Mon"
+            let mondayQuery = itemsCollectionRef.whereField("DayOfWeek", isEqualTo: dayOfWeek)
+            
+            mondayQuery.getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error.localizedDescription)")
+                } else {
+                    var totalAccuracy: Float = 0
+                    var documentCount: Float = 0
+                    
+                    for document in querySnapshot!.documents {
+                        if let accuracy = document["Accuracy"] as? Float {
+                            totalAccuracy += accuracy
+                            documentCount += 1
+                        } else {
+                            print("Document \(document.documentID) exists for Monday, but 'accuracy' field is missing or not a float.")
+                        }
+                    }
+                    
+                    if documentCount > 0 {
+                        let averageAccuracy = totalAccuracy / documentCount
+                        let formattedAverage = String(format: "%.2f", averageAccuracy)
+                        print("Average Accuracy for Monday: \(formattedAverage)")
+                    } else {
+                        print("No documents with 'accuracy' values found for Monday.")
+                    }
+                }
+            }
+        }
+    }
+
+
+    
     
     func getItemsForDayOfWeek(dayOfWeek: String, completion: @escaping ([DocumentSnapshot]?, Error?) -> Void) {
         if let user = Auth.auth().currentUser {
@@ -147,7 +187,7 @@ struct Details: View {
             let outputClass = prediction.OutputClass
             
             if(outputClass == 1){
-                return "Your're Pronunciation is Great"
+                return "Your Pronunciation is Great"
             }
             else {
                return "Your Pronunciation Needs Improvement"
@@ -188,7 +228,7 @@ struct ItemsListView: View {
                     if let documents = documents {
                         let items = documents.compactMap { document in
                             if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? String {
+                               let accuracy = document.get("Accuracy") as? Float {
                                 return "\(name) - Accuracy: \(accuracy)%"
                             }
                             return nil
@@ -213,7 +253,7 @@ struct ItemsListView: View {
                     if let documents = documents {
                         let items = documents.compactMap { document in
                             if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? String {
+                               let accuracy = document.get("Accuracy") as? Float {
                                 return "\(name) - Accuracy: \(accuracy)%"
                             }
                             return nil
@@ -238,7 +278,7 @@ struct ItemsListView: View {
                     if let documents = documents {
                         let items = documents.compactMap { document in
                             if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? String {
+                               let accuracy = document.get("Accuracy") as? Float {
                                 return "\(name) - Accuracy: \(accuracy)%"
                             }
                             return nil
@@ -262,7 +302,7 @@ struct ItemsListView: View {
                     if let documents = documents {
                         let items = documents.compactMap { document in
                             if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? String {
+                               let accuracy = document.get("Accuracy") as? Float {
                                 return "\(name) - Accuracy: \(accuracy)%"
                             }
                             return nil
@@ -287,7 +327,7 @@ struct ItemsListView: View {
                     if let documents = documents {
                         let items = documents.compactMap { document in
                             if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? String {
+                               let accuracy = document.get("Accuracy") as? Float {
                                 return "\(name) - Accuracy: \(accuracy)%"
                             }
                             return nil
@@ -312,7 +352,7 @@ struct ItemsListView: View {
                     if let documents = documents {
                         let items = documents.compactMap { document in
                             if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? String {
+                               let accuracy = document.get("Accuracy") as? Float {
                                 return "\(name) - Accuracy: \(accuracy)%"
                             }
                             return nil
@@ -337,7 +377,7 @@ struct ItemsListView: View {
                     if let documents = documents {
                         let items = documents.compactMap { document in
                             if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? String {
+                               let accuracy = document.get("Accuracy") as? Float {
                                 return "\(name) - Accuracy: \(accuracy)%"
                             }
                             return nil

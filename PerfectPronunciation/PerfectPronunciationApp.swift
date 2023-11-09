@@ -37,7 +37,7 @@ struct PerfectPronunciationApp: App {
 //            TestFirebaseView()
             //Homepage()
             //Homepage().environmentObject(fireDBHelper).environmentObject(userData)
-            VoiceRecorder(audioRecorder: AudioController())
+            //VoiceRecorder(audioRecorder: AudioController())
         }
     }
 }

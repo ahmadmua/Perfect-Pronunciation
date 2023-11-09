@@ -42,6 +42,7 @@
 		02E2B69C2AD63BA300F1FACA /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B69B2AD63BA300F1FACA /* Difficulty.swift */; };
 		02F7635E2AF7215B001BEAFA /* PronunciationModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 02F7635D2AF7215B001BEAFA /* PronunciationModel.mlmodel */; };
 		02F763602AF721A4001BEAFA /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F7635F2AF721A4001BEAFA /* TestView.swift */; };
+		4D1162DF2AFC9D9900224519 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1162DE2AFC9D9900224519 /* AudioController.swift */; };
 		4D6170602AEC5D0C002A02C1 /* VoiceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */; };
 		C58B99F22AECDACB003C0288 /* LessonsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F12AECDACB003C0288 /* LessonsPage.swift */; };
 		C58B99F42AED7CC4003C0288 /* IndividualLesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F32AED7CC4003C0288 /* IndividualLesson.swift */; };
@@ -78,6 +79,7 @@
 		02E2B69B2AD63BA300F1FACA /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
 		02F7635D2AF7215B001BEAFA /* PronunciationModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = PronunciationModel.mlmodel; sourceTree = "<group>"; };
 		02F7635F2AF721A4001BEAFA /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
+		4D1162DE2AFC9D9900224519 /* AudioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
 		4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorder.swift; sourceTree = "<group>"; };
 		C58B99F12AECDACB003C0288 /* LessonsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonsPage.swift; sourceTree = "<group>"; };
 		C58B99F32AED7CC4003C0288 /* IndividualLesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndividualLesson.swift; sourceTree = "<group>"; };
@@ -159,6 +161,7 @@
 			children = (
 				02E2B68A2AD615FC00F1FACA /* FireDBHelper.swift */,
 				C5DF79D52AFB19AA00ECB45C /* LessonController.swift */,
+				4D1162DE2AFC9D9900224519 /* AudioController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -340,6 +343,7 @@
 				02E2B6952AD61E6600F1FACA /* Homepage.swift in Sources */,
 				C5DF79D62AFB19AA00ECB45C /* LessonController.swift in Sources */,
 				02F763602AF721A4001BEAFA /* TestView.swift in Sources */,
+				4D1162DF2AFC9D9900224519 /* AudioController.swift in Sources */,
 				4D6170602AEC5D0C002A02C1 /* VoiceRecorder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -473,6 +477,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PerfectPronunciation/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow microphone settings to record audio";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Allow microphone settings to record audio";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -503,6 +509,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PerfectPronunciation/Info.plist;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow microphone settings to record audio";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Allow microphone settings to record audio";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

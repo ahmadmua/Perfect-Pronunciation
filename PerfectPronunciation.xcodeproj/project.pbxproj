@@ -48,6 +48,9 @@
 		C58B99F62AED94E5003C0288 /* StorePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F52AED94E5003C0288 /* StorePage.swift */; };
 		C58B99F82AED9F5C003C0288 /* AchievementPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F72AED9F5C003C0288 /* AchievementPage.swift */; };
 		C58B99FA2AEDAE2B003C0288 /* WeeklyGamePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F92AEDAE2B003C0288 /* WeeklyGamePage.swift */; };
+		C5DF79D02AFB106900ECB45C /* TestFirebaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF79CF2AFB106900ECB45C /* TestFirebaseView.swift */; };
+		C5DF79D62AFB19AA00ECB45C /* LessonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF79D52AFB19AA00ECB45C /* LessonController.swift */; };
+		C5DF79D82AFC77AB00ECB45C /* Lesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF79D72AFC77AB00ECB45C /* Lesson.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -81,6 +84,9 @@
 		C58B99F52AED94E5003C0288 /* StorePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorePage.swift; sourceTree = "<group>"; };
 		C58B99F72AED9F5C003C0288 /* AchievementPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementPage.swift; sourceTree = "<group>"; };
 		C58B99F92AEDAE2B003C0288 /* WeeklyGamePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyGamePage.swift; sourceTree = "<group>"; };
+		C5DF79CF2AFB106900ECB45C /* TestFirebaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFirebaseView.swift; sourceTree = "<group>"; };
+		C5DF79D52AFB19AA00ECB45C /* LessonController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonController.swift; sourceTree = "<group>"; };
+		C5DF79D72AFC77AB00ECB45C /* Lesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lesson.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -152,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				02E2B68A2AD615FC00F1FACA /* FireDBHelper.swift */,
+				C5DF79D52AFB19AA00ECB45C /* LessonController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -174,6 +181,7 @@
 				C58B99F72AED9F5C003C0288 /* AchievementPage.swift */,
 				C58B99F92AEDAE2B003C0288 /* WeeklyGamePage.swift */,
 				02F7635F2AF721A4001BEAFA /* TestView.swift */,
+				C5DF79CF2AFB106900ECB45C /* TestFirebaseView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -195,6 +203,7 @@
 				02E2B6972AD6237000F1FACA /* UserData.swift */,
 				028364722AEA504000E88DCB /* AccuracyGraphModel.swift */,
 				028364742AEA513E00E88DCB /* VoiceData.swift */,
+				C5DF79D72AFC77AB00ECB45C /* Lesson.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -310,6 +319,7 @@
 				C58B99F62AED94E5003C0288 /* StorePage.swift in Sources */,
 				02E2B69A2AD6250700F1FACA /* Country.swift in Sources */,
 				02E2B69C2AD63BA300F1FACA /* Difficulty.swift in Sources */,
+				C5DF79D82AFC77AB00ECB45C /* Lesson.swift in Sources */,
 				02E2B6932AD6188500F1FACA /* Components.swift in Sources */,
 				02E2B6982AD6237000F1FACA /* UserData.swift in Sources */,
 				028364712AE9FBC300E88DCB /* StatData.swift in Sources */,
@@ -321,12 +331,14 @@
 				C58B99F82AED9F5C003C0288 /* AchievementPage.swift in Sources */,
 				C58B99F22AECDACB003C0288 /* LessonsPage.swift in Sources */,
 				02E2B65F2AD6131100F1FACA /* PerfectPronunciationApp.swift in Sources */,
+				C5DF79D02AFB106900ECB45C /* TestFirebaseView.swift in Sources */,
 				028364752AEA513E00E88DCB /* VoiceData.swift in Sources */,
 				02E2B68E2AD617F900F1FACA /* Login.swift in Sources */,
 				0283647D2AED807600E88DCB /* Details.swift in Sources */,
 				028364732AEA504000E88DCB /* AccuracyGraphModel.swift in Sources */,
 				02E2B6902AD6180500F1FACA /* Register.swift in Sources */,
 				02E2B6952AD61E6600F1FACA /* Homepage.swift in Sources */,
+				C5DF79D62AFB19AA00ECB45C /* LessonController.swift in Sources */,
 				02F763602AF721A4001BEAFA /* TestView.swift in Sources */,
 				4D6170602AEC5D0C002A02C1 /* VoiceRecorder.swift in Sources */,
 			);

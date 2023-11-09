@@ -33,6 +33,7 @@
 		02E2B6982AD6237000F1FACA /* UserData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B6972AD6237000F1FACA /* UserData.swift */; };
 		02E2B69A2AD6250700F1FACA /* Country.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B6992AD6250700F1FACA /* Country.swift */; };
 		02E2B69C2AD63BA300F1FACA /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B69B2AD63BA300F1FACA /* Difficulty.swift */; };
+		4D1162DF2AFC9D9900224519 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1162DE2AFC9D9900224519 /* AudioController.swift */; };
 		4D6170602AEC5D0C002A02C1 /* VoiceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +52,7 @@
 		02E2B6972AD6237000F1FACA /* UserData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserData.swift; sourceTree = "<group>"; };
 		02E2B6992AD6250700F1FACA /* Country.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Country.swift; sourceTree = "<group>"; };
 		02E2B69B2AD63BA300F1FACA /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
+		4D1162DE2AFC9D9900224519 /* AudioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
 		4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -122,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				02E2B68A2AD615FC00F1FACA /* FireDBHelper.swift */,
+				4D1162DE2AFC9D9900224519 /* AudioController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -270,6 +273,7 @@
 				02E2B68E2AD617F900F1FACA /* Login.swift in Sources */,
 				02E2B6902AD6180500F1FACA /* Register.swift in Sources */,
 				02E2B6952AD61E6600F1FACA /* Homepage.swift in Sources */,
+				4D1162DF2AFC9D9900224519 /* AudioController.swift in Sources */,
 				4D6170602AEC5D0C002A02C1 /* VoiceRecorder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -402,6 +406,8 @@
 				DEVELOPMENT_TEAM = PNR82J99FX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow microphone settings to record audio";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Allow microphone settings to record audio";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -431,6 +437,8 @@
 				DEVELOPMENT_TEAM = PNR82J99FX;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Allow microphone settings to record audio";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Allow microphone settings to record audio";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

@@ -6,13 +6,40 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct TestFirebaseView: View {
+    @ObservedObject var model = LessonController()
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        List(model.list) { item in
+            Text(item.id)
+//            Text(item.difficulty)
+//            Text(item.language)
+            
+            
+        }
+        
+//        Button(action: {
+//            model.getQuestion(lesson: "Food1", difficulty: "Easy", question: "Question")
+//            print(model.question ?? "")
+//        }){
+//            Text("Get Question")
+//        }//btn
+        
+        Text(model.question ?? "Nothing")
+        
     }
+    
+    init(){
+        model.getLesson()
+        model.getQuestion(lesson: "Food1", difficulty: "Easy", question: "Question")
+    }
+    
+
+    
 }
 
-#Preview {
-    TestFirebaseView()
-}
+//#Preview {
+//    TestFirebaseView()
+//}

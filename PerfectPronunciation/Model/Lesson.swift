@@ -6,3 +6,13 @@
 //
 
 import Foundation
+
+struct Lesson: Identifiable{
+    var id: String
+//    var difficulty : String
+//    var question : String
+//    var country : String
+//    var difficulty : String
+//    var language : String
+    
+}

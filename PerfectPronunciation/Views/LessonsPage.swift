@@ -10,18 +10,24 @@ import SwiftUI
 struct LessonsPage: View {
 //    @State private var msg = ""
     @State private var showLesson = false
-    @State private var showIndiLesson = false
     @State private var showWeekly = false
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
     @State private var selection: Int? = nil
     
+    @State private var phonetics = false
+    @State private var food1 = false
+    
+    @State var showingPopup = false
+    
+    @State private var lessonName = ""
+    
     
     var body: some View {
         //        NavigationStack{
         
-//        NavigationLink(destination: IndividualLesson(), tag: 1, selection: self.$selection){}.navigationBarBackButtonHidden(true)
+//        NavigationLink(destination: IndividualLesson(lessonName: $lessonName), tag: 1, selection: self.$selection){}.navigationBarBackButtonHidden(true)
 //        NavigationLink(destination: LessonsPage(), tag: 2, selection: self.$selection){}.navigationBarBackButtonHidden(true)
 //        NavigationLink(destination: WeeklyGamePage(), tag: 3, selection: self.$selection){}.navigationBarBackButtonHidden(true)
 //        NavigationLink(destination: AchievementPage(), tag: 5, selection: self.$selection){}.navigationBarBackButtonHidden(true)
@@ -40,13 +46,14 @@ struct LessonsPage: View {
                         Button(action: {
                             print("phonetic btn press")
 //                            self.selection = 1
-                            self.showIndiLesson.toggle()
+                            lessonName = "Phonetics"
+                            self.phonetics.toggle()
                         }){
                             Image(systemName: "mouth.fill")
                                 .font(.system(size: 50, weight: .light))
                         }//btn
-                        .navigationDestination(isPresented: $showIndiLesson){
-                            IndividualLesson()
+                        .navigationDestination(isPresented: $phonetics){
+                            IndividualLesson(lessonName: $lessonName)
                         }
                         .buttonStyle(.borderless)
                         
@@ -71,6 +78,7 @@ struct LessonsPage: View {
                         Image(systemName: "mic.circle.fill")
                             .font(.system(size: 50, weight: .light))
                     }//btn
+                    .buttonStyle(.borderless)
                     
                     Button(action: {
                         print("basic2 btn press")
@@ -94,11 +102,18 @@ struct LessonsPage: View {
                 GridRow{
                     Button(action: {
                         print("food1 btn press")
-                        self.selection = 1
+//                        self.selection = 1
+                        lessonName = "Food1"
+                        self.food1.toggle()
                     }){
                         Image(systemName: "birthday.cake.fill")
                             .font(.system(size: 50, weight: .light))
                     }//btn
+                    .navigationDestination(isPresented: $food1){
+                        IndividualLesson(lessonName: $lessonName)
+//                            .navigationBarBackButtonHidden(true)
+                    }
+                    .buttonStyle(.borderless)
                     
                     Button(action: {
                         print("food2 btn press")
@@ -110,6 +125,7 @@ struct LessonsPage: View {
                     .buttonStyle(.borderless)
                 }//grid row
                 .padding()
+                
                 GridRow{
                     Button(action: {
                         print("food3 btn press")
@@ -118,6 +134,7 @@ struct LessonsPage: View {
                         Image(systemName: "birthday.cake.fill")
                             .font(.system(size: 50, weight: .light))
                     }//btn3
+                    .buttonStyle(.borderless)
                     
                     Button(action: {
                         print("food4 btn press")

@@ -32,6 +32,7 @@ struct PerfectPronunciationApp: App {
         WindowGroup {
 //            TestView().environmentObject(fireDBHelper)
 //            ContentView().environmentObject(fireDBHelper).environmentObject(userData)
+//            TestFirebaseView()
             Homepage()
         }
     }

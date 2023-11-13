@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreML
 import Firebase
 import FirebaseAuth
 
@@ -16,6 +17,16 @@ class SharedData: ObservableObject {
 
 struct Details: View {
     
+    @State private var prediction: Double?
+    
+    private var pronunciationModel: PronunciationModelProjection {
+            do {
+                return try PronunciationModelProjection(configuration: MLModelConfiguration())
+            } catch {
+                fatalError("Failed to load CoreML model: \(error)")
+            }
+        }
+    
     
     func returnDate() -> String{
         dateFormatter.dateFormat = "E"
@@ -29,18 +40,7 @@ struct Details: View {
     @EnvironmentObject var fireDBHelper: FireDBHelper
     
     let dateFormatter = DateFormatter()
-    
-        
-//    @State var days: [Day] = [
-//            Day(name: "Mo", items: []),
-//            Day(name: "Tu", items: []),
-//            Day(name: "We", items: []),
-//            Day(name: "Th", items: []),
-//            Day(name: "Fr", items: []),
-//            Day(name: "Sa", items: []),
-//            Day(name: "Su", items: []),
-//        ]
-    
+
     
     var body: some View {
         
@@ -58,8 +58,11 @@ struct Details: View {
                 StatCard(color: .yellow, title: "AVG Accuracy", value: "74%")
             }
             HStack {
-                StatCard(color: .yellow, title: "Predicted Accuracy", value: "67%")
+                StatCard(color: .yellow, title: "Predicted Accuracy", value: "\(makePrediction())%")
                 StatCard(color: .yellow, title: "Longest Streak", value: "12")
+            }
+            .onAppear {
+                prediction = makePrediction()
             }
             
             CalendarView()
@@ -73,7 +76,7 @@ struct Details: View {
             
             Button(action: {
                 
-                getAvgAccuracy(dayOfWeek: "Mon")
+                //getAvgAccuracy(dayOfWeek: "Mon")
                 
 //                dateFormatter.dateFormat = "E"
 //                let currentDayOfWeek = dateFormatter.string(from: Date())
@@ -199,8 +202,24 @@ struct Details: View {
         return "No result found"
     }
     
+     func makePrediction() -> Double {
+        do {
+            let input = PronunciationModelProjectionInput(Feature1: 78, Feature2: 98, Feature3: 86, Feature4: 55, Feature5: 68)
 
+            let prediction = try pronunciationModel.prediction(input: input)
+            self.prediction = prediction.Target
 
+            if let roundedPrediction = self.prediction {
+                return Double(roundedPrediction * 100).rounded() / 100
+            }
+        } catch {
+            print("Error making prediction: \(error)")
+            self.prediction = nil
+        }
+
+        // Default value in case of an error or nil prediction
+        return 0.0
+    }
 
     
 }

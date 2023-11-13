@@ -42,6 +42,7 @@
 		02E2B69C2AD63BA300F1FACA /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B69B2AD63BA300F1FACA /* Difficulty.swift */; };
 		02F7635E2AF7215B001BEAFA /* PronunciationModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 02F7635D2AF7215B001BEAFA /* PronunciationModel.mlmodel */; };
 		02F763602AF721A4001BEAFA /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F7635F2AF721A4001BEAFA /* TestView.swift */; };
+		02FC80CA2B02039F009DFA9C /* PronunciationModelProjection.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 02FC80C92B02039F009DFA9C /* PronunciationModelProjection.mlmodel */; };
 		4D1162DF2AFC9D9900224519 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1162DE2AFC9D9900224519 /* AudioController.swift */; };
 		4D6170602AEC5D0C002A02C1 /* VoiceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */; };
 		C58B99F22AECDACB003C0288 /* LessonsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F12AECDACB003C0288 /* LessonsPage.swift */; };
@@ -79,6 +80,8 @@
 		02E2B69B2AD63BA300F1FACA /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
 		02F7635D2AF7215B001BEAFA /* PronunciationModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = PronunciationModel.mlmodel; sourceTree = "<group>"; };
 		02F7635F2AF721A4001BEAFA /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
+		02FC80C62AFDDDDD009DFA9C /* PerfectPronunciation.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PerfectPronunciation.entitlements; sourceTree = "<group>"; };
+		02FC80C92B02039F009DFA9C /* PronunciationModelProjection.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = PronunciationModelProjection.mlmodel; sourceTree = "<group>"; };
 		4D1162DE2AFC9D9900224519 /* AudioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
 		4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorder.swift; sourceTree = "<group>"; };
 		C58B99F12AECDACB003C0288 /* LessonsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonsPage.swift; sourceTree = "<group>"; };
@@ -134,6 +137,7 @@
 		02E2B65D2AD6131100F1FACA /* PerfectPronunciation */ = {
 			isa = PBXGroup;
 			children = (
+				02FC80C62AFDDDDD009DFA9C /* PerfectPronunciation.entitlements */,
 				028364802AEDB79700E88DCB /* Info.plist */,
 				02E2B6962AD6236200F1FACA /* Model */,
 				02E2B6912AD6186400F1FACA /* Components */,
@@ -202,6 +206,7 @@
 		02E2B6962AD6236200F1FACA /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				02FC80C92B02039F009DFA9C /* PronunciationModelProjection.mlmodel */,
 				02F7635D2AF7215B001BEAFA /* PronunciationModel.mlmodel */,
 				02E2B6972AD6237000F1FACA /* UserData.swift */,
 				028364722AEA504000E88DCB /* AccuracyGraphModel.swift */,
@@ -331,6 +336,7 @@
 				02E2B68B2AD615FC00F1FACA /* FireDBHelper.swift in Sources */,
 				028364792AEA534800E88DCB /* Sequence.swift in Sources */,
 				C58B99F42AED7CC4003C0288 /* IndividualLesson.swift in Sources */,
+				02FC80CA2B02039F009DFA9C /* PronunciationModelProjection.mlmodel in Sources */,
 				C58B99F82AED9F5C003C0288 /* AchievementPage.swift in Sources */,
 				C58B99F22AECDACB003C0288 /* LessonsPage.swift in Sources */,
 				02E2B65F2AD6131100F1FACA /* PerfectPronunciationApp.swift in Sources */,
@@ -470,6 +476,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PerfectPronunciation/PerfectPronunciation.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PerfectPronunciation/Preview Content\"";
@@ -491,6 +499,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.muaz.PerfectPronunciation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -502,6 +511,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PerfectPronunciation/PerfectPronunciation.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PerfectPronunciation/Preview Content\"";
@@ -523,6 +534,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.muaz.PerfectPronunciation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

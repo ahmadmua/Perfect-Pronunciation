@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import Firebase
+import FirebaseAuth
 
 struct IndividualLesson: View {
     //    @Binding var msgTaken: String
@@ -15,6 +17,9 @@ struct IndividualLesson: View {
     @State private var showRecord = false
     @State private var showNext = false
     @State private var showLesson = false
+    @State private var userDifficulty: String = "Easy"
+    
+    
     
     @State private var isPopupPresented = false
     
@@ -100,15 +105,13 @@ struct IndividualLesson: View {
                         }
                         
                         
-                        
-                        
                     }){
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $showNext){
                         IndividualLesson(lessonName: $lessonName)
-//                            .navigationBarBackButtonHidden(true)
+                            .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
                         LessonsPage()
@@ -125,17 +128,33 @@ struct IndividualLesson: View {
         }//nanstack
         .background(Color("Background"))
         .onAppear{
+            
+            
+            
+            
+            model.findUserDifficulty{
+                print("USER DIFICULTY!! : \(model.difficulty!)")
+                
+                
+                
+                model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty!)
+                
+                model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
+            }
+            
+            
+            
              
             self.showNext = false
             
-            model.getNumberOfQuestion(lesson: lessonName, difficulty: "Easy")
-            
-            
-//            nextQuestion()
-//            counter = 0
-            
-            
-            model.getQuestion(lesson: lessonName, difficulty: "Easy", question: "Question\(counter)")
+//            model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty ?? "Easy")
+//            
+//            
+////            nextQuestion()
+////            counter = 0
+//            
+//            
+//            model.getQuestion(lesson: lessonName, difficulty: model.difficulty ?? "Easy", question: "Question\(counter)")
             
         }
 //        .onDisappear{
@@ -147,9 +166,7 @@ struct IndividualLesson: View {
         
     }
     
-//    func nextQuestion(){
-//        counter += 1
-//    }
+    
         
 //    }//view
     

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LessonsPage: View {
+    @ObservedObject var model = LessonController()
 //    @State private var msg = ""
     @State private var showLesson = false
     @State private var showWeekly = false
@@ -111,7 +112,7 @@ struct LessonsPage: View {
                     }//btn
                     .navigationDestination(isPresented: $food1){
                         IndividualLesson(lessonName: $lessonName)
-//                            .navigationBarBackButtonHidden(true)
+                            .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
                     
@@ -330,11 +331,15 @@ struct LessonsPage: View {
         .background(Color("Background"))
     }
         .background(Color("Background"))
+//        .onAppear(){
+//            model.findUserDifficulty()
+//        }
 
 
             
 //        }//nav view
     }
+        
 }
 
 //#Preview {

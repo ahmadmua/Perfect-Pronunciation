@@ -12,7 +12,47 @@ class LessonController : ObservableObject{
     
     @Published var list = [Lesson]()
     @Published var question: String?
+    @Published var difficulty: String?
     @Published var totQuestions: Int = 0
+    
+    func findUserDifficulty(completion: @escaping () -> Void){
+        //get reference to database
+        let db = Firestore.firestore()
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            
+            //read the docs at a specific path
+            userDocRef.getDocument { document, error in
+                if let document = document, document.exists{
+                    if let value = document["Difficulty"] as? String {
+                        print("LESSON CONTROLLER : \(value)")
+                        
+                        //converting to proper difficutly
+                        if(value == "Beginner"){
+                            self.difficulty = "Easy"
+                        }else if(value == "Intermediate"){
+                            self.difficulty = "Normal"
+                        }else if(value == "Advanced"){
+                            self.difficulty = "Hard"
+                        }
+                        
+                        
+                    }else{
+                        print("Document exists,")
+                        self.difficulty = nil
+                    }
+                }else{
+                    print("Document does not exist")
+                    self.difficulty = nil
+                }
+                
+                completion()
+            }
+            
+        }
+        
+    }
     
     func getLesson(){
         //get reference to database

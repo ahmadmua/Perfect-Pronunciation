@@ -12,6 +12,7 @@ struct Login: View {
     @State private var showingAlert = false
     @State private var msg = ""
     @State var userData = UserData()
+    let notificationController = NotificationController()
     
     var body: some View {
         
@@ -70,6 +71,15 @@ struct Login: View {
                     Button("OK", role: .cancel) { }
                 }
                 
+                Button("Send notification in 5 seconds") {
+                    notificationController.sendNotification(
+                        date: Date(),
+                        type: "time",
+                        timeInterval: 5,
+                        title: "5 second notification",
+                        body: "You can write more in here!")
+                }
+                
                 Spacer()
                 
                 // SignUp
@@ -93,6 +103,8 @@ struct Login: View {
                         userLoggedIn.toggle()
                     }
                 }
+                
+                setupNotifications()
             }
             
             
@@ -112,6 +124,7 @@ struct Login: View {
         //                }
         //            }
         //        }
+    
         
         func login(){
             
@@ -140,6 +153,22 @@ struct Login: View {
                 
             }
         }
+    
+    
+    func setupNotifications() {
+        notificationController.askPermission()
+        let currentDate = Date()
+        let time = Calendar.current.date(byAdding: .second, value: 60, to: currentDate)!
+
+        // Call the sendNotification method with the appropriate parameters
+        notificationController.sendNotification(date: time, type: "date", title: "Your Notification Title", body: "Your Notification Body")
+
+        // For repeating every 5 minutes, you can use a time-based trigger with a 5-minute interval
+        let repeatingTime = UNTimeIntervalNotificationTrigger(timeInterval: 60, repeats: true)
+        notificationController.sendNotification(date: currentDate, type: "time", timeInterval: 60, title: "Repeating Notification Title", body: "Repeating Notification Body")
+        }
+    
+    
         
     }
 

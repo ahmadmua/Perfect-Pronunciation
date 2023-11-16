@@ -81,7 +81,7 @@ struct Details: View {
 //                dateFormatter.dateFormat = "E"
 //                let currentDayOfWeek = dateFormatter.string(from: Date())
 //
-               //fireDBHelper.addItemToUserDataCollection(itemName: "Word15", dayOfWeek: "Tue", accuracy: 75)
+               //fireDBHelper.addItemToUserDataCollection(itemName: "Word15", dayOfWeek: "Mon", accuracy: 75)
                 
 //                getItemsForDayOfWeek(dayOfWeek: "Tue") { (documents, error) in
 //                    if let documents = documents {

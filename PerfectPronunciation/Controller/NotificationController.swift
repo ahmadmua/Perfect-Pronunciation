@@ -9,6 +9,7 @@ import Foundation
 import UserNotifications
 
 class NotificationController {
+    
     func askPermission() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
             if success {
@@ -18,27 +19,37 @@ class NotificationController {
             }
         }
     }
-
     
-    func sendNotification(date: Date, type: String, timeInterval: Double = 10, title: String, body: String) {
-        var trigger: UNNotificationTrigger?
+    func scheduleNotifications() {
         
-        // Create a trigger (either from date or time based)
-        if type == "date" {
-            let dateComponents = Calendar.current.dateComponents([.day, .month, .year, .hour, .minute], from: date)
-            trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
-        } else if type == "time" {
-            trigger = UNTimeIntervalNotificationTrigger(timeInterval: timeInterval, repeats: false)
-        }
-        
-        // Customise the content
         let content = UNMutableNotificationContent()
-        content.title = title
-        content.body = body
-        content.sound = UNNotificationSound.default
+        content.title = "Perfect Pronunciation"
+        content.subtitle = "Pls come back!"
+        content.sound = .default
+        content.badge = 1
         
-        // Create the request
+        var dateComponents = DateComponents()
+        dateComponents.hour = 00
+        dateComponents.minute = 57
+        dateComponents.second = 30
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
+        
         let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
         UNUserNotificationCenter.current().add(request)
+        
     }
+    
+    func scheduleNotification(enabled: Bool) {
+            if enabled {
+                scheduleNotifications()
+            } else {
+                removeNotifications()
+            }
+        }
+    
+    func removeNotifications() {
+            UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        }
+    
 }

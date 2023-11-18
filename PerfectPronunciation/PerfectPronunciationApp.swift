@@ -13,7 +13,7 @@ import SwiftUI
 @main
 struct PerfectPronunciationApp: App {
     
-    let fireDBHelper = FireDBHelper()
+    let fireDBHelper = DataHelper()
     @StateObject private var sharedData = SharedData()
     
     init() {

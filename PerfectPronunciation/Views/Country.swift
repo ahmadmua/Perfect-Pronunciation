@@ -10,7 +10,7 @@ struct Country: View {
     @State private var selectedLanugage: String = ""
     @State private var selection: Int? = nil
     @State var userData = UserData()
-    @EnvironmentObject var fireDBHelper: FireDBHelper
+    @EnvironmentObject var fireDBHelper: DataHelper
     
     init() {
         for code in NSLocale.isoCountryCodes {

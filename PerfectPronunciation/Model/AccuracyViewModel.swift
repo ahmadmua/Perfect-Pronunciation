@@ -11,37 +11,37 @@ class AccuracyViewModel: ObservableObject {
     init() {
         
         
-        FireDBHelper().getAvgAccuracy(weekDay: "Sun") { [weak self] averageAccuracy in
+        DataHelper().getAvgAccuracyForDayOfWeek(weekDay: "Sun") { [weak self] averageAccuracy in
             self?.voiceData[0].data[0].accuracy = averageAccuracy
             self?.objectWillChange.send()
         }
         
-        FireDBHelper().getAvgAccuracy(weekDay: "Mon") { [weak self] averageAccuracy in
+        DataHelper().getAvgAccuracyForDayOfWeek(weekDay: "Mon") { [weak self] averageAccuracy in
             self?.voiceData[0].data[1].accuracy = averageAccuracy
             self?.objectWillChange.send()
         }
         
-        FireDBHelper().getAvgAccuracy(weekDay: "Tue") { [weak self] averageAccuracy in
+        DataHelper().getAvgAccuracyForDayOfWeek(weekDay: "Tue") { [weak self] averageAccuracy in
             self?.voiceData[0].data[2].accuracy = averageAccuracy
             self?.objectWillChange.send()
         }
         
-        FireDBHelper().getAvgAccuracy(weekDay: "Wed") { [weak self] averageAccuracy in
+        DataHelper().getAvgAccuracyForDayOfWeek(weekDay: "Wed") { [weak self] averageAccuracy in
             self?.voiceData[0].data[3].accuracy = averageAccuracy
             self?.objectWillChange.send()
         }
         
-        FireDBHelper().getAvgAccuracy(weekDay: "Thu") { [weak self] averageAccuracy in
+        DataHelper().getAvgAccuracyForDayOfWeek(weekDay: "Thu") { [weak self] averageAccuracy in
             self?.voiceData[0].data[4].accuracy = averageAccuracy
             self?.objectWillChange.send()
         }
         
-        FireDBHelper().getAvgAccuracy(weekDay: "Fri") { [weak self] averageAccuracy in
+        DataHelper().getAvgAccuracyForDayOfWeek(weekDay: "Fri") { [weak self] averageAccuracy in
             self?.voiceData[0].data[5].accuracy = averageAccuracy
             self?.objectWillChange.send()
         }
         
-        FireDBHelper().getAvgAccuracy(weekDay: "Sat") { [weak self] averageAccuracy in
+        DataHelper().getAvgAccuracyForDayOfWeek(weekDay: "Sat") { [weak self] averageAccuracy in
             self?.voiceData[0].data[6].accuracy = averageAccuracy
             self?.objectWillChange.send()
         }

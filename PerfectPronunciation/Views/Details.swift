@@ -18,6 +18,7 @@ class SharedData: ObservableObject {
 struct Details: View {
     
     @State private var prediction: Double?
+    @State private var averageAccuracy: Float = 0
     
     private var pronunciationModel: PronunciationModelProjection {
             do {
@@ -37,7 +38,7 @@ struct Details: View {
     @State private var selectedDay: String = "Mo"
     @State private var str: String = ""
     
-    @EnvironmentObject var fireDBHelper: FireDBHelper
+    @EnvironmentObject var fireDBHelper: DataHelper
     
     let dateFormatter = DateFormatter()
 
@@ -55,7 +56,7 @@ struct Details: View {
     
             HStack {
                 StatCard(color: .yellow, title: "Words Pronounced", value: "5")
-                StatCard(color: .yellow, title: "AVG Accuracy", value: "74%")
+                StatCard(color: .yellow, title: "AVG Accuracy", value: "\(averageAccuracy)%")
             }
             HStack {
                 StatCard(color: .yellow, title: "Predicted Accuracy", value: "\(makePrediction())%")
@@ -63,6 +64,9 @@ struct Details: View {
             }
             .onAppear {
                 prediction = makePrediction()
+                fireDBHelper.getAvgAccuracy { fetchedAccuracy in
+                averageAccuracy = fetchedAccuracy
+                }
             }
             
             CalendarView()
@@ -86,6 +90,11 @@ struct Details: View {
                 //fireDBHelper.addItemToUserDataCollection(itemName: "Word55", dayOfWeek: "Wed", accuracy: 76)
 //                fireDBHelper.addItemToUserDataCollection(itemName: "Word9", dayOfWeek: "Mon", accuracy: 65)
 
+                
+                fireDBHelper.getAvgAccuracy { averageAccuracy in
+                            // Handle the average accuracy here
+                            print("Average Accuracy: \(averageAccuracy)")
+                        }
                 
             }){
                 Text("Reset Difficulty")
@@ -156,7 +165,7 @@ struct ItemsListView: View {
     
     @State private var items: [String] = []
     @EnvironmentObject private var sharedData: SharedData
-    @EnvironmentObject var fireDBHelper: FireDBHelper
+    @EnvironmentObject var fireDBHelper: DataHelper
     
     var body: some View {
         

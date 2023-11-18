@@ -9,7 +9,9 @@ import Foundation
 import Firebase
 import FirebaseAuth
 
-class FireDBHelper: ObservableObject {
+class DataHelper: ObservableObject {
+    
+    @Published var averageAccuracy: Float = 0
     
     
     init(){}
@@ -141,7 +143,7 @@ class FireDBHelper: ObservableObject {
         }
     }
     
-    func getAvgAccuracy(weekDay: String, completion: @escaping (Float) -> Void) {
+    func getAvgAccuracyForDayOfWeek(weekDay: String, completion: @escaping (Float) -> Void) {
         var averageAccuracy: Float = 0
 
         if let user = Auth.auth().currentUser {
@@ -177,6 +179,52 @@ class FireDBHelper: ObservableObject {
             }
         }
     }
+    
+    func getAvgAccuracy(completion: @escaping (Float) -> Void) {
+        var totalAccuracy: Float = 0
+        var totalDocumentCount: Float = 0
+
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+
+            // Create an array of days
+            let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+            // Iterate through each day
+            for day in daysOfWeek {
+                let dayQuery = itemsCollectionRef.whereField("DayOfWeek", isEqualTo: day)
+
+                dayQuery.getDocuments { (querySnapshot, error) in
+                    if let error = error {
+                        print("Error getting documents: \(error.localizedDescription)")
+                    } else {
+                        var documentCount: Float = 0
+
+                        for document in querySnapshot!.documents {
+                            if let accuracy = document["Accuracy"] as? Float {
+                                totalAccuracy += accuracy
+                                documentCount += 1
+                            } else {
+                                print("Document \(document.documentID) exists for \(day), but 'accuracy' field is missing or not a float.")
+                            }
+                        }
+
+                        totalDocumentCount += documentCount
+                        // Note: You might want to store the results for each day for further processing or reporting.
+
+                            // Calculate the overall average accuracy
+                            let averageAccuracy = totalDocumentCount > 0 ? totalAccuracy / totalDocumentCount : 0
+                            self.averageAccuracy = averageAccuracy
+                            completion(averageAccuracy)
+                        
+                    }
+                }
+            }
+        }
+    }
+
 
     
 }

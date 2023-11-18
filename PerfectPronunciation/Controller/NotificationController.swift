@@ -1,10 +1,3 @@
-//
-//  Notifications.swift
-//  SimpleNotifications
-//
-//  Created by Federico on 30/11/2021.
-//
-
 import Foundation
 import UserNotifications
 

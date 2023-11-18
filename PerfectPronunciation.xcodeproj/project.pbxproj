@@ -10,7 +10,7 @@
 		022550B92B05A57B002D5183 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 022550B82B05A57A002D5183 /* GoogleService-Info.plist */; };
 		022550BB2B05C3F5002D5183 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022550BA2B05C3F5002D5183 /* NotificationController.swift */; };
 		028364712AE9FBC300E88DCB /* StatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364702AE9FBC300E88DCB /* StatData.swift */; };
-		028364732AEA504000E88DCB /* AccuracyGraphModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364722AEA504000E88DCB /* AccuracyGraphModel.swift */; };
+		028364732AEA504000E88DCB /* AccuracyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364722AEA504000E88DCB /* AccuracyViewModel.swift */; };
 		028364752AEA513E00E88DCB /* VoiceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364742AEA513E00E88DCB /* VoiceData.swift */; };
 		028364772AEA528F00E88DCB /* AccuracyBarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364762AEA528F00E88DCB /* AccuracyBarChart.swift */; };
 		028364792AEA534800E88DCB /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364782AEA534800E88DCB /* Sequence.swift */; };
@@ -60,7 +60,7 @@
 		022550B82B05A57A002D5183 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		022550BA2B05C3F5002D5183 /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
 		028364702AE9FBC300E88DCB /* StatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatData.swift; sourceTree = "<group>"; };
-		028364722AEA504000E88DCB /* AccuracyGraphModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccuracyGraphModel.swift; sourceTree = "<group>"; };
+		028364722AEA504000E88DCB /* AccuracyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccuracyViewModel.swift; sourceTree = "<group>"; };
 		028364742AEA513E00E88DCB /* VoiceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceData.swift; sourceTree = "<group>"; };
 		028364762AEA528F00E88DCB /* AccuracyBarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccuracyBarChart.swift; sourceTree = "<group>"; };
 		028364782AEA534800E88DCB /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
@@ -212,7 +212,7 @@
 				02FC80C92B02039F009DFA9C /* PronunciationModelProjection.mlmodel */,
 				02F7635D2AF7215B001BEAFA /* PronunciationModel.mlmodel */,
 				02E2B6972AD6237000F1FACA /* UserData.swift */,
-				028364722AEA504000E88DCB /* AccuracyGraphModel.swift */,
+				028364722AEA504000E88DCB /* AccuracyViewModel.swift */,
 				028364742AEA513E00E88DCB /* VoiceData.swift */,
 				C5DF79D72AFC77AB00ECB45C /* Lesson.swift */,
 			);
@@ -348,7 +348,7 @@
 				028364752AEA513E00E88DCB /* VoiceData.swift in Sources */,
 				02E2B68E2AD617F900F1FACA /* Login.swift in Sources */,
 				0283647D2AED807600E88DCB /* Details.swift in Sources */,
-				028364732AEA504000E88DCB /* AccuracyGraphModel.swift in Sources */,
+				028364732AEA504000E88DCB /* AccuracyViewModel.swift in Sources */,
 				02E2B6902AD6180500F1FACA /* Register.swift in Sources */,
 				02E2B6952AD61E6600F1FACA /* Homepage.swift in Sources */,
 				C5DF79D62AFB19AA00ECB45C /* LessonController.swift in Sources */,

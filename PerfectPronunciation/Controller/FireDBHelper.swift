@@ -140,6 +140,43 @@ class FireDBHelper: ObservableObject {
             completion(nil, error)
         }
     }
+    
+    func getAvgAccuracy(weekDay: String, completion: @escaping (Float) -> Void) {
+        var averageAccuracy: Float = 0
+
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+
+            // Create a query to filter documents where "dayofweek" is "Mon"
+            let mondayQuery = itemsCollectionRef.whereField("DayOfWeek", isEqualTo: weekDay)
+
+            mondayQuery.getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error.localizedDescription)")
+                } else {
+                    var totalAccuracy: Float = 0
+                    var documentCount: Float = 0
+
+                    for document in querySnapshot!.documents {
+                        if let accuracy = document["Accuracy"] as? Float {
+                            totalAccuracy += accuracy
+                            documentCount += 1
+                        } else {
+                            print("Document \(document.documentID) exists for Monday, but 'accuracy' field is missing or not a float.")
+                        }
+                    }
+
+                    averageAccuracy = documentCount > 0 ? totalAccuracy / documentCount : 0
+                    //print("\(averageAccuracy)")
+
+                    // Call the completion handler with the result
+                    completion(averageAccuracy)
+                }
+            }
+        }
+    }
 
     
 }

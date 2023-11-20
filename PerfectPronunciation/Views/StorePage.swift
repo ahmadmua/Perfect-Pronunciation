@@ -18,6 +18,9 @@ struct StorePage: View {
     @State private var showHome = false
 //    @State private var selection: Int? = nil
     
+    @ObservedObject var currModel = CurrencyController()
+    @ObservedObject var model = LessonController()
+    
     var body: some View {
         
         
@@ -43,7 +46,10 @@ struct StorePage: View {
                                 HStack{
                                     Button(action: {
                                         print("theme1 btn press")
-                                        //                                    self.selection = 1
+                                        
+                                        currModel.getUserCurrency()
+                                        
+                                        
                                     }){
                                         Image(systemName: "square.fill")
                                             .font(.system(size: 50, weight: .light))
@@ -66,7 +72,9 @@ struct StorePage: View {
                                     HStack{
                                         Button(action: {
                                             print("Theme2 btn press")
-                                            //                                    self.selection = 1
+                                            
+                                            print(currModel.userCurr)
+                                            
                                         }){
                                             Image(systemName: "square.fill")
                                                 .font(.system(size: 50, weight: .light))
@@ -87,7 +95,9 @@ struct StorePage: View {
                                 HStack{
                                     Button(action: {
                                         print("theme 3 btn press")
-                                        //                                    self.selection = 1
+                                        
+                                        currModel.updateUserCurrency()
+                                        
                                     }){
                                         Image(systemName: "square.fill")
                                             .font(.system(size: 50, weight: .light))
@@ -325,7 +335,13 @@ struct StorePage: View {
         .background(Color("Background"))
     }
         .background(Color("Background"))
+        .onAppear(){
+            model.findUserDifficulty{
+                currModel.getUserCurrency()
+            }
         }
+        }
+        
     }
 //}
 

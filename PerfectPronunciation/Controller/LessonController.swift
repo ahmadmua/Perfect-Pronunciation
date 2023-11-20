@@ -17,7 +17,7 @@ class LessonController : ObservableObject{
     
     func findUserDifficulty(completion: @escaping () -> Void){
         //get reference to database
-        let db = Firestore.firestore()
+//        let db = Firestore.firestore()
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)

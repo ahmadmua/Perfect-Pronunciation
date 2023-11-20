@@ -6,12 +6,13 @@ import FirebaseAuth
 struct Login: View {
     
     @State var email: String = ""
-    @State var password: String = ""
+    @State var password: String = "123456"
     @State private var selection: Int? = nil
     @State private var userLoggedIn = false
     @State private var showingAlert = false
     @State private var msg = ""
     @State var userData = UserData()
+    let notificationController = NotificationController()
     
     var body: some View {
         
@@ -93,6 +94,9 @@ struct Login: View {
                         userLoggedIn.toggle()
                     }
                 }
+                
+                notificationController.askPermission()
+                notificationController.scheduleNotifications()
             }
             
             
@@ -101,17 +105,6 @@ struct Login: View {
     }
     
     
-    
-//    func login(){
-        //            Auth.auth().signIn(withEmail: email, password: password){result, error in
-        //                if error != nil {
-        //                    showingAlert = true
-        //                    msg = error!.localizedDescription
-        //                } else {
-        //                    self.selection = 2
-        //                }
-        //            }
-        //        }
         
         func login(){
             
@@ -140,6 +133,8 @@ struct Login: View {
                 
             }
         }
+    
+
         
     }
 

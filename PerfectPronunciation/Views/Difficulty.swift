@@ -13,7 +13,7 @@ struct Difficulty: View {
     @State private var selectedDifficulty: String? = "Intermediate"
     @State private var selection: Int? = nil
     @State var userData = UserData()
-    @EnvironmentObject var fireDBHelper: FireDBHelper
+    @EnvironmentObject var fireDBHelper: DataHelper
     
 
     let difficulties = ["Beginner",

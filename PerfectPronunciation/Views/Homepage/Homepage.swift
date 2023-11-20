@@ -14,7 +14,7 @@ struct Homepage: View {
     @State private var userEmail: String = ""
     @State var pronunciationPoints : Int = 0
     @State private var selection: Int? = nil
-    @ObservedObject private var viewModel = AccuracyViewModel()
+    @StateObject private var viewModel = AccuracyViewModel()
     
     @State private var showLesson = false
     @State private var showStats = false
@@ -23,6 +23,7 @@ struct Homepage: View {
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
+    
     
     var body: some View {
        //NavigationStack { // Use NavigationView
@@ -189,11 +190,13 @@ struct Homepage: View {
 //                                            self.selection = 5
                                             self.showStats.toggle()
                                         }){
+                                        
+                                            
                                             BarChart(
                                                 data: viewModel.word.data,
                                                 range: viewModel.accuracyRange
                                             )
-                                            
+                                                                
                                         }
                                         .navigationDestination(isPresented: $showStats){
                                             StatData()
@@ -261,6 +264,9 @@ struct Homepage: View {
                     
                     Spacer()
                 }
+            }
+            .onAppear {
+                viewModel.objectWillChange.send()
             }
             
         //}

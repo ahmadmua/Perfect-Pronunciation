@@ -91,7 +91,7 @@ struct Register: View {
                 msg = error!.localizedDescription
             } else {
                 
-                Firestore.firestore().collection("UserData").document(Auth.auth().currentUser!.uid).setData(["Country": "", "Language" : "", "Difficulty": ""])
+                Firestore.firestore().collection("UserData").document(Auth.auth().currentUser!.uid).setData(["Country": "", "Language" : "", "Difficulty": "", "Currency": 0.0])
                 self.selection = 1
             }
             

@@ -13,12 +13,12 @@ import SwiftUI
 @main
 struct PerfectPronunciationApp: App {
     
-    let fireDBHelper = FireDBHelper()
+    let fireDBHelper = DataHelper()
     @StateObject private var sharedData = SharedData()
     
-    
-    
     init() {
+        
+        FirebaseApp.configure()
         
         let appearance = UINavigationBarAppearance()
         appearance.backgroundColor = UIColor.darkGray
@@ -26,7 +26,8 @@ struct PerfectPronunciationApp: App {
                 UINavigationBar.appearance().scrollEdgeAppearance = appearance
         UINavigationBar.appearance().frame
         
-        FirebaseApp.configure()
+        
+        
 //        fireDBHelper = FireDBHelper(database: Firestore.firestore())
     }
     

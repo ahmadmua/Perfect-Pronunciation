@@ -19,6 +19,10 @@ struct LessonsPage: View {
     
     @State private var phonetics = false
     @State private var food1 = false
+    @State private var food2 = false
+    @State private var conversation = false
+    @State private var numbers = false
+    @State private var direction = false
     
     @State var showingPopup = false
     
@@ -28,33 +32,45 @@ struct LessonsPage: View {
     var body: some View {
         //        NavigationStack{
         
-//        NavigationLink(destination: IndividualLesson(lessonName: $lessonName), tag: 1, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationLink(destination: LessonsPage(), tag: 2, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationLink(destination: WeeklyGamePage(), tag: 3, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationLink(destination: AchievementPage(), tag: 5, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationLink(destination: StorePage(), tag: 4, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationLink(destination: Homepage(), tag: 6, selection: self.$selection){}.navigationBarBackButtonHidden(true)
+
         List{
             Grid{
                 VStack{
                     GridRow{
-                        Text("Phonetics")
+                        Text("Coversation")
                     }//grid row 1
                     
                     Divider()
                     
                     GridRow{
+                        //phonetics
+//                        Button(action: {
+//                            print("phonetic btn press")
+////                            self.selection = 1
+//                            lessonName = "Phonetics"
+//                            self.phonetics.toggle()
+//                        }){
+//                            Image(systemName: "mouth.fill")
+//                                .font(.system(size: 50, weight: .light))
+//                        }//btn
+//                        .navigationDestination(isPresented: $phonetics){
+//                            IndividualLesson(lessonName: $lessonName)
+//                        }
+//                        .buttonStyle(.borderless)
+                        
+                        
                         Button(action: {
-                            print("phonetic btn press")
-//                            self.selection = 1
-                            lessonName = "Phonetics"
-                            self.phonetics.toggle()
+                            print("conversation btn press")
+    //                        self.selection = 1
+                            self.lessonName = "Conversation"
+                            self.food1.toggle()
                         }){
-                            Image(systemName: "mouth.fill")
+                            Image(systemName: "rectangle.3.group.bubble.left.fill")
                                 .font(.system(size: 50, weight: .light))
                         }//btn
-                        .navigationDestination(isPresented: $phonetics){
+                        .navigationDestination(isPresented: $conversation){
                             IndividualLesson(lessonName: $lessonName)
+                                .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
                         
@@ -63,36 +79,37 @@ struct LessonsPage: View {
                     .padding()
                 }//Vstack
                 
-                VStack{
+                VStack{//Numbers
                     GridRow{
-                        Text("Basics")
-                    }//grid row 3
-                }//vstack
-                
-                Divider()
-                
-                GridRow{
-                    Button(action: {
-                        print("basic1 btn press")
-                        self.selection = 1
-                    }){
-                        Image(systemName: "mic.circle.fill")
-                            .font(.system(size: 50, weight: .light))
-                    }//btn
-                    .buttonStyle(.borderless)
+                        Text("Numbers")
+                    }//grid row 1
                     
-                    Button(action: {
-                        print("basic2 btn press")
-                        self.selection = 1
-                    }){
-                        Image(systemName: "mic.circle.fill")
-                            .font(.system(size: 50, weight: .light))
-                    }//btn basic2
-                    .buttonStyle(.borderless)
-                }//grid row 4
-                .padding()
+                    Divider()
+                    
+                    GridRow{
+                        
+                        
+                        Button(action: {
+                            print("numbers btn press")
+    
+                            self.lessonName = "Numbers"
+                            self.numbers.toggle()
+                        }){
+                            Image(systemName: "number.circle.fill")
+                                .font(.system(size: 50, weight: .light))
+                        }//btn
+                        .navigationDestination(isPresented: $numbers){
+                            IndividualLesson(lessonName: $lessonName)
+                                .navigationBarBackButtonHidden(true)
+                        }
+                        .buttonStyle(.borderless)
+                        
+                        
+                    }//grid row 2
+                    .padding()
+                }//num vstack
                 
-                VStack{
+                VStack{//food
                     GridRow{
                         Text("Food")
                     }//grid row 3
@@ -104,10 +121,10 @@ struct LessonsPage: View {
                     Button(action: {
                         print("food1 btn press")
 //                        self.selection = 1
-                        lessonName = "Food1"
+                        self.lessonName = "Food1"
                         self.food1.toggle()
                     }){
-                        Image(systemName: "birthday.cake.fill")
+                        Image(systemName: "cup.and.saucer.fill")
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $food1){
@@ -118,35 +135,54 @@ struct LessonsPage: View {
                     
                     Button(action: {
                         print("food2 btn press")
-                        self.selection = 1
+//                        self.selection = 1
+                        self.lessonName = "Food2"
+                        self.food2.toggle()
                     }){
-                        Image(systemName: "birthday.cake.fill")
+                        Image(systemName: "fork.knife")
                             .font(.system(size: 50, weight: .light))
-                    }//btn food 2
+                    }//btn
+                    .navigationDestination(isPresented: $food2){
+                        IndividualLesson(lessonName: $lessonName)
+                            .navigationBarBackButtonHidden(true)
+                    }
                     .buttonStyle(.borderless)
                 }//grid row
                 .padding()
                 
-                GridRow{
-                    Button(action: {
-                        print("food3 btn press")
-                        self.selection = 1
-                    }){
-                        Image(systemName: "birthday.cake.fill")
-                            .font(.system(size: 50, weight: .light))
-                    }//btn3
-                    .buttonStyle(.borderless)
+                
+                VStack{//Directions
+                    GridRow{
+                        Text("Directions")
+                    }//grid row 1
                     
-                    Button(action: {
-                        print("food4 btn press")
-                        self.selection = 1
-                    }){
-                        Image(systemName: "birthday.cake.fill")
-                            .font(.system(size: 50, weight: .light))
-                    }//btn food 4
-                    .buttonStyle(.borderless)
-                }//grid row
-                .padding()
+                    Divider()
+                    
+                    GridRow{
+                        
+                        
+                        Button(action: {
+                            print("directions btn press")
+    
+                            self.lessonName = "Directions"
+                            self.direction.toggle()
+                        }){
+                            Image(systemName: "mappin.and.ellipse")
+                                .font(.system(size: 50, weight: .light))
+                        }//btn
+                        .navigationDestination(isPresented: $direction){
+                            IndividualLesson(lessonName: $lessonName)
+                                .navigationBarBackButtonHidden(true)
+                        }
+                        .buttonStyle(.borderless)
+                        
+                        
+                    }//grid row 2
+                    .padding()
+                }//Directions vstack
+                
+                
+                
                 
             }//grid
             .background(Color("Background"))
@@ -156,30 +192,7 @@ struct LessonsPage: View {
             
             
             
-            //                    HStack{
-            ////                                    Spacer()
-            //                                    VStack{
-            //                                        Image(systemName: "play.rectangle")
-            //                                        Text("Lesson")
-            //                                            .padding(.top, 1)
-            //                                    }
-            //                                    .foregroundColor(selection == 1 ? Color("fontLink") : Color("fontBody"))
-            //                                    .onTapGesture {
-            //                                        self.selection = 2
-            //                                    }
-            //
-            ////                                    Spacer()
-            //                                    VStack{
-            //                                        Image(systemName: "book")
-            //                                        Text("Weekly Game")
-            //                                            .padding(.top, 1)
-            //                                    }
-            //                                    .foregroundColor(selection == 2 ? Color("fontLink") : Color("fontBody"))
-            //                                    .onTapGesture {
-            //                                        self.selection = 3
-            //                                    }
-            ////                                    Spacer()
-            //                                }
+         
             
             
         }//list
@@ -195,6 +208,8 @@ struct LessonsPage: View {
         .toolbarBackground(.visible, for: .navigationBar)
         
         
+        
+//        nav bar
         ZStack{
             Rectangle()
                 .fill(Color("Background"))
@@ -287,46 +302,7 @@ struct LessonsPage: View {
                 
                 Spacer()
             }
-//            Group {
-//                
-//                ZStack{
-//                    Circle()
-//                        .fill(Color("WhiteDiff"))
-//                        .frame(width: 50, height: 50)
-//                    Button(action: {
-//                        self.selection = 6
-//                    }) {
-//                        Image(systemName: "house.fill")
-//                            .imageScale(.large) // Adjust icon size
-//                            .foregroundStyle(Color("Background"))
-//                    }
-//                }
-//                
-//                
-//                Spacer()
-//                
-//                Button(action: {
-//                    self.selection = 4
-//                }) {
-//                    Image(systemName: "dollarsign.circle.fill")
-//                        .imageScale(.large) // Adjust icon size
-//                        .foregroundStyle(Color.gray)
-//                }
-//                
-//                Spacer()
-//                
-//                Button(action: {
-//                    self.selection = 5
-//                }) {
-//                    Image(systemName: "trophy.fill")
-//                        .imageScale(.large) // Adjust icon size
-//                        .foregroundStyle(Color.gray)
-//                }
-//                
-//                Spacer()
-//                
-//            }
-            
+           
         }
         .background(Color("Background"))
     }

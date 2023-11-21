@@ -24,47 +24,27 @@ struct Homepage: View {
     @State private var showStore = false
     @State private var showHome = false
     
+    @State var showingAlert : Bool = false
+    
+    @ObservedObject var currModel = CurrencyController()
+    
     
     var body: some View {
        //NavigationStack { // Use NavigationView
             ScrollView(.vertical, showsIndicators: false) {
                 ZStack{
                     
-//                    NavigationLink(destination: LessonsPage(), tag: 1, selection: self.$selection){}
-//                    NavigationLink(destination: WeeklyGamePage(), tag: 2, selection: self.$selection){}
-//                    NavigationLink(destination: AchievementPage(), tag: 3, selection: self.$selection){}
-//                    NavigationLink(destination: StorePage(), tag: 4, selection: self.$selection){}
-//                    NavigationLink(destination: StatData(), tag: 5, selection: self.$selection){}
-//                    NavigationLink(destination: Settings(), tag: 6, selection: self.$selection){}
                     
-//                    Image("AppBackground")
-//                        //.resizable()
-//                        //.scaledToFill()
-//                        //.frame(maxWidth: UIScreen.main.bounds.width, maxHeight: UIScreen.main.bounds.height)
-//                        //.edgesIgnoringSafeArea(.all)
                     
                     VStack(spacing: 20) {
                         Text("Hello, \(userEmail)")
                             .font(.headline)
                             .bold()
                         ZStack{
-//                            VisualEffectView(effect: UIBlurEffect(style: .systemThinMaterialDark))
-//                                .frame(width: UIScreen.main.bounds.width - 10, height: 150)
-//                                .clipShape(RoundedRectangle(cornerRadius: 20))
+
                             
                             VStack(alignment: .leading) {
-                                
-//                                ScrollView(.horizontal, showsIndicators: false) {
-//                                    HStack(spacing: 20) {
-//                                        ForEach(data, id: \.self) { item in
-//                                            Text(item)
-//                                                .font(.headline)
-//                                                .padding()
-//                                                .frame(width: 150, height: 75)
-//                                                .background(Color.yellow)
-//                                                .cornerRadius(10)
-//                                                .shadow(radius: 5)
-//                                        }
+
                                         
                                         Grid{
                                             GridRow{
@@ -83,12 +63,12 @@ struct Homepage: View {
                                                         
                                                     }
                                                     .navigationDestination(isPresented: $showLesson){
-                                                        LessonsPage()
+                                                        LessonsPage(showingAlert: $showingAlert)
                                                             .navigationBarBackButtonHidden(true)
                                                     }
                                                     
                                                     Button(action: {
-//                                                        self.selection = 2
+
                                                         self.showWeekly.toggle()
                                                     }){
                                                         Text("Weekly")
@@ -111,7 +91,7 @@ struct Homepage: View {
                                             GridRow{
                                                 HStack{
                                                     Button(action: {
-//                                                        self.selection = 3
+
                                                         self.showAchievement.toggle()
                                                     }){
                                                         Text("Achievments")
@@ -130,7 +110,7 @@ struct Homepage: View {
                                                     }
                                                     
                                                     Button(action: {
-//                                                        self.selection = 4
+
                                                         self.showStore.toggle()
                                                     }){
                                                         Text("Store")
@@ -168,21 +148,11 @@ struct Homepage: View {
                                 .bold()
                             
                             ZStack{
-//                                VisualEffectView(effect: UIBlurEffect(style: .systemThinMaterialDark))
-//                                    .frame(width: UIScreen.main.bounds.width - 10, height: 250)
-//                                    .clipShape(RoundedRectangle(cornerRadius: 20))
+
                                 VStack(alignment: .leading) {
                                 
                                     
                                     HStack(spacing: 20) {
-                                        
-                                        //                                        Text("Graph Place-Holder")
-                                        //                                            .frame(width: 200, height: 75)
-                                        
-                                        //                                        Words(
-                                        //                                            weekly: viewModel.word.name,
-                                        //                                            sum: viewModel.word.data.sum(\.accuracy)
-                                        //                                        )
                                         
         
                                         
@@ -236,7 +206,7 @@ struct Homepage: View {
                                 .frame(width: 25, height: 25)
                                 .foregroundColor(.black)
                             
-                            Text(" \(String(pronunciationPoints)) pts")
+                            Text("\(currModel.userCurr)")
                                 .foregroundColor(.black)
                         }
                         .padding(.horizontal, 25)
@@ -245,7 +215,7 @@ struct Homepage: View {
                         .overlay(RoundedRectangle(cornerRadius: 30).stroke(Color.black, lineWidth: 2))
                         
                         Button(action: {
-//                            self.selection = 6
+
                             self.showSettings.toggle()
                         }){
                 
@@ -279,6 +249,8 @@ struct Homepage: View {
                 } else {
                 }
             }
+            
+            currModel.getUserCurrency()
         }
         
         Spacer()

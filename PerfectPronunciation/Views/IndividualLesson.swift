@@ -19,7 +19,7 @@ struct IndividualLesson: View {
     @State private var showLesson = false
     @State private var userDifficulty: String = "Easy"
     
-    
+    @State private var showingAlert = false
     
     @State private var isPopupPresented = false
     
@@ -97,9 +97,13 @@ struct IndividualLesson: View {
 //                                                    self.selection = 1
                         counter+=1
                         
+                        
+                            
+                        
                         if counter >= model.totQuestions{
                             counter = 0
                             self.showLesson.toggle()
+                            self.showingAlert.toggle()
                         }else{
                             self.showNext.toggle()
                         }
@@ -114,7 +118,7 @@ struct IndividualLesson: View {
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
-                        LessonsPage()
+                        LessonsPage(showingAlert: $showingAlert)
                             .navigationBarBackButtonHidden(true)
                     }
                     .foregroundStyle(Color.green)
@@ -123,6 +127,7 @@ struct IndividualLesson: View {
                 }//grid row
             }//grid
             .background(Color("Background"))
+            
             
                 
         }//nanstack
@@ -141,6 +146,8 @@ struct IndividualLesson: View {
                 
                 model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
             }
+            
+            
             
             
             

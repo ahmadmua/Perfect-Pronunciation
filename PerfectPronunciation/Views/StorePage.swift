@@ -21,6 +21,9 @@ struct StorePage: View {
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var model = LessonController()
     
+    @State var showingAlert : Bool = false
+    
+    
     var body: some View {
         
         
@@ -47,7 +50,11 @@ struct StorePage: View {
                                     Button(action: {
                                         print("theme1 btn press")
                                         
-                                        currModel.getUserCurrency()
+//                                        currModel.getUserCurrency()
+                                        
+                                        
+                                        currModel.subUserCurrency(cost: 200)
+                                        
                                         
                                         
                                     }){
@@ -56,13 +63,14 @@ struct StorePage: View {
                                     }//btn
                                     .buttonStyle(.borderless)
                                     
+                                    
                                     Text("Theme 1")
                                     
                                     HStack(alignment: .center){
-                                        Text("20")
-                                        Image(systemName: "circle.fill")
-                                            .font(.system(size: 25, weight: .light))
-                                        
+                                        Text("200")
+//                                        Image(systemName: "circle.fill")
+//                                            .font(.system(size: 25, weight: .light))
+//                                        
                                     }
                                     .padding(.leading, 60)
                                 }
@@ -73,7 +81,8 @@ struct StorePage: View {
                                         Button(action: {
                                             print("Theme2 btn press")
                                             
-                                            print(currModel.userCurr)
+//                                            print(currModel.userCurr)
+                                            currModel.subUserCurrency(cost: 1000)
                                             
                                         }){
                                             Image(systemName: "square.fill")
@@ -84,9 +93,9 @@ struct StorePage: View {
                                         Text("Theme 2")
                                         
                                         HStack(alignment: .center){
-                                            Text("20")
-                                            Image(systemName: "circle.fill")
-                                                .font(.system(size: 25, weight: .light))
+                                            Text("200")
+//                                            Image(systemName: "circle.fill")
+//                                                .font(.system(size: 25, weight: .light))
                                             
                                         }
                                         .padding(.leading, 60)
@@ -96,7 +105,7 @@ struct StorePage: View {
                                     Button(action: {
                                         print("theme 3 btn press")
                                         
-                                        currModel.updateUserCurrency()
+//                                        currModel.updateUserCurrency()
                                         
                                     }){
                                         Image(systemName: "square.fill")
@@ -107,9 +116,9 @@ struct StorePage: View {
                                     Text("Theme 3")
                                     
                                     HStack(alignment: .center){
-                                        Text("20")
-                                        Image(systemName: "circle.fill")
-                                            .font(.system(size: 25, weight: .light))
+                                        Text("200")
+//                                        Image(systemName: "circle.fill")
+//                                            .font(.system(size: 25, weight: .light))
                                         
                                     }
                                     .padding(.leading, 60)
@@ -118,6 +127,8 @@ struct StorePage: View {
                                 
                             }//grid row 2
                             .padding()
+                            
+                            
 
                                                     
                             
@@ -144,9 +155,9 @@ struct StorePage: View {
                                     Text("Item 1")
                                     
                                     HStack(alignment: .center){
-                                        Text("30")
-                                        Image(systemName: "circle.fill")
-                                            .font(.system(size: 25, weight: .light))
+                                        Text("300")
+//                                        Image(systemName: "circle.fill")
+//                                            .font(.system(size: 25, weight: .light))
                                         
                                     }
                                     .padding(.leading, 60)
@@ -167,10 +178,10 @@ struct StorePage: View {
                                         Text("Item 2")
                                         
                                         HStack(alignment: .center){
-                                            Text("30")
-                                            Image(systemName: "circle.fill")
-                                                .font(.system(size: 25, weight: .light))
-                                            
+                                            Text("300")
+//                                            Image(systemName: "circle.fill")
+//                                                .font(.system(size: 25, weight: .light))
+//                                            
                                         }
                                         .padding(.leading, 60)
                                     }
@@ -188,9 +199,9 @@ struct StorePage: View {
                                     Text("Item 3")
                                     
                                     HStack(alignment: .center){
-                                        Text("30")
-                                        Image(systemName: "circle.fill")
-                                            .font(.system(size: 25, weight: .light))
+                                        Text("300")
+//                                        Image(systemName: "circle.fill")
+//                                            .font(.system(size: 25, weight: .light))
                                         
                                     }
                                     .padding(.leading, 60)
@@ -225,7 +236,16 @@ struct StorePage: View {
                 .toolbarBackground(Color("CustYell"), for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
             
-        
+                .alert("Sorry, You need \(currModel.neededToPurchase) more cuurency to purches this item!", isPresented: $currModel.canUserPurchase) {
+                    Button("OK", role: .cancel) {
+                        
+                    }
+                        }
+                .alert("You successfuly bought this item", isPresented: $currModel.userDidPurchase) {
+                    Button("OK", role: .cancel) {
+                        
+                    }
+                        }
         
         ZStack{
             Rectangle()
@@ -252,7 +272,7 @@ struct StorePage: View {
                     .foregroundStyle(Color.gray)
             }
             .navigationDestination(isPresented: $showLesson){
-                LessonsPage()
+                LessonsPage(showingAlert: $showingAlert)
                     .navigationBarBackButtonHidden(true)
             }
             
@@ -283,7 +303,7 @@ struct StorePage: View {
                         //                    self.selection = 6
                         self.showHome.toggle()
                     }) {
-                        Image(systemName: "dollarsign.circle.fill")
+                        Image(systemName: "house.fill")
                             .imageScale(.large) // Adjust icon size
                             .foregroundStyle(Color("Background"))
                     }

@@ -16,6 +16,8 @@ struct AchievementPage: View {
     @State private var showStore = false
     @State private var showHome = false
     
+    @State var showingAlert : Bool = false
+    
     
     var body: some View {
         
@@ -162,7 +164,7 @@ struct AchievementPage: View {
                         .foregroundStyle(Color.gray)
                 }
                 .navigationDestination(isPresented: $showLesson){
-                    LessonsPage()
+                    LessonsPage(showingAlert: $showingAlert)
                         .navigationBarBackButtonHidden(true)
                 }
                 

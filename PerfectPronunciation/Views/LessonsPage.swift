@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LessonsPage: View {
     @ObservedObject var model = LessonController()
+    @ObservedObject var currModel = CurrencyController()
 //    @State private var msg = ""
     @State private var showLesson = false
     @State private var showWeekly = false
@@ -27,6 +28,8 @@ struct LessonsPage: View {
     @State var showingPopup = false
     
     @State private var lessonName = ""
+    
+    @Binding var showingAlert : Bool
     
     
     var body: some View {
@@ -311,10 +314,15 @@ struct LessonsPage: View {
 //            model.findUserDifficulty()
 //        }
 
-
+        .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
+            Button("OK", role: .cancel) {
+                currModel.updateUserCurrency()
+            }
+                }
             
 //        }//nav view
     }
+        
         
 }
 

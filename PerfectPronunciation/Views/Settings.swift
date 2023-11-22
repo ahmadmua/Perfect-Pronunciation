@@ -19,6 +19,7 @@ struct Settings: View {
         VStack{
 
             NavigationLink(destination: Login(), tag: 1, selection: self.$selection){}
+            NavigationLink(destination: UpdateInfo(), tag: 2, selection: self.$selection){}
             
             VStack{
                 Image(systemName: "gearshape.fill")

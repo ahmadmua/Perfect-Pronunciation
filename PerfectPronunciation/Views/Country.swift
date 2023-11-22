@@ -58,18 +58,18 @@ struct Country: View {
             .pickerStyle(WheelPickerStyle())
             
             
-            Picker("Select Your Native Language", selection: $selectedLanugage) {
-                            ForEach(languageData, id: \.self) { language in
-                                Text(language)
-                                    .tag(language)
-                            }
-                        }
-                        .pickerStyle(WheelPickerStyle())
+//            Picker("Select Your Native Language", selection: $selectedLanugage) {
+//                            ForEach(languageData, id: \.self) { language in
+//                                Text(language)
+//                                    .tag(language)
+//                            }
+//                        }
+//                        .pickerStyle(WheelPickerStyle())
             
             
             Button(action: {
                updateCountry()
-                updateLanguage()
+//                updateLanguage()
 
             })
             {

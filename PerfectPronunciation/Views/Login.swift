@@ -116,7 +116,8 @@ struct Login: View {
                 } else {
                     
                     let ref = Firestore.firestore().collection("UserData")
-                    ref.whereField("Country", isEqualTo: "").whereField("Difficulty", isEqualTo: "").whereField("Language", isEqualTo: "").getDocuments { (querySnapshot, error) in
+                    ref.whereField("Country", isEqualTo: "").whereField("Difficulty", isEqualTo: "")
+                        .getDocuments { (querySnapshot, error) in
                         if error != nil {
                             // Handle error
                         } else {

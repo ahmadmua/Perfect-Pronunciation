@@ -18,7 +18,7 @@ struct Difficulty: View {
 
     let difficulties = ["Beginner",
         "Intermediate",
-        "Advanced."]
+        "Advanced"]
 
     var body: some View {
         VStack{

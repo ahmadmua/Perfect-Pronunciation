@@ -47,7 +47,8 @@ struct Register: View {
                 
                 // SignUp
                 Button(action: {
-                    userData.registeredEmail = email
+                    userData.setEmail(regiseredEmail: email)
+                    userData.setPass(registeredPassword: password)
                     register()
                     
                 }){

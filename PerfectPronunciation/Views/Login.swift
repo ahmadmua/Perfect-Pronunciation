@@ -6,7 +6,7 @@ import FirebaseAuth
 struct Login: View {
     
     @State var email: String = ""
-    @State var password: String = "111111"
+    @State var password: String = ""
     @State private var selection: Int? = nil
     @State private var userLoggedIn = false
     @State private var showingAlert = false
@@ -43,7 +43,8 @@ struct Login: View {
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 0.5).frame(height: 45))
                         .multilineTextAlignment(.center)
                         .onAppear {
-                            email = userData.registeredEmail
+                            email = userData.getEmail()
+                            password = userData.getPass()
                         }
                     
                     VStack(spacing:10){

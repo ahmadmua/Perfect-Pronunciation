@@ -19,6 +19,7 @@ struct Details: View {
     
     @State private var prediction: Double?
     @State private var averageAccuracy: Float = 0
+    @State private var totalWords: Int = 0
     
     private var pronunciationModel: PronunciationModelProjection {
             do {
@@ -55,7 +56,7 @@ struct Details: View {
                 .underline()
     
             HStack {
-                StatCard(color: .yellow, title: "Words Pronounced", value: "5")
+                StatCard(color: .yellow, title: "Words Pronounced", value: "\(totalWords)")
                 StatCard(color: .yellow, title: "AVG Accuracy", value: "\(averageAccuracy)%")
             }
             HStack {
@@ -66,6 +67,9 @@ struct Details: View {
                 prediction = makePrediction()
                 fireDBHelper.getAvgAccuracy { fetchedAccuracy in
                 averageAccuracy = fetchedAccuracy
+                }
+                fireDBHelper.getPronunciationWordCount {fetchedCount in
+                    totalWords = fetchedCount
                 }
             }
             
@@ -90,11 +94,6 @@ struct Details: View {
                 //fireDBHelper.addItemToUserDataCollection(itemName: "Word55", dayOfWeek: "Wed", accuracy: 76)
 //                fireDBHelper.addItemToUserDataCollection(itemName: "Word9", dayOfWeek: "Mon", accuracy: 65)
 
-                
-                fireDBHelper.getAvgAccuracy { averageAccuracy in
-                            // Handle the average accuracy here
-                            print("Average Accuracy: \(averageAccuracy)")
-                        }
                 
             }){
                 Text("Reset Difficulty")
@@ -355,7 +354,7 @@ struct CalendarView: View {
 
     var body: some View {
         
-        Text("Past 7 days")
+        Text("Weekly Calendar")
         
         HStack(spacing: 10) {
             ForEach(daysOfWeek, id: \.self) { day in

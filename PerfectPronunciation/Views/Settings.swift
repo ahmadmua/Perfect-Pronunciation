@@ -19,6 +19,7 @@ struct Settings: View {
         VStack{
 
             NavigationLink(destination: Login(), tag: 1, selection: self.$selection){}
+            NavigationLink(destination: UpdateInfo(), tag: 2, selection: self.$selection){}
             
             VStack{
                 Image(systemName: "gearshape.fill")
@@ -43,8 +44,8 @@ struct Settings: View {
                             notificationController.scheduleNotification(enabled: newValue)
                         })
                 
-                Section(header: Text("Update Information")){
-                    Text("Update Information")
+                Section(header: Text("Update Password")){
+                    Text("Update Password")
                 }//section
                 .font(.title2)
                 .onTapGesture {

@@ -6,7 +6,7 @@ import FirebaseAuth
 struct Login: View {
     
     @State var email: String = ""
-    @State var password: String = "qwerty"
+    @State var password: String = ""
     @State private var selection: Int? = nil
     @State private var userLoggedIn = false
     @State private var showingAlert = false
@@ -43,7 +43,8 @@ struct Login: View {
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 0.5).frame(height: 45))
                         .multilineTextAlignment(.center)
                         .onAppear {
-                            email = userData.registeredEmail
+                            email = userData.getEmail()
+                            password = userData.getPass()
                         }
                     
                     VStack(spacing:10){
@@ -111,11 +112,12 @@ struct Login: View {
             Auth.auth().signIn(withEmail: email, password: password){result, error in
                 if error != nil {
                     showingAlert = true
-                    msg = error!.localizedDescription
+                    msg = "Login Information Incorrect"
                 } else {
                     
                     let ref = Firestore.firestore().collection("UserData")
-                    ref.whereField("Country", isEqualTo: "").whereField("Difficulty", isEqualTo: "").whereField("Language", isEqualTo: "").getDocuments { (querySnapshot, error) in
+                    ref.whereField("Country", isEqualTo: "").whereField("Difficulty", isEqualTo: "")
+                        .getDocuments { (querySnapshot, error) in
                         if error != nil {
                             // Handle error
                         } else {

@@ -230,11 +230,13 @@ struct Homepage: View {
 //                                .navigationBarBackButtonHidden(true)
                         }
                     }
+
                     )
                     
                     Spacer()
                 }
             }
+        
             .onAppear {
                 viewModel.objectWillChange.send()
             }

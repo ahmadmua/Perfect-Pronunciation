@@ -224,6 +224,46 @@ class DataHelper: ObservableObject {
             }
         }
     }
+    
+    func getPronunciationWordCount(completion: @escaping (Int) -> Void) {
+        var accuracyCount = 0
+
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+
+            // Create an array of days
+            let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+            // Iterate through each day
+            for day in daysOfWeek {
+                let dayQuery = itemsCollectionRef.whereField("DayOfWeek", isEqualTo: day)
+
+                dayQuery.getDocuments { (querySnapshot, error) in
+                    if let error = error {
+                        print("Error getting documents: \(error.localizedDescription)")
+                    } else {
+                        for document in querySnapshot!.documents {
+                            if let _ = document["Accuracy"] as? Float {
+                                accuracyCount += 1
+                            } else {
+                                print("Document \(document.documentID) exists for \(day), but 'accuracy' field is missing or not a float.")
+                            }
+                        }
+
+                        // Note: You might want to store the results for each day for further processing or reporting.
+                    }
+
+                    // Check if this is the last day, and if so, call the completion handler
+                   
+                        completion(accuracyCount)
+                    
+                }
+            }
+        }
+    }
+
 
 
     

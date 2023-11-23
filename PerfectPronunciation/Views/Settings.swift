@@ -44,8 +44,8 @@ struct Settings: View {
                             notificationController.scheduleNotification(enabled: newValue)
                         })
                 
-                Section(header: Text("Update Information")){
-                    Text("Update Information")
+                Section(header: Text("Update Password")){
+                    Text("Update Password")
                 }//section
                 .font(.title2)
                 .onTapGesture {

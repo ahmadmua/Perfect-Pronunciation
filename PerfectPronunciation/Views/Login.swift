@@ -6,7 +6,7 @@ import FirebaseAuth
 struct Login: View {
     
     @State var email: String = ""
-    @State var password: String = "123456"
+    @State var password: String = "111111"
     @State private var selection: Int? = nil
     @State private var userLoggedIn = false
     @State private var showingAlert = false
@@ -111,7 +111,7 @@ struct Login: View {
             Auth.auth().signIn(withEmail: email, password: password){result, error in
                 if error != nil {
                     showingAlert = true
-                    msg = error!.localizedDescription
+                    msg = "Login Information Incorrect"
                 } else {
                     
                     let ref = Firestore.firestore().collection("UserData")

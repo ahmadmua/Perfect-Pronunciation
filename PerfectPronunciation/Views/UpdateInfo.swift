@@ -14,36 +14,39 @@ struct UpdateInfo: View {
     
     var body: some View {
         
-        VStack {
+        VStack (spacing: 30) {
             
             NavigationLink(destination: Settings(), tag: 1, selection: self.$selection){}
             
-            Text("Update Information")
+            NavigationLink(destination: Login(), tag: 2, selection: self.$selection){}
+            
+            
+            Text("Update Pass")
                 .fontWeight(.bold)
                 .font(Font.system(size: 50))
                 .foregroundColor(Color.yellow)
                 .padding(.bottom, 100)
             
-            VStack(spacing: 10) {
+            
+            
                 SecureField("Current Password", text: $currentPassword)
                     .padding(10)
                     .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 0.5).frame(height: 45))
                     .multilineTextAlignment(.center)
-            }
             
-            VStack(spacing: 10) {
+            
+           
                 SecureField("New Password", text: $newPassword)
                     .padding(10)
                     .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 0.5).frame(height: 45))
                     .multilineTextAlignment(.center)
-            }
             
-            VStack(spacing: 10) {
+          
                 SecureField("Confirm New Password", text: $confirmPassword)
                     .padding(10)
                     .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 0.5).frame(height: 45))
                     .multilineTextAlignment(.center)
-            }
+            
             
             Button(action: {
                 updatePassword()
@@ -60,6 +63,8 @@ struct UpdateInfo: View {
                 Button("OK", role: .cancel) { }
             }
         }
+        .padding(.horizontal,30)
+        .padding(.vertical, 25)
     }
     
     func updatePassword() {
@@ -80,7 +85,7 @@ struct UpdateInfo: View {
         let credential = EmailAuthProvider.credential(withEmail: user.email!, password: currentPassword)
         user.reauthenticate(with: credential) { (_, error) in
             if let error = error {
-                alertMessage = "Error reauthenticating user: \(error.localizedDescription)"
+                alertMessage = "Current Password Incorrect"
                 showingAlert = true
                 return
             }
@@ -88,11 +93,12 @@ struct UpdateInfo: View {
             // Reauthentication successful, update the password
             user.updatePassword(to: newPassword) { error in
                 if let error = error {
-                    alertMessage = "Error updating password: \(error.localizedDescription)"
+                    alertMessage = "Error updating password"
                     showingAlert = true
                 } else {
-                    alertMessage = "Password updated successfully."
+                    alertMessage = "Password updated successfully. Please re-login"
                     showingAlert = true
+                    self.selection = 2
                 }
             }
         }

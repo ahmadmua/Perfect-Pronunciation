@@ -22,8 +22,8 @@ class NotificationController {
         content.badge = 1
         
         var dateComponents = DateComponents()
-        dateComponents.hour = 00
-        dateComponents.minute = 57
+        dateComponents.hour = 14
+        dateComponents.minute = 13
         dateComponents.second = 30
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)

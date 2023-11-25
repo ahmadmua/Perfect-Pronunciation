@@ -10,6 +10,7 @@ import SwiftUI
 struct LessonsPage: View {
     @ObservedObject var model = LessonController()
     @ObservedObject var currModel = CurrencyController()
+    @ObservedObject var achieveModel = AchievementController()
 //    @State private var msg = ""
     @State private var showLesson = false
     @State private var showWeekly = false
@@ -25,8 +26,6 @@ struct LessonsPage: View {
     @State private var numbers = false
     @State private var direction = false
     
-    @State var showingPopup = false
-    
     @State private var lessonName = ""
     
     @Binding var showingAlert : Bool
@@ -40,7 +39,7 @@ struct LessonsPage: View {
             Grid{
                 VStack{
                     GridRow{
-                        Text("Coversation")
+                        Text("Conversation")
                     }//grid row 1
                     
                     Divider()
@@ -310,9 +309,11 @@ struct LessonsPage: View {
         .background(Color("Background"))
     }
         .background(Color("Background"))
-//        .onAppear(){
-//            model.findUserDifficulty()
-//        }
+        .onAppear(){
+            if(achieveModel.achievementOneCompletion()){
+                achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
+            }
+        }
 
         .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
             Button("OK", role: .cancel) {

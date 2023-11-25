@@ -13,7 +13,6 @@ struct IndividualLesson: View {
     //    @Binding var msgTaken: String
     @ObservedObject var model = LessonController()
     
-    @State private var selection: Int? = nil
     @State private var showRecord = false
     @State private var showNext = false
     @State private var showLesson = false
@@ -99,12 +98,18 @@ struct IndividualLesson: View {
                         
                         
                             
-                        
+                        //if counter is greater than number of questions
                         if counter >= model.totQuestions{
+                            //go back to the home page
                             counter = 0
                             self.showLesson.toggle()
                             self.showingAlert.toggle()
+                            
+                            //update the lesson as complete
+                            model.updateLessonCompletion(userLesson: lessonName)
+                            
                         }else{
+                            //else counter is not more than the number of questions, continue to the next question
                             self.showNext.toggle()
                         }
                         
@@ -136,47 +141,24 @@ struct IndividualLesson: View {
             
             
             
-            
+            //find the difficulty the user has set
             model.findUserDifficulty{
                 print("USER DIFICULTY!! : \(model.difficulty!)")
                 
                 
-                
+                //find the number of questions for the lesson
                 model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty!)
                 
+                //get the current question for the page number
                 model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
             }
             
-            
-            
-            
-            
              
             self.showNext = false
-            
-//            model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty ?? "Easy")
-//            
-//            
-////            nextQuestion()
-////            counter = 0
-//            
-//            
-//            model.getQuestion(lesson: lessonName, difficulty: model.difficulty ?? "Easy", question: "Question\(counter)")
-            
+         
         }
-//        .onDisappear{
-//            counter+=1
-//        }
-        
-        
-       
-        
+         
     }
-    
-    
-        
-//    }//view
-    
     
 
 }//view

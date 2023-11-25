@@ -53,6 +53,7 @@
 		C58B99FA2AEDAE2B003C0288 /* WeeklyGamePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F92AEDAE2B003C0288 /* WeeklyGamePage.swift */; };
 		C5D6050C2B0B39FA00620283 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C5D6050B2B0B39FA00620283 /* GoogleService-Info.plist */; };
 		C5D6050E2B0B3BCB00620283 /* CurrencyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D6050D2B0B3BCB00620283 /* CurrencyController.swift */; };
+		C5D605122B0F244A00620283 /* AchievementController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D605112B0F244A00620283 /* AchievementController.swift */; };
 		C5DF79D02AFB106900ECB45C /* TestFirebaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF79CF2AFB106900ECB45C /* TestFirebaseView.swift */; };
 		C5DF79D62AFB19AA00ECB45C /* LessonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF79D52AFB19AA00ECB45C /* LessonController.swift */; };
 		C5DF79D82AFC77AB00ECB45C /* Lesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF79D72AFC77AB00ECB45C /* Lesson.swift */; };
@@ -95,6 +96,7 @@
 		C58B99F92AEDAE2B003C0288 /* WeeklyGamePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyGamePage.swift; sourceTree = "<group>"; };
 		C5D6050B2B0B39FA00620283 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C5D6050D2B0B3BCB00620283 /* CurrencyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyController.swift; sourceTree = "<group>"; };
+		C5D605112B0F244A00620283 /* AchievementController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementController.swift; sourceTree = "<group>"; };
 		C5DF79CF2AFB106900ECB45C /* TestFirebaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFirebaseView.swift; sourceTree = "<group>"; };
 		C5DF79D52AFB19AA00ECB45C /* LessonController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonController.swift; sourceTree = "<group>"; };
 		C5DF79D72AFC77AB00ECB45C /* Lesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lesson.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 				4D1162DE2AFC9D9900224519 /* AudioController.swift */,
 				022550BA2B05C3F5002D5183 /* NotificationController.swift */,
 				C5D6050D2B0B3BCB00620283 /* CurrencyController.swift */,
+				C5D605112B0F244A00620283 /* AchievementController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@
 				02FC80CA2B02039F009DFA9C /* PronunciationModelProjection.mlmodel in Sources */,
 				C58B99F82AED9F5C003C0288 /* AchievementPage.swift in Sources */,
 				C58B99F22AECDACB003C0288 /* LessonsPage.swift in Sources */,
+				C5D605122B0F244A00620283 /* AchievementController.swift in Sources */,
 				02E2B65F2AD6131100F1FACA /* PerfectPronunciationApp.swift in Sources */,
 				C5DF79D02AFB106900ECB45C /* TestFirebaseView.swift in Sources */,
 				028364752AEA513E00E88DCB /* VoiceData.swift in Sources */,

@@ -23,18 +23,18 @@ class AudioAPIController : ObservableObject {
     
     @Published var audioAnalysisData = [AudioAnalysis]()
     
-    func uploadAudio(for audioAnalysisData: String, completion: @escaping (Result<AudioAnalysis, Error>) -> Void) {
+    func uploadAudio(for audio: String, completion: @escaping (Result<AudioAnalysis, Error>) -> Void) {
         
-        let headers = [            "X-RapidAPI-Key": "f78ec949c9msh56530a588aa61f8p1a1246jsn843e6d48ab6f",            "X-RapidAPI-Host": "real-time-product-search.p.rapidapi.com"        ]
         
-        guard let url = URL(string: "https://real-time-product-search.p.rapidapi.com/search?q=\(product)&country=us&language=en") else {
+        
+        guard let url = URL(string: "http://3.95.58.220:8000/upload-audio") else {
             completion(.failure(NetworkError.invalidURL))
             return
         }
         
         var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.allHTTPHeaderFields = headers
+        request.httpMethod = "POST"
+        //need to include the body with "audio" as the key and the value is the Recording
         
         URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
             if let error = error {
@@ -59,13 +59,13 @@ class AudioAPIController : ObservableObject {
             
             do {
                 let decoder = JSONDecoder()
-                let product = try decoder.decode(Product.self, from: data)
+                let audio = try decoder.decode(AudioAnalysis.self, from: data)
                 DispatchQueue.main.async { [weak self] in
-                    self?.productData.append(product) // add product to a new index in productData
+                    self?.audioAnalysisData.append(audio) // add product to a new index in productData
                 }
-                completion(.success(product))
+                completion(.success(audio))
             } catch {
-                completion(.failure(error))
+                completion(.failure(audio as! Error))
             }
         }.resume()
     }

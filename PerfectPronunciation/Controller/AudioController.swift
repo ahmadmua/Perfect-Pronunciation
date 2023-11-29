@@ -158,7 +158,7 @@ class AudioController: NSObject, ObservableObject {
 
         if let audioData = try? Data(contentsOf: audioFilename) {
             let audioAPIController = AudioAPIController()
-            audioAPIController.uploadAudio(for: audioData) { result in
+            audioAPIController.uploadAudio(audioData: audioData) { result in
                 switch result {
                 case .success(let analysis):
                     print("Audio Analysis: \(analysis)")

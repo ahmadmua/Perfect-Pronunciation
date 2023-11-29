@@ -92,7 +92,7 @@ struct VoiceRecorder: View {
 
                             if !isRecording {
                                 Button(action: {
-                                    // Implement save/finish action
+                                    audioRecorder.submitAudio()
                                 }) {
                                     Image(systemName: "checkmark.circle.fill")
                                         .font(.system(size: 50))

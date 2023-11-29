@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import SwiftUI
 import Network
+import Combine
 
 enum NetworkError: Error {
     case invalidURL
@@ -18,15 +19,11 @@ enum NetworkError: Error {
     case emptyData
 }
 
-
-class AudioAPIController : ObservableObject {
+class AudioAPIController: ObservableObject {
     
     @Published var audioAnalysisData = [AudioAnalysis]()
     
-    func uploadAudio(for audio: String, completion: @escaping (Result<AudioAnalysis, Error>) -> Void) {
-        
-        
-        
+    func uploadAudio(audioData: Data, completion: @escaping (Result<AudioAnalysis, Error>) -> Void) {
         guard let url = URL(string: "http://3.95.58.220:8000/upload-audio") else {
             completion(.failure(NetworkError.invalidURL))
             return
@@ -34,9 +31,29 @@ class AudioAPIController : ObservableObject {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        //need to include the body with "audio" as the key and the value is the Recording
         
-        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+        // Generate the boundary string using a unique per-app string
+        let boundary = "Boundary-\(UUID().uuidString)"
+        
+        // Set the content type to multipart/form-data with the generated boundary
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        var body = Data()
+        
+        // Append the audio data to the request body with the key "audio"
+        body.append("--\(boundary)\r\n".data(using: .utf8)!)
+        body.append("Content-Disposition: form-data; name=\"audio\"; filename=\"recording.wav\"\r\n".data(using: .utf8)!)
+        body.append("Content-Type: audio/wav\r\n\r\n".data(using: .utf8)!)
+        body.append(audioData)
+        body.append("\r\n".data(using: .utf8)!)
+        
+        // Close the body with the boundary
+        body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        
+        request.httpBody = body
+        
+        // Perform the request
+        URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 completion(.failure(error))
                 return
@@ -59,14 +76,23 @@ class AudioAPIController : ObservableObject {
             
             do {
                 let decoder = JSONDecoder()
-                let audio = try decoder.decode(AudioAnalysis.self, from: data)
-                DispatchQueue.main.async { [weak self] in
-                    self?.audioAnalysisData.append(audio) // add product to a new index in productData
+                let analysisResult = try decoder.decode(AudioAnalysis.self, from: data)
+                DispatchQueue.main.async {
+                    self.audioAnalysisData.append(analysisResult)
                 }
-                completion(.success(audio))
+                completion(.success(analysisResult))
             } catch {
-                completion(.failure(audio as! Error))
+                completion(.failure(error))
             }
         }.resume()
+    }
+}
+
+// Helper extension to make appending to Data easier
+extension Data {
+    mutating func append(_ string: String) {
+        if let data = string.data(using: .utf8) {
+            append(data)
+        }
     }
 }

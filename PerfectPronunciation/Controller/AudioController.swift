@@ -150,4 +150,26 @@ class AudioController: NSObject, ObservableObject {
         btnTitle = "Start Recording"
         STTresult = "Stopped Listening"
     }
+    
+    func submitAudio() {
+        let fileManager = FileManager.default
+        let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        let audioFilename = documentsDirectory.appendingPathComponent("recording.wav")
+
+        if let audioData = try? Data(contentsOf: audioFilename) {
+            let audioAPIController = AudioAPIController()
+            audioAPIController.uploadAudio(for: audioData) { result in
+                switch result {
+                case .success(let analysis):
+                    print("Audio Analysis: \(analysis)")
+                case .failure(let error):
+                    print("Error: \(error)")
+                }
+            }
+        } else {
+            print("Error: Unable to load audio file data")
+        }
+    }
+
+    
 }

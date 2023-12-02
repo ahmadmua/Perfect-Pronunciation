@@ -46,6 +46,9 @@
 		4D6170602AEC5D0C002A02C1 /* VoiceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */; };
 		4DAB969C2B16E61100800058 /* AudioAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DAB969B2B16E61100800058 /* AudioAnalysis.swift */; };
 		4DAB969E2B16E62E00800058 /* AudioAPIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DAB969D2B16E62E00800058 /* AudioAPIController.swift */; };
+		4DC3914D2B1BE1F3006C8C39 /* AudioPlayBackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC3914C2B1BE1F3006C8C39 /* AudioPlayBackController.swift */; };
+		4DC3914F2B1BE2D3006C8C39 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC3914E2B1BE2D3006C8C39 /* Audio.swift */; };
+		4DC391512B1BE468006C8C39 /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC391502B1BE468006C8C39 /* Extentions.swift */; };
 		C58B99F22AECDACB003C0288 /* LessonsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F12AECDACB003C0288 /* LessonsPage.swift */; };
 		C58B99F42AED7CC4003C0288 /* IndividualLesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F32AED7CC4003C0288 /* IndividualLesson.swift */; };
 		C58B99F62AED94E5003C0288 /* StorePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F52AED94E5003C0288 /* StorePage.swift */; };
@@ -85,6 +88,9 @@
 		4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorder.swift; sourceTree = "<group>"; };
 		4DAB969B2B16E61100800058 /* AudioAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAnalysis.swift; sourceTree = "<group>"; };
 		4DAB969D2B16E62E00800058 /* AudioAPIController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAPIController.swift; sourceTree = "<group>"; };
+		4DC3914C2B1BE1F3006C8C39 /* AudioPlayBackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayBackController.swift; sourceTree = "<group>"; };
+		4DC3914E2B1BE2D3006C8C39 /* Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
+		4DC391502B1BE468006C8C39 /* Extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
 		C58B99F12AECDACB003C0288 /* LessonsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonsPage.swift; sourceTree = "<group>"; };
 		C58B99F32AED7CC4003C0288 /* IndividualLesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndividualLesson.swift; sourceTree = "<group>"; };
 		C58B99F52AED94E5003C0288 /* StorePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorePage.swift; sourceTree = "<group>"; };
@@ -138,6 +144,7 @@
 		02E2B65D2AD6131100F1FACA /* PerfectPronunciation */ = {
 			isa = PBXGroup;
 			children = (
+				4DC391522B1BE479006C8C39 /* Helpers */,
 				028364802AEDB79700E88DCB /* Info.plist */,
 				02E2B6962AD6236200F1FACA /* Model */,
 				02E2B6912AD6186400F1FACA /* Components */,
@@ -167,6 +174,7 @@
 				C5DF79D52AFB19AA00ECB45C /* LessonController.swift */,
 				4D1162DE2AFC9D9900224519 /* AudioController.swift */,
 				4DAB969D2B16E62E00800058 /* AudioAPIController.swift */,
+				4DC3914C2B1BE1F3006C8C39 /* AudioPlayBackController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -213,8 +221,17 @@
 				028364742AEA513E00E88DCB /* VoiceData.swift */,
 				C5DF79D72AFC77AB00ECB45C /* Lesson.swift */,
 				4DAB969B2B16E61100800058 /* AudioAnalysis.swift */,
+				4DC3914E2B1BE2D3006C8C39 /* Audio.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		4DC391522B1BE479006C8C39 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				4DC391502B1BE468006C8C39 /* Extentions.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		4DC5DE822AEB864400F58B73 /* Homepage */ = {
@@ -330,6 +347,7 @@
 				02E2B69C2AD63BA300F1FACA /* Difficulty.swift in Sources */,
 				C5DF79D82AFC77AB00ECB45C /* Lesson.swift in Sources */,
 				02E2B6932AD6188500F1FACA /* Components.swift in Sources */,
+				4DC391512B1BE468006C8C39 /* Extentions.swift in Sources */,
 				02E2B6982AD6237000F1FACA /* UserData.swift in Sources */,
 				028364712AE9FBC300E88DCB /* StatData.swift in Sources */,
 				0283647F2AEDB25900E88DCB /* Settings.swift in Sources */,
@@ -343,8 +361,10 @@
 				C5DF79D02AFB106900ECB45C /* TestFirebaseView.swift in Sources */,
 				028364752AEA513E00E88DCB /* VoiceData.swift in Sources */,
 				02E2B68E2AD617F900F1FACA /* Login.swift in Sources */,
+				4DC3914D2B1BE1F3006C8C39 /* AudioPlayBackController.swift in Sources */,
 				0283647D2AED807600E88DCB /* Details.swift in Sources */,
 				028364732AEA504000E88DCB /* AccuracyGraphModel.swift in Sources */,
+				4DC3914F2B1BE2D3006C8C39 /* Audio.swift in Sources */,
 				02E2B6902AD6180500F1FACA /* Register.swift in Sources */,
 				02E2B6952AD61E6600F1FACA /* Homepage.swift in Sources */,
 				C5DF79D62AFB19AA00ECB45C /* LessonController.swift in Sources */,
@@ -481,7 +501,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PerfectPronunciation/Preview Content\"";
-				DEVELOPMENT_TEAM = PNR82J99FX;
+				DEVELOPMENT_TEAM = X9P6Z7GZAR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PerfectPronunciation/Info.plist;
@@ -513,7 +533,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PerfectPronunciation/Preview Content\"";
-				DEVELOPMENT_TEAM = PNR82J99FX;
+				DEVELOPMENT_TEAM = X9P6Z7GZAR;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PerfectPronunciation/Info.plist;

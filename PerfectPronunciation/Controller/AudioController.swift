@@ -15,95 +15,120 @@ class AudioController: NSObject, ObservableObject {
     @Published var STTresult: String = "Listening"
     @Published var recordBtnDisabled = true
     
-    private var audioRecorder: AVAudioRecorder?
+    private var audioRecorder: AVAudioRecorder!
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
     private let audioEngine = AVAudioEngine()
     private var audioFile: AVAudioFile?
-
     
+    let objectWillChange = PassthroughSubject<AudioController, Never>()
+
+    var recording = Recording(fileURL: URL(string: "about:blank")!, createdAt: Date())
+    
+    var isRecording = false {
+        didSet {
+            objectWillChange.send(self)
+        }
+    }
+
     override init() {
         super.init()
-        setupAudioFileForRecording()
+        fetchRecording()
     }
     
     func requestAuthorization() {
-           SFSpeechRecognizer.requestAuthorization { authStatus in
-               DispatchQueue.main.async {
-                   switch authStatus {
-                   case .authorized:
-                       self.recordBtnDisabled = false
-                   case .denied, .restricted, .notDetermined:
-                       self.recordBtnDisabled = true
-                       self.btnTitle = "Microphone/Speech access is not authorized"
-                   default:
-                       self.recordBtnDisabled = true
-                       self.btnTitle = "Microphone/Speech access is not authorized"
-                   }
-               }
-           }
-       }
-    
-    private func setupAudioFileForRecording() {
-            let fileManager = FileManager.default
-            let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let audioFilename = documentsDirectory.appendingPathComponent("recording.wav")
-
-            let settings = [
-                AVFormatIDKey: Int(kAudioFormatLinearPCM),
-                AVSampleRateKey: 44100,
-                AVNumberOfChannelsKey: 1,
-                AVLinearPCMBitDepthKey: 16,
-                AVLinearPCMIsBigEndianKey: false,
-                AVLinearPCMIsFloatKey: false,
-                AVLinearPCMIsNonInterleaved: false
-            ] as [String : Any]
-
-            do {
-                audioFile = try AVAudioFile(forWriting: audioFilename, settings: settings, commonFormat: .pcmFormatInt16, interleaved: true)
-            } catch {
-                print("Unable to create audio file: \(error)")
+        SFSpeechRecognizer.requestAuthorization { authStatus in
+            DispatchQueue.main.async {
+                switch authStatus {
+                case .authorized:
+                    self.recordBtnDisabled = false
+                case .denied, .restricted, .notDetermined:
+                    self.recordBtnDisabled = true
+                    self.btnTitle = "Microphone/Speech access is not authorized"
+                default:
+                    self.recordBtnDisabled = true
+                    self.btnTitle = "Microphone/Speech access is not authorized"
+                }
             }
         }
+    }
     
-    func startRecording() throws {
-        // Check if audioEngine is already running
+    func fetchRecording() {
+        let fileManager = FileManager.default
+        let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        do {
+            let directoryContents = try fileManager.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: [.creationDateKey], options: .skipsHiddenFiles)
+            
+            let audioFiles = directoryContents
+                .filter { $0.pathExtension == "m4a" }
+                .sorted {
+                    let date1 = try? $0.resourceValues(forKeys: [.creationDateKey]).creationDate ?? Date.distantPast
+                    let date2 = try? $1.resourceValues(forKeys: [.creationDateKey]).creationDate ?? Date.distantPast
+                    return date1! > date2!
+                }
+
+            if let mostRecentFile = audioFiles.first {
+                let fileDate = try mostRecentFile.resourceValues(forKeys: [.creationDateKey]).creationDate ?? Date()
+                recording = Recording(fileURL: mostRecentFile, createdAt: fileDate)
+            }
+        } catch {
+            print("Error while fetching recordings: \(error)")
+        }
+
+        objectWillChange.send(self)
+    }
+    
+    func startRecording() {
+        let recordingSession = AVAudioSession.sharedInstance()
+        
         if audioEngine.isRunning {
-            // Stop the audioEngine and end the recognition request
             audioEngine.stop()
             recognitionRequest?.endAudio()
             btnTitle = "Start Listening"
+            isRecording = false
         } else {
-            // Cancel the previous task if it's running
+            do {
+                try recordingSession.setCategory(.playAndRecord, mode: .default)
+                try recordingSession.setActive(true)
+            } catch {
+                print("Failed to set up recording session")
+            }
+            
+            let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY 'at' HH:mm:ss")).m4a")
+            
+            let settings = [
+                AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
+                AVSampleRateKey: 12000,
+                AVNumberOfChannelsKey: 1,
+                AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+            ]
+            
+            do {
+                audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
+                audioRecorder.record()
+                isRecording = true
+            } catch {
+                print("Could not start recording")
+            }
+
             recognitionTask?.cancel()
             recognitionTask = nil
-            
-            // Setup the audio session for recording
-            let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-            try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
 
-            // Get the input node and create a new recognition request
             let inputNode = audioEngine.inputNode
             recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+
             guard let recognitionRequest = recognitionRequest else {
-                fatalError("Unable to create a new SFSpeechAudioBufferRecognitionRequest.")
+                fatalError("Unable to create a SFSpeechAudioBufferRecognitionRequest.")
             }
             recognitionRequest.shouldReportPartialResults = true
 
-            // Start a new recognition task
             recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
                 guard let self = self else { return }
                 var isFinal = false
 
                 if let result = result {
-                    // Accessing the SFVoiceAnalytics from the result
-                    if #available(iOS 13, *) {
-                        let voiceAnalytics = result.bestTranscription.segments.last?.voiceAnalytics
-                        // Here you can access voiceAnalytics.jitter, voiceAnalytics.shimmer, etc.
-                    }
-                    
                     self.STTresult = result.bestTranscription.formattedString
                     isFinal = result.isFinal
                 }
@@ -115,33 +140,27 @@ class AudioController: NSObject, ObservableObject {
                     self.recognitionRequest = nil
                     self.recordBtnDisabled = false
                     self.btnTitle = "Start Listening"
+                    self.isRecording = false
                 }
             })
 
-            // Define the recording format
             let recordingFormat = inputNode.outputFormat(forBus: 0)
-            
-            // Install an audio tap on the input node
             inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] (buffer, when) in
                 self?.recognitionRequest?.append(buffer)
-
-                do {
-                    try self?.audioFile?.write(from: buffer)
-                } catch {
-                    print("Error writing audio to file: \(error)")
-                }
             }
 
-            // Prepare and start the audio engine
-            audioEngine.prepare()
-            try audioEngine.start()
+            do {
+                audioEngine.prepare()
+                try audioEngine.start()
+            } catch {
+                print("Could not start Audio Engine")
+            }
 
-            // Update the UI state
             STTresult = "Listening Started"
             btnTitle = "Stop Listening"
         }
     }
-    
+
     func stopRecording() {
         audioEngine.stop()
         recognitionRequest?.endAudio()
@@ -149,27 +168,47 @@ class AudioController: NSObject, ObservableObject {
         audioRecorder?.stop()
         btnTitle = "Start Recording"
         STTresult = "Stopped Listening"
+        //once audio stops fetch recording
+        fetchRecording()
     }
     
     func submitAudio() {
-        let fileManager = FileManager.default
-        let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let audioFilename = documentsDirectory.appendingPathComponent("recording.wav")
+        // Ensure that we have a valid file URL
+        guard let audioURL = recording.fileURL else {
+            print("Error: Invalid file URL")
+            return
+        }
 
-        if let audioData = try? Data(contentsOf: audioFilename) {
+        do {
+            let audioData = try Data(contentsOf: audioURL)
+            // No need to convert to base64String since we are sending Data directly
+            // let base64String = audioData.base64EncodedString()
+
             let audioAPIController = AudioAPIController()
             audioAPIController.uploadAudio(audioData: audioData) { result in
                 switch result {
                 case .success(let analysis):
-                    print("Audio Analysis: \(analysis)")
+                    DispatchQueue.main.async {
+                        print("Audio Analysis: \(analysis)")
+                        // Update your UI accordingly
+                    }
                 case .failure(let error):
-                    print("Error: \(error)")
+                    DispatchQueue.main.async {
+                        print("Error: \(error)")
+                        // Handle the error in your UI
+                    }
                 }
             }
-        } else {
-            print("Error: Unable to load audio file data")
+        } catch {
+            print("Error: Unable to load audio file data - \(error)")
         }
     }
 
     
 }
+
+
+
+
+
+

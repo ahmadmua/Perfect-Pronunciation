@@ -32,12 +32,12 @@ struct PerfectPronunciationApp: App {
     
     var body: some Scene {
         WindowGroup {
-            Login().environmentObject(fireDBHelper).environmentObject(sharedData)
+//            Login().environmentObject(fireDBHelper).environmentObject(sharedData)
 //            ContentView().environmentObject(fireDBHelper).environmentObject(userData)
 //            TestFirebaseView()
             //Homepage()
-            //Homepage().environmentObject(fireDBHelper).environmentObject(userData)
-            //VoiceRecorder(audioRecorder: AudioController())
+            //Homepage().environmentObject(fireDBHelper).environmentObject(sharedData)
+            VoiceRecorder(audioRecorder: AudioController(), audioPlayer: AudioPlayBackController())
         }
     }
 }

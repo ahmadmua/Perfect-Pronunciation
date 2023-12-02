@@ -10,6 +10,8 @@ import AVFoundation
 
 struct VoiceRecorder: View {
     @ObservedObject var audioRecorder: AudioController
+    @ObservedObject var audioPlayer: AudioPlayBackController
+
     @State private var isRecording = false
     @State private var audioLevels: [CGFloat] = Array(repeating: 0.5, count: 50)
     @State private var elapsedTime = TimeInterval(0)
@@ -92,7 +94,9 @@ struct VoiceRecorder: View {
 
                             if !isRecording {
                                 Button(action: {
-                                    audioRecorder.submitAudio()
+//                                    self.audioRecorder.fetchRecording()
+//                                    self.audioPlayer.startPlayback(audio: audioRecorder.recording.fileURL!)
+                                    self.audioRecorder.submitAudio()
                                 }) {
                                     Image(systemName: "checkmark.circle.fill")
                                         .font(.system(size: 50))
@@ -159,6 +163,6 @@ struct BarView: View {
 
 struct VoiceRecorder_Previews: PreviewProvider {
     static var previews: some View {
-        VoiceRecorder(audioRecorder: AudioController())
+        VoiceRecorder(audioRecorder: AudioController(), audioPlayer: AudioPlayBackController())
     }
 }

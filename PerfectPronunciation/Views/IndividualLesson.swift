@@ -77,7 +77,7 @@ struct IndividualLesson: View {
                     .foregroundStyle(Color.red)
                     .buttonStyle(.borderless)
                     .sheet(isPresented: $isPopupPresented) {
-                        VoiceRecorder(audioRecorder: AudioController())
+                        VoiceRecorder(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController())
                     }
 //                    .navigationDestination(isPresented: $showRecord){
 //                        VoiceRecorder()

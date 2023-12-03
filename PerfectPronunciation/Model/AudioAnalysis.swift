@@ -13,9 +13,9 @@ import Foundation
 // MARK: - Welcome
 struct AudioAnalysis: Codable {
     //let error: JSONNull?
-    let genderAnalysisResult: GenderAnalysisResult
-    let pronunciationScorePercentage: PronunciationScorePercentage
-    let totalSpeechAnalysisResults: TotalSpeechAnalysisResults
+    let gender_analysis_result: GenderAnalysisResult
+    let pronunciation_score_percentage: PronunciationScorePercentage
+    let total_speech_analysis_results: TotalSpeechAnalysisResults
 
     struct GenderAnalysisResult: Codable {
         let result: String
@@ -51,9 +51,9 @@ struct AudioAnalysis: Codable {
     }
     
     init(){
-        genderAnalysisResult = GenderAnalysisResult.init(result: "")
-        pronunciationScorePercentage = PronunciationScorePercentage.init(pronunciationScorePercentage: 0.0)
-        totalSpeechAnalysisResults = TotalSpeechAnalysisResults(dataset: Dataset.init(articulation_rate: "", balance: "", f0_max: "", f0_mean: "", f0_median: "", f0_quan75: "", f0_quantile25: "", f0_std: "", number_of_pauses: "", number_of_syllables: "", original_duration: "", rate_of_speech: "", speaking_duration: ""))
+        gender_analysis_result = GenderAnalysisResult.init(result: "")
+        pronunciation_score_percentage = PronunciationScorePercentage.init(pronunciationScorePercentage: 0.0)
+        total_speech_analysis_results = TotalSpeechAnalysisResults(dataset: Dataset.init(articulation_rate: "", balance: "", f0_max: "", f0_mean: "", f0_median: "", f0_quan75: "", f0_quantile25: "", f0_std: "", number_of_pauses: "", number_of_syllables: "", original_duration: "", rate_of_speech: "", speaking_duration: ""))
     }
 }
 

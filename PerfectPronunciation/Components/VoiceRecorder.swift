@@ -11,6 +11,8 @@ import AVFoundation
 struct VoiceRecorder: View {
     @ObservedObject var audioRecorder: AudioController
     @ObservedObject var audioPlayer: AudioPlayBackController
+    
+    var testText : String
 
     @State private var isRecording = false
     @State private var audioLevels: [CGFloat] = Array(repeating: 0.5, count: 50)
@@ -28,40 +30,72 @@ struct VoiceRecorder: View {
 
                 VStack {
                     Text("Recording")
-                        .padding(.top, 20)
+                        .padding(.top, 10)
 
                     Text(timeString(time: elapsedTime))
                         .font(.system(size: 40, weight: .bold, design: .rounded))
                         .padding(.top, 10)
 
                     WaveformView(audioLevels: $audioLevels)
-                        .frame(width: UIScreen.main.bounds.width - 25 , height: 250)
+                        .frame(width: UIScreen.main.bounds.width - 25 , height: 150)
                         .background(Color.black.opacity(0.6))
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                         .padding(.top, 20)
 
                     
-                    ZStack{
+                    ZStack {
+                        // The outer ScrollView for other content
+                        ScrollView(.vertical) {
+                            // Your other content goes here
+                        }
+                        
+                        // The VisualEffectView with the dark blur effect
                         VisualEffectView(effect: UIBlurEffect(style: .dark))
-                            .frame(width: UIScreen.main.bounds.width - 25, height: 100)
+                            .frame(width: UIScreen.main.bounds.width - 25, height: 200)
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                             .padding(.top, 20)
-                        ScrollView{
-                            Text(audioRecorder.STTresult)
-                                .lineLimit(nil)
-                                .font(.title)
-                        }
+                            .overlay(
+                                VStack {
+                                    ScrollView(.vertical) {
+                                        ZStack(alignment: .topLeading) { // Align to the top and leading edges
+                                            Text(testText)
+                                                .lineLimit(nil)
+                                                .font(.title)
+                                                .foregroundColor(.gray)
+                                                .padding(.horizontal, 20)
+
+                                            if !audioRecorder.STTresult.isEmpty {
+                                                Text(audioRecorder.STTresult)
+                                                    .lineLimit(nil)
+                                                    .font(.title)
+                                                    .foregroundColor(.white)
+                                                    .padding(.horizontal, 20)
+                                                
+                                            }
+                                        }
+                                        .padding(.top, 10)
+                                    }
+                                    .padding(.top, 20)
+                                }
+                            )
+
+                        // Your controls (buttons) can remain here outside the VisualEffectView
+                        // if you want them to be unaffected by the blur effect.
                     }
+
                     
                     
                     ZStack {
                         VisualEffectView(effect: UIBlurEffect(style: .dark))
-                            .frame(width: UIScreen.main.bounds.width - 25, height: 150)
+                            .frame(width: UIScreen.main.bounds.width - 25, height: 100)
                             .clipShape(RoundedRectangle(cornerRadius: 20))
                         HStack(spacing: 40) {
                             if !isRecording {
                                 Button(action: {
-                                    // Implement reset/cancel action
+                                    self.elapsedTime = 0.0
+                                    audioRecorder.recording = Recording(fileURL: URL(string: ""), createdAt: Date())
+                                    
+                                    audioRecorder.STTresult = ""
                                 }) {
                                     Image(systemName: "xmark.circle.fill")
                                         .font(.system(size: 50))
@@ -163,6 +197,6 @@ struct BarView: View {
 
 struct VoiceRecorder_Previews: PreviewProvider {
     static var previews: some View {
-        VoiceRecorder(audioRecorder: AudioController(), audioPlayer: AudioPlayBackController())
+        VoiceRecorder(audioRecorder: AudioController(), audioPlayer: AudioPlayBackController(), testText: "")
     }
 }

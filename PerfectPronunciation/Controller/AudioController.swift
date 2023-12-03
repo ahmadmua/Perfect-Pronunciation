@@ -12,7 +12,7 @@ import Speech
 
 class AudioController: NSObject, ObservableObject {
     @Published var btnTitle: String = "Start Recording"
-    @Published var STTresult: String = "Listening"
+    @Published var STTresult: String = ""
     @Published var recordBtnDisabled = true
     
     private var audioRecorder: AVAudioRecorder!
@@ -85,7 +85,6 @@ class AudioController: NSObject, ObservableObject {
         if audioEngine.isRunning {
             audioEngine.stop()
             recognitionRequest?.endAudio()
-            btnTitle = "Start Listening"
             isRecording = false
         } else {
             do {
@@ -156,7 +155,6 @@ class AudioController: NSObject, ObservableObject {
                 print("Could not start Audio Engine")
             }
 
-            STTresult = "Listening Started"
             btnTitle = "Stop Listening"
         }
     }
@@ -167,7 +165,6 @@ class AudioController: NSObject, ObservableObject {
         recognitionTask?.cancel()
         audioRecorder?.stop()
         btnTitle = "Start Recording"
-        STTresult = "Stopped Listening"
         //once audio stops fetch recording
         fetchRecording()
     }

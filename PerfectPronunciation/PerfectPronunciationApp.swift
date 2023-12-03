@@ -37,7 +37,7 @@ struct PerfectPronunciationApp: App {
 //            TestFirebaseView()
             //Homepage()
             //Homepage().environmentObject(fireDBHelper).environmentObject(sharedData)
-            VoiceRecorder(audioRecorder: AudioController(), audioPlayer: AudioPlayBackController())
+            VoiceRecorder(audioRecorder: AudioController(), audioPlayer: AudioPlayBackController(), testText: "The blue bird, lays three blue eggs in her nest. The three eggs hatch and all the blue birds fly away")
         }
     }
 }

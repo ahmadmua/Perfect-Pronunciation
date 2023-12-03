@@ -4,84 +4,86 @@
 //
 //  Created by Jordan Bhar on 2023-11-28.
 //
-
-import Foundation
-
-
-import Foundation
-
-// MARK: - Welcome
 struct AudioAnalysis: Codable {
-    //let error: JSONNull?
-    let gender_analysis_result: GenderAnalysisResult
-    let pronunciation_score_percentage: PronunciationScorePercentage
-    let total_speech_analysis_results: TotalSpeechAnalysisResults
+    let error: String?
+    let genderAnalysisResult: GenderAnalysisResult
+    let pronunciationScorePercentage: PronunciationScorePercentage
+    let totalSpeechAnalysisResults: TotalSpeechAnalysisResults
 
     struct GenderAnalysisResult: Codable {
         let result: String
     }
 
-
     struct PronunciationScorePercentage: Codable {
         let pronunciationScorePercentage: Double
-
     }
 
     struct TotalSpeechAnalysisResults: Codable {
         let dataset: Dataset
     }
 
-
     struct Dataset: Codable {
-        let articulation_rate: String
-        let balance: String
-        let f0_max: String
-        let f0_mean: String
-        let f0_median: String
-        let f0_quan75: String
-        let f0_quantile25: String
-        let f0_std: String
-        let number_of_pauses: String
-        let number_of_syllables: String
-        let original_duration: String
-        let rate_of_speech: String
-        let speaking_duration: String
-
-        
+        let articulationRate: Value
+        let balance: Value
+        let f0Max: Value
+        let f0Mean: Value
+        let f0Median: Value
+        let f0Min: Value
+        let f0Quan75: Value
+        let f0Quantile25: Value
+        let f0Std: Value
+        let numberOfPauses: Value
+        let numberOfSyllables: Value
+        let originalDuration: Value
+        let rateOfSpeech: Value
+        let speakingDuration: Value
     }
     
-    init(){
-        gender_analysis_result = GenderAnalysisResult.init(result: "")
-        pronunciation_score_percentage = PronunciationScorePercentage.init(pronunciationScorePercentage: 0.0)
-        total_speech_analysis_results = TotalSpeechAnalysisResults(dataset: Dataset.init(articulation_rate: "", balance: "", f0_max: "", f0_mean: "", f0_median: "", f0_quan75: "", f0_quantile25: "", f0_std: "", number_of_pauses: "", number_of_syllables: "", original_duration: "", rate_of_speech: "", speaking_duration: ""))
+    struct Value: Codable {
+        let value: String
+        
+        enum CodingKeys: String, CodingKey {
+            case value = "0"
+        }
+    }
+    
+    struct ErrorValue: Codable {
+        let code: String?
+        
+        init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            self.code = try? container.decode(String.self)
+        }
+        
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.singleValueContainer()
+            try container.encode(code)
+        }
+    }
+    
+    // Default initializer
+    init() {
+        self.error = String("Undefined")
+        self.genderAnalysisResult = GenderAnalysisResult(result: "Undefined")
+        self.pronunciationScorePercentage = PronunciationScorePercentage(pronunciationScorePercentage: 0.0)
+        self.totalSpeechAnalysisResults = TotalSpeechAnalysisResults(
+            dataset: Dataset(
+                articulationRate: Value(value: "Undefined"),
+                balance: Value(value: "Undefined"),
+                f0Max: Value(value: "Undefined"),
+                f0Mean: Value(value: "Undefined"),
+                f0Median: Value(value: "Undefined"),
+                f0Min: Value(value: "Undefined"),
+                f0Quan75: Value(value: "Undefined"),
+                f0Quantile25: Value(value: "Undefined"),
+                f0Std: Value(value: "Undefined"),
+                numberOfPauses: Value(value: "Undefined"),
+                numberOfSyllables: Value(value: "Undefined"),
+                originalDuration: Value(value: "Undefined"),
+                rateOfSpeech: Value(value: "Undefined"),
+                speakingDuration: Value(value: "Undefined")
+            )
+        )
     }
 }
 
-
-
-// MARK: - Encode/decode helpers
-
-//class JSONNull: Codable, Hashable {
-//
-//    public static func == (lhs: JSONNull, rhs: JSONNull) -> Bool {
-//        return true
-//    }
-//
-//    public var hashValue: Int {
-//        return 0
-//    }
-//
-//    public init() {}
-//
-//    public required init(from decoder: Decoder) throws {
-//        let container = try decoder.singleValueContainer()
-//        if !container.decodeNil() {
-//            throw DecodingError.typeMismatch(JSONNull.self, DecodingError.Context(codingPath: decoder.codingPath, debugDescription: "Wrong type for JSONNull"))
-//        }
-//    }
-//
-//    public func encode(to encoder: Encoder) throws {
-//        var container = encoder.singleValueContainer()
-//        try container.encodeNil()
-//    }
-//}

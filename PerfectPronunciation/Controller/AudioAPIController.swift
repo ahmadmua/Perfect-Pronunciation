@@ -17,10 +17,10 @@ enum NetworkError: Error {
 }
 
 class AudioAPIController: ObservableObject {
-    @Published var audioAnalysisData = [AudioAnalysis]()
+    @Published var audioAnalysisData = AudioAnalysis()
 
     func uploadAudio(audioData: Data, completion: @escaping (Result<AudioAnalysis, Error>) -> Void) {
-        let uploadURL = URL(string: "http://192.168.0.15:8000/upload-audio")!
+        let uploadURL = URL(string: "http://3.95.58.220:8000/upload-audio")! //need to change this to AWS EC2 Instance
         var request = URLRequest(url: uploadURL)
         request.httpMethod = "POST"
 
@@ -45,15 +45,28 @@ class AudioAPIController: ObservableObject {
                 completion(.failure(NetworkError.emptyData))
                 return
             }
+            
+            
+            let decoder = JSONDecoder()
+                       decoder.keyDecodingStrategy = .convertFromSnakeCase
 
-            do {
-                let audioAnalysis = try JSONDecoder().decode(AudioAnalysis.self, from: data)
-                completion(.success(audioAnalysis))
-            } catch {
-                completion(.failure(error))
-            }
-        }
-        task.resume()
+                       do {
+                           // Decode the JSON data into an AudioAnalysis object
+                           let audioAnalysis = try decoder.decode(AudioAnalysis.self, from: data)
+                           
+                           // Handling result
+                           DispatchQueue.main.async {
+                               self.audioAnalysisData = audioAnalysis
+                           }
+                           // Call the completion handler with the success result
+                           completion(.success(audioAnalysis))
+                       } catch {
+                           // If decoding fails, print the error and call the completion handler with failure
+                           print("Decoding error: \(error)")
+                           completion(.failure(error))
+                       }
+                   }
+                   task.resume()
     }
 
     private func createBody(boundary: String, data: Data, fileName: String) -> Data {

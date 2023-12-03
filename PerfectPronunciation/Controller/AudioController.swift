@@ -178,21 +178,16 @@ class AudioController: NSObject, ObservableObject {
 
         do {
             let audioData = try Data(contentsOf: audioURL)
-            // No need to convert to base64String since we are sending Data directly
-            // let base64String = audioData.base64EncodedString()
-
             let audioAPIController = AudioAPIController()
             audioAPIController.uploadAudio(audioData: audioData) { result in
                 switch result {
                 case .success(let analysis):
                     DispatchQueue.main.async {
                         print("Audio Analysis: \(analysis)")
-                        // Update your UI accordingly
                     }
                 case .failure(let error):
                     DispatchQueue.main.async {
                         print("Error: \(error)")
-                        // Handle the error in your UI
                     }
                 }
             }

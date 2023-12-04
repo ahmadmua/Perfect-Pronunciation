@@ -12,6 +12,7 @@ class LessonController : ObservableObject{
     
     @Published var list = [Lesson]()
     @Published var question: String?
+    @Published var answer: String?
     @Published var difficulty: String?
     @Published var totQuestions: Int = 0
     
@@ -92,6 +93,7 @@ class LessonController : ObservableObject{
         //read the docs at a specific path
         db.collection("Lessons").document(lesson).collection(difficulty).document(question).getDocument { document, error in
             if let document = document, document.exists{
+                //set question text value
                 if let value = document["Question"] as? String {
                     print("\(value)")
                     self.question = value
@@ -99,11 +101,49 @@ class LessonController : ObservableObject{
                     print("Document exists,")
                     self.question = nil
                 }
+                //set answer text value
+                if let value = document["Answer"] as? String {
+                    print("\(value)")
+                    self.answer = value
+                }else{
+                    print("Document exists,")
+                    self.answer = nil
+                }
             }else{
                 print("Document does not exist")
                 self.question = nil
             }
         }
+    }
+        
+        func getAnswer(lesson: String, difficulty: String, question: String){
+            //get reference to database
+            let db = Firestore.firestore()
+            
+            //read the docs at a specific path
+            db.collection("Lessons").document(lesson).collection(difficulty).document(question).getDocument { document, error in
+                if let document = document, document.exists{
+                    //set question text value
+                    if let value = document["Question"] as? String {
+                        print("\(value)")
+                        self.question = value
+                    }else{
+                        print("Document exists,")
+                        self.question = nil
+                    }
+                    //set answer text value
+                    if let value = document["Answer"] as? String {
+                        print("\(value)")
+                        self.question = value
+                    }else{
+                        print("Document exists,")
+                        self.question = nil
+                    }
+                }else{
+                    print("Document does not exist")
+                    self.question = nil
+                }
+            }
         
         
         

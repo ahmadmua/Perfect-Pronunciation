@@ -1,4 +1,5 @@
 import SwiftUI
+import CoreML
 import Firebase
 import FirebaseAuth
 
@@ -16,6 +17,18 @@ class SharedData: ObservableObject {
 
 struct Details: View {
     
+    @State private var prediction: Double?
+    @State private var averageAccuracy: Float = 0
+    @State private var totalWords: Int = 0
+    
+    private var pronunciationModel: PronunciationModelProjection {
+            do {
+                return try PronunciationModelProjection(configuration: MLModelConfiguration())
+            } catch {
+                fatalError("Failed to load CoreML model: \(error)")
+            }
+        }
+    
     
     func returnDate() -> String{
         dateFormatter.dateFormat = "E"
@@ -26,21 +39,10 @@ struct Details: View {
     @State private var selectedDay: String = "Mo"
     @State private var str: String = ""
     
-    @EnvironmentObject var fireDBHelper: FireDBHelper
+    @EnvironmentObject var fireDBHelper: DataHelper
     
     let dateFormatter = DateFormatter()
-    
-        
-//    @State var days: [Day] = [
-//            Day(name: "Mo", items: []),
-//            Day(name: "Tu", items: []),
-//            Day(name: "We", items: []),
-//            Day(name: "Th", items: []),
-//            Day(name: "Fr", items: []),
-//            Day(name: "Sa", items: []),
-//            Day(name: "Su", items: []),
-//        ]
-    
+
     
     var body: some View {
         
@@ -54,12 +56,21 @@ struct Details: View {
                 .underline()
     
             HStack {
-                StatCard(color: .yellow, title: "Words Pronounced", value: "5")
-                StatCard(color: .yellow, title: "AVG Accuracy", value: "74%")
+                StatCard(color: .yellow, title: "Words Pronounced", value: "\(totalWords)")
+                StatCard(color: .yellow, title: "AVG Accuracy", value: "\(averageAccuracy)%")
             }
             HStack {
-                StatCard(color: .yellow, title: "Predicted Accuracy", value: "67%")
+                StatCard(color: .yellow, title: "Predicted Accuracy", value: "\(makePrediction())%")
                 StatCard(color: .yellow, title: "Longest Streak", value: "12")
+            }
+            .onAppear {
+                prediction = makePrediction()
+                fireDBHelper.getAvgAccuracy { fetchedAccuracy in
+                averageAccuracy = fetchedAccuracy
+                }
+                fireDBHelper.getPronunciationWordCount {fetchedCount in
+                    totalWords = fetchedCount
+                }
             }
             
             CalendarView()
@@ -73,29 +84,17 @@ struct Details: View {
             
             Button(action: {
                 
-                getAvgAccuracy(dayOfWeek: "Mon")
+                //getAvgAccuracy(dayOfWeek: "Mon")
                 
 //                dateFormatter.dateFormat = "E"
 //                let currentDayOfWeek = dateFormatter.string(from: Date())
 //
-               //fireDBHelper.addItemToUserDataCollection(itemName: "Word15", dayOfWeek: "Tue", accuracy: 75)
+//               fireDBHelper.addItemToUserDataCollection(itemName: "Word15", dayOfWeek: "Sun", accuracy: 56)
+//                fireDBHelper.addItemToUserDataCollection(itemName: "Word7", dayOfWeek: "Sat", accuracy: 21)
+                //fireDBHelper.addItemToUserDataCollection(itemName: "Word55", dayOfWeek: "Wed", accuracy: 76)
+//                fireDBHelper.addItemToUserDataCollection(itemName: "Word9", dayOfWeek: "Mon", accuracy: 65)
+
                 
-//                getItemsForDayOfWeek(dayOfWeek: "Tue") { (documents, error) in
-//                    if let documents = documents {
-//                        for document in documents {
-//                            if let word = document.get("Name") as? String,
-//                               let accuracy = document.get("Accuracy") as? String {
-//                                print("\(word) - \(accuracy)%")
-//                            }
-//                        }
-//                    } else if let error = error {
-//                        // Handle the error
-//                        print("Error: \(error)")
-//                    }
-//                }
-                
-//                print(returnDate())
-//
             }){
                 Text("Reset Difficulty")
                     .modifier(CustomTextM(fontName: "MavenPro-Bold", fontSize: 16, fontColor: Color.black))
@@ -112,68 +111,6 @@ struct Details: View {
         
     }
     
-    func getAvgAccuracy(dayOfWeek: String) {
-        if let user = Auth.auth().currentUser {
-            let userID = user.uid
-            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
-            
-            // Create a query to filter documents where "dayofweek" is "Mon"
-            let mondayQuery = itemsCollectionRef.whereField("DayOfWeek", isEqualTo: dayOfWeek)
-            
-            mondayQuery.getDocuments { (querySnapshot, error) in
-                if let error = error {
-                    print("Error getting documents: \(error.localizedDescription)")
-                } else {
-                    var totalAccuracy: Float = 0
-                    var documentCount: Float = 0
-                    
-                    for document in querySnapshot!.documents {
-                        if let accuracy = document["Accuracy"] as? Float {
-                            totalAccuracy += accuracy
-                            documentCount += 1
-                        } else {
-                            print("Document \(document.documentID) exists for Monday, but 'accuracy' field is missing or not a float.")
-                        }
-                    }
-                    
-                    if documentCount > 0 {
-                        let averageAccuracy = totalAccuracy / documentCount
-                        let formattedAverage = String(format: "%.2f", averageAccuracy)
-                        print("Average Accuracy for Monday: \(formattedAverage)")
-                    } else {
-                        print("No documents with 'accuracy' values found for Monday.")
-                    }
-                }
-            }
-        }
-    }
-    
-    
-    func getItemsForDayOfWeek(dayOfWeek: String, completion: @escaping ([DocumentSnapshot]?, Error?) -> Void) {
-        if let user = Auth.auth().currentUser {
-            let userID = user.uid
-            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
-            
-            // Perform a query to filter documents with "DayOfWeek" equal to "Tue"
-            itemsCollectionRef.whereField("DayOfWeek", isEqualTo: dayOfWeek).getDocuments { (querySnapshot, error) in
-                if let error = error {
-                    print("Error fetching items for \(dayOfWeek): \(error)")
-                    completion(nil, error)
-                } else {
-                    if let documents = querySnapshot?.documents {
-                        print("Items for \(dayOfWeek) retrieved successfully")
-                        completion(documents, nil)
-                    }
-                }
-            }
-        } else {
-            // Handle the case where the user is not authenticated
-            let error = NSError(domain: "Authentication Error", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not authenticated"])
-            completion(nil, error)
-        }
-    }
     
     //uses the pronunciation model to predict
     func calculateAccuracyOutput() -> String{
@@ -199,8 +136,24 @@ struct Details: View {
         return "No result found"
     }
     
+     func makePrediction() -> Double {
+        do {
+            let input = PronunciationModelProjectionInput(Feature1: 78, Feature2: 98, Feature3: 86, Feature4: 55, Feature5: 68)
 
+            let prediction = try pronunciationModel.prediction(input: input)
+            self.prediction = prediction.Target
 
+            if let roundedPrediction = self.prediction {
+                return Double(roundedPrediction * 100).rounded() / 100
+            }
+        } catch {
+            print("Error making prediction: \(error)")
+            self.prediction = nil
+        }
+
+        // Default value in case of an error or nil prediction
+        return 0.0
+    }
 
     
 }
@@ -211,7 +164,7 @@ struct ItemsListView: View {
     
     @State private var items: [String] = []
     @EnvironmentObject private var sharedData: SharedData
-    @EnvironmentObject var fireDBHelper: FireDBHelper
+    @EnvironmentObject var fireDBHelper: DataHelper
     
     var body: some View {
         
@@ -401,7 +354,7 @@ struct CalendarView: View {
 
     var body: some View {
         
-        Text("Past 7 days")
+        Text("Weekly Calendar")
         
         HStack(spacing: 10) {
             ForEach(daysOfWeek, id: \.self) { day in

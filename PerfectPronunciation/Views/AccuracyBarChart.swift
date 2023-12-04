@@ -80,19 +80,18 @@ struct AccuracyBarChart: View {
 }
 
 struct BarChart: View {
-    
+
     @State private var selection: Int? = nil
-    
+
     var data: [Accuracy]
-    
     var range: ClosedRange<Int>
-    
+
     var body: some View {
-        
-        VStack{
-            
-            NavigationLink(destination: Details(), tag: 1, selection: self.$selection){}
-            
+
+        VStack {
+
+            //NavigationLink(destination: Details(), tag: 1, selection: self.$selection){}
+
             Chart {
                 ForEach(data) { item in
                     BarMark(
@@ -101,8 +100,8 @@ struct BarChart: View {
                     )
                     .annotation(position: AnnotationPosition.top) {
                         Text("\(item.accuracy, format: .number.precision(.fractionLength(2)))")
-                        // Add minimum width to avoid truncation artifacts
-                        // when value changes
+                            // Add minimum width to avoid truncation artifacts
+                            // when value changes
                             .frame(minWidth: 100)
                             .font(.caption2)
                     }
@@ -110,12 +109,11 @@ struct BarChart: View {
                 }
             }
             .frame(height: 400)
-            
-        
+        }
         .chartYScale(domain: range)
     }
-    }
 }
+
 
 
 
@@ -128,12 +126,13 @@ struct Words: View {
     var body: some View {
         VStack(alignment: HorizontalAlignment.leading) {
             Text("Weekly Average Accuracy")
-            .font(.title2)
+            .font(.title3)
+            .fontWeight(.semibold)
             
-            Text("56% - Moderate Words Difficulty")
-                .font(.title3)
-                .fontWeight(.semibold)
-                .monospacedDigit()
+//            Text("56% - Moderate Words Difficulty")
+//                .font(.title3)
+//                .fontWeight(.semibold)
+//                .monospacedDigit()
         }
     }
 }

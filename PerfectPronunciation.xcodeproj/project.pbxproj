@@ -7,8 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		022550B92B05A57B002D5183 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 022550B82B05A57A002D5183 /* GoogleService-Info.plist */; };
+		022550BB2B05C3F5002D5183 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022550BA2B05C3F5002D5183 /* NotificationController.swift */; };
 		028364712AE9FBC300E88DCB /* StatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364702AE9FBC300E88DCB /* StatData.swift */; };
-		028364732AEA504000E88DCB /* AccuracyGraphModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364722AEA504000E88DCB /* AccuracyGraphModel.swift */; };
+		028364732AEA504000E88DCB /* AccuracyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364722AEA504000E88DCB /* AccuracyViewModel.swift */; };
 		028364752AEA513E00E88DCB /* VoiceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364742AEA513E00E88DCB /* VoiceData.swift */; };
 		028364772AEA528F00E88DCB /* AccuracyBarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364762AEA528F00E88DCB /* AccuracyBarChart.swift */; };
 		028364792AEA534800E88DCB /* Sequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364782AEA534800E88DCB /* Sequence.swift */; };
@@ -18,7 +20,6 @@
 		02E2B6612AD6131100F1FACA /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B6602AD6131100F1FACA /* ContentView.swift */; };
 		02E2B6632AD6131300F1FACA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02E2B6622AD6131300F1FACA /* Assets.xcassets */; };
 		02E2B6662AD6131300F1FACA /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 02E2B6652AD6131300F1FACA /* Preview Assets.xcassets */; };
-		02E2B66D2AD6145300F1FACA /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 02E2B66C2AD6145300F1FACA /* GoogleService-Info.plist */; };
 		02E2B6702AD6150100F1FACA /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 02E2B66F2AD6150100F1FACA /* FirebaseAnalytics */; };
 		02E2B6722AD6150100F1FACA /* FirebaseAnalyticsOnDeviceConversion in Frameworks */ = {isa = PBXBuildFile; productRef = 02E2B6712AD6150100F1FACA /* FirebaseAnalyticsOnDeviceConversion */; };
 		02E2B6742AD6150100F1FACA /* FirebaseAnalyticsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 02E2B6732AD6150100F1FACA /* FirebaseAnalyticsSwift */; };
@@ -32,7 +33,7 @@
 		02E2B6842AD6150100F1FACA /* FirebaseMLModelDownloader in Frameworks */ = {isa = PBXBuildFile; productRef = 02E2B6832AD6150100F1FACA /* FirebaseMLModelDownloader */; };
 		02E2B6862AD6150100F1FACA /* FirebasePerformance in Frameworks */ = {isa = PBXBuildFile; productRef = 02E2B6852AD6150100F1FACA /* FirebasePerformance */; };
 		02E2B6882AD6150100F1FACA /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 02E2B6872AD6150100F1FACA /* FirebaseStorage */; };
-		02E2B68B2AD615FC00F1FACA /* FireDBHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B68A2AD615FC00F1FACA /* FireDBHelper.swift */; };
+		02E2B68B2AD615FC00F1FACA /* DataHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B68A2AD615FC00F1FACA /* DataHelper.swift */; };
 		02E2B68E2AD617F900F1FACA /* Login.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B68D2AD617F900F1FACA /* Login.swift */; };
 		02E2B6902AD6180500F1FACA /* Register.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B68F2AD6180500F1FACA /* Register.swift */; };
 		02E2B6932AD6188500F1FACA /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B6922AD6188500F1FACA /* Components.swift */; };
@@ -42,6 +43,8 @@
 		02E2B69C2AD63BA300F1FACA /* Difficulty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02E2B69B2AD63BA300F1FACA /* Difficulty.swift */; };
 		02F7635E2AF7215B001BEAFA /* PronunciationModel.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 02F7635D2AF7215B001BEAFA /* PronunciationModel.mlmodel */; };
 		02F763602AF721A4001BEAFA /* TestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02F7635F2AF721A4001BEAFA /* TestView.swift */; };
+		02FC80CA2B02039F009DFA9C /* PronunciationModelProjection.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 02FC80C92B02039F009DFA9C /* PronunciationModelProjection.mlmodel */; };
+		02FF6D762B0EB12B00D15D3A /* UpdateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FF6D752B0EB12B00D15D3A /* UpdateInfo.swift */; };
 		4D1162DF2AFC9D9900224519 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1162DE2AFC9D9900224519 /* AudioController.swift */; };
 		4D6170602AEC5D0C002A02C1 /* VoiceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */; };
 		4DAB969C2B16E61100800058 /* AudioAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DAB969B2B16E61100800058 /* AudioAnalysis.swift */; };
@@ -60,8 +63,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		022550B82B05A57A002D5183 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		022550BA2B05C3F5002D5183 /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
 		028364702AE9FBC300E88DCB /* StatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatData.swift; sourceTree = "<group>"; };
-		028364722AEA504000E88DCB /* AccuracyGraphModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccuracyGraphModel.swift; sourceTree = "<group>"; };
+		028364722AEA504000E88DCB /* AccuracyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccuracyViewModel.swift; sourceTree = "<group>"; };
 		028364742AEA513E00E88DCB /* VoiceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceData.swift; sourceTree = "<group>"; };
 		028364762AEA528F00E88DCB /* AccuracyBarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccuracyBarChart.swift; sourceTree = "<group>"; };
 		028364782AEA534800E88DCB /* Sequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sequence.swift; sourceTree = "<group>"; };
@@ -73,8 +78,7 @@
 		02E2B6602AD6131100F1FACA /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		02E2B6622AD6131300F1FACA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		02E2B6652AD6131300F1FACA /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		02E2B66C2AD6145300F1FACA /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		02E2B68A2AD615FC00F1FACA /* FireDBHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FireDBHelper.swift; sourceTree = "<group>"; };
+		02E2B68A2AD615FC00F1FACA /* DataHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataHelper.swift; sourceTree = "<group>"; };
 		02E2B68D2AD617F900F1FACA /* Login.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Login.swift; sourceTree = "<group>"; };
 		02E2B68F2AD6180500F1FACA /* Register.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Register.swift; sourceTree = "<group>"; };
 		02E2B6922AD6188500F1FACA /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
@@ -84,6 +88,9 @@
 		02E2B69B2AD63BA300F1FACA /* Difficulty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Difficulty.swift; sourceTree = "<group>"; };
 		02F7635D2AF7215B001BEAFA /* PronunciationModel.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = PronunciationModel.mlmodel; sourceTree = "<group>"; };
 		02F7635F2AF721A4001BEAFA /* TestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestView.swift; sourceTree = "<group>"; };
+		02FC80C62AFDDDDD009DFA9C /* PerfectPronunciation.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PerfectPronunciation.entitlements; sourceTree = "<group>"; };
+		02FC80C92B02039F009DFA9C /* PronunciationModelProjection.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = PronunciationModelProjection.mlmodel; sourceTree = "<group>"; };
+		02FF6D752B0EB12B00D15D3A /* UpdateInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateInfo.swift; sourceTree = "<group>"; };
 		4D1162DE2AFC9D9900224519 /* AudioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
 		4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorder.swift; sourceTree = "<group>"; };
 		4DAB969B2B16E61100800058 /* AudioAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAnalysis.swift; sourceTree = "<group>"; };
@@ -144,13 +151,14 @@
 		02E2B65D2AD6131100F1FACA /* PerfectPronunciation */ = {
 			isa = PBXGroup;
 			children = (
+				022550B82B05A57A002D5183 /* GoogleService-Info.plist */,
+				02FC80C62AFDDDDD009DFA9C /* PerfectPronunciation.entitlements */,
 				4DC391522B1BE479006C8C39 /* Helpers */,
 				028364802AEDB79700E88DCB /* Info.plist */,
 				02E2B6962AD6236200F1FACA /* Model */,
 				02E2B6912AD6186400F1FACA /* Components */,
 				02E2B68C2AD617E300F1FACA /* Views */,
 				02E2B6892AD615DE00F1FACA /* Controller */,
-				02E2B66C2AD6145300F1FACA /* GoogleService-Info.plist */,
 				02E2B65E2AD6131100F1FACA /* PerfectPronunciationApp.swift */,
 				02E2B6602AD6131100F1FACA /* ContentView.swift */,
 				02E2B6622AD6131300F1FACA /* Assets.xcassets */,
@@ -170,11 +178,12 @@
 		02E2B6892AD615DE00F1FACA /* Controller */ = {
 			isa = PBXGroup;
 			children = (
-				02E2B68A2AD615FC00F1FACA /* FireDBHelper.swift */,
+				02E2B68A2AD615FC00F1FACA /* DataHelper.swift */,
 				C5DF79D52AFB19AA00ECB45C /* LessonController.swift */,
 				4D1162DE2AFC9D9900224519 /* AudioController.swift */,
 				4DAB969D2B16E62E00800058 /* AudioAPIController.swift */,
 				4DC3914C2B1BE1F3006C8C39 /* AudioPlayBackController.swift */,
+				022550BA2B05C3F5002D5183 /* NotificationController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -182,7 +191,6 @@
 		02E2B68C2AD617E300F1FACA /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				4DC5DE822AEB864400F58B73 /* Homepage */,
 				02E2B68D2AD617F900F1FACA /* Login.swift */,
 				02E2B68F2AD6180500F1FACA /* Register.swift */,
 				02E2B6992AD6250700F1FACA /* Country.swift */,
@@ -198,6 +206,8 @@
 				C58B99F92AEDAE2B003C0288 /* WeeklyGamePage.swift */,
 				02F7635F2AF721A4001BEAFA /* TestView.swift */,
 				C5DF79CF2AFB106900ECB45C /* TestFirebaseView.swift */,
+				02E2B6942AD61E6600F1FACA /* Homepage.swift */,
+				02FF6D752B0EB12B00D15D3A /* UpdateInfo.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -215,9 +225,10 @@
 		02E2B6962AD6236200F1FACA /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				02FC80C92B02039F009DFA9C /* PronunciationModelProjection.mlmodel */,
 				02F7635D2AF7215B001BEAFA /* PronunciationModel.mlmodel */,
 				02E2B6972AD6237000F1FACA /* UserData.swift */,
-				028364722AEA504000E88DCB /* AccuracyGraphModel.swift */,
+				028364722AEA504000E88DCB /* AccuracyViewModel.swift */,
 				028364742AEA513E00E88DCB /* VoiceData.swift */,
 				C5DF79D72AFC77AB00ECB45C /* Lesson.swift */,
 				4DAB969B2B16E61100800058 /* AudioAnalysis.swift */,
@@ -327,8 +338,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				02E2B6662AD6131300F1FACA /* Preview Assets.xcassets in Resources */,
+				022550B92B05A57B002D5183 /* GoogleService-Info.plist in Resources */,
 				02E2B6632AD6131300F1FACA /* Assets.xcassets in Resources */,
-				02E2B66D2AD6145300F1FACA /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -350,11 +361,14 @@
 				4DC391512B1BE468006C8C39 /* Extentions.swift in Sources */,
 				02E2B6982AD6237000F1FACA /* UserData.swift in Sources */,
 				028364712AE9FBC300E88DCB /* StatData.swift in Sources */,
+				02FF6D762B0EB12B00D15D3A /* UpdateInfo.swift in Sources */,
 				0283647F2AEDB25900E88DCB /* Settings.swift in Sources */,
 				028364772AEA528F00E88DCB /* AccuracyBarChart.swift in Sources */,
-				02E2B68B2AD615FC00F1FACA /* FireDBHelper.swift in Sources */,
+				02E2B68B2AD615FC00F1FACA /* DataHelper.swift in Sources */,
 				028364792AEA534800E88DCB /* Sequence.swift in Sources */,
 				C58B99F42AED7CC4003C0288 /* IndividualLesson.swift in Sources */,
+				022550BB2B05C3F5002D5183 /* NotificationController.swift in Sources */,
+				02FC80CA2B02039F009DFA9C /* PronunciationModelProjection.mlmodel in Sources */,
 				C58B99F82AED9F5C003C0288 /* AchievementPage.swift in Sources */,
 				C58B99F22AECDACB003C0288 /* LessonsPage.swift in Sources */,
 				02E2B65F2AD6131100F1FACA /* PerfectPronunciationApp.swift in Sources */,
@@ -363,6 +377,7 @@
 				02E2B68E2AD617F900F1FACA /* Login.swift in Sources */,
 				4DC3914D2B1BE1F3006C8C39 /* AudioPlayBackController.swift in Sources */,
 				0283647D2AED807600E88DCB /* Details.swift in Sources */,
+				028364732AEA504000E88DCB /* AccuracyViewModel.swift in Sources */,
 				028364732AEA504000E88DCB /* AccuracyGraphModel.swift in Sources */,
 				4DC3914F2B1BE2D3006C8C39 /* Audio.swift in Sources */,
 				02E2B6902AD6180500F1FACA /* Register.swift in Sources */,
@@ -498,6 +513,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PerfectPronunciation/PerfectPronunciation.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PerfectPronunciation/Preview Content\"";
@@ -519,6 +536,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.muaz.PerfectPronunciation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -530,6 +548,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = PerfectPronunciation/PerfectPronunciation.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"PerfectPronunciation/Preview Content\"";
@@ -551,6 +571,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.muaz.PerfectPronunciation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

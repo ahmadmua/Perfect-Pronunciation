@@ -12,6 +12,7 @@ struct Login: View {
     @State private var showingAlert = false
     @State private var msg = ""
     @State var userData = UserData()
+    let notificationController = NotificationController()
     
     var body: some View {
         
@@ -42,7 +43,8 @@ struct Login: View {
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 0.5).frame(height: 45))
                         .multilineTextAlignment(.center)
                         .onAppear {
-                            email = userData.registeredEmail
+                            email = userData.getEmail()
+                            password = userData.getPass()
                         }
                     
                     VStack(spacing:10){
@@ -93,6 +95,9 @@ struct Login: View {
                         userLoggedIn.toggle()
                     }
                 }
+                
+                notificationController.askPermission()
+                notificationController.scheduleNotifications()
             }
             
             
@@ -101,28 +106,18 @@ struct Login: View {
     }
     
     
-    
-//    func login(){
-        //            Auth.auth().signIn(withEmail: email, password: password){result, error in
-        //                if error != nil {
-        //                    showingAlert = true
-        //                    msg = error!.localizedDescription
-        //                } else {
-        //                    self.selection = 2
-        //                }
-        //            }
-        //        }
         
         func login(){
             
             Auth.auth().signIn(withEmail: email, password: password){result, error in
                 if error != nil {
                     showingAlert = true
-                    msg = error!.localizedDescription
+                    msg = "Login Information Incorrect"
                 } else {
                     
                     let ref = Firestore.firestore().collection("UserData")
-                    ref.whereField("Country", isEqualTo: "").whereField("Difficulty", isEqualTo: "").whereField("Language", isEqualTo: "").getDocuments { (querySnapshot, error) in
+                    ref.whereField("Country", isEqualTo: "").whereField("Difficulty", isEqualTo: "")
+                        .getDocuments { (querySnapshot, error) in
                         if error != nil {
                             // Handle error
                         } else {
@@ -140,6 +135,8 @@ struct Login: View {
                 
             }
         }
+    
+
         
     }
 

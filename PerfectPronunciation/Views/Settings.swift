@@ -10,14 +10,16 @@ import Firebase
 import FirebaseAuth
 
 struct Settings: View {
-    @State private var notiOn = true
+    @AppStorage("notificationsEnabled") private var notiOn = true
     @State private var selection: Int? = nil
     @State var email: String = ""
+    let notificationController = NotificationController()
     
     var body: some View {
         VStack{
 
             NavigationLink(destination: Login(), tag: 1, selection: self.$selection){}
+            NavigationLink(destination: UpdateInfo(), tag: 2, selection: self.$selection){}
             
             VStack{
                 Image(systemName: "gearshape.fill")
@@ -34,12 +36,16 @@ struct Settings: View {
             List{
                 Section(header: Text("Notifications")){
                     Toggle("Turn on notifications", isOn: $notiOn)
-                        .font(.title2)
+                    .font(.title2)
                 }//section
                 .font(.title2)
+                .onChange(of: notiOn, perform: { newValue in
+                            UserDefaults.standard.set(newValue, forKey: "notificationsEnabled")
+                            notificationController.scheduleNotification(enabled: newValue)
+                        })
                 
-                Section(header: Text("Update Information")){
-                    Text("Update Information")
+                Section(header: Text("Update Password")){
+                    Text("Update Password")
                 }//section
                 .font(.title2)
                 .onTapGesture {

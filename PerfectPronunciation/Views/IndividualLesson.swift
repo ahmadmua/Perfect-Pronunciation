@@ -100,8 +100,6 @@ struct IndividualLesson: View {
                         }
                         
                         
-                        
-                        
                     }){
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 50, weight: .light))

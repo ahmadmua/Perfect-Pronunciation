@@ -10,7 +10,7 @@ struct Country: View {
     @State private var selectedLanugage: String = ""
     @State private var selection: Int? = nil
     @State var userData = UserData()
-    @EnvironmentObject var fireDBHelper: FireDBHelper
+    @EnvironmentObject var fireDBHelper: DataHelper
     
     init() {
         for code in NSLocale.isoCountryCodes {
@@ -43,7 +43,7 @@ struct Country: View {
             
             NavigationLink(destination: Difficulty(), tag: 1, selection: self.$selection){}
             
-            Text("Select Your Native Country/Language")
+            Text("Select Your Native Country")
                 .fontWeight(.bold)
                 .font(Font.system(size: 40))
                 .foregroundColor(Color.yellow)
@@ -58,18 +58,18 @@ struct Country: View {
             .pickerStyle(WheelPickerStyle())
             
             
-            Picker("Select Your Native Language", selection: $selectedLanugage) {
-                            ForEach(languageData, id: \.self) { language in
-                                Text(language)
-                                    .tag(language)
-                            }
-                        }
-                        .pickerStyle(WheelPickerStyle())
+//            Picker("Select Your Native Language", selection: $selectedLanugage) {
+//                            ForEach(languageData, id: \.self) { language in
+//                                Text(language)
+//                                    .tag(language)
+//                            }
+//                        }
+//                        .pickerStyle(WheelPickerStyle())
             
             
             Button(action: {
                updateCountry()
-                updateLanguage()
+//                updateLanguage()
 
             })
             {

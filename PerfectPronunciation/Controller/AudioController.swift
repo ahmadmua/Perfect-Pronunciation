@@ -39,12 +39,7 @@ class AudioController: NSObject, ObservableObject {
         }
     }
 
-    // Initializer to set up the class
-    override init() {
-        super.init()
-        // Fetch any existing recordings when the class is initialized
-        fetchRecording()
-    }
+    
     
     // Request authorization to use the microphone and speech recognition
     func requestAuthorization() {

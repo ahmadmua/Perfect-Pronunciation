@@ -20,6 +20,12 @@ struct Details: View {
     @State private var prediction: Double?
     @State private var averageAccuracy: Float = 0
     @State private var totalWords: Int = 0
+    @State var userDifficulty: String = ""
+    @State var expectedDifficulty: String = ""
+    @State private var selection: Int? = nil
+    @State var userData = UserData()
+    
+    @State var audioAnalysisData = AudioAnalysis()
     
     private var pronunciationModel: PronunciationModelProjection {
             do {
@@ -80,10 +86,38 @@ struct Details: View {
             
             Text("\(calculateAccuracyOutput())")
                 .bold()
-            Text("Current Difficulty: Intermediate \n Expected Difficulty: Beginner")
+            
+            Text("Current Difficulty: \(userDifficulty)")
+                .onAppear {
+                    fireDBHelper.findUserDifficulty { difficulty in
+                        if let difficulty = difficulty {
+                            // Use the difficulty value here
+                            userDifficulty = difficulty
+                        }
+                    }
+                }
+            
+            Text("Expected Difficulty: \(expectedDifficulty)")
+                .onAppear {
+                    
+                    fireDBHelper.findUserDifficulty { difficulty in
+                        if let difficulty = difficulty {
+                            // Use the difficulty value here
+                            userDifficulty = difficulty
+                            
+                            if(userDifficulty == "Intermediate"){
+                                expectedDifficulty = "Advanced"
+                            }
+                            
+                        }
+                    }
+                
+                }
             
             Button(action: {
                 
+                fireDBHelper.updateDifficulty(selectedDifficulty: expectedDifficulty, userData: &userData, selection: &selection)
+ 
                 //getAvgAccuracy(dayOfWeek: "Mon")
                 
 //                dateFormatter.dateFormat = "E"
@@ -112,10 +146,11 @@ struct Details: View {
     }
     
     
+    
     //uses the pronunciation model to predict
     func calculateAccuracyOutput() -> String{
         
-        let input = PronunciationModelInput(Feature1: 75, Feature2: 80, Feature3: 95, Feature4: 80, Feature5: 90)
+        let input = PronunciationModelInput(Feature1: 100, Feature2: 100, Feature3: 100, Feature4: 100, Feature5: 100)
         
         do {
             let prediction = try model.prediction(input: input)
@@ -138,7 +173,7 @@ struct Details: View {
     
      func makePrediction() -> Double {
         do {
-            let input = PronunciationModelProjectionInput(Feature1: 78, Feature2: 98, Feature3: 86, Feature4: 55, Feature5: 68)
+            let input = PronunciationModelProjectionInput(Feature1: 54, Feature2: 98, Feature3: 86, Feature4: 55, Feature5: 68)
 
             let prediction = try pronunciationModel.prediction(input: input)
             self.prediction = prediction.Target

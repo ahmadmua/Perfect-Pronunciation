@@ -134,10 +134,10 @@ class LessonController : ObservableObject{
                     //set answer text value
                     if let value = document["Answer"] as? String {
                         print("\(value)")
-                        self.question = value
+                        self.answer = value
                     }else{
                         print("Document exists,")
-                        self.question = nil
+                        self.answer = nil
                     }
                 }else{
                     print("Document does not exist")

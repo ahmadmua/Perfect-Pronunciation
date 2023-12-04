@@ -16,6 +16,10 @@ struct AchievementPage: View {
     @State private var showStore = false
     @State private var showHome = false
     
+    @State var showingAlert : Bool = false
+    
+    @ObservedObject var achieveModel = AchievementController()
+    
     
     var body: some View {
         
@@ -35,16 +39,18 @@ struct AchievementPage: View {
                         HStack{
                             Button(action: {
                                 print("basic1 btn press")
-                                //                            self.selection = 1
+                                
+
                             }){
                                 Image(systemName: "square.fill")
                                     .font(.system(size: 50, weight: .light))
                             }//btn
                             .buttonStyle(.borderless)
+                            .disabled(achieveModel.achievement1)
                             VStack{
-                                Text("Achievement Name")
+                                Text("Completion")
                                     .padding(.horizontal, 20)
-                                Text("Achievement Description")
+                                Text("Complete all the lessons")
                                     .padding(.horizontal, 20)
                             }
                         }//hstack
@@ -54,7 +60,8 @@ struct AchievementPage: View {
                         HStack{
                             Button(action: {
                                 print("basic2 btn press")
-                                //                            self.selection = 1
+                                achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
+                                
                             }){
                                 Image(systemName: "square.fill")
                                     .font(.system(size: 50, weight: .light))
@@ -132,6 +139,10 @@ struct AchievementPage: View {
             .padding(.vertical, -15)
             .padding(.horizontal, -20)
             
+            .onAppear(){
+                achieveModel.checkUserAchievement()
+            }
+            
             
         }//list
         .background(Color("Background"))
@@ -162,7 +173,7 @@ struct AchievementPage: View {
                         .foregroundStyle(Color.gray)
                 }
                 .navigationDestination(isPresented: $showLesson){
-                    LessonsPage()
+                    LessonsPage(showingAlert: $showingAlert)
                         .navigationBarBackButtonHidden(true)
                 }
                 

@@ -96,8 +96,15 @@ struct Register: View {
                     ["Country": "",
                      "Difficulty": "",
                      "Currency": 0.0,
-                     "Achievments": [
-                        "Achievment 1" : false
+                     "LessonsCompleted": [
+                        "Conversation" : false,
+                        "Numbers" : false,
+                        "Directions" : false,
+                        "Food1" : false,
+                        "Food2" : false
+                     ],
+                     "Achievements": [
+                        "Achievement 1" : false
                      ]
                     ])
                 self.selection = 1

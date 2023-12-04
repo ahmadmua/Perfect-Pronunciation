@@ -6,15 +6,19 @@
 //
 
 import SwiftUI
+import Firebase
+import FirebaseAuth
 
 struct IndividualLesson: View {
     //    @Binding var msgTaken: String
     @ObservedObject var model = LessonController()
     
-    @State private var selection: Int? = nil
     @State private var showRecord = false
     @State private var showNext = false
     @State private var showLesson = false
+    @State private var userDifficulty: String = "Easy"
+    
+    @State private var showingAlert = false
     
     @State private var isPopupPresented = false
     
@@ -92,10 +96,20 @@ struct IndividualLesson: View {
 //                                                    self.selection = 1
                         counter+=1
                         
+                        
+                            
+                        //if counter is greater than number of questions
                         if counter >= model.totQuestions{
+                            //go back to the home page
                             counter = 0
                             self.showLesson.toggle()
+                            self.showingAlert.toggle()
+                            
+                            //update the lesson as complete
+                            model.updateLessonCompletion(userLesson: lessonName)
+                            
                         }else{
+                            //else counter is not more than the number of questions, continue to the next question
                             self.showNext.toggle()
                         }
                         
@@ -106,10 +120,10 @@ struct IndividualLesson: View {
                     }//btn
                     .navigationDestination(isPresented: $showNext){
                         IndividualLesson(lessonName: $lessonName)
-//                            .navigationBarBackButtonHidden(true)
+                            .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
-                        LessonsPage()
+                        LessonsPage(showingAlert: $showingAlert)
                             .navigationBarBackButtonHidden(true)
                     }
                     .foregroundStyle(Color.green)
@@ -119,38 +133,32 @@ struct IndividualLesson: View {
             }//grid
             .background(Color("Background"))
             
+            
                 
         }//nanstack
         .background(Color("Background"))
         .onAppear{
+            
+            
+            
+            //find the difficulty the user has set
+            model.findUserDifficulty{
+                print("USER DIFICULTY!! : \(model.difficulty!)")
+                
+                
+                //find the number of questions for the lesson
+                model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty!)
+                
+                //get the current question for the page number
+                model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
+            }
+            
              
             self.showNext = false
-            
-            model.getNumberOfQuestion(lesson: lessonName, difficulty: "Easy")
-            
-            
-//            nextQuestion()
-//            counter = 0
-            
-            
-            model.getQuestion(lesson: lessonName, difficulty: "Easy", question: "Question\(counter)")
-            
+         
         }
-//        .onDisappear{
-//            counter+=1
-//        }
-        
-        
-       
-        
+         
     }
-    
-//    func nextQuestion(){
-//        counter += 1
-//    }
-        
-//    }//view
-    
     
 
 }//view

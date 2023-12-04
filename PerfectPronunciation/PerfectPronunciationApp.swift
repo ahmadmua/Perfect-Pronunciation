@@ -33,12 +33,12 @@ struct PerfectPronunciationApp: App {
     
     var body: some Scene {
         WindowGroup {
-//            Login().environmentObject(fireDBHelper).environmentObject(sharedData)
+           Login().environmentObject(fireDBHelper).environmentObject(sharedData)
 //            ContentView().environmentObject(fireDBHelper).environmentObject(userData)
 //            TestFirebaseView()
             //Homepage()
             //Homepage().environmentObject(fireDBHelper).environmentObject(sharedData)
-            VoiceRecorder(audioRecorder: AudioController(), audioPlayer: AudioPlayBackController(), audioAnalysisData: AudioAPIController(), testText: "The blue bird, lays three blue eggs in her nest. The three eggs hatch and all the blue birds fly away. All the three little birds")
+         // VoiceRecorder(audioRecorder: AudioController(), audioPlayer: AudioPlayBackController(), audioAnalysisData: AudioAPIController(), testText: "The blue bird, lays three blue eggs in her nest. The three eggs hatch and all the blue birds fly away. All the three little birds")
         }
     }
 }

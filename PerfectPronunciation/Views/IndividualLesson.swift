@@ -20,7 +20,7 @@ struct IndividualLesson: View {
     
     @State private var showingAlert = false
     
-    @State private var isPopupPresented = false
+    @State  private var isPopupPresented = false
     
 //    @State private var counter : Int = 0
     
@@ -81,7 +81,7 @@ struct IndividualLesson: View {
                     .foregroundStyle(Color.red)
                     .buttonStyle(.borderless)
                     .sheet(isPresented: $isPopupPresented) {
-                        VoiceRecorder(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController(), audioAnalysisData: AudioAPIController(), testText: "")
+                        VoiceRecorder(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController(), audioAnalysisData: AudioAPIController(), testText: model.question!, isPopupPresented: $isPopupPresented)
                     }
 //                    .navigationDestination(isPresented: $showRecord){
 //                        VoiceRecorder()

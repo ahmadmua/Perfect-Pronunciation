@@ -22,6 +22,8 @@ struct VoiceRecorder: View {
     @State private var audioLevels: [CGFloat] = Array(repeating: 0.5, count: 50)
     @State private var elapsedTime = TimeInterval(0)
     @State private var timer: Timer?
+    @Binding var isPopupPresented: Bool  // Add this line to receive the state variable
+
     
     enum RecorderState {
         case readyToRecord
@@ -73,14 +75,16 @@ struct VoiceRecorder: View {
                                                 .foregroundColor(.gray)
                                                 .padding(.horizontal, 20)
                                             
-                                            if !audioRecorder.STTresult.isEmpty {
-                                                Text(audioRecorder.STTresult)
-                                                    .lineLimit(nil)
-                                                    .font(.title)
-                                                    .foregroundColor(.white)
-                                                    .padding(.horizontal, 20)
-                                                
-                                            }
+                                            Text(audioRecorder.STTresult)
+                                                .lineLimit(nil)
+                                                .font(.title)
+                                                .foregroundColor(.white)
+                                                .padding(.horizontal, 20)
+                                            
+//                                            if !audioRecorder.STTresult.isEmpty {
+//                                                
+//                                                
+//                                            }
                                         }
                                         .padding(.top, 10)
                                     }
@@ -144,6 +148,8 @@ struct VoiceRecorder: View {
                             if recordingState != .recording {
                                 Button(action: {
                                     self.audioRecorder.submitAudio()
+                                    self.isPopupPresented = false // Add this line to dismiss the sheet
+
                                 }) {
                                     Image(systemName: "checkmark.circle.fill")
                                         .font(.system(size: 50))
@@ -229,8 +235,8 @@ struct BarView: View {
     }
 }
 
-struct VoiceRecorder_Previews: PreviewProvider {
-    static var previews: some View {
-        VoiceRecorder(audioRecorder: AudioController(), audioPlayer: AudioPlayBackController(), audioAnalysisData: AudioAPIController(), testText: "")
-    }
-}
+//struct VoiceRecorder_Previews: PreviewProvider {
+//    static var previews: some View {
+//        VoiceRecorder(audioRecorder: AudioController(), audioPlayer: AudioPlayBackController(), audioAnalysisData: AudioAPIController(), testText: "", isPopupPresented: Tr)
+//    }
+//}

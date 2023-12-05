@@ -95,9 +95,8 @@ struct WeeklyGamePage: View {
             }
             
             List(leaderboardModel.leaderboardFull){content in
-                Text(content.id)
-                Text("\(leaderboardModel.getFlagForCountry(fullCountryName: content.country)), \(content.country)")
-                Text("\(content.weeklyChallengeComplete)")
+                Text("\(leaderboardModel.getFlagForCountry(fullCountryName: content.country)) \(content.userName) \n \(content.weeklyChallengeComplete)")
+          
                 
             }
         }

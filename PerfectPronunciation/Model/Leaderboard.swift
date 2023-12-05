@@ -9,6 +9,7 @@ import Foundation
 
 struct Leaderboard: Identifiable {
     var id : String
+    var userName : String
     var country : String
     var weeklyChallengeComplete : Float
     

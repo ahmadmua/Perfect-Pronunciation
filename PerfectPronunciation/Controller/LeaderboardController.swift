@@ -30,6 +30,7 @@ class LeaderboardController: ObservableObject{
                         self.leaderboardFull = snapshot.documents.map{ d in
                             //create a new item for the list for each doc returned
                             return Leaderboard(id: d.documentID,
+                                               userName: d["Username"] as? String ?? "",
                                                country: d["Country"] as? String ?? "",
                                                weeklyChallengeComplete: d["WeeklyChallengeComplete"] as? Float ?? 0.0)
                         }
@@ -61,18 +62,18 @@ class LeaderboardController: ObservableObject{
             return String(s)
         }
         
-        func getCountryCode(code : String) -> String {
-            let locales : String = ""
-            for localeCode in NSLocale.isoCountryCodes {
-                let identifier = NSLocale(localeIdentifier: "en_UK")
-                let countryName = identifier.displayName(forKey: NSLocale.Key.countryCode, value: localeCode)
-                
-                if code.lowercased() == countryName?.lowercased() {
-                    return localeCode
-                }
+    func getCountryCode(code : String) -> String {
+        let locales : String = ""
+        for localeCode in NSLocale.isoCountryCodes {
+            let identifier = NSLocale(localeIdentifier: "en_UK")
+            let countryName = identifier.displayName(forKey: NSLocale.Key.countryCode, value: localeCode)
+            
+            if code.lowercased() == countryName?.lowercased() {
+                return localeCode
             }
-            return locales
         }
+        return locales
+    }
     
     
 }

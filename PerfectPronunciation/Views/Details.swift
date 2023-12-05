@@ -96,7 +96,7 @@ struct Details: View {
                         if let difficulty = difficulty {
                             userDifficulty = difficulty
                             
-                            if userDifficulty == "Intermediate" {
+                            if (userDifficulty == "Intermediate") {
                                 expectedDifficulty = "Advanced"
                             }
                         }

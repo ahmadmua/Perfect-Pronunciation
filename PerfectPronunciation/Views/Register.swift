@@ -105,7 +105,10 @@ struct Register: View {
                      ],
                      "Achievements": [
                         "Achievement 1" : false
-                     ]
+                     ],
+                     
+                     "Username" : email.components(separatedBy: "@").first ?? "",
+         
                     ])
                 self.selection = 1
             }

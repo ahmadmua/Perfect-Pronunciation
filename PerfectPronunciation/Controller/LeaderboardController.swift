@@ -8,16 +8,16 @@
 import Foundation
 import Firebase
 
+
 class LeaderboardController: ObservableObject{
     @Published var leaderboardFull = [Leaderboard]()
-    @Published var leaderboardTest = ["Nick", "Test", "Muaz"]
     
     
     func getLeaderboard(){
         //get reference to DB
         let db = Firestore.firestore()
         //read docs at a specific path
-        db.collection("UserData").getDocuments { snapshot, error in
+        db.collection("UserData").order(by: "WeeklyChallengeComplete", descending: true).getDocuments { snapshot, error in
             //check for errors
             if error == nil{
                 //no error
@@ -43,5 +43,36 @@ class LeaderboardController: ObservableObject{
         }
         
     }
+    
+    func getFlagForCountry(fullCountryName: String) -> String {
+        
+        var countryName = fullCountryName
+        if(fullCountryName == "China"){
+            countryName = "China mainland"
+        }
+        let country = getCountryCode(code: countryName)
+        
+        
+        let base : UInt32 = 127397
+            var s = ""
+            for v in country.unicodeScalars {
+                s.unicodeScalars.append(UnicodeScalar(base + v.value)!)
+            }
+            return String(s)
+        }
+        
+        func getCountryCode(code : String) -> String {
+            let locales : String = ""
+            for localeCode in NSLocale.isoCountryCodes {
+                let identifier = NSLocale(localeIdentifier: "en_UK")
+                let countryName = identifier.displayName(forKey: NSLocale.Key.countryCode, value: localeCode)
+                
+                if code.lowercased() == countryName?.lowercased() {
+                    return localeCode
+                }
+            }
+            return locales
+        }
+    
     
 }

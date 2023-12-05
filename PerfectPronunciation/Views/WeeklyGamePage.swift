@@ -76,13 +76,32 @@ struct WeeklyGamePage: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Color("CustYell"), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
-                    
-        List(leaderboardModel.leaderboardFull){content in
-            Text(content.id)
-            Text(content.country)
-            Text("\(content.weeklyChallengeComplete)")
+              
+        VStack{
             
+            HStack{
+                Spacer()
+                
+                Button(action: {
+                    leaderboardModel.getLeaderboard()
+                }) {
+                    Image(systemName: "arrow.clockwise")
+                        .imageScale(.medium) // Adjust icon size
+//
+                }
+                .padding(.trailing, 25)
+                .padding(.top, 25)
+                
+            }
+            
+            List(leaderboardModel.leaderboardFull){content in
+                Text(content.id)
+                Text("\(leaderboardModel.getFlagForCountry(fullCountryName: content.country)), \(content.country)")
+                Text("\(content.weeklyChallengeComplete)")
+                
+            }
         }
+        .padding(.top, -100)
         
         
         ZStack{
@@ -193,7 +212,9 @@ struct WeeklyGamePage: View {
     init(){
         leaderboardModel.getLeaderboard()
         
-    }
+        }
+        
+    
 }
                 //        .safeAreaInset(edge: .top){
                 //

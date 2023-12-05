@@ -16,6 +16,7 @@ class AudioController: NSObject, ObservableObject {
     @Published var btnTitle: String = "Start Recording"
     @Published var STTresult: String = ""
     @Published var recordBtnDisabled = true
+    @Published var analysisAccuracyScore: Float = 0.0
     
     // Private properties for managing audio recording and speech recognition
     private var audioRecorder: AVAudioRecorder!
@@ -220,6 +221,9 @@ class AudioController: NSObject, ObservableObject {
                     DispatchQueue.main.async {
                         // Process successful analysis result
                         print("Audio Analysis: \(analysis)")
+                        self.analysisAccuracyScore = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
+                        //update user completion
+                        DataHelper().updateWeeklyCompletion(score: self.analysisAccuracyScore)
                     }
                 case .failure(let error):
                     DispatchQueue.main.async {

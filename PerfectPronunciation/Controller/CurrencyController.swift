@@ -213,7 +213,7 @@ class CurrencyController : ObservableObject{
             //read the docs at a specific path
             userDocRef.getDocument { document, error in
                 if let document = document, document.exists{
-                    // Access the "Achievements" from UserData in firebase
+                    // Access the "Items" from UserData in firebase
                     if var items = document.data()?["Items"] as? [String: Bool] {
                         
                         if let item = items[storeItem] {

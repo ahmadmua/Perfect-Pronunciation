@@ -48,10 +48,13 @@ struct WeeklyLesson: View {
                         timeRemaining -= 1
                     }
                     if (timeRemaining == 1){
-
+                        //end recording and submit
                         recordingState = .readyToRecord
                         audioRecorder.stopRecording()
                         audioRecorder.submitAudio()
+                            
+//                        //update user completion
+//                        fireDBHelper.updateWeeklyCompletion(score: audioRecorder.analysisAccuracyScore)
                         
                         //return to the main screen when timer is done
                         self.showWeekly = true
@@ -89,7 +92,7 @@ struct WeeklyLesson: View {
             
             HStack{
                 ZStack {
-                    //recording buttons
+                    //recording buttons (all recording related code was adapted from jordan)
                     HStack(spacing: 40) {
                         
                         if recordingState != .recording {

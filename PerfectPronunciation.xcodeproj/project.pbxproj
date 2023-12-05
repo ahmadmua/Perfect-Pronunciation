@@ -60,6 +60,8 @@
 		C5D6050E2B0B3BCB00620283 /* CurrencyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D6050D2B0B3BCB00620283 /* CurrencyController.swift */; };
 		C5D605122B0F244A00620283 /* AchievementController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D605112B0F244A00620283 /* AchievementController.swift */; };
 		C5D605142B1DAC8A00620283 /* WeeklyLesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D605132B1DAC8A00620283 /* WeeklyLesson.swift */; };
+		C5D605162B1F1F1600620283 /* Leaderboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D605152B1F1F1600620283 /* Leaderboard.swift */; };
+		C5D605182B1F23D100620283 /* LeaderboardController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D605172B1F23D100620283 /* LeaderboardController.swift */; };
 		C5DF79D02AFB106900ECB45C /* TestFirebaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF79CF2AFB106900ECB45C /* TestFirebaseView.swift */; };
 		C5DF79D62AFB19AA00ECB45C /* LessonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF79D52AFB19AA00ECB45C /* LessonController.swift */; };
 		C5DF79D82AFC77AB00ECB45C /* Lesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF79D72AFC77AB00ECB45C /* Lesson.swift */; };
@@ -109,6 +111,8 @@
 		C5D6050D2B0B3BCB00620283 /* CurrencyController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyController.swift; sourceTree = "<group>"; };
 		C5D605112B0F244A00620283 /* AchievementController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementController.swift; sourceTree = "<group>"; };
 		C5D605132B1DAC8A00620283 /* WeeklyLesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyLesson.swift; sourceTree = "<group>"; };
+		C5D605152B1F1F1600620283 /* Leaderboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Leaderboard.swift; sourceTree = "<group>"; };
+		C5D605172B1F23D100620283 /* LeaderboardController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardController.swift; sourceTree = "<group>"; };
 		C5DF79CF2AFB106900ECB45C /* TestFirebaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFirebaseView.swift; sourceTree = "<group>"; };
 		C5DF79D52AFB19AA00ECB45C /* LessonController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonController.swift; sourceTree = "<group>"; };
 		C5DF79D72AFC77AB00ECB45C /* Lesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lesson.swift; sourceTree = "<group>"; };
@@ -192,6 +196,7 @@
 				022550BA2B05C3F5002D5183 /* NotificationController.swift */,
 				C5D6050D2B0B3BCB00620283 /* CurrencyController.swift */,
 				C5D605112B0F244A00620283 /* AchievementController.swift */,
+				C5D605172B1F23D100620283 /* LeaderboardController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -242,6 +247,7 @@
 				C5DF79D72AFC77AB00ECB45C /* Lesson.swift */,
 				4DAB969B2B16E61100800058 /* AudioAnalysis.swift */,
 				4DC3914E2B1BE2D3006C8C39 /* Audio.swift */,
+				C5D605152B1F1F1600620283 /* Leaderboard.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -357,6 +363,7 @@
 				028364712AE9FBC300E88DCB /* StatData.swift in Sources */,
 				02FF6D762B0EB12B00D15D3A /* UpdateInfo.swift in Sources */,
 				0283647F2AEDB25900E88DCB /* Settings.swift in Sources */,
+				C5D605182B1F23D100620283 /* LeaderboardController.swift in Sources */,
 				028364772AEA528F00E88DCB /* AccuracyBarChart.swift in Sources */,
 				02E2B68B2AD615FC00F1FACA /* DataHelper.swift in Sources */,
 				028364792AEA534800E88DCB /* Sequence.swift in Sources */,
@@ -374,6 +381,7 @@
 				0283647D2AED807600E88DCB /* Details.swift in Sources */,
 				028364732AEA504000E88DCB /* AccuracyViewModel.swift in Sources */,
 				028364732AEA504000E88DCB /* AccuracyViewModel.swift in Sources */,
+				C5D605162B1F1F1600620283 /* Leaderboard.swift in Sources */,
 				4DC3914F2B1BE2D3006C8C39 /* Audio.swift in Sources */,
 				02E2B6902AD6180500F1FACA /* Register.swift in Sources */,
 				02E2B6952AD61E6600F1FACA /* Homepage.swift in Sources */,

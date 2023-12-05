@@ -10,9 +10,10 @@ import Firebase
 
 struct TestFirebaseView: View {
     @ObservedObject var model = LessonController()
+    @ObservedObject var leadModel = LeaderboardController()
     
     var body: some View {
-        List(model.list) { item in
+        List(leadModel.leaderboardFull) { item in
             Text(item.id)
 //            Text(item.difficulty)
 //            Text(item.language)
@@ -34,6 +35,8 @@ struct TestFirebaseView: View {
     init(){
         model.getLesson()
         model.getQuestion(lesson: "Food1", difficulty: "Easy", question: "Question")
+        
+        leadModel.getLeaderboard()
     }
     
 

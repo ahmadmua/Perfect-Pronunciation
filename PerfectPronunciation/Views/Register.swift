@@ -96,6 +96,7 @@ struct Register: View {
                     ["Country": "",
                      "Difficulty": "",
                      "Currency": 0.0,
+                     "WeeklyChallengeComplete": 0.0,
                      "LessonsCompleted": [
                         "Conversation" : false,
                         "Numbers" : false,

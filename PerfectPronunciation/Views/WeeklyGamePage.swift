@@ -8,7 +8,9 @@
 import SwiftUI
 
 struct WeeklyGamePage: View {
-    
+//    @ObservedObject var audioRecorder: AudioController
+    @ObservedObject var leaderboardModel = LeaderboardController()
+
     @State private var selection: Int? = nil
     @State private var showLesson = false
     @State private var showIndiLesson = false
@@ -31,7 +33,7 @@ struct WeeklyGamePage: View {
                 VStack{
 
                     
-                    Text("In this time attack mode compete against everyone to achieve the most correctly pronounced words in 15 seconds!")
+                    Text("In this time attack mode compete against everyone to achieve the most correctly pronounced words in 15 seconds! Dont forget to press record, and say all words in the same recording!")
                         .padding(.vertical, 30)
                         .padding(.horizontal, 20)
                     
@@ -50,42 +52,24 @@ struct WeeklyGamePage: View {
                     
                     Divider()
                     
-                    Grid{
-                        GridRow{
-                            HStack{
-                                Text("Rank")
-                                Text("Name")
-                                Text("Score")
-                            }
-                        }
-                        GridRow{
-                            HStack{
-                                Text("1")
-                                Text("Nick")
-                                Text("10")
-                            }
-                        }
-                        GridRow{
-                            HStack{
-                                Text("2")
-                                Text("Jordan")
-                                Text("8")
-                            }
-                        }
-                        GridRow{
-                            HStack{
-                                Text("3")
-                                Text("Muaz")
-                                Text("7")
-                            }
-                        }
-                    }
-                    .padding(.top, 30)
+//                    VStack{
+//                        
+//
+//                    }
+//                    .onAppear{
+//                        leaderboardModel.getLeaderboard()
+//                    }
+//                    .padding(.top, 30)
+                    
                     
                     
                     
                     
                 }
+//                .onAppear{
+//                    //update user completion
+//                    fireDBHelper.updateWeeklyCompletion(score: audioRecorder.analysisAccuracyScore)
+//                }
                         
                     }
             .navigationTitle("Weekly Challenge")
@@ -93,6 +77,13 @@ struct WeeklyGamePage: View {
             .toolbarBackground(Color("CustYell"), for: .navigationBar)
             .toolbarBackground(.visible, for: .navigationBar)
                     
+        List(leaderboardModel.leaderboardFull){content in
+            Text(content.id)
+            Text(content.country)
+            Text("\(content.weeklyChallengeComplete)")
+            
+        }
+        
         
         ZStack{
             Rectangle()
@@ -197,8 +188,13 @@ struct WeeklyGamePage: View {
 
         .background(Color("Background"))
         }
+        
     
-                }
+    init(){
+        leaderboardModel.getLeaderboard()
+        
+    }
+}
                 //        .safeAreaInset(edge: .top){
                 //
 //            }

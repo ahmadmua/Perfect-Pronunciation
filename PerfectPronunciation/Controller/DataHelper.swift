@@ -14,6 +14,7 @@ class DataHelper: ObservableObject {
     @Published var averageAccuracy: Float = 0
     @Published var wordList = [String]()
     
+    
     init(){}
     
     func updateDifficulty(selectedDifficulty: String, userData: inout UserData, selection: inout Int?){
@@ -264,6 +265,7 @@ class DataHelper: ObservableObject {
         }
     }
     
+    //function to pull all the hard words, created by nicholas, adapted from muaz code
     func getHardWords(completion: @escaping ([DocumentSnapshot]?, Error?) -> Void) {
             if let user = Auth.auth().currentUser {
                 let userID = user.uid
@@ -308,10 +310,50 @@ class DataHelper: ObservableObject {
             }
         }
     
-    
-    
- 
+    //update the userData to reflect the users score for the weekly challenge
+    func updateWeeklyCompletion(score: Float){
+        
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            
+            //read the docs at a specific path
+            userDocRef.getDocument { document, error in
+                if let document = document, document.exists{
+                    // Access from UserData in firebase
+                    if var item = document.data()?["WeeklyChallengeComplete"] as? Float {
+                        
 
+                            print("weekly complete UPDATE CONTROLLER UPDATE : \(item)")
+                            
+                            item = score
+                            
+                            // Update the specific field in the user's document
+                            userDocRef.updateData(["WeeklyChallengeComplete" : item]) { error in
+                                if let error = error {
+                                    print("Error updating document: \(error)")
+                                } else {
+                                    print("Document updated successfully")
+                                }
+                            }
+                            
+                    }else{
+                        print("Document exists,")
+                        
+                    }
+                }else{
+                    print("Document does not exist")
+                    
+                }
+                
+            }  
+            
+        } else {
+            // Handle the case where the user is not authenticated
+            print("User is not authenticated")
+        }
+        
+    }
 
     
 }

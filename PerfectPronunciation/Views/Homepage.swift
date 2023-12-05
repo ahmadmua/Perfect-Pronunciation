@@ -83,6 +83,7 @@ struct Homepage: View {
                                                     }
                                                     .navigationDestination(isPresented: $showWeekly){
                                                         WeeklyGamePage()
+//                                                        TestFirebaseView()
                                                             .navigationBarBackButtonHidden(true)
                                                     }
                                                 }//hstack

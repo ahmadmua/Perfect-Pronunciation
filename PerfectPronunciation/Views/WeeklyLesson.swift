@@ -8,20 +8,20 @@
 import SwiftUI
 
 struct WeeklyLesson: View {
+    //models
     @ObservedObject var audioRecorder: AudioController
     @ObservedObject var audioPlayer: AudioPlayBackController
     @ObservedObject var audioAnalysisData : AudioAPIController
     @ObservedObject var currModel = CurrencyController()
     
+    @EnvironmentObject var fireDBHelper: DataHelper
+    //recording
     @State private var isRecording = false
     @State private var recordingState = RecorderState.readyToRecord
     @State private var audioLevels: [CGFloat] = Array(repeating: 0.5, count: 50)
-    
+    //navigation
     @State private var showWeekly = false
-    @State private var showRecord = false
-    
-//    @State private var isPopupPresented = false
-    
+    //button disable
     @State private var disableTimeBtn = false
     @State private var submitBtn = true
     
@@ -29,11 +29,9 @@ struct WeeklyLesson: View {
     @State var timeRemaining = 15
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
-    //countdown timer
-    @State var countdownRemaining = 3
-    let timerCountdown = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var items: [String] = []
     
-    
+    //state for recorder
     enum RecorderState {
         case readyToRecord
         case recording
@@ -50,21 +48,15 @@ struct WeeklyLesson: View {
                         timeRemaining -= 1
                     }
                     if (timeRemaining == 1){
-//                        print("time remaining : 1 second")
-//                        self.timeRemaining = 15
+
                         recordingState = .readyToRecord
                         audioRecorder.stopRecording()
                         audioRecorder.submitAudio()
+                        
                         //return to the main screen when timer is done
                         self.showWeekly = true
-//                        self.submitBtn = false
-//                        isPopupPresented = false
                         
                     }
-                    
-//                    if (timeRemaining == 0){
-//                        self.showWeekly = true
-//                    }
                 
                 }
                 .navigationDestination(isPresented: $showWeekly){
@@ -77,11 +69,27 @@ struct WeeklyLesson: View {
             Divider()
             Spacer()
             
+            List(fireDBHelper.wordList, id: \.self) { item in
+                Text(item)
+            }
+            .onAppear{
+                fireDBHelper.getHardWords() { (documents, error) in
+                    if let documents = documents {
+                        let items = fireDBHelper.wordList
+                        self.items = items
+                    } else if let error = error {
+                        // Handle the error
+                        print("Error: \(error)")
+                    }
+                }
+
+            }
+            
+            Spacer()
+            
             HStack{
                 ZStack {
-//                    VisualEffectView(effect: UIBlurEffect(style: .dark))
-//                        .frame(width: UIScreen.main.bounds.width - 25, height: 100)
-//                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                    //recording buttons
                     HStack(spacing: 40) {
                         
                         if recordingState != .recording {
@@ -97,7 +105,7 @@ struct WeeklyLesson: View {
                                     .foregroundColor(.red)
                             }
                             .overlay(Circle().stroke(Color.black, lineWidth: 2))
-                        }
+                        }//x button
                         
                         Button(action: {
                             switch recordingState {
@@ -128,20 +136,6 @@ struct WeeklyLesson: View {
                         }
                         .overlay(Circle().stroke(Color.black, lineWidth: 2))
                         
-//                        if recordingState != .recording {
-//                            Button(action: {
-//                                self.audioRecorder.submitAudio()
-////                                self.showWeekly
-////                                self.isPopupPresented = false // Add this line to dismiss the sheet
-//
-//                            }) {
-//                                Image(systemName: "checkmark.circle.fill")
-//                                    .font(.system(size: 50))
-//                                    .foregroundColor(.green)
-//                            }
-//                            .overlay(Circle().stroke(Color.black, lineWidth: 2))
-//                            .disabled(submitBtn)
-//                        }
                         
                         
                         Button(action: {
@@ -159,7 +153,6 @@ struct WeeklyLesson: View {
                             Image(systemName: "clock.arrow.2.circlepath")
                                 .font(.system(size: 50, weight: .light))
                         }//btn
-//                        .foregroundStyle(Color.blue)
                         .buttonStyle(.borderless)
                         .overlay(Circle().stroke(Color.black, lineWidth: 2))
                         //disable button when user doesn't have the item
@@ -173,16 +166,15 @@ struct WeeklyLesson: View {
                 }
                 
                 
-                
-                
-         
-                
             }//record and extra time button HSTACK
             
-            .onAppear {
+            .onAppear {//request permission and check for item
                 audioRecorder.requestAuthorization()
                 currModel.checkBuyTime()
-            }
+                
+                
+                        
+            }//on appear
         }//vstack
     }
     

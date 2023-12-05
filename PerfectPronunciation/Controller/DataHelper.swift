@@ -12,7 +12,7 @@ import FirebaseAuth
 class DataHelper: ObservableObject {
     
     @Published var averageAccuracy: Float = 0
-    
+    @Published var wordList = [String]()
     
     init(){}
     
@@ -263,7 +263,54 @@ class DataHelper: ObservableObject {
             }
         }
     }
+    
+    func getHardWords(completion: @escaping ([DocumentSnapshot]?, Error?) -> Void) {
+            if let user = Auth.auth().currentUser {
+                let userID = user.uid
+                let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+                let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
 
+                // Create an array of days
+                let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+                // Iterate through each day
+                for day in daysOfWeek {
+                    let dayQuery = itemsCollectionRef.whereField("DayOfWeek", isEqualTo: day)
+                    // Perform a query to filter documents for all days of the week, since in loop
+                    dayQuery.getDocuments { (querySnapshot, error) in
+                        if let error = error {
+                            print("Error fetching items for (All days of week): \(error)")
+                            completion(nil, error)
+                        } else {
+                            //loop documents to get a single document (word)
+                            for document in querySnapshot!.documents {
+                                //find the accuracy of the word
+                                if let accuracy = document["Accuracy"] as? Float {
+                                    //if the accuracy of the word is equal or below 50
+                                    if accuracy <= 50.0{
+                                        //add the name of the word to the list 
+                                        if let name = document["Name"] as? String {
+                                            self.wordList.append(name)
+                                        }
+                                    }
+                                } else {
+                                    print("Document \(document.documentID) exists for \(day), but 'accuracy' field is missing or not a float.")
+                                }
+                            }
+                        }
+                    }
+                }
+                
+            } else {
+                // Handle the case where the user is not authenticated
+                let error = NSError(domain: "Authentication Error", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not authenticated"])
+                completion(nil, error)
+            }
+        }
+    
+    
+    
+ 
 
 
     

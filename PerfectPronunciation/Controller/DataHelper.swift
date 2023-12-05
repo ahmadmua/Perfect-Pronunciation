@@ -68,31 +68,31 @@ class DataHelper: ObservableObject {
         selection = 1
     }
     
-    func updateLanguage(selectedLanguage: String, userData: inout UserData, selection: inout Int?){
-        
-        if let user = Auth.auth().currentUser {
-            let userID = user.uid
-            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-
-            userData.setLanguage(language: selectedLanguage)
-
-            let updatedData = ["Language": userData.getLanguage()]
-
-            // Update the specific field in the user's document
-            userDocRef.updateData(updatedData) { error in
-                if let error = error {
-                    print("Error updating document: \(error)")
-                } else {
-                    print("Document updated successfully")
-                }
-            }
-            
-        } else {
-            // Handle the case where the user is not authenticated
-        }
-        
-        selection = 1
-    }
+//    func updateLanguage(selectedLanguage: String, userData: inout UserData, selection: inout Int?){
+//
+//        if let user = Auth.auth().currentUser {
+//            let userID = user.uid
+//            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+//
+//            userData.setLanguage(language: selectedLanguage)
+//
+//            let updatedData = ["Language": userData.getLanguage()]
+//
+//            // Update the specific field in the user's document
+//            userDocRef.updateData(updatedData) { error in
+//                if let error = error {
+//                    print("Error updating document: \(error)")
+//                } else {
+//                    print("Document updated successfully")
+//                }
+//            }
+//
+//        } else {
+//            // Handle the case where the user is not authenticated
+//        }
+//
+//        selection = 1
+//    }
     
     func addItemToUserDataCollection(itemName: String, dayOfWeek: String, accuracy: Float) {
         if let user = Auth.auth().currentUser {
@@ -317,7 +317,7 @@ class DataHelper: ObservableObject {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             
-            //read the docs at a specific path
+            // Read the docs at a specific path
             userDocRef.getDocument { document, error in
                 if let document = document, document.exists{
                     // Access from UserData in firebase

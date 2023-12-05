@@ -115,9 +115,9 @@ struct Country: View {
         fireDBHelper.updateCountry(selectedCountry: selectedCountry, userData: &userData, selection: &selection)
     }
     
-    func updateLanguage(){
-        fireDBHelper.updateLanguage(selectedLanguage: selectedLanugage, userData: &userData, selection: &selection)
-    }
+//    func updateLanguage(){
+//        fireDBHelper.updateLanguage(selectedLanguage: selectedLanugage, userData: &userData, selection: &selection)
+//    }
     
 }
 

@@ -20,17 +20,28 @@ struct Details: View {
     @State private var prediction: Double?
     @State private var averageAccuracy: Float = 0
     @State private var totalWords: Int = 0
+    @State private var userDifficulty: String = ""
+    @State private var expectedDifficulty: String = ""
+    @State private var selection: Int? = nil
+    @State private var userData = UserData()
+    
+    @State private var firstScore: Double = 0.0
+    @State private var secondScore: Double = 0.0
+    @State private var thirdScore: Double = 0.0
+    @State private var fourthScore: Double = 0.0
+    @State private var fifthScore: Double = 0.0
+    
+    @State private var arr = [0.0, 0.0, 0.0, 0.0, 0.0]
     
     private var pronunciationModel: PronunciationModelProjection {
-            do {
-                return try PronunciationModelProjection(configuration: MLModelConfiguration())
-            } catch {
-                fatalError("Failed to load CoreML model: \(error)")
-            }
+        do {
+            return try PronunciationModelProjection(configuration: MLModelConfiguration())
+        } catch {
+            fatalError("Failed to load CoreML model: \(error)")
         }
+    }
     
-    
-    func returnDate() -> String{
+    func returnDate() -> String {
         dateFormatter.dateFormat = "E"
         let currentDayOfWeek = dateFormatter.string(from: Date())
         return currentDayOfWeek
@@ -42,93 +53,100 @@ struct Details: View {
     @EnvironmentObject var fireDBHelper: DataHelper
     
     let dateFormatter = DateFormatter()
-
     
     var body: some View {
-        
-        
         VStack {
-            
             Text("Detailed Stats")
                 .fontWeight(.bold)
                 .font(Font.system(size: 50))
                 .foregroundColor(Color.black)
                 .underline()
-    
+            
             HStack {
                 StatCard(color: .yellow, title: "Words Pronounced", value: "\(totalWords)")
                 StatCard(color: .yellow, title: "AVG Accuracy", value: "\(averageAccuracy)%")
             }
+            
             HStack {
-                StatCard(color: .yellow, title: "Predicted Accuracy", value: "\(makePrediction())%")
-                StatCard(color: .yellow, title: "Longest Streak", value: "12")
+                StatCard(color: .yellow, title: "Predicted Accuracy", value: "\(prediction ?? 0.0)%")
             }
-            .onAppear {
+            .onReceive([arr[0], arr[1], arr[2], arr[3], arr[4]].publisher) { _ in
                 prediction = makePrediction()
-                fireDBHelper.getAvgAccuracy { fetchedAccuracy in
-                averageAccuracy = fetchedAccuracy
-                }
-                fireDBHelper.getPronunciationWordCount {fetchedCount in
-                    totalWords = fetchedCount
-                }
             }
             
             CalendarView()
             
             ItemsListView()
             
-            
             Text("\(calculateAccuracyOutput())")
                 .bold()
-            Text("Current Difficulty: Intermediate \n Expected Difficulty: Beginner")
+            
+            Text("Current Difficulty: \(userDifficulty)")
+                .onAppear {
+                    fireDBHelper.findUserDifficulty { difficulty in
+                        if let difficulty = difficulty {
+                            userDifficulty = difficulty
+                        }
+                    }
+                }
+            
+            Text("Expected Difficulty: \(expectedDifficulty)")
+                .onAppear {
+                    fireDBHelper.findUserDifficulty { difficulty in
+                        if let difficulty = difficulty {
+                            userDifficulty = difficulty
+                            
+                            if (userDifficulty == "Intermediate") {
+                                expectedDifficulty = "Advanced"
+                            }
+                        }
+                    }
+                }
             
             Button(action: {
-                
-                //getAvgAccuracy(dayOfWeek: "Mon")
-                
-//                dateFormatter.dateFormat = "E"
-//                let currentDayOfWeek = dateFormatter.string(from: Date())
-//
-//               fireDBHelper.addItemToUserDataCollection(itemName: "Word15", dayOfWeek: "Sun", accuracy: 56)
-//                fireDBHelper.addItemToUserDataCollection(itemName: "Word7", dayOfWeek: "Sat", accuracy: 21)
-                //fireDBHelper.addItemToUserDataCollection(itemName: "Word55", dayOfWeek: "Wed", accuracy: 76)
-//                fireDBHelper.addItemToUserDataCollection(itemName: "Word9", dayOfWeek: "Mon", accuracy: 65)
-
-                
-            }){
+                fireDBHelper.updateDifficulty(selectedDifficulty: expectedDifficulty, userData: &userData, selection: &selection)
+            }) {
                 Text("Reset Difficulty")
                     .modifier(CustomTextM(fontName: "MavenPro-Bold", fontSize: 16, fontColor: Color.black))
                     .frame(height: 56, alignment: .leading)
                     .frame(width: 200)
                     .background(Color.yellow)
                     .cornerRadius(10)
-                
             }
-          
         }
-        
+        .onAppear {
+            fireDBHelper.getAvgAccuracy { fetchedAccuracy in
+                averageAccuracy = fetchedAccuracy
+            }
+            fireDBHelper.getPronunciationWordCount { fetchedCount in
+                totalWords = fetchedCount
+            }
+            
+            for index in 0..<5 {
+                fireDBHelper.getAccuracy(atIndex: index) { accuracy in
+                    if let accuracy = accuracy {
+                        arr[index] = Double(accuracy)
+                    }
+                }
+            }
+            
+            prediction = makePrediction()
+        }
         Spacer()
-        
     }
     
-    
-    //uses the pronunciation model to predict
-    func calculateAccuracyOutput() -> String{
-        
-        let input = PronunciationModelInput(Feature1: 75, Feature2: 80, Feature3: 95, Feature4: 80, Feature5: 90)
+    func calculateAccuracyOutput() -> String {
+        let input = PronunciationModelInput(Feature1: arr[0], Feature2: arr[1], Feature3: arr[2], Feature4: arr[3], Feature5: arr[4])
         
         do {
             let prediction = try model.prediction(input: input)
             let outputClass = prediction.OutputClass
             
-            if(outputClass == 1){
+            if outputClass == 1 {
                 return "Your Pronunciation is Great"
+            } else {
+                return "Your Pronunciation Needs Improvement"
             }
-            else {
-               return "Your Pronunciation Needs Improvement"
-            }
-            
-            //print("Predicted Output Class: \(str)")
         } catch {
             print("Error making prediction: \(error)")
         }
@@ -136,13 +154,19 @@ struct Details: View {
         return "No result found"
     }
     
-     func makePrediction() -> Double {
+    func makePrediction() -> Double {
         do {
-            let input = PronunciationModelProjectionInput(Feature1: 78, Feature2: 98, Feature3: 86, Feature4: 55, Feature5: 68)
-
+            let input = PronunciationModelProjectionInput(Feature1: arr[0], Feature2: arr[1], Feature3: arr[2], Feature4: arr[3], Feature5: arr[4])
+            
+            print(arr[0])
+            print(arr[1])
+            print(arr[2])
+            print(arr[3])
+            print(arr[4])
+            
             let prediction = try pronunciationModel.prediction(input: input)
             self.prediction = prediction.Target
-
+            
             if let roundedPrediction = self.prediction {
                 return Double(roundedPrediction * 100).rounded() / 100
             }
@@ -150,13 +174,15 @@ struct Details: View {
             print("Error making prediction: \(error)")
             self.prediction = nil
         }
-
+        
         // Default value in case of an error or nil prediction
         return 0.0
     }
+}
+
 
     
-}
+
 
 
 

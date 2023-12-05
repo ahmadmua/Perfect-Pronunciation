@@ -110,6 +110,9 @@ struct Register: View {
                      "Items": [
                         "TimeIncrease" : false
                      ]
+                     
+                     "Username" : email.components(separatedBy: "@").first ?? "",
+         
                     ])
                 self.selection = 1
             }

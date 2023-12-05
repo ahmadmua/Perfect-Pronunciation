@@ -18,6 +18,7 @@ class AudioController: NSObject, ObservableObject {
     @Published var recordBtnDisabled = true
     @Published var analysisAccuracyScore: Float = 0.0
     
+    
     // Private properties for managing audio recording and speech recognition
     private var audioRecorder: AVAudioRecorder!
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
@@ -25,6 +26,8 @@ class AudioController: NSObject, ObservableObject {
     private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
     private let audioEngine = AVAudioEngine()
     private var audioFile: AVAudioFile?
+    
+    var globalAnalysisResult: Float?
     
     // A subject for sending updates to subscribers
     let objectWillChange = PassthroughSubject<AudioController, Never>()
@@ -40,12 +43,7 @@ class AudioController: NSObject, ObservableObject {
         }
     }
 
-    // Initializer to set up the class
-    override init() {
-        super.init()
-        // Fetch any existing recordings when the class is initialized
-        fetchRecording()
-    }
+    
     
     // Request authorization to use the microphone and speech recognition
     func requestAuthorization() {
@@ -224,6 +222,13 @@ class AudioController: NSObject, ObservableObject {
                         self.analysisAccuracyScore = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
                         //update user completion
                         DataHelper().updateWeeklyCompletion(score: self.analysisAccuracyScore)
+                        //----------------------------------------
+                        
+                        self.globalAnalysisResult = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
+                        DataHelper().addItemToUserDataCollection(itemName: "", dayOfWeek: self.returnDate(), accuracy: self.globalAnalysisResult!)
+                        
+                        //----------------------------------------
+                        
                     }
                 case .failure(let error):
                     DispatchQueue.main.async {
@@ -237,7 +242,16 @@ class AudioController: NSObject, ObservableObject {
             print("Error: Unable to load audio file data - \(error)")
         }
     }
+    
+    func returnDate() -> String{
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E"
+        let currentDayOfWeek = dateFormatter.string(from: Date())
+        return currentDayOfWeek
+    }
 }
+
+
 
 
 

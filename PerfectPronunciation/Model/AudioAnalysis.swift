@@ -7,7 +7,7 @@
 struct AudioAnalysis: Codable {
     let error: String?
     let genderAnalysisResult: GenderAnalysisResult
-    var pronunciationScorePercentage: PronunciationScorePercentage
+    let pronunciationScorePercentage: PronunciationScorePercentage
     let totalSpeechAnalysisResults: TotalSpeechAnalysisResults
 
     struct GenderAnalysisResult: Codable {
@@ -15,7 +15,7 @@ struct AudioAnalysis: Codable {
     }
 
     struct PronunciationScorePercentage: Codable {
-        var pronunciationScorePercentage: Double
+        let pronunciationScorePercentage: Double
     }
 
     struct TotalSpeechAnalysisResults: Codable {

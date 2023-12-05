@@ -17,6 +17,7 @@ class SharedData: ObservableObject {
 
 struct Details: View {
     
+    
     @State private var prediction: Double?
     @State private var averageAccuracy: Float = 0
     @State private var totalWords: Int = 0
@@ -25,7 +26,13 @@ struct Details: View {
     @State private var selection: Int? = nil
     @State var userData = UserData()
     
-    @State var audioAnalysisData = AudioAnalysis()
+    @State var firstScore: Double = 0.0
+    @State var secondScore: Double = 0.0
+    @State var thirdScore: Double = 0.0
+    @State var fourthScore: Double = 0.0
+    @State var fifthScore: Double = 0.0
+    
+    @State public var arr = [0.0,0.0,0.0,0.0,0.0]
     
     private var pronunciationModel: PronunciationModelProjection {
             do {
@@ -55,6 +62,7 @@ struct Details: View {
         
         VStack {
             
+            
             Text("Detailed Stats")
                 .fontWeight(.bold)
                 .font(Font.system(size: 50))
@@ -67,16 +75,54 @@ struct Details: View {
             }
             HStack {
                 StatCard(color: .yellow, title: "Predicted Accuracy", value: "\(makePrediction())%")
-                StatCard(color: .yellow, title: "Longest Streak", value: "12")
+                //StatCard(color: .yellow, title: "Longest Streak", value: "\(arr[0])")
             }
             .onAppear {
-                prediction = makePrediction()
+                
                 fireDBHelper.getAvgAccuracy { fetchedAccuracy in
                 averageAccuracy = fetchedAccuracy
                 }
                 fireDBHelper.getPronunciationWordCount {fetchedCount in
                     totalWords = fetchedCount
                 }
+                
+                
+                fireDBHelper.getAccuracy(atIndex: 0) { accuracy in
+                    if let accuracy = accuracy {
+                        //firstScore = Double(accuracy)
+                        arr[0] = Double(accuracy)
+                    }
+                }
+                
+                fireDBHelper.getAccuracy(atIndex: 1) { accuracy in
+                    if let accuracy = accuracy {
+                        //firstScore = Double(accuracy)
+                        arr[1] = Double(accuracy)
+                    }
+                }
+                
+                fireDBHelper.getAccuracy(atIndex: 2) { accuracy in
+                    if let accuracy = accuracy {
+                        //firstScore = Double(accuracy
+                        arr[2] = Double(accuracy)
+                    }
+                }
+                
+                fireDBHelper.getAccuracy(atIndex: 3) { accuracy in
+                    if let accuracy = accuracy {
+                        //firstScore = Double(accuracy)
+                        arr[3] = Double(accuracy)
+                    }
+                }
+                
+                fireDBHelper.getAccuracy(atIndex: 4) { accuracy in
+                    if let accuracy = accuracy {
+                        //firstScore = Double(accuracy)
+                        arr[4] = Double(accuracy)
+                    }
+                }
+                
+                prediction = makePrediction()
             }
             
             CalendarView()
@@ -117,16 +163,16 @@ struct Details: View {
             Button(action: {
                 
                 fireDBHelper.updateDifficulty(selectedDifficulty: expectedDifficulty, userData: &userData, selection: &selection)
+                
  
+                
                 //getAvgAccuracy(dayOfWeek: "Mon")
                 
 //                dateFormatter.dateFormat = "E"
 //                let currentDayOfWeek = dateFormatter.string(from: Date())
 //
 //               fireDBHelper.addItemToUserDataCollection(itemName: "Word15", dayOfWeek: "Sun", accuracy: 56)
-//                fireDBHelper.addItemToUserDataCollection(itemName: "Word7", dayOfWeek: "Sat", accuracy: 21)
-                //fireDBHelper.addItemToUserDataCollection(itemName: "Word55", dayOfWeek: "Wed", accuracy: 76)
-//                fireDBHelper.addItemToUserDataCollection(itemName: "Word9", dayOfWeek: "Mon", accuracy: 65)
+                
 
                 
             }){
@@ -141,6 +187,10 @@ struct Details: View {
           
         }
         
+        .onAppear {
+        
+        }
+        
         Spacer()
         
     }
@@ -150,7 +200,8 @@ struct Details: View {
     //uses the pronunciation model to predict
     func calculateAccuracyOutput() -> String{
         
-        let input = PronunciationModelInput(Feature1: 100, Feature2: 100, Feature3: 100, Feature4: 100, Feature5: 100)
+        let input = PronunciationModelInput(Feature1: arr[0], Feature2: arr[1], Feature3: arr[2], Feature4: arr[3], Feature5: arr[4])
+    
         
         do {
             let prediction = try model.prediction(input: input)
@@ -173,8 +224,15 @@ struct Details: View {
     
      func makePrediction() -> Double {
         do {
-            let input = PronunciationModelProjectionInput(Feature1: 54, Feature2: 98, Feature3: 86, Feature4: 55, Feature5: 68)
-
+            let input = PronunciationModelProjectionInput(Feature1: arr[0], Feature2: arr[1], Feature3: arr[2], Feature4: arr[3], Feature5: arr[4])
+            
+            
+            print(arr[0])
+            print(arr[1])
+            print(arr[2])
+            print(arr[3])
+            print(arr[4])
+            
             let prediction = try pronunciationModel.prediction(input: input)
             self.prediction = prediction.Target
 

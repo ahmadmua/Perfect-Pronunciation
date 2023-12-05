@@ -13,6 +13,8 @@ struct IndividualLesson: View {
     //    @Binding var msgTaken: String
     @ObservedObject var model = LessonController()
     
+    @State var questionVar: String?
+    
     @State private var showRecord = false
     @State private var showNext = false
     @State private var showLesson = false
@@ -21,6 +23,7 @@ struct IndividualLesson: View {
     @State private var showingAlert = false
     
     @State  private var isPopupPresented = false
+    
     
 //    @State private var counter : Int = 0
     
@@ -74,6 +77,8 @@ struct IndividualLesson: View {
                         //                            self.selection = 1
                         self.showRecord.toggle()
                         self.isPopupPresented.toggle()
+                        
+                        
                     }){
                         Image(systemName: "record.circle.fill")
                             .font(.system(size: 50, weight: .light))
@@ -83,6 +88,8 @@ struct IndividualLesson: View {
                     .sheet(isPresented: $isPopupPresented) {
                         VoiceRecorder(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController(), audioAnalysisData: AudioAPIController(), testText: model.answer!, isPopupPresented: $isPopupPresented)
                     }
+                    
+                    
 //                    .navigationDestination(isPresented: $showRecord){
 //                        VoiceRecorder()
 ////                            .navigationBarBackButtonHidden(true)
@@ -112,6 +119,10 @@ struct IndividualLesson: View {
                             //else counter is not more than the number of questions, continue to the next question
                             self.showNext.toggle()
                         }
+                        
+                        //print("The question is: \(model.answer!)")
+                        questionVar = model.answer!
+                        print("THIS IS THE QUESTION \(questionVar ?? "NA")")
                         
                         
                     }){

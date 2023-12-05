@@ -285,6 +285,43 @@ class DataHelper: ObservableObject {
             }
         }
     }
+    
+    func getAccuracy(atIndex index: Int, completion: @escaping (Float?) -> Void) {
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+
+            itemsCollectionRef.getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error.localizedDescription)")
+                    completion(nil)
+                } else {
+                    let documentCount = querySnapshot?.documents.count ?? 0
+
+                    guard documentCount > 0 else {
+                        print("No documents found.")
+                        completion(nil)
+                        return
+                    }
+
+                    let validIndex = max(0, min(index, documentCount - 1))
+                    let selectedDocument = querySnapshot!.documents[validIndex]
+
+                    if let accuracy = selectedDocument["Accuracy"] as? Float {
+                        // Call the completion handler with the accuracy from the specified document
+                        completion(accuracy)
+                    } else {
+                        print("Selected document does not have 'accuracy' field or it is not a float.")
+                        completion(nil)
+                    }
+                }
+            }
+        }
+    }
+
+
+
 
 
 

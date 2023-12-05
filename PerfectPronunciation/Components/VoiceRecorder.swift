@@ -137,6 +137,7 @@ struct VoiceRecorder: View {
                                 case .playing:
                                     audioPlayer.startPlayback(audio: audioRecorder.recording.fileURL!)
                                     recordingState = .readyToRecord
+                                    
                                 }
                             }) {
                                 Image(systemName: getButtonImageName())
@@ -149,7 +150,9 @@ struct VoiceRecorder: View {
                                 Button(action: {
                                     self.audioRecorder.submitAudio()
                                     self.isPopupPresented = false // Add this line to dismiss the sheet
-
+//                                   
+                                    
+   
                                 }) {
                                     Image(systemName: "checkmark.circle.fill")
                                         .font(.system(size: 50))
@@ -157,6 +160,7 @@ struct VoiceRecorder: View {
                                 }
                                 .overlay(Circle().stroke(Color.black, lineWidth: 2))
                             }
+                            
                             
                             
                             

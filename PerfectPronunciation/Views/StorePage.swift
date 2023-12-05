@@ -144,15 +144,20 @@ struct StorePage: View {
                             GridRow{
                                 HStack{
                                     Button(action: {
-                                        print("item1 btn press")
-                                        //                                    self.selection = 1
+                                        print("time increase btn press")
+                                        //purchase the item and update firebase with the purchase
+                                        currModel.subUserCurrency(cost: 300)
+                                        currModel.buyItem(storeItem: "TimeIncrease")
+                                        
                                     }){
                                         Image(systemName: "square.fill")
                                             .font(.system(size: 50, weight: .light))
                                     }//btn
                                     .buttonStyle(.borderless)
+                                    //disable when user purchases
+                                    .disabled(currModel.timeIncreasePurchase)
                                     
-                                    Text("Item 1")
+                                    Text("Time Increase")
                                     
                                     HStack(alignment: .center){
                                         Text("300")
@@ -161,6 +166,7 @@ struct StorePage: View {
                                         
                                     }
                                     .padding(.leading, 60)
+                                    
                                 }
                                 
                                 
@@ -243,7 +249,7 @@ struct StorePage: View {
                         }
                 .alert("You successfuly bought this item", isPresented: $currModel.userDidPurchase) {
                     Button("OK", role: .cancel) {
-                        
+                        currModel.checkBuyTime()
                     }
                         }
         
@@ -359,6 +365,8 @@ struct StorePage: View {
             model.findUserDifficulty{
                 currModel.getUserCurrency()
             }
+            
+            currModel.checkBuyTime()
         }
         }
         

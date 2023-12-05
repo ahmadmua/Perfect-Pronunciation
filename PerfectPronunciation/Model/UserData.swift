@@ -9,7 +9,7 @@ import SwiftUI
 
 struct UserData  {
     
-     var registeredEmail: String = "abc@gmail.com"
+     var registeredEmail: String = "abc123@gmail.com"
      var registeredPassword: String = "abc123"
      var country: String = ""
      var difficulty: String = ""

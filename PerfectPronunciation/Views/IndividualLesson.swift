@@ -36,8 +36,6 @@ struct IndividualLesson: View {
 //        NavigationStack{
             ZStack{
                 
-//                NavigationLink(destination: VoiceRecorder(), tag: 1, selection: self.$selection){}
-                
                 Color("background")
             Grid{
                 

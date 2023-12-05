@@ -14,9 +14,10 @@ class CurrencyController : ObservableObject{
     @Published var canUserPurchase: Bool = false
     @Published var userDidPurchase: Bool = false
     @Published var neededToPurchase: Int = 0
+    @Published var timeIncreasePurchase: Bool = false
     var model = LessonController()
     
-    func getUserCurrency(/*completion: @escaping () -> Void*/){
+    func getUserCurrency(){
         //get reference to database
 //        let db = Firestore.firestore()
         if let user = Auth.auth().currentUser {
@@ -190,6 +191,163 @@ class CurrencyController : ObservableObject{
                 }
                 
 //                completion()
+            }
+            
+            
+
+            
+            
+        } else {
+            // Handle the case where the user is not authenticated
+            print("User is not authenticated")
+        }
+        
+    }
+    
+    func buyItem(storeItem: String){
+        
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            
+            //read the docs at a specific path
+            userDocRef.getDocument { document, error in
+                if let document = document, document.exists{
+                    // Access the "Achievements" from UserData in firebase
+                    if var items = document.data()?["Items"] as? [String: Bool] {
+                        
+                        if let item = items[storeItem] {
+                            print("STORE UPDATE CONTROLLER UPDATE : \(item)")
+                            
+                            items[storeItem] = true
+                            
+//                            if(item.description == "false"){
+//                                self.timeIncreasePurchase = true   
+//                            }
+                            
+                            
+                            // Update the specific field in the user's document
+                            userDocRef.updateData(["Items" : items]) { error in
+                                if let error = error {
+                                    print("Error updating document: \(error)")
+                                } else {
+                                    print("Document updated successfully")
+                                }
+                            }
+                            
+                        }
+                        
+                    }else{
+                        print("Document exists,")
+                        
+                    }
+                }else{
+                    print("Document does not exist")
+                    
+                }
+                
+            }
+            
+            
+
+            
+            
+        } else {
+            // Handle the case where the user is not authenticated
+            print("User is not authenticated")
+        }
+        
+    }
+    
+    func checkBuyTime(){
+        
+        
+        //Firestore reference
+        let firestore = Firestore.firestore()
+
+        // authenticated user
+        if let currentUserID = Auth.auth().currentUser?.uid {
+            let userDataRef = firestore.collection("UserData").document(currentUserID)
+            
+
+            // Read UserData document
+            userDataRef.getDocument { (document, error) in
+                if let document = document, document.exists {
+                    
+                    // Access "Achievements" from firebase
+                    if let items = document.data()?["Items"] as? [String: Bool] {
+                        
+                        print("\(items)")
+                        // Access individual achievements
+                        //achievement 1
+                        if let timeIncrease = items["TimeIncrease"] {
+                            
+                            // Use the achievement data as needed
+                            print("Item : \(timeIncrease)")
+                            print("\(timeIncrease.description)")
+                            if(timeIncrease.description == "false"){
+                                self.timeIncreasePurchase = false
+                                
+                            }else if(timeIncrease.description == "true"){
+                                self.timeIncreasePurchase = true
+                            }
+                        }
+
+                        // acheivement 2
+                    }
+                } else {
+                    print("Document does not exist or there was an error: \(error?.localizedDescription ?? "Unknown error")")
+                }
+            }
+        } else {
+            // Handle the case when the user is not authenticated
+        }
+        
+        
+    }
+    
+    func updateItemUse(itemUsed: String){
+        
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            
+            //read the docs at a specific path
+            userDocRef.getDocument { document, error in
+                if let document = document, document.exists{
+                    // Access the "Achievements" from UserData in firebase
+                    if var items = document.data()?["Items"] as? [String: Bool] {
+                        
+                        if let item = items[itemUsed] {
+                            print("STORE UPDATE CONTROLLER UPDATE : \(item)")
+                            
+                            items[itemUsed] = false
+                            
+//                            if(item.description == "false"){
+//                                self.timeIncreasePurchase = true
+//                            }
+                            
+                            
+                            // Update the specific field in the user's document
+                            userDocRef.updateData(["Items" : items]) { error in
+                                if let error = error {
+                                    print("Error updating document: \(error)")
+                                } else {
+                                    print("Document updated successfully")
+                                }
+                            }
+                            
+                        }
+                        
+                    }else{
+                        print("Document exists,")
+                        
+                    }
+                }else{
+                    print("Document does not exist")
+                    
+                }
+                
             }
             
             

@@ -105,6 +105,9 @@ struct Register: View {
                      ],
                      "Achievements": [
                         "Achievement 1" : false
+                     ],
+                     "Items": [
+                        "TimeIncrease" : false
                      ]
                     ])
                 self.selection = 1

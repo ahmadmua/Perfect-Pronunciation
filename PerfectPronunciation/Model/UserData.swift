@@ -9,12 +9,11 @@ import SwiftUI
 
 struct UserData  {
     
-     var registeredEmail: String = "muazstinnks@gmail.com"
-     var registeredPassword: String = "111111"
+     var registeredEmail: String = ""
+     var registeredPassword: String = ""
      var country: String = ""
      var difficulty: String = ""
      var language: String = ""
-    
     
     mutating func setEmail(regiseredEmail: String){
         self.registeredEmail = regiseredEmail

@@ -15,6 +15,8 @@ struct VoiceRecorder: View {
     @ObservedObject var audioPlayer: AudioPlayBackController
     @ObservedObject var audioAnalysisData : AudioAPIController
     
+    @ObservedObject var model = LessonController()
+    
     var testText : String
     
     @State private var isRecording = false
@@ -148,7 +150,7 @@ struct VoiceRecorder: View {
                             
                             if recordingState != .recording {
                                 Button(action: {
-                                    self.audioRecorder.submitAudio()
+                                    self.audioRecorder.submitAudio(answer: testText)
                                     self.isPopupPresented = false // Add this line to dismiss the sheet
 //                                   
                                     

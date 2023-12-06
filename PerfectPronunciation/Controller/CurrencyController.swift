@@ -285,12 +285,17 @@ class CurrencyController : ObservableObject{
                             // Use the achievement data as needed
                             print("Item : \(timeIncrease)")
                             print("\(timeIncrease.description)")
-                            if(timeIncrease.description == "false"){
-                                self.timeIncreasePurchase = false
-                                
-                            }else if(timeIncrease.description == "true"){
-                                self.timeIncreasePurchase = true
-                            }
+                            
+                            DispatchQueue.main.async{
+                                if(timeIncrease.description == "false"){
+                                    self.timeIncreasePurchase = false
+                                    print("TIME INCREASE FALSE : \(timeIncrease.description)")
+                                    
+                                }else if(timeIncrease.description == "true"){
+                                    self.timeIncreasePurchase = true
+                                    print("TIME INCREASE TRUE : \(timeIncrease.description)")
+                                }
+                        }
                         }
 
                         // acheivement 2

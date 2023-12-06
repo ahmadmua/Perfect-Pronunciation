@@ -22,8 +22,10 @@ struct WeeklyLesson: View {
     //navigation
     @State private var showWeekly = false
     //button disable
-    @State private var disableTimeBtn = false
+    @State private var disableTimeBtn = 0
     @State private var submitBtn = true
+    
+    @State private var countUses = 0
     
     //time limit timer
     @State var timeRemaining = 15
@@ -51,7 +53,7 @@ struct WeeklyLesson: View {
                         //end recording and submit
                         recordingState = .readyToRecord
                         audioRecorder.stopRecording()
-                        audioRecorder.submitAudio()
+                        audioRecorder.submitAudioWeekly()
                             
 //                        //update user completion
 //                        fireDBHelper.updateWeeklyCompletion(score: audioRecorder.analysisAccuracyScore)
@@ -145,12 +147,15 @@ struct WeeklyLesson: View {
                             //nav to the next word
                             print("extra time")
                             
+                                self.countUses += 1
+                            
+                            
                             //gray out if user does not have item
                             
                             // if user has item, allow them to add time (ONLY ONCE PER WEEK)
                             timeRemaining += 5
                             currModel.updateItemUse(itemUsed: "TimeIncrease")
-                            self.disableTimeBtn = true
+//                            self.disableTimeBtn = 1
                             
                         }){
                             Image(systemName: "clock.arrow.2.circlepath")
@@ -159,8 +164,8 @@ struct WeeklyLesson: View {
                         .buttonStyle(.borderless)
                         .overlay(Circle().stroke(Color.black, lineWidth: 2))
                         //disable button when user doesn't have the item
-                        .disabled(!currModel.timeIncreasePurchase)
-                        .disabled(disableTimeBtn)
+                        .disabled(countUses == 1)
+                        
                         
                         
                     }
@@ -172,12 +177,37 @@ struct WeeklyLesson: View {
             }//record and extra time button HSTACK
             
             .onAppear {//request permission and check for item
-                audioRecorder.requestAuthorization()
-                currModel.checkBuyTime()
+                DispatchQueue.main.async{
+                    audioRecorder.requestAuthorization()
+                    currModel.checkBuyTime()
+                    
+                    
+                }
+                
+                
+                print("PURCHASED : \(currModel.timeIncreasePurchase)")
+                
+                if(currModel.timeIncreasePurchase == false){
+                    self.countUses = 1
+                }else{
+                    self.countUses = 0
+                }
+                
+                print("COUNT USES : \(self.countUses)")
+                
+                
+//                if(currModel.timeIncreasePurchase == true){
+//                    self.disableTimeBtn = false
+//                }else{
+//                    self.disableTimeBtn = true
+//                }
                 
                 
                         
             }//on appear
+//            .onDisappear{
+//                self.disableTimeBtn = false
+//            }
         }//vstack
     }
     
@@ -193,6 +223,8 @@ struct WeeklyLesson: View {
 //            return "play.circle.fill"
         }
     }
+    
+
 }
 
 //#Preview {

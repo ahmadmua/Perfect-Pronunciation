@@ -62,6 +62,8 @@ struct WeeklyLesson: View {
                         self.showWeekly = true
                         
                     }
+                    
+                    
                 
                 }
                 .navigationDestination(isPresented: $showWeekly){
@@ -177,25 +179,28 @@ struct WeeklyLesson: View {
             }//record and extra time button HSTACK
             
             .onAppear {//request permission and check for item
-                DispatchQueue.main.async{
-                    audioRecorder.requestAuthorization()
-                    currModel.checkBuyTime()
-                    
-                    
-                }
                 
+                audioRecorder.requestAuthorization()
+                currModel.checkBuyTime()
+                
+                
+                
+                DispatchQueue.main.async{
                 
                 print("PURCHASED : \(currModel.timeIncreasePurchase)")
+                    
+                    print(UserDefaults.standard.bool(forKey: "TimeIncreaseAvailable"))
                 
-                if(currModel.timeIncreasePurchase == false){
-                    self.countUses = 1
-                }else{
-                    self.countUses = 0
-                }
+                    if(UserDefaults.standard.bool(forKey: "TimeIncreaseAvailable") == false){
+                        self.countUses = 1
+                        
+                    }else{
+                        self.countUses = 0
+                    }
                 
                 print("COUNT USES : \(self.countUses)")
                 
-                
+            }
 //                if(currModel.timeIncreasePurchase == true){
 //                    self.disableTimeBtn = false
 //                }else{

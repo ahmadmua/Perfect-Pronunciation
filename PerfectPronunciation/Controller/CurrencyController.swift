@@ -288,12 +288,16 @@ class CurrencyController : ObservableObject{
                             
                             DispatchQueue.main.async{
                                 if(timeIncrease.description == "false"){
+                                    UserDefaults.standard.set(false, forKey: "TimeIncreaseAvailable")
                                     self.timeIncreasePurchase = false
                                     print("TIME INCREASE FALSE : \(timeIncrease.description)")
+                                    self.objectWillChange.send()
                                     
                                 }else if(timeIncrease.description == "true"){
                                     self.timeIncreasePurchase = true
+                                    UserDefaults.standard.set(true, forKey: "TimeIncreaseAvailable")
                                     print("TIME INCREASE TRUE : \(timeIncrease.description)")
+                                    self.objectWillChange.send()
                                 }
                         }
                         }

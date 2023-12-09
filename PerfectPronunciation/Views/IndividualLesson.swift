@@ -12,6 +12,9 @@ import FirebaseAuth
 struct IndividualLesson: View {
     //controller var
     @ObservedObject var model = LessonController()
+    @ObservedObject var audioController : AudioController
+
+    
     //question variable
     @State var questionVar: String?
     //navigation vars
@@ -81,7 +84,7 @@ struct IndividualLesson: View {
                     .foregroundStyle(Color.red)
                     .buttonStyle(.borderless)
                     .sheet(isPresented: $isPopupPresented) {
-                        VoiceRecorder(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController(), audioAnalysisData: AudioAPIController(), testText: model.answer!, isPopupPresented: $isPopupPresented)
+                        VoiceRecorder(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController(), audioAPIController: AudioAPIController(), testText: model.answer!, isPopupPresented: $isPopupPresented).environmentObject(audioController)
                     }
                     
                     Button(action: {
@@ -120,7 +123,7 @@ struct IndividualLesson: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $showNext){
-                        IndividualLesson(lessonName: $lessonName)
+                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
@@ -147,6 +150,8 @@ struct IndividualLesson: View {
                 
                 //get the current question for the page number
                 model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
+                
+                //audioController.submitTestAudio(file: "Waffle")
             }
             
              

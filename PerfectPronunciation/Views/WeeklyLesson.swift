@@ -53,7 +53,7 @@ struct WeeklyLesson: View {
                         //end recording and submit
                         recordingState = .readyToRecord
                         audioRecorder.stopRecording()
-                        audioRecorder.submitAudioWeekly()
+                        //audioRecorder.submitAudioWeekly()
                             
                         
                         //return to the main screen when timer is done

@@ -161,6 +161,7 @@
 		02E2B65D2AD6131100F1FACA /* PerfectPronunciation */ = {
 			isa = PBXGroup;
 			children = (
+				4DD36F632B23EDF700321DF8 /* TestAudioFiles */,
 				C5D6050B2B0B39FA00620283 /* GoogleService-Info.plist */,
 				02FC80C62AFDDDDD009DFA9C /* PerfectPronunciation.entitlements */,
 				4DC391522B1BE479006C8C39 /* Helpers */,
@@ -258,6 +259,13 @@
 				4DC391502B1BE468006C8C39 /* Extentions.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		4DD36F632B23EDF700321DF8 /* TestAudioFiles */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = TestAudioFiles;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

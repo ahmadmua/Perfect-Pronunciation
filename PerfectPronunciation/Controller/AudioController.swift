@@ -200,48 +200,28 @@ class AudioController: NSObject, ObservableObject {
         fetchRecording()
     }
     
-    // Submit the recorded audio for analysis
-    func submitAudio(answer:String) {
+    func submitAudio(answer: String) {
         // Ensure that we have a valid file URL
         guard let audioURL = recording.fileURL else {
             print("Error: Invalid file URL")
             return
         }
 
+        // Create an instance of the API controller
+        let audioAPIController = AudioAPIController()
+
         do {
-            // Read audio data from the file
             let audioData = try Data(contentsOf: audioURL)
-            let audioAPIController = AudioAPIController()
             // Submit the audio data to the API for analysis
-            audioAPIController.uploadAudio(audioData: audioData) { result in
-                switch result {
-                case .success(let analysis):
-                    DispatchQueue.main.async {
-                        // Process successful analysis result
-                        print("Audio Analysis: \(analysis)")
-//                        self.analysisAccuracyScore = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
-//                        //update user completion
-//                        DataHelper().updateWeeklyCompletion(score: self.analysisAccuracyScore)
-                        //----------------------------------------
-                        
-                        self.globalAnalysisResult = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
-                        DataHelper().addItemToUserDataCollection(itemName: answer, dayOfWeek: self.returnDate(), accuracy: self.globalAnalysisResult!)
-                        
-                        //----------------------------------------
-                        
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        // Handle any errors during analysis
-                        print("Error: \(error)")
-                    }
-                }
-            }
+            audioAPIController.uploadUserAudio(audioData: audioData)
         } catch {
             // Handle errors during audio data reading
             print("Error: Unable to load audio file data - \(error)")
         }
     }
+
+    // Make sure to implement uploadUserAudio(audioData:) in your AudioAPIController
+
     
     func submitAudioWeekly() {
         // Ensure that we have a valid file URL

@@ -86,7 +86,7 @@ struct IndividualLesson: View {
                     .foregroundStyle(Color.red)
                     .buttonStyle(.borderless)
                     .sheet(isPresented: $isPopupPresented) {
-                        VoiceRecorder(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController(), audioAnalysisData: AudioAPIController(), testText: model.answer!, isPopupPresented: $isPopupPresented)
+                        VoiceRecorder(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController(), audioAPIController: AudioAPIController(), testText: model.answer!, isPopupPresented: $isPopupPresented).environmentObject(audioController)
                     }
                     
                     
@@ -163,7 +163,7 @@ struct IndividualLesson: View {
                 //get the current question for the page number
                 model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
                 
-                //audioController.submitTestAudio(file: model.question)
+                //audioController.submitTestAudio(file: "Waffle")
             }
             
              

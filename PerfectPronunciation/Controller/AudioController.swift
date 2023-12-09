@@ -17,6 +17,8 @@ class AudioController: NSObject, ObservableObject {
     @Published var STTresult: String = ""
     @Published var recordBtnDisabled = true
     @Published var analysisAccuracyScore: Float = 0.0
+    var audioAPIController = AudioAPIController.shared
+    
     
     
     // Private properties for managing audio recording and speech recognition
@@ -31,7 +33,7 @@ class AudioController: NSObject, ObservableObject {
     
     // A subject for sending updates to subscribers
     let objectWillChange = PassthroughSubject<AudioController, Never>()
-
+    
     // A placeholder for the last recording made
     var recording = Recording(fileURL: URL(string: "about:blank")!, createdAt: Date())
     
@@ -42,8 +44,6 @@ class AudioController: NSObject, ObservableObject {
             objectWillChange.send(self)
         }
     }
-
-    
     
     // Request authorization to use the microphone and speech recognition
     func requestAuthorization() {
@@ -82,7 +82,7 @@ class AudioController: NSObject, ObservableObject {
                     let date2 = try? $1.resourceValues(forKeys: [.creationDateKey]).creationDate ?? Date.distantPast
                     return date1! > date2!
                 }
-
+            
             // Take the most recent file and update the recording property
             if let mostRecentFile = audioFiles.first {
                 let fileDate = try mostRecentFile.resourceValues(forKeys: [.creationDateKey]).creationDate ?? Date()
@@ -91,7 +91,7 @@ class AudioController: NSObject, ObservableObject {
         } catch {
             print("Error while fetching recordings: \(error)")
         }
-
+        
         // Notify subscribers that the object has changed
         objectWillChange.send(self)
     }
@@ -134,31 +134,31 @@ class AudioController: NSObject, ObservableObject {
             } catch {
                 print("Could not start recording")
             }
-
+            
             // Reset any previous recognition tasks
             recognitionTask?.cancel()
             recognitionTask = nil
-
+            
             // Prepare the audio engine for recording and recognition
             let inputNode = audioEngine.inputNode
             recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-
+            
             guard let recognitionRequest = recognitionRequest else {
                 fatalError("Unable to create a SFSpeechAudioBufferRecognitionRequest.")
             }
             recognitionRequest.shouldReportPartialResults = true
-
+            
             // Start the recognition task with the audio data
             recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
                 guard let self = self else { return }
                 var isFinal = false
-
+                
                 // Update the transcription result as it comes in
                 if let result = result {
                     self.STTresult = result.bestTranscription.formattedString
                     isFinal = result.isFinal
                 }
-
+                
                 // Stop the task if there's an error or if it's final
                 if error != nil || isFinal {
                     self.audioEngine.stop()
@@ -170,13 +170,13 @@ class AudioController: NSObject, ObservableObject {
                     self.isRecording = false
                 }
             })
-
+            
             // Configure the audio input node
             let recordingFormat = inputNode.outputFormat(forBus: 0)
             inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] (buffer, when) in
                 self?.recognitionRequest?.append(buffer)
             }
-
+            
             // Start the audio engine
             do {
                 audioEngine.prepare()
@@ -184,11 +184,11 @@ class AudioController: NSObject, ObservableObject {
             } catch {
                 print("Could not start Audio Engine")
             }
-
+            
             btnTitle = "Stop Listening"
         }
     }
-
+    
     // Stop the recording and recognition process
     func stopRecording() {
         audioEngine.stop()
@@ -206,14 +206,28 @@ class AudioController: NSObject, ObservableObject {
             print("Error: Invalid file URL")
             return
         }
-
-        // Create an instance of the API controller
-        let audioAPIController = AudioAPIController()
-
+        
         do {
+            // Read audio data from the file
             let audioData = try Data(contentsOf: audioURL)
+            let audioAPIController = AudioAPIController()
             // Submit the audio data to the API for analysis
-            audioAPIController.uploadUserAudio(audioData: audioData)
+            audioAPIController.uploadUserAudio(audioData: audioData) { result in
+                switch result {
+                case .success(let analysis):
+                    DispatchQueue.main.async {
+                        // Process successful analysis result
+                        //print("Audio Analysis: \(analysis)")
+                        audioAPIController.compareAudioAnalysis()
+                        
+                    }
+                case .failure(let error):
+                    DispatchQueue.main.async {
+                        // Handle any errors during analysis
+                        print("Error: \(error)")
+                    }
+                }
+            }
         } catch {
             // Handle errors during audio data reading
             print("Error: Unable to load audio file data - \(error)")
@@ -221,16 +235,15 @@ class AudioController: NSObject, ObservableObject {
     }
     
     func submitTestAudio(file: String) {
-        // Assuming 'answer' is the name of the audio file without the file extension
-        // Replace 'YOUR_AUDIO_FILE_EXTENSION' with your actual file extension e.g., 'mp3'
+        
         guard let audioURL = Bundle.main.url(forResource: file, withExtension: "m4a", subdirectory: "Test Audio Files") else {
             print("Error: Invalid file URL")
             return
         }
-
+        
         // Create an instance of the API controller
         let audioAPIController = AudioAPIController()
-
+        
         do {
             let audioData = try Data(contentsOf: audioURL)
             // Submit the audio data to the API for analysis
@@ -240,11 +253,23 @@ class AudioController: NSObject, ObservableObject {
             print("Error: Unable to load audio file data - \(error)")
         }
     }
-
-
-    // Make sure to implement uploadUserAudio(audioData:) in your AudioAPIController
-
     
+    
+    // Make sure to implement uploadUserAudio(audioData:) in your AudioAPIController
+    
+    
+    
+    
+    func returnDate() -> String{
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E"
+        let currentDayOfWeek = dateFormatter.string(from: Date())
+        return currentDayOfWeek
+    }
+}
+
+
+
 //    func submitAudioWeekly() {
 //        // Ensure that we have a valid file URL
 //        guard let audioURL = recording.fileURL else {
@@ -267,12 +292,12 @@ class AudioController: NSObject, ObservableObject {
 //                        //update user completion
 //                        DataHelper().updateWeeklyCompletion(score: self.analysisAccuracyScore)
 //                        //----------------------------------------
-//                        
+//
 ////                        self.globalAnalysisResult = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
 ////                        DataHelper().addItemToUserDataCollection(itemName: "", dayOfWeek: self.returnDate(), accuracy: self.globalAnalysisResult!)
-////                        
+////
 //                        //----------------------------------------
-//                        
+//
 //                    }
 //                case .failure(let error):
 //                    DispatchQueue.main.async {
@@ -286,18 +311,6 @@ class AudioController: NSObject, ObservableObject {
 //            print("Error: Unable to load audio file data - \(error)")
 //        }
 //    }
-    
-    func returnDate() -> String{
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "E"
-        let currentDayOfWeek = dateFormatter.string(from: Date())
-        return currentDayOfWeek
-    }
-}
-
-
-
-
 
 
 

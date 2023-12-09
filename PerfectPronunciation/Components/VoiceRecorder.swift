@@ -13,7 +13,8 @@ import AVFoundation
 struct VoiceRecorder: View {
     @ObservedObject var audioRecorder: AudioController
     @ObservedObject var audioPlayer: AudioPlayBackController
-    @ObservedObject var audioAnalysisData : AudioAPIController
+    @ObservedObject var audioAPIController = AudioAPIController.shared
+    
     
     @ObservedObject var model = LessonController()
     
@@ -25,7 +26,7 @@ struct VoiceRecorder: View {
     @State private var elapsedTime = TimeInterval(0)
     @State private var timer: Timer?
     @Binding var isPopupPresented: Bool  // Add this line to receive the state variable
-
+    
     
     enum RecorderState {
         case readyToRecord
@@ -82,11 +83,6 @@ struct VoiceRecorder: View {
                                                 .font(.title)
                                                 .foregroundColor(.white)
                                                 .padding(.horizontal, 20)
-                                            
-//                                            if !audioRecorder.STTresult.isEmpty {
-//                                                
-//                                                
-//                                            }
                                         }
                                         .padding(.top, 10)
                                     }
@@ -132,10 +128,10 @@ struct VoiceRecorder: View {
                                     audioRecorder.stopRecording()
                                     stopTimer()
                                     recordingState = .playing
-                                
-                                //case .readyToPlay:
                                     
-                                
+                                    //case .readyToPlay:
+                                    
+                                    
                                 case .playing:
                                     audioPlayer.startPlayback(audio: audioRecorder.recording.fileURL!)
                                     recordingState = .readyToRecord
@@ -152,9 +148,9 @@ struct VoiceRecorder: View {
                                 Button(action: {
                                     self.audioRecorder.submitUserAudio(answer: testText)
                                     self.isPopupPresented = false // Add this line to dismiss the sheet
-//                                   
+                                    //
                                     
-   
+                                    
                                 }) {
                                     Image(systemName: "checkmark.circle.fill")
                                         .font(.system(size: 50))
@@ -162,9 +158,6 @@ struct VoiceRecorder: View {
                                 }
                                 .overlay(Circle().stroke(Color.black, lineWidth: 2))
                             }
-                            
-                            
-                            
                             
                         }
                         
@@ -213,8 +206,8 @@ struct VoiceRecorder: View {
             return "stop.circle.fill"
         case .playing:
             return "pause.circle.fill"
-//        case .readyToPlay:
-//            return "play.circle.fill"
+            //        case .readyToPlay:
+            //            return "play.circle.fill"
         }
     }
     

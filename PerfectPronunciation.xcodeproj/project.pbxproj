@@ -99,6 +99,7 @@
 		4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorder.swift; sourceTree = "<group>"; };
 		4DAB969B2B16E61100800058 /* AudioAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAnalysis.swift; sourceTree = "<group>"; };
 		4DAB969D2B16E62E00800058 /* AudioAPIController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAPIController.swift; sourceTree = "<group>"; };
+		4DB6FCA92B24399000AFA913 /* Waffle.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Waffle.m4a; sourceTree = "<group>"; };
 		4DC3914C2B1BE1F3006C8C39 /* AudioPlayBackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayBackController.swift; sourceTree = "<group>"; };
 		4DC3914E2B1BE2D3006C8C39 /* Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
 		4DC391502B1BE468006C8C39 /* Extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
@@ -264,6 +265,7 @@
 		4DD36F632B23EDF700321DF8 /* TestAudioFiles */ = {
 			isa = PBXGroup;
 			children = (
+				4DB6FCA92B24399000AFA913 /* Waffle.m4a */,
 			);
 			path = TestAudioFiles;
 			sourceTree = "<group>";

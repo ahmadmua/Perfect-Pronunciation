@@ -33,6 +33,7 @@ struct Details: View {
     
     @State private var arr = [0.0, 0.0, 0.0, 0.0, 0.0]
     
+    
     private var pronunciationModel: PronunciationModelProjection {
         do {
             return try PronunciationModelProjection(configuration: MLModelConfiguration())
@@ -105,6 +106,7 @@ struct Details: View {
             
             Button(action: {
                 fireDBHelper.updateDifficulty(selectedDifficulty: expectedDifficulty, userData: &userData, selection: &selection)
+                //fireDBHelper.addItemToUserDataCollection(itemName: "TestWord", dayOfWeek: "Thu", accuracy: 98.42)
             }) {
                 Text("Reset Difficulty")
                     .modifier(CustomTextM(fontName: "MavenPro-Bold", fontSize: 16, fontColor: Color.black))

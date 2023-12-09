@@ -11,6 +11,10 @@ struct AccuracyBarChart: View {
     
     @State var showDetails = false
     
+    @EnvironmentObject var fireDBHelper: DataHelper
+    @State private var accuracyAtIndexText = [0.0,0.0,0.0,0.0]
+    @State private var nameAtIndexText = ["","","",""]
+    
     var body: some View {
         
         VStack{
@@ -41,17 +45,17 @@ struct AccuracyBarChart: View {
             Spacer()
             
             HStack {
-                Text("Word 1 - 40%")
+                Text("\(accuracyAtIndexText[0])%")
                 Spacer()
-                Text("Word 2 - 74%")
+                Text("\(accuracyAtIndexText[1])%")
             }
             
             Spacer()
             
             HStack {
-                Text("Word 3 - 92%")
+                Text("\(accuracyAtIndexText[2])%")
                 Spacer()
-                Text("Word 4 - 37%")
+                Text("\(accuracyAtIndexText[3])%")
             }
             
             Spacer()
@@ -76,6 +80,27 @@ struct AccuracyBarChart: View {
         
         .chartYScale(domain: range)
     }
+        .onAppear {
+            
+            for index in 0..<4 {
+                fireDBHelper.getAccuracyAtIndex(index: index) { accuracy in
+                    if let accuracy = accuracy {
+                        accuracyAtIndexText[index] = Double(accuracy)
+                    }
+                }
+            }
+            
+            for index in 0..<4 {
+                fireDBHelper.getNameAtIndex(index: index) { word in
+                    if let word = word {
+                        nameAtIndexText[index] = String(word)
+                    }
+                }
+            }
+            
+        }
+        
+        
     }
 }
 

@@ -103,7 +103,8 @@ class DataHelper: ObservableObject {
             let itemData = [
                 "Name": itemName,
                 "DayOfWeek": dayOfWeek,
-                "Accuracy": accuracy
+                "Accuracy": accuracy,
+                "Timestamp": FieldValue.serverTimestamp(),
             ] as [String : Any]
             
             // Add a new document to the "Items" subcollection
@@ -413,6 +414,98 @@ class DataHelper: ObservableObject {
             }
         }
     }
+    
+    func getMostRecentFourAccuracies(completion: @escaping ([Float]?) -> Void) {
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+
+            itemsCollectionRef.order(by: "Timestamp", descending: true).getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error.localizedDescription)")
+                    completion(nil)
+                } else {
+                    let accuracies: [Float] = querySnapshot?.documents.compactMap { document in
+                        guard let accuracy = document["Accuracy"] as? Float else {
+                            print("Invalid 'Accuracy' field in document.")
+                            return nil
+                        }
+                        return accuracy
+                    } ?? []
+
+                    if !accuracies.isEmpty {
+                        // Call the completion handler with the most recent 4 accuracies
+                        completion(accuracies)
+                    } else {
+                        print("No valid accuracies found in the most recent 4 documents.")
+                        completion(nil)
+                    }
+                }
+            }
+        }
+    }
+
+    // Function to get accuracy at a specific index from the most recent 4 accuracies
+    func getAccuracyAtIndex(index: Int, completion: @escaping (Float?) -> Void) {
+        getMostRecentFourAccuracies { accuracies in
+            guard let accuracies = accuracies, index >= 0 && index < accuracies.count else {
+                completion(nil)
+                return
+            }
+
+            let accuracyAtIndex = accuracies[index]
+            completion(accuracyAtIndex)
+        }
+    }
+
+    func getMostRecentFourNames(completion: @escaping ([String]?) -> Void) {
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+
+            itemsCollectionRef.order(by: "Timestamp", descending: true).getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error.localizedDescription)")
+                    completion(nil)
+                } else {
+                    let names: [String] = querySnapshot?.documents.compactMap { document in
+                        guard let name = document["Name"] as? String else {
+                            print("Invalid 'Name' field in document.")
+                            return nil
+                        }
+                        return name
+                    } ?? []
+
+                    if !names.isEmpty {
+                        // Call the completion handler with the most recent 4 names
+                        completion(names)
+                    } else {
+                        print("No valid names found in the most recent 4 documents.")
+                        completion(nil)
+                    }
+                }
+            }
+        }
+    }
+
+
+    // Function to get name at a specific index from the most recent 4 names
+    func getNameAtIndex(index: Int, completion: @escaping (String?) -> Void) {
+        getMostRecentFourNames { names in
+            guard let names = names, index >= 0 && index < names.count else {
+                completion(nil)
+                return
+            }
+
+            let nameAtIndex = names[index]
+            completion(nameAtIndex)
+        }
+    }
+
+
+
 
     
 }

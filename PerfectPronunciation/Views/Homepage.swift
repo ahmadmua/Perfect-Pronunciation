@@ -24,9 +24,14 @@ struct Homepage: View {
     @State private var showStore = false
     @State private var showHome = false
     
+   
+    
     @State var showingAlert : Bool = false
     
     @ObservedObject var currModel = CurrencyController()
+    
+    @EnvironmentObject var fireDBHelper: DataHelper
+    @State private var accuracyAtIndexText: String = ""
     
     
     var body: some View {
@@ -155,31 +160,25 @@ struct Homepage: View {
                                     
                                     HStack(spacing: 20) {
                                         
-        
+                                        
                                         
                                         Button(action: {
-//                                            self.selection = 5
+                                            //                                            self.selection = 5
                                             self.showStats.toggle()
                                         }){
-                                        
+                                            
                                             
                                             BarChart(
                                                 data: viewModel.word.data,
                                                 range: viewModel.accuracyRange
                                             )
-                                                                
+                                            
                                         }
                                         .navigationDestination(isPresented: $showStats){
                                             StatData()
-//                                                .navigationBarBackButtonHidden(true)
+                                            //                                                .navigationBarBackButtonHidden(true)
                                         }
-    
-                                        VStack(alignment: .center, spacing: 10){
-                                            Text("Data Point 1")
-                                            Text("Data Point 1")
-                                            Text("Data Point 1")
-                                            Text("Data Point 1")
-                                        }
+                                        
                                     }
                                     .frame(maxWidth: .infinity)
                                     
@@ -240,6 +239,7 @@ struct Homepage: View {
         
             .onAppear {
                 viewModel.objectWillChange.send()
+            
             }
             
         //}
@@ -254,6 +254,16 @@ struct Homepage: View {
             }
             
             currModel.getUserCurrency()
+            
+            fireDBHelper.getAccuracyAtIndex(index: 2) { accuracy in
+                if let accuracy = accuracy {
+                                        accuracyAtIndexText = "Accuracy at index 2: \(accuracy)"
+                                    } else {
+                                        accuracyAtIndexText = "Failed to retrieve accuracy."
+                                    }
+            }
+
+            
         }
         
         Spacer()

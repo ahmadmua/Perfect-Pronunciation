@@ -17,14 +17,15 @@ class NotificationController {
         
         let content = UNMutableNotificationContent()
         content.title = "Perfect Pronunciation"
-        content.subtitle = "Pls come back!"
+        content.subtitle = "Get your daily lesson in!"
         content.sound = .default
         content.badge = 1
         
         var dateComponents = DateComponents()
+        
         dateComponents.hour = 14
-        dateComponents.minute = 13
-        dateComponents.second = 30
+        dateComponents.minute = 55
+        dateComponents.second = 45
         
         let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: true)
         

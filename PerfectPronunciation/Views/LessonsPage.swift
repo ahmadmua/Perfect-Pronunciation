@@ -71,7 +71,7 @@ struct LessonsPage: View {
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $conversation){
-                            IndividualLesson(lessonName: $lessonName)
+                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
@@ -101,7 +101,7 @@ struct LessonsPage: View {
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $numbers){
-                            IndividualLesson(lessonName: $lessonName)
+                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
@@ -130,7 +130,7 @@ struct LessonsPage: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $food1){
-                        IndividualLesson(lessonName: $lessonName)
+                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
                             .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
@@ -145,7 +145,7 @@ struct LessonsPage: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $food2){
-                        IndividualLesson(lessonName: $lessonName)
+                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
                             .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
@@ -173,7 +173,7 @@ struct LessonsPage: View {
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $direction){
-                            IndividualLesson(lessonName: $lessonName)
+                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)

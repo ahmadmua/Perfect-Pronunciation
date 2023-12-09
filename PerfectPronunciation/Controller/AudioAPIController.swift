@@ -20,23 +20,98 @@ enum NetworkError: Error {
 // This class is responsible for handling the audio API operations.
 class AudioAPIController: ObservableObject {
     // Published property that updates the view when a new analysis is loaded.
-    @Published var audioAnalysisData = AudioAnalysis()
-
-    // Function to upload audio data to the server for analysis.
-    func uploadAudio(audioData: Data, completion: @escaping (Result<AudioAnalysis, Error>) -> Void) {
+    static let shared = AudioAPIController()
+    
+    @Published var audioAnalysisTestData = AudioAnalysis()
+    @Published var audioAnalysisUserData = AudioAnalysis()
+    @Published var comparedAudioAnalysis: AudioAnalysis = AudioAnalysis()
+    
+    
+    init(comparedAudioAnalysis: AudioAnalysis = AudioAnalysis()) {
+        self.comparedAudioAnalysis = comparedAudioAnalysis
+    }
+    
+    
+    func uploadTestAudio(audioData: Data) {
+        
+        
+        //NOTE TO Nick & Muaz, this function needs to grab the test audio we all pre recorded that is supposed to be the highly accurate data
+        
+        
+        guard let uploadURL = URL(string: "http://3.95.58.220:8000/upload-audio") else {
+            print("Invalid URL")
+            return
+        }
+        
+        // URLRequest configuration.
+        var request = URLRequest(url: uploadURL)
+        request.httpMethod = "POST"
+        
+        // Generate a unique boundary string using UUID for multipart/form-data.
+        let boundary = "Boundary-\(UUID().uuidString)"
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        
+        // Create the multipart/form-data body.
+        request.httpBody = createBody(boundary: boundary, data: audioData, fileName: "recording.m4a") //change to variable
+        
+        // Perform the network task.
+        let task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            // Handle any errors that occur during the network request.
+            if let error = error {
+                print("Network request error: \(error)")
+                return
+            }
+            
+            // Check for a valid HTTP response.
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200...299).contains(httpResponse.statusCode) else {
+                print("Invalid response from server")
+                return
+            }
+            
+            // Ensure that data is received from the server.
+            guard let data = data else {
+                print("No data received from server")
+                return
+            }
+            
+            // JSONDecoder to parse the JSON data.
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            
+            do {
+                // Attempt to decode the JSON data into an AudioAnalysis object.
+                let audioAnalysis = try decoder.decode(AudioAnalysis.self, from: data)
+                
+                // If decoding is successful, update the published property.
+                DispatchQueue.main.async {
+                    self?.audioAnalysisUserData = audioAnalysis
+                    print("Audio analysis updated successfully")
+                }
+            } catch {
+                // If decoding fails, print the error.
+                print("Decoding error: \(error)")
+            }
+        }
+        
+        // Start the network task.
+        task.resume()
+    }
+    
+    func uploadUserAudio(audioData: Data, completion: @escaping (Result<AudioAnalysis, Error>) -> Void) {
         // URL for the audio upload endpoint (Change to your AWS EC2 instance URL).
         let uploadURL = URL(string: "http://3.95.58.220:8000/upload-audio")!
         // URLRequest configuration.
         var request = URLRequest(url: uploadURL)
         request.httpMethod = "POST"
-
+        
         // Generate a unique boundary string using UUID for multipart/form-data.
         let boundary = "Boundary-\(UUID().uuidString)"
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-
+        
         // Create the multipart/form-data body.
         request.httpBody = createBody(boundary: boundary, data: audioData, fileName: "recording.m4a")
-
+        
         // Perform the network task.
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             // Handle any errors that occur during the network request.
@@ -44,14 +119,14 @@ class AudioAPIController: ObservableObject {
                 completion(.failure(error))
                 return
             }
-
+            
             // Check for a valid HTTP response.
             guard let httpResponse = response as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode) else {
                 completion(.failure(NetworkError.invalidResponse))
                 return
             }
-
+            
             // Ensure that data is received from the server.
             guard let data = data else {
                 completion(.failure(NetworkError.emptyData))
@@ -61,14 +136,14 @@ class AudioAPIController: ObservableObject {
             // JSONDecoder to parse the JSON data.
             let decoder = JSONDecoder()
             decoder.keyDecodingStrategy = .convertFromSnakeCase
-
+            
             do {
                 // Attempt to decode the JSON data into an AudioAnalysis object.
                 let audioAnalysis = try decoder.decode(AudioAnalysis.self, from: data)
                 
                 // If decoding is successful, update the published property and call the completion handler.
                 DispatchQueue.main.async {
-                    self.audioAnalysisData = audioAnalysis
+                    self.audioAnalysisUserData = audioAnalysis
                     completion(.success(audioAnalysis))
                 }
             } catch {
@@ -80,11 +155,18 @@ class AudioAPIController: ObservableObject {
         // Start the network task.
         task.resume()
     }
-
+    
+    
+    
+    func compareAudioAnalysis() {
+        print("CompareAudioAnalysis FUNCTION CALLLLED \(audioAnalysisUserData.pronunciationScorePercentage)")
+    }
+    
+    
     // Helper function to create the body of the multipart/form-data request.
     private func createBody(boundary: String, data: Data, fileName: String) -> Data {
         var body = Data()
-
+        
         // Append the multipart/form-data boundaries and file data to the request body.
         body.append("--\(boundary)\r\n")
         body.append("Content-Disposition: form-data; name=\"audio\"; filename=\"\(fileName)\"\r\n")
@@ -92,7 +174,7 @@ class AudioAPIController: ObservableObject {
         body.append(data)
         body.append("\r\n")
         body.append("--\(boundary)--\r\n")
-
+        
         return body
     }
 }

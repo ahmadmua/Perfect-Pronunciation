@@ -15,6 +15,7 @@ struct PerfectPronunciationApp: App {
     
     let fireDBHelper = DataHelper()
     @StateObject private var sharedData = SharedData()
+    let comparedAudioAnalysis = AudioAPIController()
     
     init() {
         
@@ -24,7 +25,7 @@ struct PerfectPronunciationApp: App {
         appearance.backgroundColor = UIColor.darkGray
                 UINavigationBar.appearance().standardAppearance = appearance
                 UINavigationBar.appearance().scrollEdgeAppearance = appearance
-        UINavigationBar.appearance().frame
+                UINavigationBar.appearance().frame
         
         
         
@@ -33,7 +34,7 @@ struct PerfectPronunciationApp: App {
     
     var body: some Scene {
         WindowGroup {
-           Login().environmentObject(fireDBHelper).environmentObject(sharedData)
+            Login().environmentObject(fireDBHelper).environmentObject(sharedData).environmentObject(comparedAudioAnalysis)
 //            ContentView().environmentObject(fireDBHelper).environmentObject(userData)
 //            TestFirebaseView()
             //Homepage()

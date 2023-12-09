@@ -15,6 +15,7 @@ struct PerfectPronunciationApp: App {
     
     let fireDBHelper = DataHelper()
     @StateObject private var sharedData = SharedData()
+    let comparedAudioAnalysis = AudioAPIController()
     
     init() {
         
@@ -33,7 +34,7 @@ struct PerfectPronunciationApp: App {
     
     var body: some Scene {
         WindowGroup {
-           Login().environmentObject(fireDBHelper).environmentObject(sharedData)
+            Login().environmentObject(fireDBHelper).environmentObject(sharedData).environmentObject(fireDBHelper)
 //            ContentView().environmentObject(fireDBHelper).environmentObject(userData)
 //            TestFirebaseView()
             //Homepage()

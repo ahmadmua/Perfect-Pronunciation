@@ -53,7 +53,7 @@ struct WeeklyLesson: View {
                         //end recording and submit
                         recordingState = .readyToRecord
                         audioRecorder.stopRecording()
-                        audioRecorder.submitAudioWeekly()
+                        //audioRecorder.submitAudioWeekly()
                             
 //                        //update user completion
 //                        fireDBHelper.updateWeeklyCompletion(score: audioRecorder.analysisAccuracyScore)

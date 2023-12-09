@@ -154,10 +154,13 @@ class AudioAPIController: ObservableObject {
             
             // Start the network task.
             task.resume()
+            
+            compareAudioAnalysis()
         }
     
     func compareAudioAnalysis() {
            //Use Mathematical Analysis here to compare the Test Audio Results with the User Audio Results
+            print("test")
        }
        
 

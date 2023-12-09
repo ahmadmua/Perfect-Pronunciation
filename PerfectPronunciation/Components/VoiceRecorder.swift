@@ -150,7 +150,7 @@ struct VoiceRecorder: View {
                             
                             if recordingState != .recording {
                                 Button(action: {
-                                    self.audioRecorder.submitAudio(answer: testText)
+                                    self.audioRecorder.submitUserAudio(answer: testText)
                                     self.isPopupPresented = false // Add this line to dismiss the sheet
 //                                   
                                     

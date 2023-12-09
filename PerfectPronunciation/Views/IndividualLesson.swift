@@ -12,6 +12,8 @@ import FirebaseAuth
 struct IndividualLesson: View {
     //    @Binding var msgTaken: String
     @ObservedObject var model = LessonController()
+    @ObservedObject var audioController : AudioController
+
     
     @State var questionVar: String?
     
@@ -128,7 +130,7 @@ struct IndividualLesson: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $showNext){
-                        IndividualLesson(lessonName: $lessonName)
+                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
@@ -160,6 +162,8 @@ struct IndividualLesson: View {
                 
                 //get the current question for the page number
                 model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
+                
+                //audioController.submitTestAudio(file: model.question)
             }
             
              

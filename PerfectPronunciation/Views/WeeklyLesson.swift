@@ -55,16 +55,12 @@ struct WeeklyLesson: View {
                         audioRecorder.stopRecording()
                         audioRecorder.submitAudioWeekly()
                             
-//                        //update user completion
-//                        fireDBHelper.updateWeeklyCompletion(score: audioRecorder.analysisAccuracyScore)
                         
                         //return to the main screen when timer is done
                         self.showWeekly = true
                         
                     }
                     
-                    
-                
                 }
                 .navigationDestination(isPresented: $showWeekly){
                     WeeklyGamePage()
@@ -168,13 +164,9 @@ struct WeeklyLesson: View {
                         //disable button when user doesn't have the item
                         .disabled(countUses == 1)
                         
-                        
-                        
                     }
                     
-                    
                 }
-                
                 
             }//record and extra time button HSTACK
             
@@ -182,8 +174,6 @@ struct WeeklyLesson: View {
                 
                 audioRecorder.requestAuthorization()
                 currModel.checkBuyTime()
-                
-                
                 
                 DispatchQueue.main.async{
                 
@@ -200,19 +190,10 @@ struct WeeklyLesson: View {
                 
                 print("COUNT USES : \(self.countUses)")
                 
-            }
-//                if(currModel.timeIncreasePurchase == true){
-//                    self.disableTimeBtn = false
-//                }else{
-//                    self.disableTimeBtn = true
-//                }
-                
-                
+            }            
                         
             }//on appear
-//            .onDisappear{
-//                self.disableTimeBtn = false
-//            }
+
         }//vstack
     }
     

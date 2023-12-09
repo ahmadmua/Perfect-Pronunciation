@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AchievementPage: View {
+    //navigation vars
     @State private var selection: Int? = nil
     @State private var showLesson = false
     @State private var showIndiLesson = false
@@ -15,22 +16,14 @@ struct AchievementPage: View {
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
-    
+    //alert
     @State var showingAlert : Bool = false
-    
+    //controller var
     @ObservedObject var achieveModel = AchievementController()
     
     
     var body: some View {
         
-        //        NavigationStack{
-        
-        
-//        NavigationLink(destination: LessonsPage(), tag: 2, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationLink(destination: WeeklyGamePage(), tag: 3, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationLink(destination: AchievementPage(), tag: 5, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationLink(destination: StorePage(), tag: 4, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationLink(destination: Homepage(), tag: 6, selection: self.$selection){}.navigationBarBackButtonHidden(true)
         
         List{
             Grid{
@@ -39,7 +32,6 @@ struct AchievementPage: View {
                         HStack{
                             Button(action: {
                                 print("basic1 btn press")
-                                
 
                             }){
                                 Image(systemName: "square.fill")
@@ -52,7 +44,7 @@ struct AchievementPage: View {
                                     .padding(.horizontal, 20)
                                 Text("Complete all the lessons")
                                     .padding(.horizontal, 20)
-                            }
+                            }//vstack to explain the achievement
                         }//hstack
                     }
                     .padding()
@@ -60,7 +52,9 @@ struct AchievementPage: View {
                         HStack{
                             Button(action: {
                                 print("basic2 btn press")
-                                achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
+                                
+                                //test the achievement capabilities
+//                                achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
                                 
                             }){
                                 Image(systemName: "square.fill")
@@ -80,7 +74,6 @@ struct AchievementPage: View {
                         HStack{
                             Button(action: {
                                 print("basic2 btn press")
-                                //                            self.selection = 1
                             }){
                                 Image(systemName: "square.fill")
                                     .font(.system(size: 50, weight: .light))
@@ -99,7 +92,6 @@ struct AchievementPage: View {
                         HStack{
                             Button(action: {
                                 print("basic2 btn press")
-                                //                            self.selection = 1
                             }){
                                 Image(systemName: "square.fill")
                                     .font(.system(size: 50, weight: .light))
@@ -118,7 +110,6 @@ struct AchievementPage: View {
                         HStack{
                             Button(action: {
                                 print("basic2 btn press")
-                                //                            self.selection = 1
                             }){
                                 Image(systemName: "square.fill")
                                     .font(.system(size: 50, weight: .light))
@@ -129,7 +120,7 @@ struct AchievementPage: View {
                                     .padding(.horizontal, 20)
                                 Text("Achievement Description")
                                     .padding(.horizontal, 20)
-                            }
+                            }//vstack
                         }//hstack
                     }//grid row 4
                     .padding()
@@ -140,6 +131,7 @@ struct AchievementPage: View {
             .padding(.horizontal, -20)
             
             .onAppear(){
+                //check the current users achievements and update accordingly
                 achieveModel.checkUserAchievement()
             }
             
@@ -154,6 +146,7 @@ struct AchievementPage: View {
         .toolbarBackground(.visible, for: .navigationBar)
         
         
+        //navigation bar
         ZStack{
             Rectangle()
                 .fill(Color("Background"))
@@ -164,7 +157,6 @@ struct AchievementPage: View {
                 Spacer()
                 
                 Button(action: {
-    //                                        self.selection = 2
                     self.showLesson.toggle()
                     
                 }) {
@@ -180,7 +172,6 @@ struct AchievementPage: View {
                 Spacer()
                 
                 Button(action: {
-    //                self.selection = 3
                     self.showWeekly.toggle()
                 }) {
                     Image(systemName: "gamecontroller.fill")
@@ -201,7 +192,6 @@ struct AchievementPage: View {
                             .fill(Color("WhiteDiff"))
                             .frame(width: 50, height: 50)
                         Button(action: {
-                            //                    self.selection = 6
                             self.showHome.toggle()
                         }) {
                             Image(systemName: "house.fill")
@@ -218,7 +208,6 @@ struct AchievementPage: View {
                     Spacer()
                     
                     Button(action: {
-                        //                self.selection = 4
                         self.showStore.toggle()
                     }) {
                         Image(systemName: "dollarsign.circle.fill")
@@ -233,7 +222,7 @@ struct AchievementPage: View {
                     Spacer()
                     
                     Button(action: {
-                        //                self.selection = 5
+                        
                     }) {
                         Image(systemName: "trophy.fill")
                             .imageScale(.large) // Adjust icon size
@@ -242,56 +231,14 @@ struct AchievementPage: View {
                     
                     Spacer()
                     
-                    //                Group {
-                    //                    
-                    //                    ZStack{
-                    //                        Circle()
-                    //                            .fill(Color("WhiteDiff"))
-                    //                            .frame(width: 50, height: 50)
-                    //                        Button(action: {
-                    //                            self.selection = 6
-                    //                        }) {
-                    //                            Image(systemName: "house.fill")
-                    //                                .imageScale(.large) // Adjust icon size
-                    //                                .foregroundStyle(Color("Background"))
-                    //                        }
-                    //                    }
-                    //                    
-                    //                    
-                    //                    Spacer()
-                    //                    
-                    //                    Button(action: {
-                    //                        self.selection = 4
-                    //                        
-                    //                    }) {
-                    //                        Image(systemName: "dollarsign.circle.fill")
-                    //                            .imageScale(.large) // Adjust icon size
-                    //                            .foregroundStyle(Color.gray)
-                    //                    }
-                    //                    
-                    //                    Spacer()
-                    //                    
-                    //                    Button(action: {
-                    //                        //                self.selection = 5
-                    //                    }) {
-                    //                        Image(systemName: "trophy.fill")
-                    //                            .imageScale(.large) // Adjust icon size
-                    //                            .foregroundStyle(Color("CustYell"))
-                    //                    }
-                    //                    
-                    //                    Spacer()
-                    //                    
-                    //                }
-                }
-            }
+                }//gropu
+            }//hstack
             .background(Color("Background"))
-        }
+        }//zstack
         .background(Color("Background"))
-    }
-}
-//        }
-//    }
-//}
+    }//body view
+}//view
+
 
 //#Preview {
 //    AchievementPage()

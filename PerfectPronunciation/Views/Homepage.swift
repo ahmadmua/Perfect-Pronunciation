@@ -205,8 +205,8 @@ struct Homepage: View {
                                 .resizable()
                                 .frame(width: 25, height: 25)
                                 .foregroundColor(.black)
-                            
-                            Text("\(currModel.userCurr)")
+                            //get the current user currency
+                    Text("\(currModel.userCurr)")
                                 .foregroundColor(.black)
                         }
                         .padding(.horizontal, 25)
@@ -252,7 +252,7 @@ struct Homepage: View {
                 } else {
                 }
             }
-            
+            //get the users current currency total
             currModel.getUserCurrency()
             
             fireDBHelper.getAccuracyAtIndex(index: 2) { accuracy in

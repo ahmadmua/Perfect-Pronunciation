@@ -8,33 +8,31 @@
 import SwiftUI
 
 struct LessonsPage: View {
+    //controllers
     @ObservedObject var model = LessonController()
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var achieveModel = AchievementController()
-//    @State private var msg = ""
+    //navigation to other pages
     @State private var showLesson = false
     @State private var showWeekly = false
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
     @State private var selection: Int? = nil
-    
+    //lesson nav
     @State private var phonetics = false
     @State private var food1 = false
     @State private var food2 = false
     @State private var conversation = false
     @State private var numbers = false
     @State private var direction = false
-    
+    //lesson name
     @State private var lessonName = ""
-    
+    //currency alert
     @Binding var showingAlert : Bool
     
     
     var body: some View {
-        //        NavigationStack{
-        
-
         List{
             Grid{
                 VStack{
@@ -45,25 +43,10 @@ struct LessonsPage: View {
                     Divider()
                     
                     GridRow{
-                        //phonetics
-//                        Button(action: {
-//                            print("phonetic btn press")
-////                            self.selection = 1
-//                            lessonName = "Phonetics"
-//                            self.phonetics.toggle()
-//                        }){
-//                            Image(systemName: "mouth.fill")
-//                                .font(.system(size: 50, weight: .light))
-//                        }//btn
-//                        .navigationDestination(isPresented: $phonetics){
-//                            IndividualLesson(lessonName: $lessonName)
-//                        }
-//                        .buttonStyle(.borderless)
-                        
                         
                         Button(action: {
+                            //go to lesson
                             print("conversation btn press")
-    //                        self.selection = 1
                             self.lessonName = "Conversation"
                             self.food1.toggle()
                         }){
@@ -75,9 +58,7 @@ struct LessonsPage: View {
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
-                        
-                        
-                    }//grid row 2
+                    }//grid row 2 conversation
                     .padding()
                 }//Vstack
                 
@@ -92,6 +73,7 @@ struct LessonsPage: View {
                         
                         
                         Button(action: {
+                            //go to lesson
                             print("numbers btn press")
     
                             self.lessonName = "Numbers"
@@ -107,7 +89,7 @@ struct LessonsPage: View {
                         .buttonStyle(.borderless)
                         
                         
-                    }//grid row 2
+                    }//grid row 2 numbers
                     .padding()
                 }//num vstack
                 
@@ -121,8 +103,9 @@ struct LessonsPage: View {
                 
                 GridRow{
                     Button(action: {
+                        //go to lesson
                         print("food1 btn press")
-//                        self.selection = 1
+
                         self.lessonName = "Food1"
                         self.food1.toggle()
                     }){
@@ -136,8 +119,9 @@ struct LessonsPage: View {
                     .buttonStyle(.borderless)
                     
                     Button(action: {
+                        //go to lesson
                         print("food2 btn press")
-//                        self.selection = 1
+
                         self.lessonName = "Food2"
                         self.food2.toggle()
                     }){
@@ -149,7 +133,7 @@ struct LessonsPage: View {
                             .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
-                }//grid row
+                }//grid row food
                 .padding()
                 
                 
@@ -162,8 +146,8 @@ struct LessonsPage: View {
                     
                     GridRow{
                         
-                        
                         Button(action: {
+                            //go to lesson
                             print("directions btn press")
     
                             self.lessonName = "Directions"
@@ -179,28 +163,17 @@ struct LessonsPage: View {
                         .buttonStyle(.borderless)
                         
                         
-                    }//grid row 2
+                    }//grid row directions
                     .padding()
                 }//Directions vstack
-                
-                
-                
                 
             }//grid
             .background(Color("Background"))
             .padding(.vertical, -15)
             .padding(.horizontal, -20)
-            
-            
-            
-            
-         
-            
-            
+                
         }//list
-        
-        
-        
+
         .background(Color("Background"))
         .scrollContentBackground(.hidden)
         
@@ -209,8 +182,7 @@ struct LessonsPage: View {
         .toolbarBackground(Color("CustYell"), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         
-        
-        
+
 //        nav bar
         ZStack{
             Rectangle()
@@ -220,30 +192,26 @@ struct LessonsPage: View {
             
         HStack {
             
-                    
-            
             Spacer()
             
             Button(action: {
-                //                        self.selection = 6
-                
                 print("buttpress")
             }) {
                 Image(systemName: "book.fill")
                     .imageScale(.large) // Adjust icon size
                     .foregroundStyle(Color("CustYell"))
-            }
+            }//btn
             
             Spacer()
             
             Button(action: {
-//                self.selection = 3
+                //nav to page
                 self.showWeekly.toggle()
             }) {
                 Image(systemName: "gamecontroller.fill")
                     .imageScale(.large) // Adjust icon size
                     .foregroundStyle(Color.gray)
-            }
+            }//btn
             .navigationDestination(isPresented: $showWeekly){
                 WeeklyGamePage()
                     .navigationBarBackButtonHidden(true)
@@ -258,13 +226,13 @@ struct LessonsPage: View {
                         .fill(Color("WhiteDiff"))
                         .frame(width: 50, height: 50)
                     Button(action: {
-                        //                    self.selection = 6
+                        //nav to page
                         self.showHome.toggle()
                     }) {
                         Image(systemName: "house.fill")
                             .imageScale(.large) // Adjust icon size
                             .foregroundStyle(Color("Background"))
-                    }
+                    }//btn
                     .navigationDestination(isPresented: $showHome){
                         Homepage()
                             .navigationBarBackButtonHidden(true)
@@ -275,13 +243,13 @@ struct LessonsPage: View {
                 Spacer()
                 
                 Button(action: {
-                    //                self.selection = 4
+                    //nav to page
                     self.showStore.toggle()
                 }) {
                     Image(systemName: "dollarsign.circle.fill")
                         .imageScale(.large) // Adjust icon size
                         .foregroundStyle(Color.gray)
-                }
+                }//btn
                 .navigationDestination(isPresented: $showStore){
                     StorePage()
                         .navigationBarBackButtonHidden(true)
@@ -290,24 +258,24 @@ struct LessonsPage: View {
                 Spacer()
                 
                 Button(action: {
-                    //                self.selection = 5
+                    //nav to page
                     self.showAchievement.toggle()
                 }) {
                     Image(systemName: "trophy.fill")
                         .imageScale(.large) // Adjust icon size
                         .foregroundStyle(Color.gray)
-                }
+                }//btn
                 .navigationDestination(isPresented: $showAchievement){
                     AchievementPage()
                         .navigationBarBackButtonHidden(true)
                 }
                 
                 Spacer()
-            }
+            }//group
            
-        }
+        }//hstack
         .background(Color("Background"))
-    }
+    }//zstack
         .background(Color("Background"))
         .onAppear(){
             if(achieveModel.achievementOneCompletion()){
@@ -319,13 +287,13 @@ struct LessonsPage: View {
             Button("OK", role: .cancel) {
                 currModel.updateUserCurrency()
             }
-                }
+                }//alert
             
-//        }//nav view
-    }
+
+    }//body view
         
         
-}
+}//view
 
 //#Preview {
 //    LessonsPage()

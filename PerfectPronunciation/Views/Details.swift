@@ -34,6 +34,8 @@ struct Details: View {
     
     @State private var arr = [0.0, 0.0, 0.0, 0.0, 0.0]
     
+    @State private var showHome = false
+    
     
     private var pronunciationModel: PronunciationModelProjection {
         do {
@@ -70,8 +72,10 @@ struct Details: View {
             }
             
             HStack {
+                
                 StatCard(color: .yellow, title: "Predicted Accuracy", value: "\(prediction ?? 0.0)%")
             }
+            
             .onReceive([arr[0], arr[1], arr[2], arr[3], arr[4]].publisher) { _ in
                 prediction = makePrediction()
             }
@@ -117,6 +121,24 @@ struct Details: View {
                     .cornerRadius(10)
             }
         }
+        .navigationBarItems(leading:
+            
+            Button(action: {
+            self.showHome.toggle()
+            }){
+    
+                Image(systemName: "arrowshape.backward.fill")
+                    .resizable()
+                    .frame(width: 30, height: 30)
+                    .foregroundColor(.yellow)
+            }
+        )
+        .navigationDestination(isPresented: $showHome){
+            Homepage()
+                .navigationBarBackButtonHidden(true)
+        }
+        .navigationBarBackButtonHidden(true)
+        
         .onAppear {
             fireDBHelper.getAvgAccuracy { fetchedAccuracy in
                 averageAccuracy = fetchedAccuracy

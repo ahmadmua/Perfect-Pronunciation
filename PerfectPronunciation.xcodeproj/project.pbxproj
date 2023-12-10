@@ -50,8 +50,6 @@
 		4DC3914D2B1BE1F3006C8C39 /* AudioPlayBackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC3914C2B1BE1F3006C8C39 /* AudioPlayBackController.swift */; };
 		4DC3914F2B1BE2D3006C8C39 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC3914E2B1BE2D3006C8C39 /* Audio.swift */; };
 		4DC391512B1BE468006C8C39 /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC391502B1BE468006C8C39 /* Extentions.swift */; };
-		C508E7802B25426D00953FA5 /* Waffle.m4a in Resources */ = {isa = PBXBuildFile; fileRef = C508E77F2B25426D00953FA5 /* Waffle.m4a */; };
-		C508E7842B25455700953FA5 /* Home fries.m4a in Resources */ = {isa = PBXBuildFile; fileRef = C508E7832B25455700953FA5 /* Home fries.m4a */; };
 		C508E7862B25493C00953FA5 /* Good morning, do you have any plans today?.m4a in Resources */ = {isa = PBXBuildFile; fileRef = C508E7852B25493C00953FA5 /* Good morning, do you have any plans today?.m4a */; };
 		C508E7882B25494300953FA5 /* Pancake.m4a in Resources */ = {isa = PBXBuildFile; fileRef = C508E7872B25494300953FA5 /* Pancake.m4a */; };
 		C508E78A2B254BE500953FA5 /* This apple is delicious.m4a in Resources */ = {isa = PBXBuildFile; fileRef = C508E7892B254BE500953FA5 /* This apple is delicious.m4a */; };
@@ -102,12 +100,9 @@
 		4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorder.swift; sourceTree = "<group>"; };
 		4DAB969B2B16E61100800058 /* AudioAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAnalysis.swift; sourceTree = "<group>"; };
 		4DAB969D2B16E62E00800058 /* AudioAPIController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAPIController.swift; sourceTree = "<group>"; };
-		4DB6FCA92B24399000AFA913 /* Waffle.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Waffle.m4a; sourceTree = "<group>"; };
 		4DC3914C2B1BE1F3006C8C39 /* AudioPlayBackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayBackController.swift; sourceTree = "<group>"; };
 		4DC3914E2B1BE2D3006C8C39 /* Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
 		4DC391502B1BE468006C8C39 /* Extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
-		C508E77F2B25426D00953FA5 /* Waffle.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = Waffle.m4a; path = ../../../../Downloads/Waffle.m4a; sourceTree = "<group>"; };
-		C508E7832B25455700953FA5 /* Home fries.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Home fries.m4a"; path = "../../../../Desktop/Home fries.m4a"; sourceTree = "<group>"; };
 		C508E7852B25493C00953FA5 /* Good morning, do you have any plans today?.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Good morning, do you have any plans today?.m4a"; sourceTree = "<group>"; };
 		C508E7872B25494300953FA5 /* Pancake.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Pancake.m4a; sourceTree = "<group>"; };
 		C508E7892B254BE500953FA5 /* This apple is delicious.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = "This apple is delicious.m4a"; sourceTree = "<group>"; };
@@ -274,10 +269,7 @@
 				C508E78B2B254BEB00953FA5 /* Omelette.m4a */,
 				C508E7892B254BE500953FA5 /* This apple is delicious.m4a */,
 				C508E7852B25493C00953FA5 /* Good morning, do you have any plans today?.m4a */,
-				C508E7832B25455700953FA5 /* Home fries.m4a */,
 				C508E7872B25494300953FA5 /* Pancake.m4a */,
-				C508E77F2B25426D00953FA5 /* Waffle.m4a */,
-				4DB6FCA92B24399000AFA913 /* Waffle.m4a */,
 			);
 			path = TestAudioFiles;
 			sourceTree = "<group>";
@@ -362,10 +354,8 @@
 				C508E7862B25493C00953FA5 /* Good morning, do you have any plans today?.m4a in Resources */,
 				C508E78A2B254BE500953FA5 /* This apple is delicious.m4a in Resources */,
 				C508E78C2B254BEC00953FA5 /* Omelette.m4a in Resources */,
-				C508E7842B25455700953FA5 /* Home fries.m4a in Resources */,
 				02E2B6632AD6131300F1FACA /* Assets.xcassets in Resources */,
 				C508E7882B25494300953FA5 /* Pancake.m4a in Resources */,
-				C508E7802B25426D00953FA5 /* Waffle.m4a in Resources */,
 				C5D6050C2B0B39FA00620283 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -239,6 +239,7 @@ struct Homepage: View {
         
             .onAppear {
                 viewModel.objectWillChange.send()
+
             
             }
             
@@ -255,15 +256,7 @@ struct Homepage: View {
             //get the users current currency total
             currModel.getUserCurrency()
             
-            fireDBHelper.getAccuracyAtIndex(index: 2) { accuracy in
-                if let accuracy = accuracy {
-                                        accuracyAtIndexText = "Accuracy at index 2: \(accuracy)"
-                                    } else {
-                                        accuracyAtIndexText = "Failed to retrieve accuracy."
-                                    }
-            }
-
-            
+        
         }
         
         Spacer()

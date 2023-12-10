@@ -57,12 +57,7 @@ struct IndividualLesson: View {
                     
                     Divider()
                     
-                    GridRow{
-                        //display the score the user got
-                        Text("\(UserDefaults.standard.double(forKey: "UserAccuracyResults"))")
-                            .background(Rectangle().fill(Color.gray).padding(.all, -30))
-                            .padding(.all, 40)
-                    }
+                   
                     
                 }//vstack
                 
@@ -105,6 +100,8 @@ struct IndividualLesson: View {
                             self.showLesson.toggle()
                             self.showingAlert.toggle()
                             
+                            
+                            
                             //update the lesson as complete
                             model.updateLessonCompletion(userLesson: lessonName)
                             
@@ -127,7 +124,7 @@ struct IndividualLesson: View {
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
-                        LessonsPage(showingAlert: $showingAlert)
+                        Details()
                             .navigationBarBackButtonHidden(true)
                     }
                     .foregroundStyle(Color.green)

@@ -140,6 +140,7 @@ struct IndividualLesson: View {
         }//nanstack
         .background(Color("Background"))
         .onAppear{
+            
              
             //find the difficulty the user has set
             model.findUserDifficulty{
@@ -151,7 +152,7 @@ struct IndividualLesson: View {
                 //get the current question for the page number
                 model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
                 
-                //audioController.submitTestAudio(file: "Waffle")
+                
             }
             
              

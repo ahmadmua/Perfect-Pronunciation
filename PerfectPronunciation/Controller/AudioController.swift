@@ -211,6 +211,7 @@ class AudioController: NSObject, ObservableObject {
             // Read audio data from the file
             let audioData = try Data(contentsOf: audioURL)
             let audioAPIController = AudioAPIController()
+            
             // Submit the audio data to the API for analysis
             audioAPIController.uploadUserAudio(audioData: audioData) { result in
                 switch result {
@@ -218,8 +219,10 @@ class AudioController: NSObject, ObservableObject {
                     DispatchQueue.main.async {
                         // Process successful analysis result
                         //print("Audio Analysis: \(analysis)")
-                        audioAPIController.compareAudioAnalysis()
+                        UserDefaults.standard.set(audioAPIController.audioAnalysisUserData.pronunciationScorePercentage.pronunciationScorePercentage, forKey: "UserAudioScore")
                         
+                        print("USER DEFAULTS USER AUDIO : \(UserDefaults.standard.double(forKey: "UserAudioScore"))")
+                        UserDefaults.standard.synchronize()
                     }
                 case .failure(let error):
                     DispatchQueue.main.async {
@@ -236,22 +239,50 @@ class AudioController: NSObject, ObservableObject {
     
     func submitTestAudio(file: String) {
         
-        guard let audioURL = Bundle.main.url(forResource: file, withExtension: "m4a", subdirectory: "Test Audio Files") else {
+        guard let audioURL = Bundle.main.url(forResource: file, withExtension: "m4a") else {
             print("Error: Invalid file URL")
             return
         }
         
-        // Create an instance of the API controller
-        let audioAPIController = AudioAPIController()
+//        if let audioURL = Bundle.main.path(forResource: file, ofType: "m4a") {
+//            print("File PATH: \(audioURL)")
+//            // Create an instance of the API controller
+            let audioAPIController = AudioAPIController()
+            
+            do {
+                let audioData = try Data(contentsOf: audioURL)
+                // Submit the audio data to the API for analysis
+                audioAPIController.uploadTestAudio(audioData: audioData, recordingName: "\(file).m4a"){ result in
+                    switch result {
+                    case .success(let analysis):
+                        DispatchQueue.main.async {
+                            // Process successful analysis result
+                            //print("Audio Analysis: \(analysis)")
+                            //save user default for test audio
+                            UserDefaults.standard.set(audioAPIController.audioAnalysisTestData.pronunciationScorePercentage.pronunciationScorePercentage, forKey: "SampleAudioScore")
+                            
+                            
+                            print("USER DEFAULTS TEST AUDIO : \(UserDefaults.standard.double(forKey: "SampleAudioScore"))")
+                            UserDefaults.standard.synchronize()
+                            
+                        }
+                    case .failure(let error):
+                        DispatchQueue.main.async {
+                            // Handle any errors during analysis
+                            print("Error: \(error)")
+                        }
+                    }
+                }
+            } catch {
+                // Handle errors during audio data reading
+                print("Error: Unable to load audio file data - \(error)")
+            }
+//        } else{
+//            print("COULD NOT FIND ")
+//        }
         
-        do {
-            let audioData = try Data(contentsOf: audioURL)
-            // Submit the audio data to the API for analysis
-            audioAPIController.uploadTestAudio(audioData: audioData)
-        } catch {
-            // Handle errors during audio data reading
-            print("Error: Unable to load audio file data - \(error)")
-        }
+        
+        
     }
     
     

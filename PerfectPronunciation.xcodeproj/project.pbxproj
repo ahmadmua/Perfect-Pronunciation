@@ -50,6 +50,7 @@
 		4DC3914D2B1BE1F3006C8C39 /* AudioPlayBackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC3914C2B1BE1F3006C8C39 /* AudioPlayBackController.swift */; };
 		4DC3914F2B1BE2D3006C8C39 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC3914E2B1BE2D3006C8C39 /* Audio.swift */; };
 		4DC391512B1BE468006C8C39 /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC391502B1BE468006C8C39 /* Extentions.swift */; };
+		C508E77E2B2523C200953FA5 /* Waffle.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 4DB6FCA92B24399000AFA913 /* Waffle.m4a */; };
 		C58B99F22AECDACB003C0288 /* LessonsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F12AECDACB003C0288 /* LessonsPage.swift */; };
 		C58B99F42AED7CC4003C0288 /* IndividualLesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F32AED7CC4003C0288 /* IndividualLesson.swift */; };
 		C58B99F62AED94E5003C0288 /* StorePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F52AED94E5003C0288 /* StorePage.swift */; };
@@ -343,6 +344,7 @@
 				02E2B6662AD6131300F1FACA /* Preview Assets.xcassets in Resources */,
 				02E2B6632AD6131300F1FACA /* Assets.xcassets in Resources */,
 				C5D6050C2B0B39FA00620283 /* GoogleService-Info.plist in Resources */,
+				C508E77E2B2523C200953FA5 /* Waffle.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

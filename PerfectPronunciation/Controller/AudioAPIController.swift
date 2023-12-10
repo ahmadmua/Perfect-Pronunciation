@@ -32,17 +32,9 @@ class AudioAPIController: ObservableObject {
     }
     
     
-    func uploadTestAudio(audioData: Data) {
-        
-        
-        //NOTE TO Nick & Muaz, this function needs to grab the test audio we all pre recorded that is supposed to be the highly accurate data
-        
-        
-        guard let uploadURL = URL(string: "http://3.95.58.220:8000/upload-audio") else {
-            print("Invalid URL")
-            return
-        }
-        
+    func uploadTestAudio(audioData: Data, recordingName: String, completion: @escaping (Result<AudioAnalysis, Error>) -> Void) {
+        // URL for the audio upload endpoint (Change to your AWS EC2 instance URL).
+        let uploadURL = URL(string: "http://3.95.58.220:8000/upload-audio")!
         // URLRequest configuration.
         var request = URLRequest(url: uploadURL)
         request.httpMethod = "POST"
@@ -52,26 +44,26 @@ class AudioAPIController: ObservableObject {
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
         
         // Create the multipart/form-data body.
-        request.httpBody = createBody(boundary: boundary, data: audioData, fileName: "recording.m4a") //change to variable
+        request.httpBody = createBody(boundary: boundary, data: audioData, fileName: recordingName)
         
         // Perform the network task.
-        let task = URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
             // Handle any errors that occur during the network request.
             if let error = error {
-                print("Network request error: \(error)")
+                completion(.failure(error))
                 return
             }
             
             // Check for a valid HTTP response.
             guard let httpResponse = response as? HTTPURLResponse,
                   (200...299).contains(httpResponse.statusCode) else {
-                print("Invalid response from server")
+                completion(.failure(NetworkError.invalidResponse))
                 return
             }
             
             // Ensure that data is received from the server.
             guard let data = data else {
-                print("No data received from server")
+                completion(.failure(NetworkError.emptyData))
                 return
             }
             
@@ -83,17 +75,17 @@ class AudioAPIController: ObservableObject {
                 // Attempt to decode the JSON data into an AudioAnalysis object.
                 let audioAnalysis = try decoder.decode(AudioAnalysis.self, from: data)
                 
-                // If decoding is successful, update the published property.
+                // If decoding is successful, update the published property and call the completion handler.
                 DispatchQueue.main.async {
-                    self?.audioAnalysisUserData = audioAnalysis
-                    print("Audio analysis updated successfully")
+                    self.audioAnalysisTestData = audioAnalysis
+                    completion(.success(audioAnalysis))
                 }
             } catch {
-                // If decoding fails, print the error.
+                // If decoding fails, print the error and call the completion handler with failure.
                 print("Decoding error: \(error)")
+                completion(.failure(error))
             }
         }
-        
         // Start the network task.
         task.resume()
     }
@@ -159,7 +151,14 @@ class AudioAPIController: ObservableObject {
     
     
     func compareAudioAnalysis() {
-        print("CompareAudioAnalysis FUNCTION CALLLLED \(audioAnalysisUserData.pronunciationScorePercentage)")
+//        print("CompareAudioAnalysis FUNCTION CALLLLED \(audioAnalysisUserData.pronunciationScorePercentage)")
+//        
+//        
+////        print("USER DATA SCORE : \(self.audioAnalysisUserData.pronunciationScorePercentage)")
+//        print("TEST DATA SCORE : \(self.audioAnalysisTestData.pronunciationScorePercentage)")
+        
+        print("USER DEFAULTS USER AUDIO  FROM COMPARE FUNC: \(UserDefaults.standard.double(forKey: "UserAudioScore"))")
+        UserDefaults.standard.synchronize()
     }
     
     

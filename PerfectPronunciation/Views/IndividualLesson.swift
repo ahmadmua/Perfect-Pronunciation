@@ -48,18 +48,18 @@ struct IndividualLesson: View {
                             .background(Rectangle().fill(Color.gray).padding(.all, -30))
                             .padding(.bottom, 80)
                     }
-                    GridRow{
-                        //displays uers response
-                        Text("User Pronunciation")
-                            .background(Rectangle().fill(Color.gray).padding(.all, -30))
-                            .padding(.bottom, 40)
-                    }
+//                    GridRow{
+//                        //displays uers response
+//                        Text("User Pronunciation")
+//                            .background(Rectangle().fill(Color.gray).padding(.all, -30))
+//                            .padding(.bottom, 40)
+//                    }
                     
                     Divider()
                     
                     GridRow{
                         //display the score the user got
-                        Text("Grade")
+                        Text("\(UserDefaults.standard.double(forKey: "UserAccuracyResults"))")
                             .background(Rectangle().fill(Color.gray).padding(.all, -30))
                             .padding(.all, 40)
                     }
@@ -152,6 +152,7 @@ struct IndividualLesson: View {
                 //get the current question for the page number
                 model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
                 
+                UserDefaults.standard.synchronize()
                 
             }
             

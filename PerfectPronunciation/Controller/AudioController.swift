@@ -223,6 +223,10 @@ class AudioController: NSObject, ObservableObject {
                         
                         print("USER DEFAULTS USER AUDIO : \(UserDefaults.standard.double(forKey: "UserAudioScore"))")
                         UserDefaults.standard.synchronize()
+                        
+                        self.audioAPIController.compareAudioAnalysis()
+                        
+                        DataHelper().addItemToUserDataCollection(itemName: answer, dayOfWeek: self.returnDate(), accuracy: Float(UserDefaults.standard.double(forKey: "UserAccuracyResults")))
                     }
                 case .failure(let error):
                     DispatchQueue.main.async {
@@ -297,51 +301,54 @@ class AudioController: NSObject, ObservableObject {
         let currentDayOfWeek = dateFormatter.string(from: Date())
         return currentDayOfWeek
     }
+    
+    
+    func submitAudioWeekly() {
+        // Ensure that we have a valid file URL
+        guard let audioURL = recording.fileURL else {
+            print("Error: Invalid file URL")
+            return
+        }
+
+        do {
+            // Read audio data from the file
+            let audioData = try Data(contentsOf: audioURL)
+            let audioAPIController = AudioAPIController()
+            // Submit the audio data to the API for analysis
+            audioAPIController.uploadUserAudio(audioData: audioData) { result in
+                switch result {
+                case .success(let analysis):
+                    DispatchQueue.main.async {
+                        // Process successful analysis result
+                        print("Audio Analysis: \(analysis)")
+                        self.analysisAccuracyScore = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
+                        //update user completion
+                        DataHelper().updateWeeklyCompletion(score: self.analysisAccuracyScore)
+                        //----------------------------------------
+
+//                        self.globalAnalysisResult = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
+//                        DataHelper().addItemToUserDataCollection(itemName: "", dayOfWeek: self.returnDate(), accuracy: self.globalAnalysisResult!)
+//
+                        //----------------------------------------
+
+                    }
+                case .failure(let error):
+                    DispatchQueue.main.async {
+                        // Handle any errors during analysis
+                        print("Error: \(error)")
+                    }
+                }
+            }
+        } catch {
+            // Handle errors during audio data reading
+            print("Error: Unable to load audio file data - \(error)")
+        }
+    }
 }
 
 
 
-//    func submitAudioWeekly() {
-//        // Ensure that we have a valid file URL
-//        guard let audioURL = recording.fileURL else {
-//            print("Error: Invalid file URL")
-//            return
-//        }
-//
-//        do {
-//            // Read audio data from the file
-//            let audioData = try Data(contentsOf: audioURL)
-//            let audioAPIController = AudioAPIController()
-//            // Submit the audio data to the API for analysis
-//            audioAPIController.uploadAudio(audioData: audioData) { result in
-//                switch result {
-//                case .success(let analysis):
-//                    DispatchQueue.main.async {
-//                        // Process successful analysis result
-//                        print("Audio Analysis: \(analysis)")
-//                        self.analysisAccuracyScore = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
-//                        //update user completion
-//                        DataHelper().updateWeeklyCompletion(score: self.analysisAccuracyScore)
-//                        //----------------------------------------
-//
-////                        self.globalAnalysisResult = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
-////                        DataHelper().addItemToUserDataCollection(itemName: "", dayOfWeek: self.returnDate(), accuracy: self.globalAnalysisResult!)
-////
-//                        //----------------------------------------
-//
-//                    }
-//                case .failure(let error):
-//                    DispatchQueue.main.async {
-//                        // Handle any errors during analysis
-//                        print("Error: \(error)")
-//                    }
-//                }
-//            }
-//        } catch {
-//            // Handle errors during audio data reading
-//            print("Error: Unable to load audio file data - \(error)")
-//        }
-//    }
+    
 
 
 

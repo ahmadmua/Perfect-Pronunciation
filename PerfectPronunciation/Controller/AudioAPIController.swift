@@ -158,7 +158,26 @@ class AudioAPIController: ObservableObject {
 //        print("TEST DATA SCORE : \(self.audioAnalysisTestData.pronunciationScorePercentage)")
         
         print("USER DEFAULTS USER AUDIO  FROM COMPARE FUNC: \(UserDefaults.standard.double(forKey: "UserAudioScore"))")
+        
+        
+        print("USER DEFAULTS TEST AUDIO  FROM COMPARE FUNC: \(UserDefaults.standard.double(forKey: "SampleAudioScore"))")
+        
+        var userAccuracyResults : Double
+        
+        if (UserDefaults.standard.double(forKey: "SampleAudioScore") < UserDefaults.standard.double(forKey: "UserAudioScore")){
+            userAccuracyResults = 100.0
+        }else{
+            userAccuracyResults = (UserDefaults.standard.double(forKey: "UserAudioScore") / UserDefaults.standard.double(forKey: "SampleAudioScore")) * 100
+        }
+        
+        UserDefaults.standard.set(userAccuracyResults, forKey: "UserAccuracyResults")
+        
+        print("USERS SCORE FROM COMPARING SCORE: \(UserDefaults.standard.double(forKey: "UserAccuracyResults"))")
+        
+        
+        
         UserDefaults.standard.synchronize()
+        
     }
     
     

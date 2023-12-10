@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct StorePage: View {
-    
+    //nav vars
     @State private var selection: Int? = nil
     @State private var showLesson = false
     @State private var showIndiLesson = false
@@ -16,25 +16,14 @@ struct StorePage: View {
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
-//    @State private var selection: Int? = nil
-    
+    //controller vars
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var model = LessonController()
-    
+    //alert
     @State var showingAlert : Bool = false
     
     
     var body: some View {
-        
-        
-//        NavigationLink(destination: LessonsPage(), tag: 2, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationLink(destination: WeeklyGamePage(), tag: 3, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationLink(destination: AchievementPage(), tag: 5, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationLink(destination: StorePage(), tag: 4, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationLink(destination: Homepage(), tag: 6, selection: self.$selection){}.navigationBarBackButtonHidden(true)
-//        NavigationStack{
-            
-//            NavigationLink(destination: IndividualLesson(), tag: 1, selection: self.$selection){}
   
                 List{
                     Grid{
@@ -49,13 +38,8 @@ struct StorePage: View {
                                 HStack{
                                     Button(action: {
                                         print("theme1 btn press")
-                                        
-//                                        currModel.getUserCurrency()
-                                        
-                                        
+                                        //this is to test subtracting small currency
                                         currModel.subUserCurrency(cost: 200)
-                                        
-                                        
                                         
                                     }){
                                         Image(systemName: "square.fill")
@@ -63,25 +47,19 @@ struct StorePage: View {
                                     }//btn
                                     .buttonStyle(.borderless)
                                     
-                                    
                                     Text("Theme 1")
                                     
                                     HStack(alignment: .center){
                                         Text("200")
-//                                        Image(systemName: "circle.fill")
-//                                            .font(.system(size: 25, weight: .light))
-//                                        
                                     }
                                     .padding(.leading, 60)
-                                }
+                                }// hstack item 1
                                 
                                 
-//                                GridRow{
                                     HStack{
                                         Button(action: {
                                             print("Theme2 btn press")
-                                            
-//                                            print(currModel.userCurr)
+                                            //this is to test subtracting large currency
                                             currModel.subUserCurrency(cost: 1000)
                                             
                                         }){
@@ -94,19 +72,14 @@ struct StorePage: View {
                                         
                                         HStack(alignment: .center){
                                             Text("200")
-//                                            Image(systemName: "circle.fill")
-//                                                .font(.system(size: 25, weight: .light))
                                             
                                         }
                                         .padding(.leading, 60)
-                                    }
+                                    }//hstack item 2
                                 
                                 HStack{
                                     Button(action: {
                                         print("theme 3 btn press")
-                                        
-//                                        currModel.updateUserCurrency()
-                                        
                                     }){
                                         Image(systemName: "square.fill")
                                             .font(.system(size: 50, weight: .light))
@@ -117,20 +90,13 @@ struct StorePage: View {
                                     
                                     HStack(alignment: .center){
                                         Text("200")
-//                                        Image(systemName: "circle.fill")
-//                                            .font(.system(size: 25, weight: .light))
                                         
                                     }
                                     .padding(.leading, 60)
-                                }
+                                }//hstack item 3
                               
-                                
                             }//grid row 2
                             .padding()
-                            
-                            
-
-                                                    
                             
                         }//Vstack
                         
@@ -161,20 +127,14 @@ struct StorePage: View {
                                     
                                     HStack(alignment: .center){
                                         Text("300")
-//                                        Image(systemName: "circle.fill")
-//                                            .font(.system(size: 25, weight: .light))
-                                        
                                     }
                                     .padding(.leading, 60)
-                                    
-                                }
+                                }//hstack item time purchase
                                 
-                                
-//                                GridRow{
                                     HStack{
                                         Button(action: {
                                             print("item2 btn press")
-                                            //                                    self.selection = 1
+                                            
                                         }){
                                             Image(systemName: "square.fill")
                                                 .font(.system(size: 50, weight: .light))
@@ -185,17 +145,13 @@ struct StorePage: View {
                                         
                                         HStack(alignment: .center){
                                             Text("300")
-//                                            Image(systemName: "circle.fill")
-//                                                .font(.system(size: 25, weight: .light))
-//                                            
                                         }
                                         .padding(.leading, 60)
-                                    }
+                                    }//hstack item 2
                                 
                                 HStack{
                                     Button(action: {
                                         print("item 3 btn press")
-                                        //                                    self.selection = 1
                                     }){
                                         Image(systemName: "square.fill")
                                             .font(.system(size: 50, weight: .light))
@@ -206,26 +162,14 @@ struct StorePage: View {
                                     
                                     HStack(alignment: .center){
                                         Text("300")
-//                                        Image(systemName: "circle.fill")
-//                                            .font(.system(size: 25, weight: .light))
-                                        
                                     }
                                     .padding(.leading, 60)
-                                }
+                                }//hstack item 3
                               
-                                
                             }//grid row 2
                             .padding()
-
-                            
-                           
                             
                         }//Vstack
-                        
-                       
-                        
-   
-                     
                         
                     }//grid
                     
@@ -241,12 +185,13 @@ struct StorePage: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(Color("CustYell"), for: .navigationBar)
                 .toolbarBackground(.visible, for: .navigationBar)
-            
+                //need more money alert
                 .alert("Sorry, You need \(currModel.neededToPurchase) more cuurency to purches this item!", isPresented: $currModel.canUserPurchase) {
                     Button("OK", role: .cancel) {
                         
                     }
                         }
+                //purchase successful
                 .alert("You successfuly bought this item", isPresented: $currModel.userDidPurchase) {
                     Button("OK", role: .cancel) {
                         currModel.checkBuyTime()
@@ -259,17 +204,11 @@ struct StorePage: View {
                 .shadow(color: .gray, radius: 3, x: -2, y: 2)
                 .frame(maxWidth: .infinity, maxHeight: 50)
         HStack {
-            
-            
-                
-                
-                
-                    
-            
+
             Spacer()
             
             Button(action: {
-//                                        self.selection = 2
+                //nav to page
                 self.showLesson.toggle()
                 
             }) {
@@ -285,7 +224,7 @@ struct StorePage: View {
             Spacer()
             
             Button(action: {
-//                self.selection = 3
+                //nav to page
                 self.showWeekly.toggle()
             }) {
                 Image(systemName: "gamecontroller.fill")
@@ -306,7 +245,7 @@ struct StorePage: View {
                         .fill(Color("WhiteDiff"))
                         .frame(width: 50, height: 50)
                     Button(action: {
-                        //                    self.selection = 6
+                        //nav to page
                         self.showHome.toggle()
                     }) {
                         Image(systemName: "house.fill")
@@ -318,18 +257,11 @@ struct StorePage: View {
                             .navigationBarBackButtonHidden(true)
                     }
                 }
-                
-                
-                //                Spacer()
-                
-                
-                
-                
-                
+ 
                 Spacer()
                 
                 Button(action: {
-                    //                self.selection = 4
+                    //nav to page
                     print("buttpress")
                 }) {
                     Image(systemName: "dollarsign.circle.fill")
@@ -341,7 +273,7 @@ struct StorePage: View {
                 Spacer()
                 
                 Button(action: {
-                    //                self.selection = 5
+                    //nav to page
                     self.showAchievement.toggle()
                 }) {
                     Image(systemName: "trophy.fill")
@@ -357,21 +289,22 @@ struct StorePage: View {
                 
             }
             
-        }
+        }//hstack
         .background(Color("Background"))
-    }
+    }//zstack
         .background(Color("Background"))
         .onAppear(){
+            //find the users difficulty
             model.findUserDifficulty{
+                //get the users current currency
                 currModel.getUserCurrency()
             }
-            
+            //check if the user has purchased an item
             currModel.checkBuyTime()
-        }
-        }
+        }//on appear
+        }//body view
         
-    }
-//}
+    }//view
 
 ////#Preview {
 //    StorePage()

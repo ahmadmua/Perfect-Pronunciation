@@ -10,49 +10,46 @@ import Firebase
 import FirebaseAuth
 
 struct IndividualLesson: View {
-    //    @Binding var msgTaken: String
+    //controller var
     @ObservedObject var model = LessonController()
     @ObservedObject var audioController : AudioController
 
     
+    //question variable
     @State var questionVar: String?
-    
+    //navigation vars
     @State private var showRecord = false
     @State private var showNext = false
     @State private var showLesson = false
+    //user difficulty
     @State private var userDifficulty: String = "Easy"
-    
+    //alrt
     @State private var showingAlert = false
-    
+    //pop up for recorder view
     @State  private var isPopupPresented = false
-    
-    
-//    @State private var counter : Int = 0
-    
+    //lesson name
     @Binding var lessonName : String
-    
+    //counter
     @AppStorage("counter") var counter: Int = 0
     
     
-
     var body: some View {
         
-        
-//        NavigationStack{
             ZStack{
-                
                 Color("background")
             Grid{
                 
                 Spacer()
+                
                 VStack{
                     GridRow{
-                        
+                       //display question
                         Text(model.question ?? "Could not get the question")
                             .background(Rectangle().fill(Color.gray).padding(.all, -30))
                             .padding(.bottom, 80)
                     }
                     GridRow{
+                        //displays uers response
                         Text("User Pronunciation")
                             .background(Rectangle().fill(Color.gray).padding(.all, -30))
                             .padding(.bottom, 40)
@@ -61,23 +58,24 @@ struct IndividualLesson: View {
                     Divider()
                     
                     GridRow{
+                        //display the score the user got
                         Text("Grade")
                             .background(Rectangle().fill(Color.gray).padding(.all, -30))
                             .padding(.all, 40)
                     }
                     
-                }
+                }//vstack
+                
                 Spacer()
+                
                 GridRow{
                     
                     Button(action: {
                         //nav to the next word
                         print("record btn press")
-//                        self.selection = 1
-                        //                            self.selection = 1
+
                         self.showRecord.toggle()
                         self.isPopupPresented.toggle()
-                        
                         
                     }){
                         Image(systemName: "record.circle.fill")
@@ -89,18 +87,13 @@ struct IndividualLesson: View {
                         VoiceRecorder(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController(), audioAPIController: AudioAPIController(), testText: model.answer!, isPopupPresented: $isPopupPresented).environmentObject(audioController)
                     }
                     
-                    
-//                    .navigationDestination(isPresented: $showRecord){
-//                        VoiceRecorder()
-////                            .navigationBarBackButtonHidden(true)
-//                    }
-                    
                     Button(action: {
+                        //nav to the nexet question
                         print("Continue btn press")
-                        
+                    
                         print("Numo q's \(model.totQuestions)")
                         print("QUESTION \(model.question ?? "WHY NO WORK")")
-//                                                    self.selection = 1
+                        //increment counter to track what question the user is on
                         counter+=1
                         
                         
@@ -120,7 +113,7 @@ struct IndividualLesson: View {
                             self.showNext.toggle()
                         }
                         
-                        //print("The question is: \(model.answer!)")
+                        //assign the question var
                         questionVar = model.answer!
                         print("THIS IS THE QUESTION \(questionVar ?? "NA")")
                         
@@ -144,18 +137,14 @@ struct IndividualLesson: View {
             }//grid
             .background(Color("Background"))
             
-            
-                
         }//nanstack
         .background(Color("Background"))
         .onAppear{
             
-            
-            
+             
             //find the difficulty the user has set
             model.findUserDifficulty{
                 print("USER DIFICULTY!! : \(model.difficulty!)")
-                
                 
                 //find the number of questions for the lesson
                 model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty!)
@@ -163,7 +152,7 @@ struct IndividualLesson: View {
                 //get the current question for the page number
                 model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
                 
-                //audioController.submitTestAudio(file: "Waffle")
+                
             }
             
              

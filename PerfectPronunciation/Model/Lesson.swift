@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+//defines a lesson object
 struct Lesson: Identifiable{
     var id: String
 //    var difficulty : String

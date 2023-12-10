@@ -6,7 +6,7 @@
 //
 
 import Foundation
-
+//defines a leaderboard object, which stores a users score to be displayed on the leaderbaord
 struct Leaderboard: Identifiable {
     var id : String
     var userName : String

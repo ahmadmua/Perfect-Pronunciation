@@ -16,6 +16,7 @@ class SharedData: ObservableObject {
 
 
 struct Details: View {
+    let model = PronunciationModel()
     
     @State private var prediction: Double?
     @State private var averageAccuracy: Float = 0

@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct WeeklyGamePage: View {
-//    @ObservedObject var audioRecorder: AudioController
+    //controller vars
     @ObservedObject var leaderboardModel = LeaderboardController()
-
+    //navigation vars
     @State private var selection: Int? = nil
     @State private var showLesson = false
     @State private var showIndiLesson = false
@@ -18,26 +18,25 @@ struct WeeklyGamePage: View {
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
-    
+
     @State private var showWeeklyLesson = false
-    
+        //alert
     @State var showingAlert : Bool = false
 
     
     var body: some View {
-//        NavigationStack{
-            
             
             ScrollView{
                 
                 VStack{
 
-                    
+                    //explain the game
                     Text("In this time attack mode compete against everyone to achieve the most correctly pronounced words in 15 seconds! Dont forget to press record, and say all words in the same recording!")
                         .padding(.vertical, 30)
                         .padding(.horizontal, 20)
                     
                     Button("Start Challenge"){
+                        //navigate to the game
                         self.showWeeklyLesson = true
                     }
                     .padding()
@@ -52,26 +51,10 @@ struct WeeklyGamePage: View {
                     
                     Divider()
                     
-//                    VStack{
-//                        
-//
-//                    }
-//                    .onAppear{
-//                        leaderboardModel.getLeaderboard()
-//                    }
-//                    .padding(.top, 30)
                     
-                    
-                    
-                    
-                    
-                }
-//                .onAppear{
-//                    //update user completion
-//                    fireDBHelper.updateWeeklyCompletion(score: audioRecorder.analysisAccuracyScore)
-//                }
+                }//vstack
                         
-                    }
+                    }//scroll view
             .navigationTitle("Weekly Challenge")
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(Color("CustYell"), for: .navigationBar)
@@ -83,43 +66,38 @@ struct WeeklyGamePage: View {
                 Spacer()
                 
                 Button(action: {
+                    //refresh for updatign the leaderboard
                     leaderboardModel.getLeaderboard()
                 }) {
                     Image(systemName: "arrow.clockwise")
-                        .imageScale(.medium) // Adjust icon size
-//
+                        .imageScale(.medium) // Adjust icon
                 }
                 .padding(.trailing, 25)
                 .padding(.top, 25)
                 
             }
             
+            //list displaying the leaderboard
             List(leaderboardModel.leaderboardFull){content in
                 Text("\(leaderboardModel.getFlagForCountry(fullCountryName: content.country)) \(content.userName) \n \(content.weeklyChallengeComplete)")
           
                 
-            }
-        }
+            }//list
+        }//vstack
         .padding(.top, -100)
-        
         
         ZStack{
             Rectangle()
                 .fill(Color("Background"))
                 .shadow(color: .gray, radius: 3, x: -2, y: 2)
                 .frame(maxWidth: .infinity, maxHeight: 50)
+            
         HStack {
-            
-            
-                
-                
-                
                     
             
             Spacer()
             
             Button(action: {
-//                                        self.selection = 2
                 self.showLesson.toggle()
                 
             }) {
@@ -135,7 +113,7 @@ struct WeeklyGamePage: View {
             Spacer()
             
             Button(action: {
-//                self.selection = 3
+                
             }) {
                 Image(systemName: "gamecontroller.fill")
                     .imageScale(.large) // Adjust icon size
@@ -152,7 +130,7 @@ struct WeeklyGamePage: View {
                         .fill(Color("WhiteDiff"))
                         .frame(width: 50, height: 50)
                     Button(action: {
-                        //                    self.selection = 6
+                
                         self.showHome.toggle()
                     }) {
                         Image(systemName: "house.fill")
@@ -165,11 +143,10 @@ struct WeeklyGamePage: View {
                     }
                 }
                 
-                
                 Spacer()
                 
                 Button(action: {
-                    //                self.selection = 4
+                
                     self.showStore.toggle()
                 }) {
                     Image(systemName: "dollarsign.circle.fill")
@@ -184,7 +161,7 @@ struct WeeklyGamePage: View {
                 Spacer()
                 
                 Button(action: {
-                    //                self.selection = 5
+                
                     self.showAchievement.toggle()
                 }) {
                     Image(systemName: "trophy.fill")
@@ -200,29 +177,20 @@ struct WeeklyGamePage: View {
                 
             }
             
-        }
+        }//vstack
         .background(Color("Background"))
-    }
+    }//zstack
 
         .background(Color("Background"))
-        }
+        }//body view
         
     
     init(){
+        //initial popoulation of the leaderboard
         leaderboardModel.getLeaderboard()
         
-        }
-        
-    
-}
-                //        .safeAreaInset(edge: .top){
-                //
-//            }
-            
-//}
-        
-   
-    
+        }//init
+}//view
 
 
 //#Preview {

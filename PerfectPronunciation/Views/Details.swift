@@ -118,7 +118,8 @@ struct Details: View {
                                 expectedDifficulty = "Advanced"
                                 msg = "User Difficulty Successfully Reset!"
                             }
-                            else if(userDifficulty == "Advanced"){
+                             
+                             else if(userDifficulty == "Advanced"){
                                 msg = "User Difficulty Successfully Reset!"
                                 expectedDifficulty = "Advanced"
                             }
@@ -213,29 +214,34 @@ struct Details: View {
     }
     
     func makePrediction() -> Double {
-        do {
-            let input = PronunciationModelProjectionInput(Feature1: arr[0], Feature2: arr[1], Feature3: arr[2], Feature4: arr[3], Feature5: arr[4])
-            
-            print(arr[0])
-            print(arr[1])
-            print(arr[2])
-            print(arr[3])
-            print(arr[4])
-            
-            let prediction = try pronunciationModel.prediction(input: input)
-            self.prediction = prediction.Target
-            
-            if let roundedPrediction = self.prediction {
-                return Double(roundedPrediction * 100).rounded() / 100
-            }
-        } catch {
-            print("Error making prediction: \(error)")
-            self.prediction = nil
+        
+        if(averageAccuracy == 0.0){
+            prediction = 0.0
         }
         
-        // Default value in case of an error or nil prediction
-        return 0.0
-    }
+        else if(averageAccuracy == 100.0){
+            prediction = 100.0
+        }
+        
+         else {
+            
+            do {
+                let input = PronunciationModelProjectionInput(Feature1: arr[0], Feature2: arr[1], Feature3: arr[2], Feature4: arr[3], Feature5: arr[4])
+                
+                let prediction = try pronunciationModel.prediction(input: input)
+                self.prediction = prediction.Target
+                
+                if let roundedPrediction = self.prediction {
+                    return Double(roundedPrediction * 100).rounded() / 100
+                }
+            } catch {
+                print("Error making prediction: \(error)")
+                self.prediction = nil
+            }
+        }
+            // Default value in case of an error or nil prediction
+            return 0.0
+        }
 }
 
 

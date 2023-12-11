@@ -39,7 +39,7 @@ struct StorePage: View {
                                     Button(action: {
                                         print("theme1 btn press")
                                         //this is to test subtracting small currency
-                                        currModel.subUserCurrency(cost: 200)
+//                                        currModel.subUserCurrency(cost: 200, item: "TimeIncrease")
                                         
                                     }){
                                         Image(systemName: "square.fill")
@@ -60,7 +60,7 @@ struct StorePage: View {
                                         Button(action: {
                                             print("Theme2 btn press")
                                             //this is to test subtracting large currency
-                                            currModel.subUserCurrency(cost: 1000)
+//                                            currModel.subUserCurrency(cost: 1000, item: "TimeIncrease")
                                             
                                         }){
                                             Image(systemName: "square.fill")
@@ -112,8 +112,12 @@ struct StorePage: View {
                                     Button(action: {
                                         print("time increase btn press")
                                         //purchase the item and update firebase with the purchase
-                                        currModel.subUserCurrency(cost: 300)
-                                        currModel.buyItem(storeItem: "TimeIncrease")
+                                        currModel.subUserCurrency(cost: 300, item: "TimeIncrease")
+                                        
+//                                        if(currModel.canUserPurchase == true){
+//                                            currModel.buyItem(storeItem: "TimeIncrease")
+//                                        }
+                                        
                                         
                                     }){
                                         Image(systemName: "square.fill")

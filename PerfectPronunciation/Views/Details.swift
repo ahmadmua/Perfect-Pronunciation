@@ -18,6 +18,7 @@ class SharedData: ObservableObject {
 struct Details: View {
     
     let model = PronunciationModel()
+    @ObservedObject var modelLesson = LessonController()
     
     @State private var prediction: Double?
     @State private var averageAccuracy: Float = 0
@@ -55,11 +56,27 @@ struct Details: View {
     
     var body: some View {
         VStack {
-            Text("Detailed Stats")
-                .fontWeight(.bold)
-                .font(Font.system(size: 50))
-                .foregroundColor(Color.black)
-                .underline()
+            HStack{
+                Button(action: {
+                self.showHome.toggle()
+                }){
+        
+                    Image(systemName: "arrowshape.backward.fill")
+                        .resizable()
+                        .frame(width: 30, height: 30)
+                        .foregroundColor(.yellow)
+                }
+                .navigationDestination(isPresented: $showHome){
+                    Homepage()
+                }
+                .navigationBarBackButtonHidden(true)
+                
+                Text("Detailed Stats")
+                    .fontWeight(.bold)
+                    .font(Font.system(size: 50))
+                    .foregroundColor(Color.black)
+                    .underline()
+            }
             
             HStack {
                 StatCard(color: .yellow, title: "Words Pronounced", value: "\(totalWords)")
@@ -127,21 +144,26 @@ struct Details: View {
                 }
             }
         }
-        .navigationBarItems(leading:
-            
-            Button(action: {
-            self.showHome.toggle()
-            }){
-    
-                Image(systemName: "arrowshape.backward.fill")
-                    .resizable()
-                    .frame(width: 30, height: 30)
-                    .foregroundColor(.yellow)
-            }
-        )
-        .navigationDestination(isPresented: $showHome){
-            Homepage()
-        }
+//        .navigationBarItems(leading:
+//            
+//            Button(action: {
+//            self.showHome.toggle()
+//            //get the users current currency total
+////            modelLesson.findUserDifficulty{
+////                //get the users current currency
+////                currModel.getUserCurrency()
+////            }
+//            }){
+//    
+//                Image(systemName: "arrowshape.backward.fill")
+//                    .resizable()
+//                    .frame(width: 30, height: 30)
+//                    .foregroundColor(.yellow)
+//            }
+//        )
+//        .navigationDestination(isPresented: $showHome){
+//            Homepage()
+//        }
         .navigationBarBackButtonHidden(true)
         
         .onAppear {

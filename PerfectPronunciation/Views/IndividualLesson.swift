@@ -25,12 +25,16 @@ struct IndividualLesson: View {
     @State private var userDifficulty: String = "Easy"
     //alrt
     @State private var showingAlert = false
+    
+    
     //pop up for recorder view
     @State  private var isPopupPresented = false
     //lesson name
     @Binding var lessonName : String
     //counter
     @AppStorage("counter") var counter: Int = 0
+    
+    
     
     
     var body: some View {
@@ -124,7 +128,7 @@ struct IndividualLesson: View {
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
-                        Details()
+                        Details(showingAlert: $showingAlert)
                             .navigationBarBackButtonHidden(true)
                     }
                     .foregroundStyle(Color.green)

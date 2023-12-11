@@ -65,7 +65,7 @@ class CurrencyController : ObservableObject{
                     if let value = document["Currency"] as? Int {
                         print("CURRENCY CONTROLLER UPDATE : \(value)")
                         
-                        let updateData = ["Currency": value + 100]
+                        let updateData = ["Currency": value + 400]
                         
                         // Update the specific field in the user's document
                         userDocRef.updateData(updateData) { error in

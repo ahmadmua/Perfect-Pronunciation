@@ -26,7 +26,6 @@ struct Login: View {
                 
                 NavigationLink(destination: Homepage(), tag: 3, selection: self.$selection){}
                 
-                
                 Spacer()
                 
                 Text("LOGIN")
@@ -99,7 +98,6 @@ struct Login: View {
                 notificationController.askPermission()
                 notificationController.scheduleNotifications()
             }
-            
             
         }
         .navigationBarBackButtonHidden(true)

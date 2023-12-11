@@ -283,11 +283,11 @@ struct LessonsPage: View {
             }
         }
 
-        .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
-            Button("OK", role: .cancel) {
-                currModel.updateUserCurrency()
-            }
-                }//alert
+//        .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
+//            Button("OK", role: .cancel) {
+//                currModel.updateUserCurrency()
+//            }
+//                }//alert
             
 
     }//body view

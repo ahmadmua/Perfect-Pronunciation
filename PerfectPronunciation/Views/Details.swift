@@ -16,6 +16,7 @@ class SharedData: ObservableObject {
 
 
 struct Details: View {
+    
     let model = PronunciationModel()
     
     @State private var prediction: Double?
@@ -25,12 +26,13 @@ struct Details: View {
     @State private var expectedDifficulty: String = ""
     @State private var selection: Int? = nil
     @State private var userData = UserData()
+    @ObservedObject var currModel = CurrencyController()
     
-    @State private var firstScore: Double = 0.0
-    @State private var secondScore: Double = 0.0
-    @State private var thirdScore: Double = 0.0
-    @State private var fourthScore: Double = 0.0
-    @State private var fifthScore: Double = 0.0
+    @State var showingAlert2 = false
+    @Binding var showingAlert: Bool
+    
+    
+    @State private var msg = ""
     
     @State private var arr = [0.0, 0.0, 0.0, 0.0, 0.0]
     
@@ -45,18 +47,11 @@ struct Details: View {
         }
     }
     
-    func returnDate() -> String {
-        dateFormatter.dateFormat = "E"
-        let currentDayOfWeek = dateFormatter.string(from: Date())
-        return currentDayOfWeek
-    }
     
     @State private var selectedDay: String = "Mo"
     @State private var str: String = ""
     
     @EnvironmentObject var fireDBHelper: DataHelper
-    
-    let dateFormatter = DateFormatter()
     
     var body: some View {
         VStack {
@@ -104,13 +99,20 @@ struct Details: View {
                             
                             if (userDifficulty == "Intermediate") {
                                 expectedDifficulty = "Advanced"
+                                msg = "User Difficulty Successfully Reset!"
+                            }
+                            else if(userDifficulty == "Advanced"){
+                                msg = "User Difficulty Successfully Reset!"
+                                expectedDifficulty = "Advanced"
                             }
                         }
                     }
+                    
                 }
             
             Button(action: {
                 fireDBHelper.updateDifficulty(selectedDifficulty: expectedDifficulty, userData: &userData, selection: &selection)
+                showingAlert2 = true
                 //fireDBHelper.addItemToUserDataCollection(itemName: "TestWord", dayOfWeek: "Thu", accuracy: 98.42)
             }) {
                 Text("Reset Difficulty")
@@ -119,6 +121,10 @@ struct Details: View {
                     .frame(width: 200)
                     .background(Color.yellow)
                     .cornerRadius(10)
+            }
+            .alert(self.msg, isPresented: $showingAlert2) {
+                Button("OK", role: .cancel) {
+                }
             }
         }
         .navigationBarItems(leading:
@@ -135,7 +141,6 @@ struct Details: View {
         )
         .navigationDestination(isPresented: $showHome){
             Homepage()
-                .navigationBarBackButtonHidden(true)
         }
         .navigationBarBackButtonHidden(true)
         
@@ -158,6 +163,12 @@ struct Details: View {
             prediction = makePrediction()
         }
         Spacer()
+        
+            .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
+                Button("OK", role: .cancel) {
+                    currModel.updateUserCurrency()
+                }
+                    }//
     }
     
     func calculateAccuracyOutput() -> String {
@@ -448,8 +459,4 @@ struct StatCard: View {
     }
 }
 
-struct Details_Previews: PreviewProvider {
-    static var previews: some View {
-        Details()
-    }
-}
+

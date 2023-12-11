@@ -14,6 +14,7 @@ struct AccuracyBarChart: View {
     @EnvironmentObject var fireDBHelper: DataHelper
     @State private var accuracyAtIndexText = [0.0,0.0,0.0,0.0]
     @State private var nameAtIndexText = ["","","",""]
+    @State private var showingAlert = false
     
     var body: some View {
         
@@ -73,7 +74,7 @@ struct AccuracyBarChart: View {
                     .bold()
             }
             .navigationDestination(isPresented: $showDetails){
-                Details()
+                Details(showingAlert: $showingAlert)
             }
             
         

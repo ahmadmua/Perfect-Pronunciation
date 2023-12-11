@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		02112DC52B26C2830008A52D /* Waffle.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 02112DC42B26C2830008A52D /* Waffle.m4a */; };
+		02112DC72B26C2900008A52D /* Home_fries.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 02112DC62B26C2900008A52D /* Home_fries.m4a */; };
 		022550BB2B05C3F5002D5183 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022550BA2B05C3F5002D5183 /* NotificationController.swift */; };
 		028364712AE9FBC300E88DCB /* StatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364702AE9FBC300E88DCB /* StatData.swift */; };
 		028364732AEA504000E88DCB /* AccuracyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364722AEA504000E88DCB /* AccuracyViewModel.swift */; };
@@ -70,6 +72,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		02112DC42B26C2830008A52D /* Waffle.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Waffle.m4a; sourceTree = "<group>"; };
+		02112DC62B26C2900008A52D /* Home_fries.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = Home_fries.m4a; sourceTree = "<group>"; };
 		022550BA2B05C3F5002D5183 /* NotificationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationController.swift; sourceTree = "<group>"; };
 		028364702AE9FBC300E88DCB /* StatData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatData.swift; sourceTree = "<group>"; };
 		028364722AEA504000E88DCB /* AccuracyViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccuracyViewModel.swift; sourceTree = "<group>"; };
@@ -266,6 +270,8 @@
 		4DD36F632B23EDF700321DF8 /* TestAudioFiles */ = {
 			isa = PBXGroup;
 			children = (
+				02112DC62B26C2900008A52D /* Home_fries.m4a */,
+				02112DC42B26C2830008A52D /* Waffle.m4a */,
 				C508E78B2B254BEB00953FA5 /* Omelette.m4a */,
 				C508E7892B254BE500953FA5 /* This apple is delicious.m4a */,
 				C508E7852B25493C00953FA5 /* Good morning, do you have any plans today?.m4a */,
@@ -357,6 +363,8 @@
 				02E2B6632AD6131300F1FACA /* Assets.xcassets in Resources */,
 				C508E7882B25494300953FA5 /* Pancake.m4a in Resources */,
 				C5D6050C2B0B39FA00620283 /* GoogleService-Info.plist in Resources */,
+				02112DC72B26C2900008A52D /* Home_fries.m4a in Resources */,
+				02112DC52B26C2830008A52D /* Waffle.m4a in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

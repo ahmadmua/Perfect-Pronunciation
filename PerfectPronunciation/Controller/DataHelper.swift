@@ -99,26 +99,57 @@ class DataHelper: ObservableObject {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+
+            // Check if an item with the same name already exists
+            let query = itemsCollectionRef.whereField("Name", isEqualTo: itemName)
             
-            let itemData = [
-                "Name": itemName,
-                "DayOfWeek": dayOfWeek,
-                "Accuracy": accuracy,
-                "Timestamp": FieldValue.serverTimestamp(),
-            ] as [String : Any]
-            
-            // Add a new document to the "Items" subcollection
-            itemsCollectionRef.addDocument(data: itemData) { error in
+            query.getDocuments { (querySnapshot, error) in
                 if let error = error {
-                    print("Error adding item to UserData subcollection: \(error)")
+                    print("Error querying for existing item: \(error)")
+                } else if let snapshot = querySnapshot, !snapshot.isEmpty {
+                    // Item with the same name already exists
+                    print("Item with the same name already exists")
+                    // Check if the current accuracy is higher than the stored accuracy
+                    if let existingItemAccuracy = snapshot.documents.first?.data()["Accuracy"] as? Float,
+                       accuracy > existingItemAccuracy {
+                        // Update the existing item with the new accuracy
+                        let documentID = snapshot.documents.first!.documentID
+                        itemsCollectionRef.document(documentID).updateData(["Accuracy": accuracy]) { error in
+                            if let error = error {
+                                print("Error updating existing item: \(error)")
+                            } else {
+                                print("Existing item updated with higher accuracy")
+                            }
+                        }
+                    } else {
+                        print("Current accuracy is not higher than the stored accuracy. Item not updated.")
+                    }
                 } else {
-                    print("Item added to UserData subcollection successfully")
+                    // Item with the same name does not exist, add the new item
+                    let itemData = [
+                        "Name": itemName,
+                        "DayOfWeek": dayOfWeek,
+                        "Accuracy": accuracy,
+                        "Timestamp": FieldValue.serverTimestamp(),
+                    ] as [String : Any]
+
+                    // Add a new document to the "Items" subcollection
+                    itemsCollectionRef.addDocument(data: itemData) { error in
+                        if let error = error {
+                            print("Error adding item to UserData subcollection: \(error)")
+                        } else {
+                            print("Item added to UserData subcollection successfully")
+                        }
+                    }
                 }
             }
         } else {
             // Handle the case where the user is not authenticated
         }
     }
+
+
+
     
     func getItemsForDayOfWeek(dayOfWeek: String, completion: @escaping ([DocumentSnapshot]?, Error?) -> Void) {
         if let user = Auth.auth().currentUser {

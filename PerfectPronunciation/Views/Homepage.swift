@@ -29,6 +29,7 @@ struct Homepage: View {
     @State var showingAlert : Bool = false
     
     @ObservedObject var currModel = CurrencyController()
+    @ObservedObject var model = LessonController()
     
     @EnvironmentObject var fireDBHelper: DataHelper
     @State private var accuracyAtIndexText: String = ""
@@ -254,7 +255,10 @@ struct Homepage: View {
                 }
             }
             //get the users current currency total
-            currModel.getUserCurrency()
+            model.findUserDifficulty{
+                //get the users current currency
+                currModel.getUserCurrency()
+            }
             
         
         }

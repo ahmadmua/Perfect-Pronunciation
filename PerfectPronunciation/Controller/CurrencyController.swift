@@ -139,7 +139,7 @@ class CurrencyController : ObservableObject{
         
     }
     
-    func subUserCurrency(cost : Int){
+    func subUserCurrency(cost : Int, item: String){
         
         if let user = Auth.auth().currentUser {
             let userID = user.uid
@@ -170,6 +170,11 @@ class CurrencyController : ObservableObject{
                                     print("Document updated successfully")
                                 }
                             }
+                            
+                            
+                            self.buyItem(storeItem: item)
+                            
+                            
                             self.userDidPurchase = true
                         }else{
                             //else - they cannot

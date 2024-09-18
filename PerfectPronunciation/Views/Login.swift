@@ -105,34 +105,41 @@ struct Login: View {
     
     
         
-        func login(){
-            
-            Auth.auth().signIn(withEmail: email, password: password){result, error in
-                if error != nil {
-                    showingAlert = true
-                    msg = "Login Information Incorrect"
-                } else {
-                    
-                    let ref = Firestore.firestore().collection("UserData")
-                    ref.whereField("Country", isEqualTo: "").whereField("Difficulty", isEqualTo: "")
-                        .getDocuments { (querySnapshot, error) in
-                        if error != nil {
-                            // Handle error
+    func login() {
+        Auth.auth().signIn(withEmail: email, password: password) { result, error in
+            if error != nil {
+                showingAlert = true
+                msg = "Login Information Incorrect"
+            } else if let user = result?.user {
+                let ref = Firestore.firestore().collection("UserData").document(user.uid)
+                
+                ref.getDocument { (document, error) in
+                    if let document = document, document.exists {
+                        let data = document.data()
+                        let country = data?["Country"] as? String ?? ""
+                        let difficulty = data?["Difficulty"] as? String ?? ""
+                        
+                        if country.isEmpty || difficulty.isEmpty {
+                            // Redirect to Country and Difficulty selection screen if either is empty
+                            self.selection = 2
                         } else {
-                            if !querySnapshot!.isEmpty {
-                                self.selection = 2
-                            } else {
-                                self.selection = 3
-                            }
+                            // Redirect to Homepage if both fields are filled
+                            self.selection = 3
                         }
+                        
+                        // Cache the data to prevent re-selecting country and difficulty on re-login
+                        userData.setCountry(country: country)
+                        userData.setDifficulty(difficulty: difficulty)
+                        
+                    } else {
+                        // Handle document does not exist scenario
+                        self.selection = 2 // Go to country and difficulty setup screen
                     }
-                    
-                    
                 }
-                
-                
             }
         }
+    }
+
     
 
         

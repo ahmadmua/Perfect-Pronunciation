@@ -40,7 +40,7 @@ struct IndividualLesson: View {
     var body: some View {
         
             ZStack{
-                Color("background")
+                Color("Background")
             Grid{
                 
                 Spacer()

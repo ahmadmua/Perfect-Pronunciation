@@ -181,6 +181,7 @@ struct WeeklyGamePage: View {
         .background(Color("Background"))
     }//zstack
 
+        
         .background(Color("Background"))
         }//body view
         

@@ -5,6 +5,7 @@
 //  Created by Nichoalas Cammisuli on 2023-10-28.
 //
 
+
 import SwiftUI
 import Firebase
 import FirebaseAuth
@@ -40,7 +41,7 @@ struct IndividualLesson: View {
     var body: some View {
         
             ZStack{
-                Color("background")
+                Color("Background")
             Grid{
                 
                 Spacer()

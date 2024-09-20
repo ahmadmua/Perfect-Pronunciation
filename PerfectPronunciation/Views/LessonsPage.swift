@@ -33,7 +33,7 @@ struct LessonsPage: View {
     
     
     var body: some View {
-        List{
+        ScrollView{
             Grid{
                 VStack{
                     GridRow{
@@ -169,7 +169,7 @@ struct LessonsPage: View {
                 
             }//grid
             .background(Color("Background"))
-            .padding(.vertical, -15)
+            .padding(.vertical, 30)
             .padding(.horizontal, -20)
                 
         }//list

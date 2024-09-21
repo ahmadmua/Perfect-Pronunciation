@@ -9,6 +9,7 @@
 import SwiftUI
 import Firebase
 import FirebaseAuth
+import Combine
 
 struct IndividualLesson: View {
     //controller var
@@ -35,6 +36,9 @@ struct IndividualLesson: View {
     //counter
     @AppStorage("counter") var counter: Int = 0
     
+    @State private var responseText: String = "Press the button to get a response"
+    @State private var cancellable: AnyCancellable?
+    private let openAIService = OpenAIService()
     
     
     
@@ -49,7 +53,8 @@ struct IndividualLesson: View {
                 VStack{
                     GridRow{
                        //display question
-                        Text(model.question ?? "Could not get the question")
+                        //Text(model.question ?? "Could not get the question")
+                        Text(responseText)
                             .background(Rectangle().fill(Color.gray).padding(.all, -30))
                             .padding(.bottom, 80)
                     }
@@ -59,7 +64,9 @@ struct IndividualLesson: View {
 //                            .background(Rectangle().fill(Color.gray).padding(.all, -30))
 //                            .padding(.bottom, 40)
 //                    }
-                    
+                    Button("Get OpenAI Response") {
+                                    fetchResponse()
+                                }
                     Divider()
                     
                    
@@ -166,7 +173,16 @@ struct IndividualLesson: View {
          
     }
     
-
+    func fetchResponse() {
+            cancellable = openAIService.fetchOpenAIResponse(prompt: "Create 5 easy sentences about countries to perfect my pronunciation as an English learner") { result in
+                switch result {
+                case .success(let response):
+                    responseText = response
+                case .failure(let error):
+                    responseText = "Error: \(error.localizedDescription)"
+                }
+            }
+        }
 }//view
 
 //#Preview {

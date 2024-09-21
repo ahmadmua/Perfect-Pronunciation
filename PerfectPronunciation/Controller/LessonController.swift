@@ -7,6 +7,7 @@
 
 import Foundation
 import Firebase
+import Combine
 
 class LessonController : ObservableObject{
     
@@ -15,6 +16,10 @@ class LessonController : ObservableObject{
     @Published var answer: String?
     @Published var difficulty: String?
     @Published var totQuestions: Int = 0
+    
+    @Published var openAiResponseText: String?
+    private var cancellable: AnyCancellable?
+
     
     func findUserDifficulty(completion: @escaping () -> Void){
         //get reference to database
@@ -221,5 +226,4 @@ class LessonController : ObservableObject{
                 print("User is not authenticated")
             }
         }
-
 }

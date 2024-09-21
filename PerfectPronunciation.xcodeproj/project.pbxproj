@@ -68,6 +68,7 @@
 		C5D605142B1DAC8A00620283 /* WeeklyLesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D605132B1DAC8A00620283 /* WeeklyLesson.swift */; };
 		C5D605162B1F1F1600620283 /* Leaderboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D605152B1F1F1600620283 /* Leaderboard.swift */; };
 		C5D605182B1F23D100620283 /* LeaderboardController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D605172B1F23D100620283 /* LeaderboardController.swift */; };
+		C5DE40C82C9F4B160002E852 /* OpenAiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DE40C72C9F4B160002E852 /* OpenAiService.swift */; };
 		C5DF79D62AFB19AA00ECB45C /* LessonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF79D52AFB19AA00ECB45C /* LessonController.swift */; };
 		C5DF79D82AFC77AB00ECB45C /* Lesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF79D72AFC77AB00ECB45C /* Lesson.swift */; };
 /* End PBXBuildFile section */
@@ -123,6 +124,7 @@
 		C5D605132B1DAC8A00620283 /* WeeklyLesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeeklyLesson.swift; sourceTree = "<group>"; };
 		C5D605152B1F1F1600620283 /* Leaderboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Leaderboard.swift; sourceTree = "<group>"; };
 		C5D605172B1F23D100620283 /* LeaderboardController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardController.swift; sourceTree = "<group>"; };
+		C5DE40C72C9F4B160002E852 /* OpenAiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAiService.swift; sourceTree = "<group>"; };
 		C5DF79D52AFB19AA00ECB45C /* LessonController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonController.swift; sourceTree = "<group>"; };
 		C5DF79D72AFC77AB00ECB45C /* Lesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lesson.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -208,6 +210,7 @@
 				C5D6050D2B0B3BCB00620283 /* CurrencyController.swift */,
 				C5D605112B0F244A00620283 /* AchievementController.swift */,
 				C5D605172B1F23D100620283 /* LeaderboardController.swift */,
+				C5DE40C72C9F4B160002E852 /* OpenAiService.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -382,6 +385,7 @@
 				02F7635E2AF7215B001BEAFA /* PronunciationModel.mlmodel in Sources */,
 				02E2B6612AD6131100F1FACA /* ContentView.swift in Sources */,
 				C5D6050E2B0B3BCB00620283 /* CurrencyController.swift in Sources */,
+				C5DE40C82C9F4B160002E852 /* OpenAiService.swift in Sources */,
 				C58B99FA2AEDAE2B003C0288 /* WeeklyGamePage.swift in Sources */,
 				C58B99F62AED94E5003C0288 /* StorePage.swift in Sources */,
 				02E2B69A2AD6250700F1FACA /* Country.swift in Sources */,

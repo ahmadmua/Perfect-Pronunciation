@@ -147,6 +147,7 @@ struct IndividualLesson: View {
             //find the difficulty the user has set
             model.findUserDifficulty{
                 print("USER DIFICULTY!! : \(model.difficulty!)")
+                print("TEST")
                 
                 //find the number of questions for the lesson
                 model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty!)

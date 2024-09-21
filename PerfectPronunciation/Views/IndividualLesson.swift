@@ -5,6 +5,7 @@
 //  Created by Nichoalas Cammisuli on 2023-10-28.
 //
 
+
 import SwiftUI
 import Firebase
 import FirebaseAuth
@@ -40,7 +41,7 @@ struct IndividualLesson: View {
     var body: some View {
         
             ZStack{
-                Color("background")
+                Color("Background")
             Grid{
                 
                 Spacer()
@@ -146,6 +147,7 @@ struct IndividualLesson: View {
             //find the difficulty the user has set
             model.findUserDifficulty{
                 print("USER DIFICULTY!! : \(model.difficulty!)")
+                print("TEST")
                 
                 //find the number of questions for the lesson
                 model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty!)

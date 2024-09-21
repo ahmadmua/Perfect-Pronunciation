@@ -61,6 +61,7 @@
 		C58B99F62AED94E5003C0288 /* StorePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F52AED94E5003C0288 /* StorePage.swift */; };
 		C58B99F82AED9F5C003C0288 /* AchievementPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F72AED9F5C003C0288 /* AchievementPage.swift */; };
 		C58B99FA2AEDAE2B003C0288 /* WeeklyGamePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F92AEDAE2B003C0288 /* WeeklyGamePage.swift */; };
+		C59756F02C9E05E8004F4382 /* OpenAISwift in Frameworks */ = {isa = PBXBuildFile; productRef = C59756EF2C9E05E8004F4382 /* OpenAISwift */; };
 		C5D6050C2B0B39FA00620283 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C5D6050B2B0B39FA00620283 /* GoogleService-Info.plist */; };
 		C5D6050E2B0B3BCB00620283 /* CurrencyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D6050D2B0B3BCB00620283 /* CurrencyController.swift */; };
 		C5D605122B0F244A00620283 /* AchievementController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D605112B0F244A00620283 /* AchievementController.swift */; };
@@ -137,6 +138,7 @@
 				02E2B6782AD6150100F1FACA /* FirebaseAuth in Frameworks */,
 				02E2B6702AD6150100F1FACA /* FirebaseAnalytics in Frameworks */,
 				02E2B67A2AD6150100F1FACA /* FirebaseCrashlytics in Frameworks */,
+				C59756F02C9E05E8004F4382 /* OpenAISwift in Frameworks */,
 				02E2B6822AD6150100F1FACA /* FirebaseFirestoreSwift in Frameworks */,
 				02E2B6802AD6150100F1FACA /* FirebaseFirestore in Frameworks */,
 				02E2B6882AD6150100F1FACA /* FirebaseStorage in Frameworks */,
@@ -310,6 +312,7 @@
 				02E2B6832AD6150100F1FACA /* FirebaseMLModelDownloader */,
 				02E2B6852AD6150100F1FACA /* FirebasePerformance */,
 				02E2B6872AD6150100F1FACA /* FirebaseStorage */,
+				C59756EF2C9E05E8004F4382 /* OpenAISwift */,
 			);
 			productName = PerfectPronunciation;
 			productReference = 02E2B65B2AD6131100F1FACA /* PerfectPronunciation.app */;
@@ -341,6 +344,7 @@
 			mainGroup = 02E2B6522AD6131100F1FACA;
 			packageReferences = (
 				02E2B66E2AD6150100F1FACA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				C59756EE2C9E05E8004F4382 /* XCRemoteSwiftPackageReference "OpenAISwift" */,
 			);
 			productRefGroup = 02E2B65C2AD6131100F1FACA /* Products */;
 			projectDirPath = "";
@@ -638,6 +642,14 @@
 				kind = branch;
 			};
 		};
+		C59756EE2C9E05E8004F4382 /* XCRemoteSwiftPackageReference "OpenAISwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/adamrushy/OpenAISwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.4.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -705,6 +717,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 02E2B66E2AD6150100F1FACA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		C59756EF2C9E05E8004F4382 /* OpenAISwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C59756EE2C9E05E8004F4382 /* XCRemoteSwiftPackageReference "OpenAISwift" */;
+			productName = OpenAISwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

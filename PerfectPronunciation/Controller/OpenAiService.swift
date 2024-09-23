@@ -6,8 +6,8 @@
 //
 import Foundation
 import Combine
+import FirebaseRemoteConfig
 
-// Struct to decode the OpenAI Chat API response
 struct OpenAIChatResponse: Codable {
     struct Choice: Codable {
         struct Message: Codable {
@@ -18,23 +18,48 @@ struct OpenAIChatResponse: Codable {
     let choices: [Choice]
 }
 
-// OpenAIService class to handle API calls
 class OpenAIService {
-    private let apiKey = "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"
+    private var remoteConfig: RemoteConfig
+    private var apiKey: String = ""
+
+    init() {
+        self.remoteConfig = RemoteConfig.remoteConfig()
+        self.fetchAPIKey()
+    }
+
+
+    private func fetchAPIKey() {
+        let settings = RemoteConfigSettings()
+        settings.minimumFetchInterval = 0 // For testing, change this in production.
+        remoteConfig.configSettings = settings
+        
+        remoteConfig.fetchAndActivate { [weak self] status, error in
+            if let error = error {
+                print("Error fetching remote config: \(error.localizedDescription)")
+                return
+            }
+            
+            self?.apiKey = self?.remoteConfig["open_api_key"].stringValue ?? "No API Key Found"
+            //print("Fetched API Key: \(self?.apiKey ?? "No API Key")")
+        }
+    }
+
 
     func fetchOpenAIResponse(prompt: String, completion: @escaping (Result<String, Error>) -> Void) -> AnyCancellable? {
-        let url = URL(string: "https://api.openai.com/v1/chat/completions")!
+        guard !apiKey.isEmpty else {
+            completion(.failure(NSError(domain: "API Key is missing", code: -1, userInfo: nil)))
+            return nil
+        }
 
+        let url = URL(string: "https://api.openai.com/v1/chat/completions")!
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
 
         let parameters: [String: Any] = [
-            "model": "gpt-3.5-turbo",  // Or gpt-4 if you are using the GPT-4 model
-            "messages": [
-                ["role": "user", "content": prompt]
-            ],
+            "model": "gpt-3.5-turbo",
+            "messages": [["role": "user", "content": prompt]],
             "max_tokens": 50,
             "temperature": 1.5
         ]
@@ -46,7 +71,7 @@ class OpenAIService {
 
         request.httpBody = httpBody
 
-        // Use Combine's URLSession.DataTaskPublisher to fetch the data
+
         return URLSession.shared.dataTaskPublisher(for: request)
             .tryMap { output in
                 guard let httpResponse = output.response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
@@ -70,4 +95,3 @@ class OpenAIService {
             })
     }
 }
-

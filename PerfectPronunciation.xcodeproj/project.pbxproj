@@ -10,6 +10,8 @@
 		02112DC52B26C2830008A52D /* Waffle.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 02112DC42B26C2830008A52D /* Waffle.m4a */; };
 		02112DC72B26C2900008A52D /* Home_fries.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 02112DC62B26C2900008A52D /* Home_fries.m4a */; };
 		022550BB2B05C3F5002D5183 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 022550BA2B05C3F5002D5183 /* NotificationController.swift */; };
+		023E6E8E2CA10035009D79D9 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 023E6E8D2CA10035009D79D9 /* FirebaseRemoteConfig */; };
+		023E6E902CA10035009D79D9 /* FirebaseRemoteConfigSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 023E6E8F2CA10035009D79D9 /* FirebaseRemoteConfigSwift */; };
 		028364712AE9FBC300E88DCB /* StatData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364702AE9FBC300E88DCB /* StatData.swift */; };
 		028364732AEA504000E88DCB /* AccuracyViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364722AEA504000E88DCB /* AccuracyViewModel.swift */; };
 		028364752AEA513E00E88DCB /* VoiceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 028364742AEA513E00E88DCB /* VoiceData.swift */; };
@@ -143,6 +145,8 @@
 				C59756F02C9E05E8004F4382 /* OpenAISwift in Frameworks */,
 				02E2B6822AD6150100F1FACA /* FirebaseFirestoreSwift in Frameworks */,
 				02E2B6802AD6150100F1FACA /* FirebaseFirestore in Frameworks */,
+				023E6E902CA10035009D79D9 /* FirebaseRemoteConfigSwift in Frameworks */,
+				023E6E8E2CA10035009D79D9 /* FirebaseRemoteConfig in Frameworks */,
 				02E2B6882AD6150100F1FACA /* FirebaseStorage in Frameworks */,
 				02E2B6842AD6150100F1FACA /* FirebaseMLModelDownloader in Frameworks */,
 				02E2B6722AD6150100F1FACA /* FirebaseAnalyticsOnDeviceConversion in Frameworks */,
@@ -316,6 +320,8 @@
 				02E2B6852AD6150100F1FACA /* FirebasePerformance */,
 				02E2B6872AD6150100F1FACA /* FirebaseStorage */,
 				C59756EF2C9E05E8004F4382 /* OpenAISwift */,
+				023E6E8D2CA10035009D79D9 /* FirebaseRemoteConfig */,
+				023E6E8F2CA10035009D79D9 /* FirebaseRemoteConfigSwift */,
 			);
 			productName = PerfectPronunciation;
 			productReference = 02E2B65B2AD6131100F1FACA /* PerfectPronunciation.app */;
@@ -657,6 +663,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		023E6E8D2CA10035009D79D9 /* FirebaseRemoteConfig */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02E2B66E2AD6150100F1FACA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfig;
+		};
+		023E6E8F2CA10035009D79D9 /* FirebaseRemoteConfigSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 02E2B66E2AD6150100F1FACA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseRemoteConfigSwift;
+		};
 		02E2B66F2AD6150100F1FACA /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 02E2B66E2AD6150100F1FACA /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

@@ -13,6 +13,7 @@ struct Login: View {
     @State private var msg = ""
     @State var userData = UserData()
     let notificationController = NotificationController()
+    //let openAIService = OpenAIService()
     
     var body: some View {
         
@@ -97,6 +98,7 @@ struct Login: View {
                 
                 notificationController.askPermission()
                 notificationController.scheduleNotifications()
+                
             }
             
         }

@@ -28,7 +28,7 @@ class OpenAIService {
     }
 
 
-    private func fetchAPIKey() {
+    func fetchAPIKey() {
         let settings = RemoteConfigSettings()
         settings.minimumFetchInterval = 0 // For testing, change this in production.
         remoteConfig.configSettings = settings
@@ -40,7 +40,7 @@ class OpenAIService {
             }
             
             self?.apiKey = self?.remoteConfig["open_api_key"].stringValue ?? "No API Key Found"
-            //print("Fetched API Key: \(self?.apiKey ?? "No API Key")")
+            print("Fetched API Key: \(self?.apiKey ?? "No API Key")")
         }
     }
 

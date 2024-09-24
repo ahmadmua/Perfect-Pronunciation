@@ -150,7 +150,7 @@ struct IndividualLesson: View {
         .background(Color("Background"))
         .onAppear{
             
-             
+            openAIService.fetchAPIKey()
             //find the difficulty the user has set
             model.findUserDifficulty{
                 print("USER DIFICULTY!! : \(model.difficulty!)")

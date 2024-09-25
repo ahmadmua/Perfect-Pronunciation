@@ -24,7 +24,7 @@ class OpenAIService {
 
     init() {
         self.remoteConfig = RemoteConfig.remoteConfig()
-        self.fetchAPIKey()
+        //self.fetchAPIKey()
     }
 
 
@@ -61,7 +61,7 @@ class OpenAIService {
             "model": "gpt-3.5-turbo",
             "messages": [["role": "user", "content": prompt]],
             "max_tokens": 50,
-            "temperature": 1.5
+            "temperature": 0.5
         ]
 
         guard let httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: []) else {

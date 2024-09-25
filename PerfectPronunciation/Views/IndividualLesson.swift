@@ -36,7 +36,7 @@ struct IndividualLesson: View {
     //counter
     @AppStorage("counter") var counter: Int = 0
     
-    @State private var responseText: String = "Press the button to get a response"
+    @Binding var responseText: String
     @State private var cancellable: AnyCancellable?
     private let openAIService = OpenAIService()
     
@@ -64,9 +64,6 @@ struct IndividualLesson: View {
 //                            .background(Rectangle().fill(Color.gray).padding(.all, -30))
 //                            .padding(.bottom, 40)
 //                    }
-                    Button("Get OpenAI Response") {
-                                    fetchResponse()
-                                }
                     Divider()
                     
                    
@@ -132,7 +129,7 @@ struct IndividualLesson: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $showNext){
-                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
+                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText)
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
@@ -151,11 +148,18 @@ struct IndividualLesson: View {
         .onAppear{
             
             openAIService.fetchAPIKey()
+            
             //find the difficulty the user has set
             model.findUserDifficulty{
                 print("USER DIFICULTY!! : \(model.difficulty!)")
                 print("TEST")
                 
+                
+                /*
+                 ------------------------------------
+                 WILL PROBABLY HAVE TO RE-WRITE THIS - wont be having lessons stored like this anymore?
+                 vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+                 */
                 //find the number of questions for the lesson
                 model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty!)
                 
@@ -173,16 +177,7 @@ struct IndividualLesson: View {
          
     }
     
-    func fetchResponse() {
-            cancellable = openAIService.fetchOpenAIResponse(prompt: "Create 5 easy sentences about countries to perfect my pronunciation as an English learner") { result in
-                switch result {
-                case .success(let response):
-                    responseText = response
-                case .failure(let error):
-                    responseText = "Error: \(error.localizedDescription)"
-                }
-            }
-        }
+
 }//view
 
 //#Preview {

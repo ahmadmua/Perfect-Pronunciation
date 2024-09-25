@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct LessonsPage: View {
     //controllers
@@ -30,6 +31,10 @@ struct LessonsPage: View {
     @State private var lessonName = ""
     //currency alert
     @Binding var showingAlert : Bool
+    //openai
+    @State private var responseText: String = "Press the button to get a response"
+    @State private var cancellable: AnyCancellable?
+    private let openAIService = OpenAIService()
     
     
     var body: some View {
@@ -49,12 +54,14 @@ struct LessonsPage: View {
                             print("conversation btn press")
                             self.lessonName = "Conversation"
                             self.food1.toggle()
+                            
+                            fetchOpenAiResponse()
                         }){
                             Image(systemName: "rectangle.3.group.bubble.left.fill")
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $conversation){
-                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
+                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
@@ -78,12 +85,14 @@ struct LessonsPage: View {
     
                             self.lessonName = "Numbers"
                             self.numbers.toggle()
+                            
+                            fetchOpenAiResponse()
                         }){
                             Image(systemName: "number.circle.fill")
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $numbers){
-                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
+                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
@@ -108,12 +117,14 @@ struct LessonsPage: View {
 
                         self.lessonName = "Food1"
                         self.food1.toggle()
+                        
+                        fetchOpenAiResponse()
                     }){
                         Image(systemName: "cup.and.saucer.fill")
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $food1){
-                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
+                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText)
                             .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
@@ -124,12 +135,14 @@ struct LessonsPage: View {
 
                         self.lessonName = "Food2"
                         self.food2.toggle()
+                        
+                        fetchOpenAiResponse()
                     }){
                         Image(systemName: "fork.knife")
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $food2){
-                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
+                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText)
                             .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
@@ -152,12 +165,14 @@ struct LessonsPage: View {
     
                             self.lessonName = "Directions"
                             self.direction.toggle()
+                            
+                            fetchOpenAiResponse()
                         }){
                             Image(systemName: "mappin.and.ellipse")
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $direction){
-                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
+                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
@@ -278,6 +293,16 @@ struct LessonsPage: View {
     }//zstack
         .background(Color("Background"))
         .onAppear(){
+            openAIService.fetchAPIKey()
+            
+            model.findUserDifficulty{
+                print("USER DIFICULTY!! : \(model.difficulty!)")
+                print("TEST")
+                
+                UserDefaults.standard.synchronize()
+                
+            }
+
             if(achieveModel.achievementOneCompletion()){
                 achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
             }
@@ -291,7 +316,19 @@ struct LessonsPage: View {
             
 
     }//body view
+    func fetchOpenAiResponse() {
+
+        cancellable = openAIService.fetchOpenAIResponse(prompt: "Create 5 \(model.difficulty!) language learner sentences about \(lessonName) to perfect my pronunciation as an English learner") { result in
+                switch result {
+                case .success(let response):
+                    responseText = response
+                case .failure(let error):
+                    responseText = "Error: \(error.localizedDescription)"
+                }
+            }
         
+        
+        }
         
 }//view
 

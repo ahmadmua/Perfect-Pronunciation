@@ -33,6 +33,7 @@ struct LessonsPage: View {
     @Binding var showingAlert : Bool
     //openai
     @State private var responseText: String = "Press the button to get a response"
+    @State private var responseArray : [String] = []
     @State private var cancellable: AnyCancellable?
     private let openAIService = OpenAIService()
     
@@ -53,7 +54,7 @@ struct LessonsPage: View {
                             //go to lesson
                             print("conversation btn press")
                             self.lessonName = "Conversation"
-                            self.food1.toggle()
+                            self.conversation.toggle()
                             
                             fetchOpenAiResponse()
                         }){
@@ -61,7 +62,7 @@ struct LessonsPage: View {
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $conversation){
-                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText)
+                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
@@ -82,17 +83,18 @@ struct LessonsPage: View {
                         Button(action: {
                             //go to lesson
                             print("numbers btn press")
-    
+                            
                             self.lessonName = "Numbers"
                             self.numbers.toggle()
                             
                             fetchOpenAiResponse()
+                            
                         }){
                             Image(systemName: "number.circle.fill")
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $numbers){
-                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText)
+                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
@@ -124,7 +126,7 @@ struct LessonsPage: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $food1){
-                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText)
+                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
@@ -142,7 +144,7 @@ struct LessonsPage: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $food2){
-                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText)
+                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
@@ -163,16 +165,17 @@ struct LessonsPage: View {
                             //go to lesson
                             print("directions btn press")
     
-                            self.lessonName = "Directions"
+                            self.lessonName = "Conversational Directions"
                             self.direction.toggle()
                             
                             fetchOpenAiResponse()
+                            
                         }){
                             Image(systemName: "mappin.and.ellipse")
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $direction){
-                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText)
+                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
@@ -308,6 +311,9 @@ struct LessonsPage: View {
             }
         }
 
+        /*
+         THIS WAS COMMENTED OUT - BUT I STILL DONT GET ALERT FOR CURRENCY WHEN IT IS UNCOMMENTED
+         */
 //        .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
 //            Button("OK", role: .cancel) {
 //                currModel.updateUserCurrency()
@@ -316,19 +322,30 @@ struct LessonsPage: View {
             
 
     }//body view
+    
+    
+    /*
+     TODO: Save the AI response as a list and pass the list to the individual lesson
+     
+     */
+    
     func fetchOpenAiResponse() {
-
-        cancellable = openAIService.fetchOpenAIResponse(prompt: "Create 5 \(model.difficulty!) language learner sentences about \(lessonName) to perfect my pronunciation as an English learner") { result in
-                switch result {
-                case .success(let response):
+        openAIService.fetchMultipleOpenAIResponses(prompt: "Create \(model.difficulty!) language learner sentence about \(lessonName) to perfect my pronunciation as an English learner.") { result in
+            switch result {
+            case .success(let responses):
+                print("Got 5 responses:")
+                responses.forEach{ response in
+                    print(response)
+                    responseArray.append(response)
+                    
                     responseText = response
-                case .failure(let error):
-                    responseText = "Error: \(error.localizedDescription)"
+                    
                 }
+            case .failure(let error):
+                responseText = "Error: \(error.localizedDescription)"
             }
-        
-        
         }
+    }//func
         
 }//view
 

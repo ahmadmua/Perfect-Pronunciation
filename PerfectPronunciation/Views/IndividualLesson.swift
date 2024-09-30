@@ -37,6 +37,7 @@ struct IndividualLesson: View {
     @AppStorage("counter") var counter: Int = 0
     
     @Binding var responseText: String
+    @Binding var responseArray: [String]
     @State private var cancellable: AnyCancellable?
     private let openAIService = OpenAIService()
     
@@ -95,15 +96,15 @@ struct IndividualLesson: View {
                         //nav to the nexet question
                         print("Continue btn press")
                     
-                        print("Numo q's \(model.totQuestions)")
-                        print("QUESTION \(model.question ?? "WHY NO WORK")")
+//                        print("Numo q's \(model.totQuestions)")
+//                        print("QUESTION \(model.question ?? "WHY NO WORK")")
                         //increment counter to track what question the user is on
                         counter+=1
                         
                         
                             
                         //if counter is greater than number of questions
-                        if counter >= model.totQuestions{
+                        if counter >= 5{//let questionCount = 0
                             //go back to the home page
                             counter = 0
                             self.showLesson.toggle()
@@ -114,14 +115,15 @@ struct IndividualLesson: View {
                             //update the lesson as complete
                             model.updateLessonCompletion(userLesson: lessonName)
                             
+                            
                         }else{
                             //else counter is not more than the number of questions, continue to the next question
                             self.showNext.toggle()
                         }
                         
-                        //assign the question var
-                        questionVar = model.answer!
-                        print("THIS IS THE QUESTION \(questionVar ?? "NA")")
+//                        //assign the question var
+//                        questionVar = model.answer!
+//                        print("THIS IS THE QUESTION \(questionVar ?? "NA")")
                         
                         
                     }){
@@ -129,7 +131,7 @@ struct IndividualLesson: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $showNext){
-                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText)
+                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
@@ -146,13 +148,21 @@ struct IndividualLesson: View {
         }//nanstack
         .background(Color("Background"))
         .onAppear{
+            for response in responseArray{
+//                print("RESPONSES : \(response)")
+                responseText = responseArray[4-counter]
+                
+            }
+            
+//            let responseArray = responseText.split(separator: "~")
+//            print("ARRAY : \(responseArray)")
             
             openAIService.fetchAPIKey()
             
             //find the difficulty the user has set
             model.findUserDifficulty{
                 print("USER DIFICULTY!! : \(model.difficulty!)")
-                print("TEST")
+            
                 
                 
                 /*
@@ -161,10 +171,10 @@ struct IndividualLesson: View {
                  vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
                  */
                 //find the number of questions for the lesson
-                model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty!)
-                
-                //get the current question for the page number
-                model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
+//                model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty!)
+//                
+//                //get the current question for the page number
+//                model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
                 
                 UserDefaults.standard.synchronize()
                 
@@ -176,10 +186,6 @@ struct IndividualLesson: View {
         }
          
     }
-    
 
 }//view
 
-//#Preview {
-//    IndividualLesson(msgTaken: <#Binding<String>#>)
-//}

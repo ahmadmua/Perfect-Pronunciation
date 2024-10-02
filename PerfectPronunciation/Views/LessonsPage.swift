@@ -330,7 +330,7 @@ struct LessonsPage: View {
      */
     
     func fetchOpenAiResponse() {
-        openAIService.fetchMultipleOpenAIResponses(prompt: "Create \(model.difficulty!) language learner sentence about \(lessonName) to perfect my pronunciation as an English learner.") { result in
+        openAIService.fetchMultipleOpenAIResponses(prompt: "I am an english language learner. Please Create a \(model.difficulty!) sentence about \(lessonName) to perfect my pronunciation as an English learner.") { result in
             switch result {
             case .success(let responses):
                 print("Got 5 responses:")

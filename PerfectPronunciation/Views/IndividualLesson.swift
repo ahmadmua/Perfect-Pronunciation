@@ -15,8 +15,7 @@ struct IndividualLesson: View {
     //controller var
     @ObservedObject var model = LessonController()
     @ObservedObject var audioController : AudioController
-
-    
+    @ObservedObject var currModel = CurrencyController()
     //question variable
     @State var questionVar: String?
     //navigation vars
@@ -107,15 +106,11 @@ struct IndividualLesson: View {
                         if counter >= 5{//let questionCount = 0
                             //go back to the home page
                             counter = 0
-                            self.showLesson.toggle()
-                            self.showingAlert.toggle()
-                            
-                            
-                            
                             //update the lesson as complete
                             model.updateLessonCompletion(userLesson: lessonName)
-                            
-                            
+                            self.showingAlert.toggle()
+                            self.showLesson.toggle()
+                        
                         }else{
                             //else counter is not more than the number of questions, continue to the next question
                             self.showNext.toggle()
@@ -130,12 +125,17 @@ struct IndividualLesson: View {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 50, weight: .light))
                     }//btn
+                    .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
+                                    Button("OK", role: .cancel) {
+                                        currModel.updateUserCurrency()
+                                    }
+                                        }//
                     .navigationDestination(isPresented: $showNext){
                         IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
-                        Details(showingAlert: $showingAlert)
+                        Details()
                             .navigationBarBackButtonHidden(true)
                     }
                     .foregroundStyle(Color.green)
@@ -148,7 +148,7 @@ struct IndividualLesson: View {
         }//nanstack
         .background(Color("Background"))
         .onAppear{
-            for response in responseArray{
+            for _ in responseArray{
 //                print("RESPONSES : \(response)")
                 responseText = responseArray[4-counter]
                 

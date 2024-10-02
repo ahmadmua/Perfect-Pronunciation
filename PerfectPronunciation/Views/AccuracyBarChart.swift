@@ -74,7 +74,7 @@ struct AccuracyBarChart: View {
                     .bold()
             }
             .navigationDestination(isPresented: $showDetails){
-                Details(showingAlert: $showingAlert)
+                Details()
             }
             
         

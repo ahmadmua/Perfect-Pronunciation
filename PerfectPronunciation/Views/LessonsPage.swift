@@ -326,11 +326,12 @@ struct LessonsPage: View {
     
     /*
      TODO: Save the AI response as a list and pass the list to the individual lesson
+     TODO: Need to fix the prompt generation sentence
      
      */
     
     func fetchOpenAiResponse() {
-        openAIService.fetchMultipleOpenAIResponses(prompt: "I am an english language learner. Please Create a \(model.difficulty!) sentence about \(lessonName) to perfect my pronunciation as an English learner.") { result in
+        openAIService.fetchMultipleOpenAIResponses(prompt: "I am an english language learner. Please Create a \(model.difficulty!) sentence about \(lessonName) to perfect my pronunciation as an English learner. Please only include the sentence for me to pronounce. Ensure that the sentence is different from the following sentences, completely change the sentence and leave no trace:  \(responseArray)") { result in
             switch result {
             case .success(let responses):
                 print("Got 5 responses:")

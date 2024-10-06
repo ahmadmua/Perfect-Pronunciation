@@ -324,6 +324,7 @@ class DataHelper: ObservableObject {
                                 //find the accuracy of the word
                                 if let accuracy = document["Accuracy"] as? Float {
                                     //if the accuracy of the word is equal or below 50
+                                    //TODO: TEST THIS TO SEE IF IT IS PULLING EVERY WORD
                                     if accuracy < 100.0{
                                         //add the name of the word to the list 
                                         if let name = document["Name"] as? String {

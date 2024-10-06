@@ -254,6 +254,8 @@ struct Homepage: View {
                 } else {
                 }
             }
+            
+            //TODO: on first launch / login the user currency does not update only when going back to the homepage does it update
             //get the users current currency total
             model.findUserDifficulty{
                 //get the users current currency

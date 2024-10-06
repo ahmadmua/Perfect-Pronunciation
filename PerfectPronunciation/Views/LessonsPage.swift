@@ -331,8 +331,7 @@ struct LessonsPage: View {
      */
     
     func fetchOpenAiResponse() {
-        let randomFloat = CGFloat.random(in: 1...50)
-        openAIService.fetchMultipleOpenAIResponses(prompt: "You are a language Teacher. I am an english language learner. Please Create a unique and \(model.difficulty!) sentence about \(lessonName) to perfect my pronunciation as an English learner. Please only include the sentence for me to pronounce. Ensure that the sentence is different from the following sentences, completely change the sentence and leave no trace:  \(responseArray) make this sentence \(randomFloat) Tokens long") { result in
+        openAIService.fetchMultipleOpenAIResponses(prompt: "You are a language Teacher. I am an english language learner. Please Create a unique and \(model.difficulty!) sentence about \(lessonName) to perfect my pronunciation as an English learner. Ensure that this sentence is new and unique. Only give me the language learning sentence and nothing else.") { result in
             switch result {
             case .success(let responses):
                 print("Got 5 responses:")

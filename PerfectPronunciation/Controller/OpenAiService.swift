@@ -21,12 +21,12 @@ struct OpenAIChatResponse: Codable {
 class OpenAIService {
     private var remoteConfig: RemoteConfig
     private var apiKey: String = ""
+    private var cancellable: AnyCancellable? // Store the cancellable here to prevent deallocation
 
     init() {
         self.remoteConfig = RemoteConfig.remoteConfig()
-        self.fetchAPIKey()
+        // self.fetchAPIKey()
     }
-
 
     func fetchAPIKey() {
         let settings = RemoteConfigSettings()
@@ -44,11 +44,10 @@ class OpenAIService {
         }
     }
 
-
-    func fetchOpenAIResponse(prompt: String, completion: @escaping (Result<String, Error>) -> Void) -> AnyCancellable? {
+    private func makeOpenAIRequest(prompt: String) -> AnyPublisher<String, Error> {
         guard !apiKey.isEmpty else {
-            completion(.failure(NSError(domain: "API Key is missing", code: -1, userInfo: nil)))
-            return nil
+            return Fail(error: NSError(domain: "API Key is missing", code: -1, userInfo: nil))
+                .eraseToAnyPublisher()
         }
 
         let url = URL(string: "https://api.openai.com/v1/chat/completions")!
@@ -61,16 +60,15 @@ class OpenAIService {
             "model": "gpt-3.5-turbo",
             "messages": [["role": "user", "content": prompt]],
             "max_tokens": 50,
-            "temperature": 1.5
+            "temperature": 0.5
         ]
 
         guard let httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: []) else {
-            completion(.failure(NSError(domain: "Failed to create request body", code: -1, userInfo: nil)))
-            return nil
+            return Fail(error: NSError(domain: "Failed to create request body", code: -1, userInfo: nil))
+                .eraseToAnyPublisher()
         }
 
         request.httpBody = httpBody
-
 
         return URLSession.shared.dataTaskPublisher(for: request)
             .tryMap { output in
@@ -80,7 +78,19 @@ class OpenAIService {
                 return output.data
             }
             .decode(type: OpenAIChatResponse.self, decoder: JSONDecoder())
+            .map { response in
+                response.choices.first?.message.content.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            }
             .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+
+    // call the API 5 times
+    func fetchMultipleOpenAIResponses(prompt: String, completion: @escaping (Result<[String], Error>) -> Void) {
+        let publishers = (1...5).map { _ in makeOpenAIRequest(prompt: prompt) }
+
+        cancellable = Publishers.MergeMany(publishers)
+            .collect(5) // Collect exactly 5 results
             .sink(receiveCompletion: { result in
                 switch result {
                 case .failure(let error):
@@ -88,10 +98,8 @@ class OpenAIService {
                 case .finished:
                     break
                 }
-            }, receiveValue: { response in
-                if let choice = response.choices.first {
-                    completion(.success(choice.message.content.trimmingCharacters(in: .whitespacesAndNewlines)))
-                }
+            }, receiveValue: { responses in
+                completion(.success(responses))
             })
     }
 }

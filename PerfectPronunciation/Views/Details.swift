@@ -14,7 +14,6 @@ class SharedData: ObservableObject {
 }
 
 
-
 struct Details: View {
     
     let model = PronunciationModel()
@@ -29,8 +28,10 @@ struct Details: View {
     @State private var userData = UserData()
     @ObservedObject var currModel = CurrencyController()
     
+    
     @State var showingAlert2 = false
-    @Binding var showingAlert: Bool
+        
+
     
     
     @State private var msg = ""
@@ -141,9 +142,9 @@ struct Details: View {
                     .cornerRadius(10)
             }
             .alert(self.msg, isPresented: $showingAlert2) {
-                Button("OK", role: .cancel) {
-                }
-            }
+                            Button("OK", role: .cancel) {
+                            }
+                        }
         }
 //        .navigationBarItems(leading:
 //            
@@ -184,14 +185,12 @@ struct Details: View {
             }
             
             prediction = makePrediction()
+            
+            
         }
-        Spacer()
         
-            .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
-                Button("OK", role: .cancel) {
-                    currModel.updateUserCurrency()
-                }
-                    }//
+        Spacer()
+
     }
     
     func calculateAccuracyOutput() -> String {

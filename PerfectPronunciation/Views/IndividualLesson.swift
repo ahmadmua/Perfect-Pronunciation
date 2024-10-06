@@ -15,8 +15,7 @@ struct IndividualLesson: View {
     //controller var
     @ObservedObject var model = LessonController()
     @ObservedObject var audioController : AudioController
-
-    
+    @ObservedObject var currModel = CurrencyController()
     //question variable
     @State var questionVar: String?
     //navigation vars
@@ -36,7 +35,8 @@ struct IndividualLesson: View {
     //counter
     @AppStorage("counter") var counter: Int = 0
     
-    @State private var responseText: String = "Press the button to get a response"
+    @Binding var responseText: String
+    @Binding var responseArray: [String]
     @State private var cancellable: AnyCancellable?
     private let openAIService = OpenAIService()
     
@@ -64,9 +64,6 @@ struct IndividualLesson: View {
 //                            .background(Rectangle().fill(Color.gray).padding(.all, -30))
 //                            .padding(.bottom, 40)
 //                    }
-                    Button("Get OpenAI Response") {
-                                    fetchResponse()
-                                }
                     Divider()
                     
                    
@@ -98,45 +95,47 @@ struct IndividualLesson: View {
                         //nav to the nexet question
                         print("Continue btn press")
                     
-                        print("Numo q's \(model.totQuestions)")
-                        print("QUESTION \(model.question ?? "WHY NO WORK")")
+//                        print("Numo q's \(model.totQuestions)")
+//                        print("QUESTION \(model.question ?? "WHY NO WORK")")
                         //increment counter to track what question the user is on
                         counter+=1
                         
                         
                             
                         //if counter is greater than number of questions
-                        if counter >= model.totQuestions{
+                        if counter >= 5{//let questionCount = 0
                             //go back to the home page
                             counter = 0
-                            self.showLesson.toggle()
-                            self.showingAlert.toggle()
-                            
-                            
-                            
                             //update the lesson as complete
                             model.updateLessonCompletion(userLesson: lessonName)
-                            
+                            self.showingAlert.toggle()
+                            self.showLesson.toggle()
+                        
                         }else{
                             //else counter is not more than the number of questions, continue to the next question
                             self.showNext.toggle()
                         }
                         
-                        //assign the question var
-                        questionVar = model.answer!
-                        print("THIS IS THE QUESTION \(questionVar ?? "NA")")
+//                        //assign the question var
+//                        questionVar = model.answer!
+//                        print("THIS IS THE QUESTION \(questionVar ?? "NA")")
                         
                         
                     }){
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 50, weight: .light))
                     }//btn
+                    .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
+                                    Button("OK", role: .cancel) {
+                                        currModel.updateUserCurrency()
+                                    }
+                                        }//
                     .navigationDestination(isPresented: $showNext){
-                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName)
+                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
-                        Details(showingAlert: $showingAlert)
+                        Details()
                             .navigationBarBackButtonHidden(true)
                     }
                     .foregroundStyle(Color.green)
@@ -149,18 +148,33 @@ struct IndividualLesson: View {
         }//nanstack
         .background(Color("Background"))
         .onAppear{
+            for _ in responseArray{
+//                print("RESPONSES : \(response)")
+                responseText = responseArray[4-counter]
+                
+            }
+            
+//            let responseArray = responseText.split(separator: "~")
+//            print("ARRAY : \(responseArray)")
             
             openAIService.fetchAPIKey()
+            
             //find the difficulty the user has set
             model.findUserDifficulty{
                 print("USER DIFICULTY!! : \(model.difficulty!)")
-                print("TEST")
+            
                 
+                
+                /*
+                 ------------------------------------
+                 WILL PROBABLY HAVE TO RE-WRITE THIS - wont be having lessons stored like this anymore?
+                 vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+                 */
                 //find the number of questions for the lesson
-                model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty!)
-                
-                //get the current question for the page number
-                model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
+//                model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty!)
+//                
+//                //get the current question for the page number
+//                model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
                 
                 UserDefaults.standard.synchronize()
                 
@@ -172,19 +186,6 @@ struct IndividualLesson: View {
         }
          
     }
-    
-    func fetchResponse() {
-            cancellable = openAIService.fetchOpenAIResponse(prompt: "Create 5 easy sentences about countries to perfect my pronunciation as an English learner") { result in
-                switch result {
-                case .success(let response):
-                    responseText = response
-                case .failure(let error):
-                    responseText = "Error: \(error.localizedDescription)"
-                }
-            }
-        }
+
 }//view
 
-//#Preview {
-//    IndividualLesson(msgTaken: <#Binding<String>#>)
-//}

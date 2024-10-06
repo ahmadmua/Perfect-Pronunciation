@@ -36,11 +36,11 @@ class LessonController : ObservableObject{
                         
                         //converting to proper difficutly
                         if(value == "Beginner"){
-                            self.difficulty = "Easy"
+                            self.difficulty = "Beginner"
                         }else if(value == "Intermediate"){
-                            self.difficulty = "Normal"
+                            self.difficulty = "Intermediate"
                         }else if(value == "Advanced"){
-                            self.difficulty = "Hard"
+                            self.difficulty = "Advanced"
                         }
                         
                         
@@ -225,5 +225,44 @@ class LessonController : ObservableObject{
                 // Handle the case where the user is not authenticated
                 print("User is not authenticated")
             }
+        }//func
+    
+    func updateLessonQuestionData(userLesson: String, userDifficulty: String, lessonQuestionsList: [String]) {
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+
+            userDocRef.getDocument { document, error in
+                if let document = document, document.exists {
+                    if let lessonQuestions = document.data()?["LessonQuestions"] as? [String: Any] {
+                        if var lessonData = lessonQuestions[userLesson] as? [String: Any] {
+                            // Update "Difficulty" and "Questions" fields
+                            lessonData["Difficulty"] = userDifficulty
+                            lessonData["Questions"] = lessonQuestionsList
+
+                            // Update the nested fields in Firestore
+                            userDocRef.updateData(["LessonQuestions.\(userLesson)": lessonData]) { error in
+                                if let error = error {
+                                    print("Error updating document: \(error)")
+                                } else {
+                                    print("Lesson Question Document updated successfully")
+
+                                    //I DONT THINK USER DEFAULTS NEEDS TO BE UPDATED
+                                }
+                            }
+                        } else {
+                            print("lesson field does not exist in LessonQuestions.")
+                        }
+                    } else {
+                        print("LessonQuestions field does not exist in the document.")
+                    }
+                } else {
+                    print("Document does not exist or there was an error: \(error?.localizedDescription ?? "Unknown error")")
+                }
+            }
+        } else {
+            print("User is not authenticated")
         }
+    }
+
 }

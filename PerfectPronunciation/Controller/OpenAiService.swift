@@ -60,7 +60,9 @@ class OpenAIService {
             "model": "gpt-3.5-turbo",
             "messages": [["role": "user", "content": prompt]],
             "max_tokens": 50,
-            "temperature": 0.5
+            "temperature": 0.5,
+            "frequency_penalty": -2,
+            "presence_penalty": -2
         ]
 
         guard let httpBody = try? JSONSerialization.data(withJSONObject: parameters, options: []) else {

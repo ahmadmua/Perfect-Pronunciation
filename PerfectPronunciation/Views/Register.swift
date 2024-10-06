@@ -104,6 +104,28 @@ struct Register: View {
                         "Food1" : false,
                         "Food2" : false
                      ],
+                     "LessonQuestions": [
+                        "Conversation" : [
+                            "Difficulty" : "",
+                            "Questions" : ""
+                        ],
+                        "Numbers" : [
+                            "Difficulty" : "",
+                            "Questions" : ""
+                        ],
+                        "Directions" : [
+                            "Difficulty" : "",
+                            "Questions" : ""
+                        ],
+                        "Food1" : [
+                            "Difficulty" : "",
+                            "Questions" : ""
+                        ],
+                        "Food2" : [
+                            "Difficulty" : "",
+                            "Questions" : ""
+                        ]
+                     ],
                      "Achievements": [
                         "Achievement 1" : false
                      ],

@@ -108,6 +108,11 @@ struct IndividualLesson: View {
                             counter = 0
                             //update the lesson as complete
                             model.updateLessonCompletion(userLesson: lessonName)
+                            
+                            model.findUserDifficulty{
+                                model.updateLessonQuestionData(userLesson: lessonName, userDifficulty: model.difficulty!, lessonQuestionsList: responseArray)
+                            }
+                            
                             self.showingAlert.toggle()
                             self.showLesson.toggle()
                         
@@ -162,8 +167,6 @@ struct IndividualLesson: View {
             //find the difficulty the user has set
             model.findUserDifficulty{
                 print("USER DIFICULTY!! : \(model.difficulty!)")
-            
-                
                 
                 /*
                  ------------------------------------

@@ -50,8 +50,8 @@
 		02FC80CA2B02039F009DFA9C /* PronunciationModelProjection.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 02FC80C92B02039F009DFA9C /* PronunciationModelProjection.mlmodel */; };
 		02FF6D762B0EB12B00D15D3A /* UpdateInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02FF6D752B0EB12B00D15D3A /* UpdateInfo.swift */; };
 		4D1162DF2AFC9D9900224519 /* AudioController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1162DE2AFC9D9900224519 /* AudioController.swift */; };
+		4D5DD9C92CB2329A00590EE0 /* PronunciationAssessmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5DD9C82CB2329A00590EE0 /* PronunciationAssessmentModel.swift */; };
 		4D6170602AEC5D0C002A02C1 /* VoiceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */; };
-		4DAB969C2B16E61100800058 /* AudioAnalysis.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DAB969B2B16E61100800058 /* AudioAnalysis.swift */; };
 		4DAB969E2B16E62E00800058 /* AudioAPIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DAB969D2B16E62E00800058 /* AudioAPIController.swift */; };
 		4DC3914D2B1BE1F3006C8C39 /* AudioPlayBackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC3914C2B1BE1F3006C8C39 /* AudioPlayBackController.swift */; };
 		4DC3914F2B1BE2D3006C8C39 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC3914E2B1BE2D3006C8C39 /* Audio.swift */; };
@@ -109,8 +109,8 @@
 		02FC80C92B02039F009DFA9C /* PronunciationModelProjection.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = PronunciationModelProjection.mlmodel; sourceTree = "<group>"; };
 		02FF6D752B0EB12B00D15D3A /* UpdateInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateInfo.swift; sourceTree = "<group>"; };
 		4D1162DE2AFC9D9900224519 /* AudioController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioController.swift; sourceTree = "<group>"; };
+		4D5DD9C82CB2329A00590EE0 /* PronunciationAssessmentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronunciationAssessmentModel.swift; sourceTree = "<group>"; };
 		4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorder.swift; sourceTree = "<group>"; };
-		4DAB969B2B16E61100800058 /* AudioAnalysis.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAnalysis.swift; sourceTree = "<group>"; };
 		4DAB969D2B16E62E00800058 /* AudioAPIController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAPIController.swift; sourceTree = "<group>"; };
 		4DC3914C2B1BE1F3006C8C39 /* AudioPlayBackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayBackController.swift; sourceTree = "<group>"; };
 		4DC3914E2B1BE2D3006C8C39 /* Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
@@ -269,9 +269,9 @@
 				028364722AEA504000E88DCB /* AccuracyViewModel.swift */,
 				028364742AEA513E00E88DCB /* VoiceData.swift */,
 				C5DF79D72AFC77AB00ECB45C /* Lesson.swift */,
-				4DAB969B2B16E61100800058 /* AudioAnalysis.swift */,
 				4DC3914E2B1BE2D3006C8C39 /* Audio.swift */,
 				C5D605152B1F1F1600620283 /* Leaderboard.swift */,
+				4D5DD9C82CB2329A00590EE0 /* PronunciationAssessmentModel.swift */,
 			);
 			name = Model;
 			path = PerfectPronunciation/Model;
@@ -399,6 +399,7 @@
 			files = (
 				02F7635E2AF7215B001BEAFA /* PronunciationModel.mlmodel in Sources */,
 				02E2B6612AD6131100F1FACA /* ContentView.swift in Sources */,
+				4D5DD9C92CB2329A00590EE0 /* PronunciationAssessmentModel.swift in Sources */,
 				C5D6050E2B0B3BCB00620283 /* CurrencyController.swift in Sources */,
 				C5DE40C82C9F4B160002E852 /* OpenAiService.swift in Sources */,
 				C58B99FA2AEDAE2B003C0288 /* WeeklyGamePage.swift in Sources */,
@@ -439,7 +440,6 @@
 				C5D605142B1DAC8A00620283 /* WeeklyLesson.swift in Sources */,
 				4DAB969E2B16E62E00800058 /* AudioAPIController.swift in Sources */,
 				4D1162DF2AFC9D9900224519 /* AudioController.swift in Sources */,
-				4DAB969C2B16E61100800058 /* AudioAnalysis.swift in Sources */,
 				4D6170602AEC5D0C002A02C1 /* VoiceRecorder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

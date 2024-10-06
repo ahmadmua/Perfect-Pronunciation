@@ -148,8 +148,21 @@ class DataHelper: ObservableObject {
         }
     }
 
+    
+    func uploadUserLessonData(data: PronunciationAssessmentResult){
+        
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID).collection("Lessons")
+            Firestore.firestore().collection("UserData").document(userID).collection("Lessons")
 
-
+            
+            
+        } else {
+            // Handle the case where the user is not authenticated
+        }
+        
+    }
     
     func getItemsForDayOfWeek(dayOfWeek: String, completion: @escaping ([DocumentSnapshot]?, Error?) -> Void) {
         if let user = Auth.auth().currentUser {

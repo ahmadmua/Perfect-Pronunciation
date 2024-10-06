@@ -12,38 +12,41 @@ import Speech
 
 // This class handles audio recording and speech recognition
 class AudioController: NSObject, ObservableObject {
-    // Published properties will cause updates to the UI when changed
-    @Published var btnTitle: String = "Start Recording"
-    @Published var STTresult: String = ""
-    @Published var recordBtnDisabled = true
-    @Published var analysisAccuracyScore: Float = 0.0
-    var audioAPIController = AudioAPIController.shared
+    
+      // MARK: - Published Properties (for UI binding)
+      @Published var btnTitle: String = "Start Recording"
+      @Published var STTresult: String = ""
+      @Published var recordBtnDisabled = true
+      @Published var analysisAccuracyScore: Float = 0.0
+      
+      // MARK: - Audio and Speech Processing
+      var audioAPIController = AudioAPIController.shared
+    
+      var globalAnalysisResult: Float?
+      
+      // MARK: - Recording Management
+      private var audioRecorder: AVAudioRecorder!
+      private var audioFile: AVAudioFile?
+      // A boolean flag to track the recording state
+      var isRecording = false {
+          didSet {
+              // Notify subscribers that the object has changed
+              objectWillChange.send(self)
+          }
+      }
+      var recording = Recording(fileURL: URL(string: "about:blank")!, createdAt: Date())
+      
+      // MARK: - Speech Recognition Properties
+      private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+      private var recognitionTask: SFSpeechRecognitionTask?
+      private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
+      private let audioEngine = AVAudioEngine()
+      
+      // MARK: - Combine (for subscribers)
+      let objectWillChange = PassthroughSubject<AudioController, Never>()
     
     
-    
-    // Private properties for managing audio recording and speech recognition
-    private var audioRecorder: AVAudioRecorder!
-    private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-    private var recognitionTask: SFSpeechRecognitionTask?
-    private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
-    private let audioEngine = AVAudioEngine()
-    private var audioFile: AVAudioFile?
-    
-    var globalAnalysisResult: Float?
-    
-    // A subject for sending updates to subscribers
-    let objectWillChange = PassthroughSubject<AudioController, Never>()
-    
-    // A placeholder for the last recording made
-    var recording = Recording(fileURL: URL(string: "about:blank")!, createdAt: Date())
-    
-    // A boolean flag to track the recording state
-    var isRecording = false {
-        didSet {
-            // Notify subscribers that the object has changed
-            objectWillChange.send(self)
-        }
-    }
+   
     
     // Request authorization to use the microphone and speech recognition
     func requestAuthorization() {
@@ -76,7 +79,7 @@ class AudioController: NSObject, ObservableObject {
             
             // Filter for audio files and sort them by date
             let audioFiles = directoryContents
-                .filter { $0.pathExtension == "m4a" }
+                .filter { $0.pathExtension == "wav" }  // Now filtering for .wav files
                 .sorted {
                     let date1 = try? $0.resourceValues(forKeys: [.creationDateKey]).creationDate ?? Date.distantPast
                     let date2 = try? $1.resourceValues(forKeys: [.creationDateKey]).creationDate ?? Date.distantPast
@@ -116,12 +119,12 @@ class AudioController: NSObject, ObservableObject {
             
             // Create a file URL for the new recording
             let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY 'at' HH:mm:ss")).m4a")
+            let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY 'at' HH:mm:ss")).wav")
             
             // Define the audio recorder settings
             let settings = [
-                AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
-                AVSampleRateKey: 12000,
+                AVFormatIDKey: Int(kAudioFormatLinearPCM),  // Use PCM for WAV format
+                AVSampleRateKey: 16000,  // Set the correct sample rate
                 AVNumberOfChannelsKey: 1,
                 AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
             ]
@@ -200,155 +203,130 @@ class AudioController: NSObject, ObservableObject {
         fetchRecording()
     }
     
-    func submitUserAudio(answer: String) {
-        // Ensure that we have a valid file URL
+
+    // Function to submit the last recorded audio for analysis
+    func submitTestAudio(testText: String) {
+        // Unwrap the optional recording URL
         guard let audioURL = recording.fileURL else {
-            print("Error: Invalid file URL")
+            print("Error: No valid file URL for the recording.")
             return
         }
         
+        // Ensure the audio file URL is valid
+        guard FileManager.default.fileExists(atPath: audioURL.path) else {
+            print("Error: File does not exist at \(audioURL.path)")
+            return
+        }
+
+        //let audioAPIController = AudioAPIController.shared
+        
         do {
-            // Read audio data from the file
-            let audioData = try Data(contentsOf: audioURL)
-            let audioAPIController = AudioAPIController()
-            
-            // Submit the audio data to the API for analysis
-            audioAPIController.uploadUserAudio(audioData: audioData) { result in
+            _ = try Data(contentsOf: audioURL)
+            // Process successful analysis result NEED TO CHANGE TO STORE DIFFERENTLY
+            audioAPIController.transcribeAndAssessAudio(audioURL: audioURL, referenceText: testText) { result in
                 switch result {
-                case .success(let analysis):
+                case .success(let resultJson):
                     DispatchQueue.main.async {
-                        // Process successful analysis result
-                        //print("Audio Analysis: \(analysis)")
-                        UserDefaults.standard.set(audioAPIController.audioAnalysisUserData.pronunciationScorePercentage.pronunciationScorePercentage, forKey: "UserAudioScore")
+                        print("Pronunciation Assessment Result: \(resultJson)")
                         
-                        print("USER DEFAULTS USER AUDIO : \(UserDefaults.standard.double(forKey: "UserAudioScore"))")
-                        UserDefaults.standard.synchronize()
-                        
-                        self.audioAPIController.compareAudioAnalysis()
-                        
-                        DataHelper().addItemToUserDataCollection(itemName: answer, dayOfWeek: self.returnDate(), accuracy: Float(UserDefaults.standard.double(forKey: "UserAccuracyResults")))
+                        self.audioAPIController.uploadTestData()
+//                        // Process successful analysis result
+//                        UserDefaults.standard.set(self.audioAPIController.audioAnalysisTestData.pronunciationScorePercentage.pronunciationScorePercentage, forKey: "SampleAudioScore")
+//
+//                        print("USER DEFAULTS TEST AUDIO : \(UserDefaults.standard.double(forKey: "SampleAudioScore"))")
+//                        UserDefaults.standard.synchronize()
                     }
                 case .failure(let error):
                     DispatchQueue.main.async {
                         // Handle any errors during analysis
-                        print("Error: \(error)")
+                        print("Error during assessment: \(error)")
                     }
                 }
             }
         } catch {
-            // Handle errors during audio data reading
             print("Error: Unable to load audio file data - \(error)")
         }
-    }
+   }
+
     
-    func submitTestAudio(file: String) {
-        
-        guard let audioURL = Bundle.main.url(forResource: file, withExtension: "m4a") else {
-            print("Error: Invalid file URL")
-            return
-        }
-        
-//        if let audioURL = Bundle.main.path(forResource: file, ofType: "m4a") {
-//            print("File PATH: \(audioURL)")
-//            // Create an instance of the API controller
-            let audioAPIController = AudioAPIController()
-            
-            do {
-                let audioData = try Data(contentsOf: audioURL)
-                // Submit the audio data to the API for analysis
-                audioAPIController.uploadTestAudio(audioData: audioData, recordingName: "\(file).m4a"){ result in
-                    switch result {
-                    case .success(let analysis):
-                        DispatchQueue.main.async {
-                            // Process successful analysis result
-                            //print("Audio Analysis: \(analysis)")
-                            //save user default for test audio
-                            UserDefaults.standard.set(audioAPIController.audioAnalysisTestData.pronunciationScorePercentage.pronunciationScorePercentage, forKey: "SampleAudioScore")
-                            
-                            
-                            print("USER DEFAULTS TEST AUDIO : \(UserDefaults.standard.double(forKey: "SampleAudioScore"))")
-                            UserDefaults.standard.synchronize()
-                            
-                        }
-                    case .failure(let error):
-                        DispatchQueue.main.async {
-                            // Handle any errors during analysis
-                            print("Error: \(error)")
-                        }
-                    }
-                }
-            } catch {
-                // Handle errors during audio data reading
-                print("Error: Unable to load audio file data - \(error)")
-            }
-//        } else{
-//            print("COULD NOT FIND ")
-//        }
-        
-        
-        
-    }
-    
-    
-    // Make sure to implement uploadUserAudio(audioData:) in your AudioAPIController
-    
-    
-    
-    
-    func returnDate() -> String{
+    // Function that submits text to AI Voice gallery, to get an Audio File back to Play
+    func submitTextToSpeechAI(testText: String) {
+           // Call the sendTextToVoiceGallery function to obtain the audio clip
+        audioAPIController.sendTextToVoiceGallery(testText: testText) { result in
+               switch result {
+               case .success(let audioData):
+                   // Store the obtained audio clip in the audioClip variable
+                   DispatchQueue.main.async {
+                       //self.audioClip = audioData
+                       print("Audio clip successfully obtained and stored.")
+                       // You can now trigger audio playback here if needed
+                   }
+               case .failure(let error):
+                   print("Failed to get audio clip: \(error)")
+               }
+           }
+       }
+
+    func returnDate() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "E"
         let currentDayOfWeek = dateFormatter.string(from: Date())
         return currentDayOfWeek
-    }
-    
-    
-    func submitAudioWeekly() {
-        // Ensure that we have a valid file URL
-        guard let audioURL = recording.fileURL else {
-            print("Error: Invalid file URL")
-            return
-        }
-
-        do {
-            // Read audio data from the file
-            let audioData = try Data(contentsOf: audioURL)
-            let audioAPIController = AudioAPIController()
-            // Submit the audio data to the API for analysis
-            audioAPIController.uploadUserAudio(audioData: audioData) { result in
-                switch result {
-                case .success(let analysis):
-                    DispatchQueue.main.async {
-                        // Process successful analysis result
-                        print("Audio Analysis: \(analysis)")
-                        self.analysisAccuracyScore = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
-                        //update user completion
-                        DataHelper().updateWeeklyCompletion(score: self.analysisAccuracyScore)
-                        //----------------------------------------
-
-//                        self.globalAnalysisResult = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
-//                        DataHelper().addItemToUserDataCollection(itemName: "", dayOfWeek: self.returnDate(), accuracy: self.globalAnalysisResult!)
-//
-                        //----------------------------------------
-
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        // Handle any errors during analysis
-                        print("Error: \(error)")
-                    }
-                }
-            }
-        } catch {
-            // Handle errors during audio data reading
-            print("Error: Unable to load audio file data - \(error)")
-        }
     }
 }
 
 
 
     
+    
+//    func submitAudioWeekly() {
+//        // Ensure that we have a valid file URL
+//        guard let audioURL = recording.fileURL else {
+//            print("Error: Invalid file URL")
+//            return
+//        }
+//
+//        do {
+//            // Read audio data from the file
+//            let audioData = try Data(contentsOf: audioURL)
+//            let audioAPIController = AudioAPIController()
+//            // Submit the audio data to the API for analysis
+//            audioAPIController.uploadUserAudio(audioData: audioData) { result in
+//                switch result {
+//                case .success(let analysis):
+//                    DispatchQueue.main.async {
+//                        // Process successful analysis result
+//                        print("Audio Analysis: \(analysis)")
+//                        self.analysisAccuracyScore = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
+//                        //update user completion
+//                        DataHelper().updateWeeklyCompletion(score: self.analysisAccuracyScore)
+//                        //----------------------------------------
+//
+////                        self.globalAnalysisResult = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
+////                        DataHelper().addItemToUserDataCollection(itemName: "", dayOfWeek: self.returnDate(), accuracy: self.globalAnalysisResult!)
+////
+//                        //----------------------------------------
+//
+//                    }
+//                case .failure(let error):
+//                    DispatchQueue.main.async {
+//                        // Handle any errors during analysis
+//                        print("Error: \(error)")
+//                    }
+//                }
+//            }
+//        } catch {
+//            // Handle errors during audio data reading
+//            print("Error: Unable to load audio file data - \(error)")
+//        }
+//    }
+
+
+
+
+    
+
+
 
 
 

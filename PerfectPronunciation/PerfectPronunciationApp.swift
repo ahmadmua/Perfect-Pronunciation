@@ -34,7 +34,7 @@ struct PerfectPronunciationApp: App {
     
     var body: some Scene {
         WindowGroup {
-            AssessmentView().environmentObject(fireDBHelper).environmentObject(sharedData).environmentObject(comparedAudioAnalysis)
+            Login().environmentObject(fireDBHelper).environmentObject(sharedData).environmentObject(comparedAudioAnalysis)
 //            ContentView().environmentObject(fireDBHelper).environmentObject(userData)
 //            TestFirebaseView()
             //Homepage()

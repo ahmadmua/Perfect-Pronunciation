@@ -147,19 +147,9 @@ struct VoiceRecorder: View {
                             if recordingState != .recording {
                                 Button(action: {
                                     
-                                    if(testText == audioRecorder.STTresult){
-                                        DispatchQueue.main.async{
-                                            self.audioRecorder.submitTestAudio(file: testText)
-                                            self.audioRecorder.submitUserAudio(answer: testText)
-                                            self.isPopupPresented = false // Add this line to dismiss the sheet
-                                        }
-                                        
-                                        
-                                        
-                                            
-                                        
-                                    }else{
-                                        print("audio doesn't match")
+                                    DispatchQueue.main.async{
+                                        self.audioRecorder.submitTestAudio(testText: testText)
+                                        self.isPopupPresented = false // Add this line to dismiss the sheet
                                     }
                                     
                                 }) {

@@ -3,7 +3,6 @@
 //  PerfectPronunciation
 //
 //  Created by Jordan Bhar on 2023-11-28.
-
 import Foundation
 import Combine
 
@@ -19,192 +18,198 @@ enum NetworkError: Error {
 
 // This class is responsible for handling the audio API operations.
 class AudioAPIController: ObservableObject {
-    // Published property that updates the view when a new analysis is loaded.
     static let shared = AudioAPIController()
     
     @Published var audioAnalysisTestData = AudioAnalysis()
-    @Published var audioAnalysisUserData = AudioAnalysis()
-    @Published var comparedAudioAnalysis: AudioAnalysis = AudioAnalysis()
     
-    
-    init(comparedAudioAnalysis: AudioAnalysis = AudioAnalysis()) {
-        self.comparedAudioAnalysis = comparedAudioAnalysis
-    }
-    
-    
-    func uploadTestAudio(audioData: Data, recordingName: String, completion: @escaping (Result<AudioAnalysis, Error>) -> Void) {
-        // URL for the audio upload endpoint (Change to your AWS EC2 instance URL).
-        let uploadURL = URL(string: "http://3.95.58.220:8000/upload-audio")!
-        // URLRequest configuration.
-        var request = URLRequest(url: uploadURL)
+    // Function to transcribe audio file to text using Microsoft Transcription API
+    // allows us to transcribe the words that were said in the audio file
+    func transcribeAudioFile(audioURL: URL, completion: @escaping (Result<[String: Any], NetworkError>) -> Void) {
+        let region = "eastus" // Replace this with your region
+        let subscriptionKey = "a39f6ff72e4c4ffb99deaa05019002fa" // Replace this with your key
+        
+        let urlString = "https://\(region).stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=en-US&format=detailed"
+        
+        guard let url = URL(string: urlString) else {
+            completion(.failure(.invalidURL))
+            return
+        }
+        
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.setValue(subscriptionKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
+        request.setValue("audio/wav", forHTTPHeaderField: "Content-Type")
         
-        // Generate a unique boundary string using UUID for multipart/form-data.
-        let boundary = "Boundary-\(UUID().uuidString)"
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-        
-        // Create the multipart/form-data body.
-        request.httpBody = createBody(boundary: boundary, data: audioData, fileName: recordingName)
-        
-        // Perform the network task.
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Handle any errors that occur during the network request.
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
-            
-            // Check for a valid HTTP response.
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                completion(.failure(NetworkError.invalidResponse))
-                return
-            }
-            
-            // Ensure that data is received from the server.
-            guard let data = data else {
-                completion(.failure(NetworkError.emptyData))
-                return
-            }
-            
-            // JSONDecoder to parse the JSON data.
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            
-            do {
-                // Attempt to decode the JSON data into an AudioAnalysis object.
-                let audioAnalysis = try decoder.decode(AudioAnalysis.self, from: data)
-                
-                // If decoding is successful, update the published property and call the completion handler.
-                DispatchQueue.main.async {
-                    self.audioAnalysisTestData = audioAnalysis
-                    completion(.success(audioAnalysis))
+        do {
+            let audioData = try Data(contentsOf: audioURL)
+            let task = URLSession.shared.uploadTask(with: request, from: audioData) { data, response, error in
+                if let error = error {
+                    print("Error: \(error)")
+                    completion(.failure(.invalidResponse))
+                    return
                 }
-            } catch {
-                // If decoding fails, print the error and call the completion handler with failure.
-                print("Decoding error: \(error)")
-                completion(.failure(error))
+                
+                guard let response = response as? HTTPURLResponse else {
+                    completion(.failure(.invalidResponse))
+                    return
+                }
+                
+                guard response.statusCode == 200 else {
+                    completion(.failure(.statusCode(response.statusCode)))
+                    return
+                }
+                
+                guard let data = data else {
+                    completion(.failure(.emptyData))
+                    return
+                }
+                
+                // return the full JSON object
+                do {
+                    if let jsonResult = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                        // Return the entire JSON object
+                        completion(.success(jsonResult))
+                    } else {
+                        completion(.failure(.encodingError))
+                    }
+                } catch {
+                    completion(.failure(.encodingError))
+                }
             }
+            task.resume()
+        } catch {
+            completion(.failure(.fileReadError))
         }
-        // Start the network task.
-        task.resume()
     }
-    
-    func uploadUserAudio(audioData: Data, completion: @escaping (Result<AudioAnalysis, Error>) -> Void) {
-        // URL for the audio upload endpoint (Change to your AWS EC2 instance URL).
-        let uploadURL = URL(string: "http://3.95.58.220:8000/upload-audio")!
-        // URLRequest configuration.
-        var request = URLRequest(url: uploadURL)
+
+    // Function to send audio for pronunciation assessment
+    func sendToSpeechAnalysisAPI(audioURL: URL, referenceText: String, completion: @escaping (Result<[String: Any], NetworkError>) -> Void) {
+        let region = "eastus" // Replace with your region
+        let subscriptionKey = "a39f6ff72e4c4ffb99deaa05019002fa" // Replace this with your key
+        
+        let urlString = "https://\(region).stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=en-us"
+        
+        guard let url = URL(string: urlString) else {
+            completion(.failure(.invalidURL))
+            return
+        }
+        
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("audio/wav; codecs=audio/pcm; samplerate=16000", forHTTPHeaderField: "Content-Type")
+        request.setValue(subscriptionKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
         
-        // Generate a unique boundary string using UUID for multipart/form-data.
-        let boundary = "Boundary-\(UUID().uuidString)"
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        // Create pronunciation assessment params
+        let pronAssessmentParams: [String: Any] = [
+            "ReferenceText": referenceText,
+            "GradingSystem": "HundredMark",
+            "Dimension": "Comprehensive"
+        ]
         
-        // Create the multipart/form-data body.
-        request.httpBody = createBody(boundary: boundary, data: audioData, fileName: "recording.m4a")
-        
-        // Perform the network task.
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            // Handle any errors that occur during the network request.
-            if let error = error {
-                completion(.failure(error))
-                return
-            }
+        do {
+            let jsonParams = try JSONSerialization.data(withJSONObject: pronAssessmentParams, options: [])
+            let base64Params = jsonParams.base64EncodedString()
+            request.setValue(base64Params, forHTTPHeaderField: "Pronunciation-Assessment")
             
-            // Check for a valid HTTP response.
-            guard let httpResponse = response as? HTTPURLResponse,
-                  (200...299).contains(httpResponse.statusCode) else {
-                completion(.failure(NetworkError.invalidResponse))
-                return
-            }
-            
-            // Ensure that data is received from the server.
-            guard let data = data else {
-                completion(.failure(NetworkError.emptyData))
-                return
-            }
-            
-            // JSONDecoder to parse the JSON data.
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            
-            do {
-                // Attempt to decode the JSON data into an AudioAnalysis object.
-                let audioAnalysis = try decoder.decode(AudioAnalysis.self, from: data)
-                
-                // If decoding is successful, update the published property and call the completion handler.
-                DispatchQueue.main.async {
-                    self.audioAnalysisUserData = audioAnalysis
-                    completion(.success(audioAnalysis))
+            let audioData = try Data(contentsOf: audioURL)
+            let task = URLSession.shared.uploadTask(with: request, from: audioData) { data, response, error in
+                if let error = error {
+                    print("Error: \(error)")
+                    completion(.failure(.invalidResponse))
+                    return
                 }
-            } catch {
-                // If decoding fails, print the error and call the completion handler with failure.
-                print("Decoding error: \(error)")
+                
+                guard let response = response as? HTTPURLResponse else {
+                    completion(.failure(.invalidResponse))
+                    return
+                }
+                
+                guard response.statusCode == 200 else {
+                    completion(.failure(.statusCode(response.statusCode)))
+                    return
+                }
+                
+                guard let data = data else {
+                    completion(.failure(.emptyData))
+                    return
+                }
+                
+                do {
+                    // Debugging variable to hold the JSON data
+                    if let jsonResult = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                        // Complete with success
+                        completion(.success(jsonResult))
+                    } else {
+                        completion(.failure(.encodingError))
+                    }
+                } catch {
+                    completion(.failure(.encodingError))
+                }
+            }
+            task.resume()
+        } catch {
+            completion(.failure(.fileReadError))
+        }
+    }
+    
+    //Still Need to Implement
+    func sendTextToVoiceGallery(testText: String, completion: @escaping (Result<Data, NetworkError>) -> Void) {
+         
+     }
+    
+    //Still Need to Implement
+    func uploadTestData(){
+        
+    }
+    
+    //Clean up JSON FILE Speech to Text Transcription first, then Assesment Data
+    func analyzeAndAssessAudio(audioURL: URL, referenceText: String, completion: @escaping (Result<[String: Any], NetworkError>) -> Void) {
+        
+        // First call transcribeAudioFile
+        self.transcribeAudioFile(audioURL: audioURL) { transcriptionResult in
+            switch transcriptionResult {
+            case .success(let transcription):
+                // Then call sendToSpeechAPI for Pronunciation Assessment
+                self.sendToSpeechAnalysisAPI(audioURL: audioURL, referenceText: referenceText) { assessmentResult in
+                    switch assessmentResult {
+                    case .success(let assessmentData):
+                        // Merge both assessment and transcription into one dictionary with assessment first
+                        var mergedResult: [String: Any] = [:]
+                        mergedResult["assessment"] = assessmentData // Add assessment result first
+                        mergedResult["transcription"] = transcription // Add transcription result next
+                        
+                        // Complete with the merged result
+                        completion(.success(mergedResult))
+                        
+                    case .failure(let error):
+                        // Handle error from sendToSpeechAPI
+                        completion(.failure(error))
+                    }
+                }
+                
+            case .failure(let error):
+                // Handle error from transcribeAudioFile
                 completion(.failure(error))
             }
         }
-        // Start the network task.
-        task.resume()
     }
+
     
-    
-    
-    func compareAudioAnalysis() {
-//        print("CompareAudioAnalysis FUNCTION CALLLLED \(audioAnalysisUserData.pronunciationScorePercentage)")
-//        
-//        
-////        print("USER DATA SCORE : \(self.audioAnalysisUserData.pronunciationScorePercentage)")
-//        print("TEST DATA SCORE : \(self.audioAnalysisTestData.pronunciationScorePercentage)")
-        
-        print("USER DEFAULTS USER AUDIO  FROM COMPARE FUNC: \(UserDefaults.standard.double(forKey: "UserAudioScore"))")
-        
-        
-        print("USER DEFAULTS TEST AUDIO  FROM COMPARE FUNC: \(UserDefaults.standard.double(forKey: "SampleAudioScore"))")
-        
-        var userAccuracyResults : Double
-        
-        if (UserDefaults.standard.double(forKey: "SampleAudioScore") < UserDefaults.standard.double(forKey: "UserAudioScore")){
-            userAccuracyResults = 100.0
-        }else{
-            userAccuracyResults = (UserDefaults.standard.double(forKey: "UserAudioScore") / UserDefaults.standard.double(forKey: "SampleAudioScore")) * 100
-        }
-        
-        UserDefaults.standard.set(userAccuracyResults, forKey: "UserAccuracyResults")
-        
-        print("USERS SCORE FROM COMPARING SCORE: \(UserDefaults.standard.double(forKey: "UserAccuracyResults"))")
-        
-        
-        
-        UserDefaults.standard.synchronize()
-        
-    }
-    
-    
-    // Helper function to create the body of the multipart/form-data request.
-    private func createBody(boundary: String, data: Data, fileName: String) -> Data {
-        var body = Data()
-        
-        // Append the multipart/form-data boundaries and file data to the request body.
-        body.append("--\(boundary)\r\n")
-        body.append("Content-Disposition: form-data; name=\"audio\"; filename=\"\(fileName)\"\r\n")
-        body.append("Content-Type: audio/m4a\r\n\r\n")
-        body.append(data)
-        body.append("\r\n")
-        body.append("--\(boundary)--\r\n")
-        
-        return body
-    }
 }
+    
+   
+    
+
 
 // Extension to simplify appending strings to Data objects.
 extension Data {
-    // Helper method to append string data to a Data object.
     mutating func append(_ string: String) {
         if let data = string.data(using: .utf8) {
             append(data)
         }
     }
 }
+
 
 

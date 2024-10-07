@@ -220,7 +220,9 @@ class DataHelper: ObservableObject {
                     var documentCount: Float = 0
 
                     for document in querySnapshot!.documents {
-                        if let accuracy = document["Accuracy"] as? Float {
+                        if let assessment = document["assessment"] as? [String: Any],
+                           let nBest = assessment["NBest"] as? [[String: Any]],
+                           let accuracy = nBest.first?["AccuracyScore"] as? Float {
                             totalAccuracy += accuracy
                             documentCount += 1
                         } else {
@@ -486,30 +488,39 @@ class DataHelper: ObservableObject {
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
 
-            itemsCollectionRef.order(by: "Timestamp", descending: true).getDocuments { (querySnapshot, error) in
+            itemsCollectionRef.limit(to: 4).getDocuments { (querySnapshot, error) in
                 if let error = error {
                     print("Error getting documents: \(error.localizedDescription)")
                     completion(nil)
                 } else {
                     let accuracies: [Float] = querySnapshot?.documents.compactMap { document in
-                        guard let accuracy = document["Accuracy"] as? Float else {
-                            print("Invalid 'Accuracy' field in document.")
+                        if let assessment = document["assessment"] as? [String: Any],
+                           let nBest = assessment["NBest"] as? [[String: Any]],
+                           let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                            return accuracyScore
+                        } else {
+                            print("Invalid structure or 'AccuracyScore' field in document.")
                             return nil
                         }
-                        return accuracy
                     } ?? []
 
                     if !accuracies.isEmpty {
-                        // Call the completion handler with the most recent 4 accuracies
+                        // Call the completion handler with the most recent accuracies
                         completion(accuracies)
                     } else {
-                        print("No valid accuracies found in the most recent 4 documents.")
+                        print("No valid accuracies found in the documents.")
                         completion(nil)
                     }
                 }
             }
+        } else {
+            print("No user is currently authenticated.")
+            completion(nil)
         }
     }
+
+
+
 
     // Function to get accuracy at a specific index from the most recent 4 accuracies
     func getAccuracyAtIndex(index: Int, completion: @escaping (Float?) -> Void) {

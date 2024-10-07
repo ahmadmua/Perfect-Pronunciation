@@ -29,6 +29,7 @@ struct Details: View {
     @ObservedObject var currModel = CurrencyController()
     
     
+    
     @State var showingAlert2 = false
         
 
@@ -257,196 +258,100 @@ struct ItemsListView: View {
     
     var body: some View {
         
-        if(sharedData.selectedDay == "Mo"){
-            
-            List(items, id: \.self) { item in
-                Text(item)
-            }
-            .onAppear {
-                // Fetch and populate items for "Tue" when the view appears
-                fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Mon") { (documents, error) in
-                    if let documents = documents {
-                        let items = documents.compactMap { document in
-                            //if let name = document.get("Name") as? String,
-                               if let assessment = document.get("assessment") as? [String: Any],
-                               let nBest = assessment["NBest"] as? [[String: Any]],
-                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
-                                return "Accuracy: \(accuracyScore)%"
-                            }
-                            return nil
-                        }
-                        self.items = items
-                    } else if let error = error {
-                        // Handle the error
-                        print("Error: \(error)")
+        NavigationView {
+            if(sharedData.selectedDay == "Mo") {
+                List(items, id: \.self) { item in
+                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
+                        Text(item)
                     }
                 }
-
-            }
-        }
-        
-        else if(sharedData.selectedDay == "Tu"){
-            
-            List(items, id: \.self) { item in
-                Text(item)
-            }
-            .onAppear {
-                // Fetch and populate items for "Tue" when the view appears
-                fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Tue") { (documents, error) in
-                    if let documents = documents {
-                        let items = documents.compactMap { document in
-                            //if let name = document.get("Name") as? String,
-                               if let assessment = document.get("assessment") as? [String: Any],
-                               let nBest = assessment["NBest"] as? [[String: Any]],
-                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
-                                return "Accuracy: \(accuracyScore)%"
-                            }
-                            return nil
-                        }
-                        self.items = items
-                    } else if let error = error {
-                        // Handle the error
-                        print("Error: \(error)")
-                    }
+                .onAppear {
+                    fetchItemsForDayOfWeek(day: "Mon")
                 }
             }
-        }
-        
-        else if(sharedData.selectedDay == "We"){
-            
-            List(items, id: \.self) { item in
-                Text(item)
-            }
-            .onAppear {
-                // Fetch and populate items for "Tue" when the view appears
-                fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Wed") { (documents, error) in
-                    if let documents = documents {
-                        let items = documents.compactMap { document in
-                            //if let name = document.get("Name") as? String,
-                               if let assessment = document.get("assessment") as? [String: Any],
-                               let nBest = assessment["NBest"] as? [[String: Any]],
-                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
-                                return "Accuracy: \(accuracyScore)%"
-                            }
-                            return nil
-                        }
-                        self.items = items
-                    } else if let error = error {
-                        // Handle the error
-                        print("Error: \(error)")
+            else if(sharedData.selectedDay == "Tu") {
+                List(items, id: \.self) { item in
+                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
+                        Text(item)
                     }
                 }
-            }
-        }
-        else if(sharedData.selectedDay == "Th"){
-            
-            List(items, id: \.self) { item in
-                Text(item)
-            }
-            .onAppear {
-                // Fetch and populate items for "Tue" when the view appears
-                fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Thu") { (documents, error) in
-                    if let documents = documents {
-                        let items = documents.compactMap { document in
-                            //if let name = document.get("Name") as? String,
-                               if let assessment = document.get("assessment") as? [String: Any],
-                               let nBest = assessment["NBest"] as? [[String: Any]],
-                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
-                                return "Accuracy: \(accuracyScore)%"
-                            }
-                            return nil
-                        }
-                        self.items = items
-                    } else if let error = error {
-                        // Handle the error
-                        print("Error: \(error)")
-                    }
+                .onAppear {
+                    fetchItemsForDayOfWeek(day: "Tue")
                 }
             }
-        }
-        
-        else if(sharedData.selectedDay == "Fr"){
-            
-            List(items, id: \.self) { item in
-                Text(item)
-            }
-            .onAppear {
-                // Fetch and populate items for "Tue" when the view appears
-                fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Mon") { (documents, error) in
-                    if let documents = documents {
-                        let items = documents.compactMap { document in
-                            //if let name = document.get("Name") as? String,
-                               if let assessment = document.get("assessment") as? [String: Any],
-                               let nBest = assessment["NBest"] as? [[String: Any]],
-                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
-                                return "Accuracy: \(accuracyScore)%"
-                            }
-                            return nil
-                        }
-                        self.items = items
-                    } else if let error = error {
-                        // Handle the error
-                        print("Error: \(error)")
+            else if(sharedData.selectedDay == "We") {
+                List(items, id: \.self) { item in
+                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
+                        Text(item)
                     }
                 }
-            }
-        }
-        
-        else if(sharedData.selectedDay == "Sa"){
-        
-            List(items, id: \.self) { item in
-                Text(item)
-            }
-            .onAppear {
-                // Fetch and populate items for "Tue" when the view appears
-                fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Sat") { (documents, error) in
-                    if let documents = documents {
-                        let items = documents.compactMap { document in
-                            //if let name = document.get("Name") as? String,
-                               if let assessment = document.get("assessment") as? [String: Any],
-                               let nBest = assessment["NBest"] as? [[String: Any]],
-                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
-                                return "Accuracy: \(accuracyScore)%"
-                            }
-                            return nil
-                        }
-                        self.items = items
-                    } else if let error = error {
-                        // Handle the error
-                        print("Error: \(error)")
-                    }
+                .onAppear {
+                    fetchItemsForDayOfWeek(day: "Wed")
                 }
             }
-        }
-        
-        else if(sharedData.selectedDay == "Su"){
-            
-            List(items, id: \.self) { item in
-                Text(item)
-            }
-            .onAppear {
-                // Fetch and populate items for "Tue" when the view appears
-                fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Sun") { (documents, error) in
-                    if let documents = documents {
-                        let items = documents.compactMap { document in
-                            //if let name = document.get("Name") as? String,
-                               if let assessment = document.get("assessment") as? [String: Any],
-                               let nBest = assessment["NBest"] as? [[String: Any]],
-                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
-                                return "Accuracy: \(accuracyScore)%"
-                            }
-                            return nil
-                        }
-                        self.items = items
-                    } else if let error = error {
-                        // Handle the error
-                        print("Error: \(error)")
+            else if(sharedData.selectedDay == "Th") {
+                List(items, id: \.self) { item in
+                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
+                        Text(item)
                     }
+                }
+                .onAppear {
+                    fetchItemsForDayOfWeek(day: "Thu")
+                }
+            }
+            else if(sharedData.selectedDay == "Fr") {
+                List(items, id: \.self) { item in
+                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
+                        Text(item)
+                    }
+                }
+                .onAppear {
+                    fetchItemsForDayOfWeek(day: "Fri")
+                }
+            }
+            else if(sharedData.selectedDay == "Sa") {
+                List(items, id: \.self) { item in
+                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
+                        Text(item)
+                    }
+                }
+                .onAppear {
+                    fetchItemsForDayOfWeek(day: "Sat")
+                }
+            }
+            else if(sharedData.selectedDay == "Su") {
+                List(items, id: \.self) { item in
+                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
+                        Text(item)
+                    }
+                }
+                .onAppear {
+                    fetchItemsForDayOfWeek(day: "Sun")
                 }
             }
         }
     }
+    
+    private func fetchItemsForDayOfWeek(day: String) {
+        fireDBHelper.getItemsForDayOfWeek(dayOfWeek: day) { (documents, error) in
+            if let documents = documents {
+                let items = documents.compactMap { document in
+                    if let assessment = document.get("assessment") as? [String: Any],
+                       let nBest = assessment["NBest"] as? [[String: Any]],
+                       let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                        return "Accuracy: \(accuracyScore)%"
+                    }
+                    return nil
+                }
+                self.items = items
+            } else if let error = error {
+                print("Error: \(error)")
+            }
+        }
+    }
 }
+
+
 
 
 

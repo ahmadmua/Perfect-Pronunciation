@@ -26,10 +26,10 @@ struct AccuracyBarChart: View {
                 ForEach(data) { item in
                     BarMark(
                         x: .value("Accuracy", item.weekday),
-                        y: .value("Words", item.accuracy)
+                        y: .value("Words", item.AccuracyScore)
                     )
                     .annotation(position: AnnotationPosition.top) {
-                        Text("\(item.accuracy, format: .number.precision(.fractionLength(2)))")
+                        Text("\(item.AccuracyScore, format: .number.precision(.fractionLength(2)))")
                         // Add minimum width to avoid truncation artifacts
                         // when value changes
                             .frame(minWidth: 100)
@@ -121,11 +121,11 @@ struct BarChart: View {
             Chart {
                 ForEach(data) { item in
                     BarMark(
-                        x: .value("Accuracy", item.weekday),
-                        y: .value("Words", item.accuracy)
+                        x: .value("AccuracyScore", item.weekday),
+                        y: .value("Words", item.AccuracyScore)
                     )
                     .annotation(position: AnnotationPosition.top) {
-                        Text("\(item.accuracy, format: .number.precision(.fractionLength(2)))")
+                        Text("\(item.AccuracyScore, format: .number.precision(.fractionLength(2)))")
                             // Add minimum width to avoid truncation artifacts
                             // when value changes
                             .frame(minWidth: 100)

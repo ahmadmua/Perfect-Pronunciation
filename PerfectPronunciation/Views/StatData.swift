@@ -18,7 +18,7 @@ struct StatData: View {
         
             Words(
                 weekly: viewModel.word.name,
-                sum: Double(viewModel.word.data.sum(\.accuracy))
+                sum: Double(viewModel.word.data.sum(\.AccuracyScore))
             )
             
             AccuracyBarChart(

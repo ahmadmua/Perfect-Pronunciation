@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct AssessmentView: View {
+    @State var accuracyScore: Float // New property to receive the score
+
     @State private var progress: Double = 16.0
     @State private var mispronunciationsCount = 0
     @State private var omissionsCount = 0
@@ -37,8 +39,8 @@ struct AssessmentView: View {
                 VStack(alignment: .leading) {
                     Text("Pronunciation score")
                         .font(.headline)
-                    CircularScoreView(score: 88)
-                    .padding(.top, 8)
+                    CircularScoreView(score: Int(accuracyScore)) // Use passed score here
+                        .padding(.top, 8)
                 }
                 .padding(.leading)
 
@@ -60,7 +62,7 @@ struct AssessmentView: View {
             VStack(alignment: .leading, spacing: 10) {
                 Text("Score breakdown")
                     .font(.headline)
-                ScoreBar(label: "Accuracy score", score: 92)
+                ScoreBar(label: "Accuracy score", score: Int(accuracyScore))
                 ScoreBar(label: "Completeness score", score: 93)
                 ScoreBar(label: "Fluency score", score: 84)
                 ScoreBar(label: "Prosody score", score: 87)
@@ -87,6 +89,10 @@ struct AssessmentView: View {
             predictionResult = predictPronunciationImprovement(mispronunciations: 1, omissions: 2, insertions: 2, unexpectedBreak: 2, missingBreak: 2.0, monotone: 2)
         }
     }
+
+    // Remaining methods stay the same
+
+    
 
     // Function to build the highlighted text
     func buildAttributedText() -> AttributedString {
@@ -224,9 +230,9 @@ struct ErrorLabelView: View {
     }
 }
 
-struct AssessmentView_Previews: PreviewProvider {
-    static var previews: some View {
-        AssessmentView()
-    }
-}
+//struct AssessmentView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        AssessmentView()
+//    }
+//}
 

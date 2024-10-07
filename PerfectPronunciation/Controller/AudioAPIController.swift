@@ -179,10 +179,6 @@ class AudioAPIController: ObservableObject {
          
      }
     
-    //Still Need to Implement
-    func uploadTestData(){
-        
-    }
     
     // Function to call transcribeAudioFile func & sendToSpeechAnalysis func
       func transcribeAndAssessAudio(audioURL: URL, referenceText: String, completion: @escaping (Result<PronunciationAssessmentResult, NetworkError>) -> Void) {

@@ -45,6 +45,13 @@ class AudioController: NSObject, ObservableObject {
       // MARK: - Combine (for subscribers)
       let objectWillChange = PassthroughSubject<AudioController, Never>()
     
+      private var dataHelper: DataHelper
+        
+        // Initialize the controller with a DataHelper instance (dependency injection)
+        init(dataHelper: DataHelper = DataHelper()) {
+            self.dataHelper = dataHelper
+        }
+    
     
     // Request authorization to use the microphone and speech recognition
     func requestAuthorization() {
@@ -225,7 +232,7 @@ class AudioController: NSObject, ObservableObject {
                     DispatchQueue.main.async {
                         print("Pronunciation Assessment Result: \(resultJson)")
                         //save the data to firebase
-                        self.audioAPIController.uploadTestData()
+                        self.dataHelper.uploadUserLessonData(data: resultJson)
 
                     }
                 case .failure(let error):

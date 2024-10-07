@@ -132,11 +132,11 @@ struct IndividualLesson: View {
                     }//btn
 
                     //BUGGED OUT FOR JORDAN AND MUAZ (NICK WORKS FOR SOME REASON)
-//                    .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
-//                                    Button("OK", role: .cancel) {
-//                                        currModel.updateUserCurrency()
-//                                    }
-//                                        }//
+                    .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
+                                    Button("OK", role: .cancel) {
+                                        currModel.updateUserCurrency()
+                                    }
+                                        }//
                     .navigationDestination(isPresented: $showNext){
                         IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)

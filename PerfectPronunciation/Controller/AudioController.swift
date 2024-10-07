@@ -233,6 +233,15 @@ class AudioController: NSObject, ObservableObject {
                         print("Pronunciation Assessment Result: \(resultJson)")
                         //save the data to firebase
                         self.dataHelper.uploadUserLessonData(data: resultJson)
+                        
+                        self.dataHelper.fetchAndAddDayAndTimestampToAssessment { success in
+                            if success {
+                                print("DayOfWeek and Timestamp were successfully added/updated.")
+                            } else {
+                                print("Failed to update DayOfWeek and Timestamp.")
+                            }
+                        }
+
 
                     }
                 case .failure(let error):

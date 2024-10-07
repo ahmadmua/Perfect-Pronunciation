@@ -180,7 +180,7 @@ class DataHelper: ObservableObject {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+            let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
             
             // Perform a query to filter documents with "DayOfWeek" equal to "Tue"
             itemsCollectionRef.whereField("DayOfWeek", isEqualTo: dayOfWeek).getDocuments { (querySnapshot, error) in
@@ -207,7 +207,7 @@ class DataHelper: ObservableObject {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+            let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
 
             // Create a query to filter documents where "dayofweek" is "Mon"
             let mondayQuery = itemsCollectionRef.whereField("DayOfWeek", isEqualTo: weekDay)
@@ -245,7 +245,7 @@ class DataHelper: ObservableObject {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+            let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
 
             // Create an array of days
             let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -261,7 +261,9 @@ class DataHelper: ObservableObject {
                         var documentCount: Float = 0
 
                         for document in querySnapshot!.documents {
-                            if let accuracy = document["Accuracy"] as? Float {
+                            if let assessment = document["assessment"] as? [String: Any],
+                               let nBest = assessment["NBest"] as? [[String: Any]],
+                               let accuracy = nBest.first?["AccuracyScore"] as? Float {
                                 totalAccuracy += accuracy
                                 documentCount += 1
                             } else {
@@ -289,7 +291,7 @@ class DataHelper: ObservableObject {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+            let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
 
             // Create an array of days
             let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -303,7 +305,9 @@ class DataHelper: ObservableObject {
                         print("Error getting documents: \(error.localizedDescription)")
                     } else {
                         for document in querySnapshot!.documents {
-                            if let _ = document["Accuracy"] as? Float {
+                            if let assessment = document["assessment"] as? [String: Any],
+                               let nBest = assessment["NBest"] as? [[String: Any]],
+                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
                                 accuracyCount += 1
                             } else {
                                 print("Document \(document.documentID) exists for \(day), but 'accuracy' field is missing or not a float.")
@@ -327,7 +331,7 @@ class DataHelper: ObservableObject {
             if let user = Auth.auth().currentUser {
                 let userID = user.uid
                 let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-                let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+                let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
 
                 //delete contents of word list
                 self.wordList = []
@@ -442,7 +446,7 @@ class DataHelper: ObservableObject {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+            let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
 
             itemsCollectionRef.getDocuments { (querySnapshot, error) in
                 if let error = error {
@@ -460,23 +464,27 @@ class DataHelper: ObservableObject {
                     let validIndex = max(0, min(index, documentCount - 1))
                     let selectedDocument = querySnapshot!.documents[validIndex]
 
-                    if let accuracy = selectedDocument["Accuracy"] as? Float {
-                        // Call the completion handler with the accuracy from the specified document
-                        completion(accuracy)
+                    // Extracting AccuracyScore from the new structure
+                    if let assessment = selectedDocument["assessment"] as? [String: Any],
+                       let nBest = assessment["NBest"] as? [[String: Any]],
+                       let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                        // Call the completion handler with the accuracy score from the specified document
+                        completion(accuracyScore)
                     } else {
-                        print("Selected document does not have 'accuracy' field or it is not a float.")
+                        print("Selected document does not have 'AccuracyScore' or the structure is not correct.")
                         completion(nil)
                     }
                 }
             }
         }
     }
+
     
     func getMostRecentFourAccuracies(completion: @escaping ([Float]?) -> Void) {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+            let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
 
             itemsCollectionRef.order(by: "Timestamp", descending: true).getDocuments { (querySnapshot, error) in
                 if let error = error {
@@ -520,7 +528,7 @@ class DataHelper: ObservableObject {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+            let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
 
             itemsCollectionRef.order(by: "Timestamp", descending: true).getDocuments { (querySnapshot, error) in
                 if let error = error {

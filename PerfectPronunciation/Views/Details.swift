@@ -267,9 +267,11 @@ struct ItemsListView: View {
                 fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Mon") { (documents, error) in
                     if let documents = documents {
                         let items = documents.compactMap { document in
-                            if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? Float {
-                                return "\(name) - Accuracy: \(accuracy)%"
+                            //if let name = document.get("Name") as? String,
+                               if let assessment = document.get("assessment") as? [String: Any],
+                               let nBest = assessment["NBest"] as? [[String: Any]],
+                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                                return "Accuracy: \(accuracyScore)%"
                             }
                             return nil
                         }
@@ -279,6 +281,7 @@ struct ItemsListView: View {
                         print("Error: \(error)")
                     }
                 }
+
             }
         }
         
@@ -292,9 +295,11 @@ struct ItemsListView: View {
                 fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Tue") { (documents, error) in
                     if let documents = documents {
                         let items = documents.compactMap { document in
-                            if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? Float {
-                                return "\(name) - Accuracy: \(accuracy)%"
+                            //if let name = document.get("Name") as? String,
+                               if let assessment = document.get("assessment") as? [String: Any],
+                               let nBest = assessment["NBest"] as? [[String: Any]],
+                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                                return "Accuracy: \(accuracyScore)%"
                             }
                             return nil
                         }
@@ -317,9 +322,11 @@ struct ItemsListView: View {
                 fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Wed") { (documents, error) in
                     if let documents = documents {
                         let items = documents.compactMap { document in
-                            if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? Float {
-                                return "\(name) - Accuracy: \(accuracy)%"
+                            //if let name = document.get("Name") as? String,
+                               if let assessment = document.get("assessment") as? [String: Any],
+                               let nBest = assessment["NBest"] as? [[String: Any]],
+                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                                return "Accuracy: \(accuracyScore)%"
                             }
                             return nil
                         }
@@ -341,9 +348,11 @@ struct ItemsListView: View {
                 fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Thu") { (documents, error) in
                     if let documents = documents {
                         let items = documents.compactMap { document in
-                            if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? Float {
-                                return "\(name) - Accuracy: \(accuracy)%"
+                            //if let name = document.get("Name") as? String,
+                               if let assessment = document.get("assessment") as? [String: Any],
+                               let nBest = assessment["NBest"] as? [[String: Any]],
+                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                                return "Accuracy: \(accuracyScore)%"
                             }
                             return nil
                         }
@@ -363,12 +372,14 @@ struct ItemsListView: View {
             }
             .onAppear {
                 // Fetch and populate items for "Tue" when the view appears
-                fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Fri") { (documents, error) in
+                fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Mon") { (documents, error) in
                     if let documents = documents {
                         let items = documents.compactMap { document in
-                            if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? Float {
-                                return "\(name) - Accuracy: \(accuracy)%"
+                            //if let name = document.get("Name") as? String,
+                               if let assessment = document.get("assessment") as? [String: Any],
+                               let nBest = assessment["NBest"] as? [[String: Any]],
+                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                                return "Accuracy: \(accuracyScore)%"
                             }
                             return nil
                         }
@@ -391,9 +402,11 @@ struct ItemsListView: View {
                 fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Sat") { (documents, error) in
                     if let documents = documents {
                         let items = documents.compactMap { document in
-                            if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? Float {
-                                return "\(name) - Accuracy: \(accuracy)%"
+                            //if let name = document.get("Name") as? String,
+                               if let assessment = document.get("assessment") as? [String: Any],
+                               let nBest = assessment["NBest"] as? [[String: Any]],
+                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                                return "Accuracy: \(accuracyScore)%"
                             }
                             return nil
                         }
@@ -416,9 +429,11 @@ struct ItemsListView: View {
                 fireDBHelper.getItemsForDayOfWeek(dayOfWeek: "Sun") { (documents, error) in
                     if let documents = documents {
                         let items = documents.compactMap { document in
-                            if let name = document.get("Name") as? String,
-                               let accuracy = document.get("Accuracy") as? Float {
-                                return "\(name) - Accuracy: \(accuracy)%"
+                            //if let name = document.get("Name") as? String,
+                               if let assessment = document.get("assessment") as? [String: Any],
+                               let nBest = assessment["NBest"] as? [[String: Any]],
+                               let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                                return "Accuracy: \(accuracyScore)%"
                             }
                             return nil
                         }

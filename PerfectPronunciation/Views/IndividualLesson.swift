@@ -124,17 +124,19 @@ struct IndividualLesson: View {
 //                        //assign the question var
 //                        questionVar = model.answer!
 //                        print("THIS IS THE QUESTION \(questionVar ?? "NA")")
-                        
-                        
+                                             
+                    
                     }){
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 50, weight: .light))
                     }//btn
-                    .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
-                                    Button("OK", role: .cancel) {
-                                        currModel.updateUserCurrency()
-                                    }
-                                        }//
+
+                    //BUGGED OUT FOR JORDAN AND MUAZ (NICK WORKS FOR SOME REASON)
+//                    .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
+//                                    Button("OK", role: .cancel) {
+//                                        currModel.updateUserCurrency()
+//                                    }
+//                                        }//
                     .navigationDestination(isPresented: $showNext){
                         IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)

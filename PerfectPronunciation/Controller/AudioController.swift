@@ -46,8 +46,6 @@ class AudioController: NSObject, ObservableObject {
       let objectWillChange = PassthroughSubject<AudioController, Never>()
     
     
-   
-    
     // Request authorization to use the microphone and speech recognition
     func requestAuthorization() {
         SFSpeechRecognizer.requestAuthorization { authStatus in
@@ -217,8 +215,6 @@ class AudioController: NSObject, ObservableObject {
             print("Error: File does not exist at \(audioURL.path)")
             return
         }
-
-        //let audioAPIController = AudioAPIController.shared
         
         do {
             _ = try Data(contentsOf: audioURL)
@@ -228,13 +224,9 @@ class AudioController: NSObject, ObservableObject {
                 case .success(let resultJson):
                     DispatchQueue.main.async {
                         print("Pronunciation Assessment Result: \(resultJson)")
-                        
+                        //save the data to firebase
                         self.audioAPIController.uploadTestData()
-//                        // Process successful analysis result
-//                        UserDefaults.standard.set(self.audioAPIController.audioAnalysisTestData.pronunciationScorePercentage.pronunciationScorePercentage, forKey: "SampleAudioScore")
-//
-//                        print("USER DEFAULTS TEST AUDIO : \(UserDefaults.standard.double(forKey: "SampleAudioScore"))")
-//                        UserDefaults.standard.synchronize()
+
                     }
                 case .failure(let error):
                     DispatchQueue.main.async {

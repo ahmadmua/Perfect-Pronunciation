@@ -153,8 +153,8 @@ class DataHelper: ObservableObject {
         
         if let user = Auth.auth().currentUser {
             let userID = user.uid
-            let userDocRef = Firestore.firestore().collection("UserData").document(userID).collection("Lessons")
-            Firestore.firestore().collection("UserData").document(userID).collection("Lessons")
+            //let userDocRef = Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
+            Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
 
             
             

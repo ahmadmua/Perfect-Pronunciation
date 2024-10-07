@@ -17,6 +17,7 @@ class DataHelper: ObservableObject {
     
     init(){}
     
+    
     func updateDifficulty(selectedDifficulty: String, userData: inout UserData, selection: inout Int?){
         
         if let user = Auth.auth().currentUser {
@@ -147,22 +148,33 @@ class DataHelper: ObservableObject {
             // Handle the case where the user is not authenticated
         }
     }
-
     
-    func uploadUserLessonData(data: PronunciationAssessmentResult){
-        
+
+    func uploadUserLessonData(data: PronunciationAssessmentResult) {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
-            //let userDocRef = Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
-            Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
+            
+            // Convert PronunciationAssessmentResult to dictionary
+            if let lessonData = data.toDictionary() {
+                // Add the PronunciationAssessmentResult to the "LessonData" subcollection
+                Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
+                    .addDocument(data: lessonData) { error in
+                        if let error = error {
+                            print("Error adding pronunciation test data: \(error.localizedDescription)")
+                        } else {
+                            print("Pronunciation test data successfully added with a unique ID.")
+                        }
+                    }
 
-            
-            
+            } else {
+                print("Failed to convert PronunciationAssessmentResult to dictionary.")
+            }
         } else {
             // Handle the case where the user is not authenticated
+            print("User is not authenticated.")
         }
-        
     }
+
     
     func getItemsForDayOfWeek(dayOfWeek: String, completion: @escaping ([DocumentSnapshot]?, Error?) -> Void) {
         if let user = Auth.auth().currentUser {
@@ -547,9 +559,13 @@ class DataHelper: ObservableObject {
             completion(nameAtIndex)
         }
     }
-
-
-
-
     
+}
+
+extension Encodable {
+    func toDictionary() -> [String: Any]? {
+        guard let data = try? JSONEncoder().encode(self) else { return nil }
+        return (try? JSONSerialization.jsonObject(with: data, options: .allowFragments))
+            .flatMap { $0 as? [String: Any] }
+    }
 }

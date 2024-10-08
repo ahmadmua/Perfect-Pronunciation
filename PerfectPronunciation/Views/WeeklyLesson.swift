@@ -58,9 +58,15 @@ struct WeeklyLesson: View {
                         audioRecorder.stopRecording()
                         
                         // MARK: - Nick provide integration here
-                        let singleString = fireDBHelper.wordList.joined(separator: ".")
+                        let singleString = fireDBHelper.wordList.joined()
                         audioRecorder.submitTestAudio(testText: singleString, lessonType: lessonType)
                             
+                        fireDBHelper.getWeeklyAccuracy { accuracy in
+                            if let accuracy = accuracy {
+                                print("THIS IS THE FUCKING ACCURACY: \(accuracy)")
+                                DataHelper().updateWeeklyCompletion(score: accuracy)
+                            }
+                        }
                         
                         //return to the main screen when timer is done
                         self.showWeekly = true

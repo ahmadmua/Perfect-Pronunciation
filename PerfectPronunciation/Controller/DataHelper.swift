@@ -418,14 +418,16 @@ class DataHelper: ObservableObject {
                             //loop documents to get a single document (word)
                             for document in querySnapshot!.documents {
                                 //find the accuracy of the word
-                                if let assessment = document["assessment"] as? [String: Any],
+                                
+                                  if let assessment = document["assessment"] as? [String: Any],
                                    let nBest = assessment["NBest"] as? [[String: Any]],
                                    let accuracy = nBest.first?["AccuracyScore"] as? Float {
                                     //if the accuracy of the word is equal or below 50
                                     //TODO: TEST THIS TO SEE IF IT IS PULLING EVERY WORD
                                     if accuracy < 100.0{
                                         //add the name of the word to the list
-                                        if let assessment = document["assessment"] as? [String: Any],
+                                        
+                                          if let assessment = document["assessment"] as? [String: Any],
                                            let nBest = assessment["NBest"] as? [[String: Any]],
                                            let name = nBest.first?["Display"] as? String {
                                             self.wordList.append(name)
@@ -490,6 +492,41 @@ class DataHelper: ObservableObject {
         }
         
     }
+    
+    func getWeeklyAccuracy(completion: @escaping (Float?) -> Void) {
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
+
+            // Assuming you have a timestamp field in your documents (e.g., "timestamp")
+            itemsCollectionRef.order(by: "Timestamp", descending: true).limit(to: 1).getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error.localizedDescription)")
+                    completion(nil)
+                } else {
+                    guard let document = querySnapshot?.documents.first else {
+                        print("No documents found.")
+                        completion(nil)
+                        return
+                    }
+
+                    // Extracting AccuracyScore from the new structure
+                    if let lessonType = document["lessonType"] as? String, lessonType == "WeeklyChallenge",
+                       let assessment = document["assessment"] as? [String: Any],
+                       let nBest = assessment["NBest"] as? [[String: Any]],
+                       let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                        // Call the completion handler with the accuracy score from the most recent document
+                        completion(accuracyScore)
+                    } else {
+                        print("Selected document does not have 'AccuracyScore' or the structure is not correct.")
+                        completion(nil)
+                    }
+                }
+            }
+        }
+    }
+
     
     func findUserDifficulty(completion: @escaping (String?) -> Void) {
         if let user = Auth.auth().currentUser {

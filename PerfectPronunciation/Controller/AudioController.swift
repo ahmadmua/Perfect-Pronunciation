@@ -210,7 +210,7 @@ class AudioController: NSObject, ObservableObject {
     
 
     // Function to submit the last recorded audio for analysis
-    func submitTestAudio(testText: String) {
+    func submitTestAudio(testText: String, lessonType: String) {
         // Unwrap the optional recording URL
         guard let audioURL = recording.fileURL else {
             print("Error: No valid file URL for the recording.")
@@ -226,7 +226,7 @@ class AudioController: NSObject, ObservableObject {
         do {
             _ = try Data(contentsOf: audioURL)
             // Process successful analysis result NEED TO CHANGE TO STORE DIFFERENTLY
-            audioAPIController.transcribeAndAssessAudio(audioURL: audioURL, referenceText: testText) { result in
+            audioAPIController.transcribeAndAssessAudio(audioURL: audioURL, referenceText: testText, lessonType: lessonType) { result in
                 switch result {
                 case .success(let resultJson):
                     DispatchQueue.main.async {

@@ -34,7 +34,7 @@ struct IndividualLesson: View {
     @Binding var lessonName : String
     //counter
     @AppStorage("counter") var counter: Int = 0
-    
+    var lessonType : String = "Induvidual"
     @Binding var responseText: String
     @Binding var responseArray: [String]
     @State private var cancellable: AnyCancellable?
@@ -88,7 +88,7 @@ struct IndividualLesson: View {
                     .foregroundStyle(Color.red)
                     .buttonStyle(.borderless)
                     .sheet(isPresented: $isPopupPresented) {
-                        VoiceRecorder(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController(), audioAPIController: AudioAPIController(), testText: responseText, isPopupPresented: $isPopupPresented).environmentObject(audioController)
+                        VoiceRecorder(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController(), audioAPIController: AudioAPIController(), testText: responseText, lessonType: lessonType ,isPopupPresented: $isPopupPresented).environmentObject(audioController)
                     }
                     
                     Button(action: {

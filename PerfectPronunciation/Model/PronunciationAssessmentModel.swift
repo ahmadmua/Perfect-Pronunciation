@@ -11,6 +11,7 @@ import Foundation
 struct PronunciationAssessmentResult: Codable {
     let transcription: Transcription
     let assessment: Assessment
+    let lessonType: String
 }
 
 // MARK: - Transcription

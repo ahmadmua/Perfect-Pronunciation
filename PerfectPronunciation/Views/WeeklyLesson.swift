@@ -27,6 +27,9 @@ struct WeeklyLesson: View {
     
     @State private var countUses = 0
     
+    
+    var lessonType : String = "WeeklyChallenge"
+    
     //time limit timer
     @State var timeRemaining = 15
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -53,7 +56,9 @@ struct WeeklyLesson: View {
                         //end recording and submit
                         recordingState = .readyToRecord
                         audioRecorder.stopRecording()
-                        //audioRecorder.submitAudioWeekly()
+                        
+                        // MARK: - Nick provide integration here
+                        //audioRecorder.submitTestAudio(testText: fireDBHelper.wordList, lessonType: lessonType)
                             
                         
                         //return to the main screen when timer is done

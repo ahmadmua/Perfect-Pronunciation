@@ -19,6 +19,7 @@ struct VoiceRecorder: View {
     @ObservedObject var model = LessonController()
     
     var testText : String
+    var lessonType : String
     
     @State private var isRecording = false
     @State private var recordingState = RecorderState.readyToRecord
@@ -148,7 +149,7 @@ struct VoiceRecorder: View {
                                 Button(action: {
                                     
                                     DispatchQueue.main.async{
-                                        self.audioRecorder.submitTestAudio(testText: testText)
+                                        self.audioRecorder.submitTestAudio(testText: testText, lessonType: lessonType)
                                         self.isPopupPresented = false // Add this line to dismiss the sheet
                                     }
                                     

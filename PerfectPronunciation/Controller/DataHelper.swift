@@ -103,7 +103,7 @@ class DataHelper: ObservableObject {
 //
 //            // Check if an item with the same name already exists
 //            let query = itemsCollectionRef.whereField("Name", isEqualTo: itemName)
-//            
+//
 //            query.getDocuments { (querySnapshot, error) in
 //                if let error = error {
 //                    print("Error querying for existing item: \(error)")
@@ -206,7 +206,7 @@ class DataHelper: ObservableObject {
                     }
                 } else {
                     print("Document already has DayOfWeek or Timestamp. Skipping update.")
-                    completion(true) 
+                    completion(true)
                 }
             }
         }
@@ -418,12 +418,16 @@ class DataHelper: ObservableObject {
                             //loop documents to get a single document (word)
                             for document in querySnapshot!.documents {
                                 //find the accuracy of the word
-                                if let accuracy = document["Accuracy"] as? Float {
+                                if let assessment = document["assessment"] as? [String: Any],
+                                   let nBest = assessment["NBest"] as? [[String: Any]],
+                                   let accuracy = nBest.first?["AccuracyScore"] as? Float {
                                     //if the accuracy of the word is equal or below 50
                                     //TODO: TEST THIS TO SEE IF IT IS PULLING EVERY WORD
                                     if accuracy < 100.0{
-                                        //add the name of the word to the list 
-                                        if let name = document["Name"] as? String {
+                                        //add the name of the word to the list
+                                        if let assessment = document["assessment"] as? [String: Any],
+                                           let nBest = assessment["NBest"] as? [[String: Any]],
+                                           let name = nBest.first?["Display"] as? String {
                                             self.wordList.append(name)
                                         }
                                     }
@@ -478,7 +482,7 @@ class DataHelper: ObservableObject {
                     
                 }
                 
-            }  
+            }
             
         } else {
             // Handle the case where the user is not authenticated

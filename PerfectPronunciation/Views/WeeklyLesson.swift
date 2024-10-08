@@ -58,7 +58,8 @@ struct WeeklyLesson: View {
                         audioRecorder.stopRecording()
                         
                         // MARK: - Nick provide integration here
-                        //audioRecorder.submitTestAudio(testText: fireDBHelper.wordList, lessonType: lessonType)
+                        let singleString = fireDBHelper.wordList.joined(separator: ".")
+                        audioRecorder.submitTestAudio(testText: singleString, lessonType: lessonType)
                             
                         
                         //return to the main screen when timer is done

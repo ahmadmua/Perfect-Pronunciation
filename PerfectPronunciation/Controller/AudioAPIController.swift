@@ -181,7 +181,7 @@ class AudioAPIController: ObservableObject {
     
     
     // Function to call transcribeAudioFile func & sendToSpeechAnalysis func
-      func transcribeAndAssessAudio(audioURL: URL, referenceText: String, completion: @escaping (Result<PronunciationAssessmentResult, NetworkError>) -> Void) {
+    func transcribeAndAssessAudio(audioURL: URL, referenceText: String, lessonType: String ,completion: @escaping (Result<PronunciationAssessmentResult, NetworkError>) -> Void) {
           
           // First call transcribeAudioFile
           self.transcribeAudioFile(audioURL: audioURL) { transcriptionResult in
@@ -193,6 +193,7 @@ class AudioAPIController: ObservableObject {
                       case .success(let assessmentData):
                           // Merge both assessment and transcription into one dictionary with assessment first
                           var mergedResult: [String: Any] = [:]
+                          mergedResult["lessonType"] = lessonType
                           mergedResult["assessment"] = assessmentData // Add assessment result first
                           mergedResult["transcription"] = transcription // Add transcription result next
                           

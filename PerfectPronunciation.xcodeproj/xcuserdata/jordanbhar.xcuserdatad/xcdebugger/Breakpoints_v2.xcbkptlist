@@ -78,7 +78,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "233"
             endingLineNumber = "233"
-            landmarkName = "submitTestAudio(testText:)"
+            landmarkName = "submitTestAudio(testText:lessonType:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

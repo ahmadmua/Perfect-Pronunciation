@@ -69,84 +69,6 @@ class DataHelper: ObservableObject {
         selection = 1
     }
     
-//    func updateLanguage(selectedLanguage: String, userData: inout UserData, selection: inout Int?){
-//
-//        if let user = Auth.auth().currentUser {
-//            let userID = user.uid
-//            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-//
-//            userData.setLanguage(language: selectedLanguage)
-//
-//            let updatedData = ["Language": userData.getLanguage()]
-//
-//            // Update the specific field in the user's document
-//            userDocRef.updateData(updatedData) { error in
-//                if let error = error {
-//                    print("Error updating document: \(error)")
-//                } else {
-//                    print("Document updated successfully")
-//                }
-//            }
-//
-//        } else {
-//            // Handle the case where the user is not authenticated
-//        }
-//
-//        selection = 1
-//    }
-    
-//    func addItemToUserDataCollection(itemName: String, dayOfWeek: String, accuracy: Float) {
-//        if let user = Auth.auth().currentUser {
-//            let userID = user.uid
-//            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-//            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
-//
-//            // Check if an item with the same name already exists
-//            let query = itemsCollectionRef.whereField("Name", isEqualTo: itemName)
-//            
-//            query.getDocuments { (querySnapshot, error) in
-//                if let error = error {
-//                    print("Error querying for existing item: \(error)")
-//                } else if let snapshot = querySnapshot, !snapshot.isEmpty {
-//                    // Item with the same name already exists
-//                    print("Item with the same name already exists")
-//                    // Check if the current accuracy is higher than the stored accuracy
-//                    if let existingItemAccuracy = snapshot.documents.first?.data()["Accuracy"] as? Float,
-//                       accuracy > existingItemAccuracy {
-//                        // Update the existing item with the new accuracy
-//                        let documentID = snapshot.documents.first!.documentID
-//                        itemsCollectionRef.document(documentID).updateData(["Accuracy": accuracy]) { error in
-//                            if let error = error {
-//                                print("Error updating existing item: \(error)")
-//                            } else {
-//                                print("Existing item updated with higher accuracy")
-//                            }
-//                        }
-//                    } else {
-//                        print("Current accuracy is not higher than the stored accuracy. Item not updated.")
-//                    }
-//                } else {
-//                    // Item with the same name does not exist, add the new item
-//                    let itemData = [
-//                        "DayOfWeek": dayOfWeek,
-//                        "Timestamp": FieldValue.serverTimestamp(),
-//                    ] as [String : Any]
-//
-//                    // Add a new document to the "Items" subcollection
-//                    itemsCollectionRef.addDocument(data: itemData) { error in
-//                        if let error = error {
-//                            print("Error adding item to UserData subcollection: \(error)")
-//                        } else {
-//                            print("Item added to UserData subcollection successfully")
-//                        }
-//                    }
-//                }
-//            }
-//        } else {
-//            // Handle the case where the user is not authenticated
-//        }
-//    }
-    
     func fetchAndAddDayAndTimestampToAssessment(completion: @escaping (Bool) -> Void) {
         guard let user = Auth.auth().currentUser else {
             print("User is not authenticated.")
@@ -206,13 +128,11 @@ class DataHelper: ObservableObject {
                     }
                 } else {
                     print("Document already has DayOfWeek or Timestamp. Skipping update.")
-                    completion(true) 
+                    completion(true)
                 }
             }
         }
     }
-
-
     
 
     func uploadUserLessonData(data: PronunciationAssessmentResult) {
@@ -291,7 +211,7 @@ class DataHelper: ObservableObject {
                             totalAccuracy += accuracy
                             documentCount += 1
                         } else {
-                            print("Document \(document.documentID) exists for Monday, but 'accuracy' field is missing or not a float.")
+                            //print("Document \(document.documentID) exists for Monday, but 'accuracy' field is missing or not a float.")
                         }
                     }
 
@@ -510,41 +430,39 @@ class DataHelper: ObservableObject {
     }
     
     func getAccuracy(atIndex index: Int, completion: @escaping (Float?) -> Void) {
-        if let user = Auth.auth().currentUser {
-            let userID = user.uid
-            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-            let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
+          if let user = Auth.auth().currentUser {
+              let userID = user.uid
+              let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+              let itemsCollectionRef = userDocRef.collection("LessonData")
 
-            itemsCollectionRef.getDocuments { (querySnapshot, error) in
-                if let error = error {
-                    print("Error getting documents: \(error.localizedDescription)")
-                    completion(nil)
-                } else {
-                    let documentCount = querySnapshot?.documents.count ?? 0
+              itemsCollectionRef.getDocuments { (querySnapshot, error) in
+                  if let error = error {
+                      print("Error getting documents: \(error.localizedDescription)")
+                      completion(nil)
+                  } else {
+                      let documentCount = querySnapshot?.documents.count ?? 0
 
-                    guard documentCount > 0 else {
-                        print("No documents found.")
-                        completion(nil)
-                        return
-                    }
+                      guard documentCount > 0 else {
+                          print("No documents found.")
+                          completion(nil)
+                          return
+                      }
 
-                    let validIndex = max(0, min(index, documentCount - 1))
-                    let selectedDocument = querySnapshot!.documents[validIndex]
+                      let validIndex = max(0, min(index, documentCount - 1))
+                      let selectedDocument = querySnapshot!.documents[validIndex]
 
-                    // Extracting AccuracyScore from the new structure
-                    if let assessment = selectedDocument["assessment"] as? [String: Any],
-                       let nBest = assessment["NBest"] as? [[String: Any]],
-                       let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
-                        // Call the completion handler with the accuracy score from the specified document
-                        completion(accuracyScore)
-                    } else {
-                        print("Selected document does not have 'AccuracyScore' or the structure is not correct.")
-                        completion(nil)
-                    }
-                }
-            }
-        }
-    }
+                      if let assessment = selectedDocument["assessment"] as? [String: Any],
+                         let nBest = assessment["NBest"] as? [[String: Any]],
+                         let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                          completion(accuracyScore)
+                      } else {
+                          print("Selected document does not have 'AccuracyScore' or the structure is not correct.")
+                          completion(nil)
+                      }
+                  }
+              }
+          }
+      }
 
     
     func getMostRecentFourAccuracies(completion: @escaping ([Float]?) -> Void) {
@@ -654,3 +572,5 @@ extension Encodable {
             .flatMap { $0 as? [String: Any] }
     }
 }
+
+

@@ -31,8 +31,8 @@ struct Details: View {
     
     
     @State var showingAlert2 = false
-        
-
+    
+    
     
     
     @State private var msg = ""
@@ -60,9 +60,9 @@ struct Details: View {
         VStack {
             HStack{
                 Button(action: {
-                self.showHome.toggle()
+                    self.showHome.toggle()
                 }){
-        
+                    
                     Image(systemName: "arrowshape.backward.fill")
                         .resizable()
                         .frame(width: 30, height: 30)
@@ -120,8 +120,8 @@ struct Details: View {
                                 expectedDifficulty = "Advanced"
                                 msg = "User Difficulty Successfully Reset!"
                             }
-                             
-                             else if(userDifficulty == "Advanced"){
+                            
+                            else if(userDifficulty == "Advanced"){
                                 msg = "User Difficulty Successfully Reset!"
                                 expectedDifficulty = "Advanced"
                             }
@@ -143,30 +143,30 @@ struct Details: View {
                     .cornerRadius(10)
             }
             .alert(self.msg, isPresented: $showingAlert2) {
-                            Button("OK", role: .cancel) {
-                            }
-                        }
+                Button("OK", role: .cancel) {
+                }
+            }
         }
-//        .navigationBarItems(leading:
-//            
-//            Button(action: {
-//            self.showHome.toggle()
-//            //get the users current currency total
-////            modelLesson.findUserDifficulty{
-////                //get the users current currency
-////                currModel.getUserCurrency()
-////            }
-//            }){
-//    
-//                Image(systemName: "arrowshape.backward.fill")
-//                    .resizable()
-//                    .frame(width: 30, height: 30)
-//                    .foregroundColor(.yellow)
-//            }
-//        )
-//        .navigationDestination(isPresented: $showHome){
-//            Homepage()
-//        }
+        //        .navigationBarItems(leading:
+        //
+        //            Button(action: {
+        //            self.showHome.toggle()
+        //            //get the users current currency total
+        ////            modelLesson.findUserDifficulty{
+        ////                //get the users current currency
+        ////                currModel.getUserCurrency()
+        ////            }
+        //            }){
+        //
+        //                Image(systemName: "arrowshape.backward.fill")
+        //                    .resizable()
+        //                    .frame(width: 30, height: 30)
+        //                    .foregroundColor(.yellow)
+        //            }
+        //        )
+        //        .navigationDestination(isPresented: $showHome){
+        //            Homepage()
+        //        }
         .navigationBarBackButtonHidden(true)
         
         .onAppear {
@@ -191,7 +191,7 @@ struct Details: View {
         }
         
         Spacer()
-
+        
     }
     
     func calculateAccuracyOutput() -> String {
@@ -223,7 +223,7 @@ struct Details: View {
             prediction = 100.0
         }
         
-         else {
+        else {
             
             do {
                 let input = PronunciationModelProjectionInput(Feature1: arr[0], Feature2: arr[1], Feature3: arr[2], Feature4: arr[3], Feature5: arr[4])
@@ -239,13 +239,13 @@ struct Details: View {
                 self.prediction = nil
             }
         }
-            // Default value in case of an error or nil prediction
-            return 0.0
-        }
+        // Default value in case of an error or nil prediction
+        return 0.0
+    }
 }
 
 
-    
+
 
 
 
@@ -255,81 +255,46 @@ struct ItemsListView: View {
     @State private var items: [String] = []
     @EnvironmentObject private var sharedData: SharedData
     @EnvironmentObject var fireDBHelper: DataHelper
+    @State private var accuracyScores: [Int: Float] = [:]
     
     var body: some View {
         
         NavigationView {
             if(sharedData.selectedDay == "Mo") {
-                List(items, id: \.self) { item in
-                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
-                        Text(item)
+                List(items.indices, id: \.self) { index in
+                    NavigationLink(
+                        destination:
+                            AssessmentView(accuracyScore: accuracyScores[index] ?? 0.0)
+                        
+                    ) {
+                        Text(items[index])
+                    }
+                    .onAppear {
+                        fetchAccuracyForItem(atIndex: index)
                     }
                 }
                 .onAppear {
                     fetchItemsForDayOfWeek(day: "Mon")
                 }
-            }
-            else if(sharedData.selectedDay == "Tu") {
-                List(items, id: \.self) { item in
-                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
-                        Text(item)
+            } else if sharedData.selectedDay == "Tu" {
+                List(items.indices, id: \.self) { index in
+                    NavigationLink(
+                        destination:
+                            AssessmentView(accuracyScore: accuracyScores[index] ?? 0.0)
+                        
+                    ) {
+                        Text(items[index])
+                    }
+                    .onAppear {
+                        fetchAccuracyForItem(atIndex: index)
                     }
                 }
                 .onAppear {
                     fetchItemsForDayOfWeek(day: "Tue")
                 }
             }
-            else if(sharedData.selectedDay == "We") {
-                List(items, id: \.self) { item in
-                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
-                        Text(item)
-                    }
-                }
-                .onAppear {
-                    fetchItemsForDayOfWeek(day: "Wed")
-                }
-            }
-            else if(sharedData.selectedDay == "Th") {
-                List(items, id: \.self) { item in
-                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
-                        Text(item)
-                    }
-                }
-                .onAppear {
-                    fetchItemsForDayOfWeek(day: "Thu")
-                }
-            }
-            else if(sharedData.selectedDay == "Fr") {
-                List(items, id: \.self) { item in
-                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
-                        Text(item)
-                    }
-                }
-                .onAppear {
-                    fetchItemsForDayOfWeek(day: "Fri")
-                }
-            }
-            else if(sharedData.selectedDay == "Sa") {
-                List(items, id: \.self) { item in
-                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
-                        Text(item)
-                    }
-                }
-                .onAppear {
-                    fetchItemsForDayOfWeek(day: "Sat")
-                }
-            }
-            else if(sharedData.selectedDay == "Su") {
-                List(items, id: \.self) { item in
-                    NavigationLink(destination: AssessmentView(accuracyScore: Float(item.count))) { // Navigate to AssessmentDetails on click
-                        Text(item)
-                    }
-                }
-                .onAppear {
-                    fetchItemsForDayOfWeek(day: "Sun")
-                }
-            }
         }
+        
     }
     
     private func fetchItemsForDayOfWeek(day: String) {
@@ -349,9 +314,17 @@ struct ItemsListView: View {
             }
         }
     }
+    
+    func fetchAccuracyForItem(atIndex index: Int) {
+        fireDBHelper.getAccuracy(atIndex: index) { score in
+            if let accuracyScore = score {
+                DispatchQueue.main.async {
+                    accuracyScores[index] = accuracyScore
+                }
+            }
+        }
+    }
 }
-
-
 
 
 
@@ -360,7 +333,7 @@ struct CalendarView: View {
     public let daysOfWeek = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
     
     @EnvironmentObject private var sharedData: SharedData
-
+    
     var body: some View {
         
         Text("Weekly Calendar")
@@ -391,7 +364,7 @@ struct StatCard: View {
     var color: Color
     var title: String
     var value: String
-
+    
     var body: some View {
         VStack {
             Text(title)

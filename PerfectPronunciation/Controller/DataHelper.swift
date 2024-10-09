@@ -211,8 +211,6 @@ class DataHelper: ObservableObject {
             }
         }
     }
-
-
     
 
     func uploadUserLessonData(data: PronunciationAssessmentResult) {
@@ -291,7 +289,7 @@ class DataHelper: ObservableObject {
                             totalAccuracy += accuracy
                             documentCount += 1
                         } else {
-                            print("Document \(document.documentID) exists for Monday, but 'accuracy' field is missing or not a float.")
+                            //print("Document \(document.documentID) exists for Monday, but 'accuracy' field is missing or not a float.")
                         }
                     }
 
@@ -550,41 +548,39 @@ class DataHelper: ObservableObject {
     }
     
     func getAccuracy(atIndex index: Int, completion: @escaping (Float?) -> Void) {
-        if let user = Auth.auth().currentUser {
-            let userID = user.uid
-            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-            let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
+          if let user = Auth.auth().currentUser {
+              let userID = user.uid
+              let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+              let itemsCollectionRef = userDocRef.collection("LessonData")
 
-            itemsCollectionRef.getDocuments { (querySnapshot, error) in
-                if let error = error {
-                    print("Error getting documents: \(error.localizedDescription)")
-                    completion(nil)
-                } else {
-                    let documentCount = querySnapshot?.documents.count ?? 0
+              itemsCollectionRef.getDocuments { (querySnapshot, error) in
+                  if let error = error {
+                      print("Error getting documents: \(error.localizedDescription)")
+                      completion(nil)
+                  } else {
+                      let documentCount = querySnapshot?.documents.count ?? 0
 
-                    guard documentCount > 0 else {
-                        print("No documents found.")
-                        completion(nil)
-                        return
-                    }
+                      guard documentCount > 0 else {
+                          print("No documents found.")
+                          completion(nil)
+                          return
+                      }
 
-                    let validIndex = max(0, min(index, documentCount - 1))
-                    let selectedDocument = querySnapshot!.documents[validIndex]
+                      let validIndex = max(0, min(index, documentCount - 1))
+                      let selectedDocument = querySnapshot!.documents[validIndex]
 
-                    // Extracting AccuracyScore from the new structure
-                    if let assessment = selectedDocument["assessment"] as? [String: Any],
-                       let nBest = assessment["NBest"] as? [[String: Any]],
-                       let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
-                        // Call the completion handler with the accuracy score from the specified document
-                        completion(accuracyScore)
-                    } else {
-                        print("Selected document does not have 'AccuracyScore' or the structure is not correct.")
-                        completion(nil)
-                    }
-                }
-            }
-        }
-    }
+                      if let assessment = selectedDocument["assessment"] as? [String: Any],
+                         let nBest = assessment["NBest"] as? [[String: Any]],
+                         let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                          completion(accuracyScore)
+                      } else {
+                          print("Selected document does not have 'AccuracyScore' or the structure is not correct.")
+                          completion(nil)
+                      }
+                  }
+              }
+          }
+      }
 
     
     func getMostRecentFourAccuracies(completion: @escaping ([Float]?) -> Void) {
@@ -694,3 +690,5 @@ extension Encodable {
             .flatMap { $0 as? [String: Any] }
     }
 }
+
+

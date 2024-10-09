@@ -395,58 +395,57 @@ class DataHelper: ObservableObject {
     
     //function to pull all the hard words, created by nicholas, adapted from muaz code
     func getHardWords(completion: @escaping ([DocumentSnapshot]?, Error?) -> Void) {
-            if let user = Auth.auth().currentUser {
-                let userID = user.uid
-                let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-                let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
 
-                //delete contents of word list
-                self.wordList = []
-                
-                // Create an array of days
-                let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+            // Delete contents of word list
+            self.wordList = []
 
-                // Iterate through each day
-                for day in daysOfWeek {
-                    let dayQuery = itemsCollectionRef.whereField("DayOfWeek", isEqualTo: day)
-                    // Perform a query to filter documents for all days of the week, since in loop
-                    dayQuery.getDocuments { (querySnapshot, error) in
-                        if let error = error {
-                            print("Error fetching items for (All days of week): \(error)")
-                            completion(nil, error)
-                        } else {
-                            //loop documents to get a single document (word)
-                            for document in querySnapshot!.documents {
-                                //find the accuracy of the word
+            // Create an array of days
+            let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+
+            // Iterate through each day
+            for day in daysOfWeek {
+                // Perform a query to filter documents for the current day and lessonType
+                let dayQuery = itemsCollectionRef
+                    .whereField("DayOfWeek", isEqualTo: day)
+                    .whereField("lessonType", isEqualTo: "Induvidual")
+
+                dayQuery.getDocuments { (querySnapshot, error) in
+                    if let error = error {
+                        print("Error fetching items for \(day): \(error)")
+                        completion(nil, error)
+                    } else {
+                        // Loop documents to get a single document (word)
+                        for document in querySnapshot!.documents {
+                            // Find the accuracy of the word
+                            if let assessment = document["assessment"] as? [String: Any],
+                               let nBest = assessment["NBest"] as? [[String: Any]],
+                               let accuracy = nBest.first?["AccuracyScore"] as? Float {
                                 
-                                  if let assessment = document["assessment"] as? [String: Any],
-                                   let nBest = assessment["NBest"] as? [[String: Any]],
-                                   let accuracy = nBest.first?["AccuracyScore"] as? Float {
-                                    //if the accuracy of the word is equal or below 50
-                                    //TODO: TEST THIS TO SEE IF IT IS PULLING EVERY WORD
-                                    if accuracy < 100.0{
-                                        //add the name of the word to the list
-                                        
-                                          if let assessment = document["assessment"] as? [String: Any],
-                                           let nBest = assessment["NBest"] as? [[String: Any]],
-                                           let name = nBest.first?["Display"] as? String {
-                                            self.wordList.append(name)
-                                        }
+                                // If the accuracy of the word is equal or below 100
+                                if accuracy < 60.0 {
+                                    // Add the name of the word to the list
+                                    if let name = nBest.first?["Display"] as? String {
+                                        self.wordList.append(name)
                                     }
-                                } else {
-                                    print("Document \(document.documentID) exists for \(day), but 'accuracy' field is missing or not a float.")
                                 }
+                            } else {
+                                print("Document \(document.documentID) exists for \(day), but 'accuracy' field is missing or not a float.")
                             }
                         }
                     }
                 }
-                
-            } else {
-                // Handle the case where the user is not authenticated
-                let error = NSError(domain: "Authentication Error", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not authenticated"])
-                completion(nil, error)
             }
+        } else {
+            // Handle the case where the user is not authenticated
+            let error = NSError(domain: "Authentication Error", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not authenticated"])
+            completion(nil, error)
         }
+    }
+
     
     //update the userData to reflect the users score for the weekly challenge
     func updateWeeklyCompletion(score: Float){

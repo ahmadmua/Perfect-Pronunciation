@@ -14,6 +14,7 @@ class LeaderboardController: ObservableObject{
     
     
     func getLeaderboard(){
+        
         //get reference to DB
         let db = Firestore.firestore()
         //read docs at a specific path

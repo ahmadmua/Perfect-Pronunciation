@@ -27,6 +27,7 @@ struct WeeklyLesson: View {
     
     @State private var countUses = 0
     
+    @State var showingResultAlert : Bool = false
     
     var lessonType : String = "WeeklyChallenge"
     
@@ -61,14 +62,15 @@ struct WeeklyLesson: View {
                         let singleString = fireDBHelper.wordList.joined()
                         audioRecorder.submitTestAudio(testText: singleString, lessonType: lessonType)
                             
-                        fireDBHelper.getWeeklyAccuracy { accuracy in
-                            if let accuracy = accuracy {
-                                print("THIS IS THE FUCKING ACCURACY: \(accuracy)")
-                                DataHelper().updateWeeklyCompletion(score: accuracy)
-                            }
-                        }
+//                        fireDBHelper.getWeeklyAccuracy { accuracy in
+//                            if let accuracy = accuracy {
+//                                print("THIS IS THE FUCKING ACCURACY: \(accuracy)")
+//                                DataHelper().updateWeeklyCompletion(score: accuracy)
+//                            }
+//                        }
                         
                         //return to the main screen when timer is done
+                        self.showingResultAlert = true
                         self.showWeekly = true
                         
                     }
@@ -207,6 +209,12 @@ struct WeeklyLesson: View {
             }//on appear
 
         }//vstack
+        .alert("You completed the weekly game! Please come back or hit the refresh button shortly to receive your results on the leaderboard!", isPresented: $showingResultAlert) {
+            Button("OK", role: .cancel) {
+                
+            }
+        }//
+
     }
     
     func getButtonImageName() -> String {

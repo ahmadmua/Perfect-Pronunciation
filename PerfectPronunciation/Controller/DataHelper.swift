@@ -526,7 +526,7 @@ class DataHelper: ObservableObject {
             }
         }
     }
-
+    
     
     func findUserDifficulty(completion: @escaping (String?) -> Void) {
         if let user = Auth.auth().currentUser {

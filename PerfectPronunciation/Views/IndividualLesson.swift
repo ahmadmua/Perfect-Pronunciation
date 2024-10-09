@@ -131,7 +131,6 @@ struct IndividualLesson: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
 
-                    //BUGGED OUT FOR JORDAN AND MUAZ (NICK WORKS FOR SOME REASON)
                     .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
                                     Button("OK", role: .cancel) {
                                         currModel.updateUserCurrency()

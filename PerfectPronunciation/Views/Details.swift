@@ -177,6 +177,7 @@ struct Details: View {
                 totalWords = fetchedCount
             }
             
+            //for prediction model
             for index in 0..<5 {
                 fireDBHelper.getAccuracy(atIndex: index) { accuracy in
                     if let accuracy = accuracy {
@@ -251,80 +252,70 @@ struct Details: View {
 
 
 struct ItemsListView: View {
-    
     @State private var items: [String] = []
     @EnvironmentObject private var sharedData: SharedData
     @EnvironmentObject var fireDBHelper: DataHelper
-    @State private var accuracyScores: [Int: Float] = [:]
-    
+    @State private var accuracyScores: [Float] = []
+
     var body: some View {
-        
         NavigationView {
-            if(sharedData.selectedDay == "Mo") {
-                List(items.indices, id: \.self) { index in
-                    NavigationLink(
-                        destination:
-                            AssessmentView(accuracyScore: accuracyScores[index] ?? 0.0)
-                        
-                    ) {
-                        Text(items[index])
-                    }
-                    .onAppear {
-                        fetchAccuracyForItem(atIndex: index)
-                    }
-                }
-                .onAppear {
-                    fetchItemsForDayOfWeek(day: "Mon")
-                }
-            } else if sharedData.selectedDay == "Tu" {
-                List(items.indices, id: \.self) { index in
-                    NavigationLink(
-                        destination:
-                            AssessmentView(accuracyScore: accuracyScores[index] ?? 0.0)
-                        
-                    ) {
-                        Text(items[index])
-                    }
-                    .onAppear {
-                        fetchAccuracyForItem(atIndex: index)
-                    }
-                }
-                .onAppear {
-                    fetchItemsForDayOfWeek(day: "Tue")
+            List(items.indices, id: \.self) { index in
+                NavigationLink(
+                    destination:
+                        AssessmentView(accuracyScore: accuracyScores.indices.contains(index) ? accuracyScores[index] : 0.0)
+                ) {
+                    Text(items[index])
                 }
             }
+            .onAppear {
+                fetchItemsForSelectedDay()
+            }
+            .onChange(of: sharedData.selectedDay) { _ in
+                fetchItemsForSelectedDay()
+            }
         }
-        
     }
-    
+
+    private func fetchItemsForSelectedDay() {
+        let day = mapDayOfWeek(from: sharedData.selectedDay)
+        fetchItemsForDayOfWeek(day: day)
+    }
+
+    private func mapDayOfWeek(from abbreviation: String) -> String {
+        switch abbreviation {
+        case "Mo": return "Mon"
+        case "Tu": return "Tue"
+        case "We": return "Wed"
+        case "Th": return "Thu"
+        case "Fr": return "Fri"
+        case "Sa": return "Sat"
+        case "Su": return "Sun"
+        default: return ""
+        }
+    }
+
     private func fetchItemsForDayOfWeek(day: String) {
         fireDBHelper.getItemsForDayOfWeek(dayOfWeek: day) { (documents, error) in
             if let documents = documents {
-                let items = documents.compactMap { document in
+                self.items.removeAll()
+                self.accuracyScores.removeAll()
+                for document in documents {
                     if let assessment = document.get("assessment") as? [String: Any],
                        let nBest = assessment["NBest"] as? [[String: Any]],
                        let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
-                        return "Accuracy: \(accuracyScore)%"
+                        self.items.append("Accuracy: \(accuracyScore)%")
+                        self.accuracyScores.append(accuracyScore)
                     }
-                    return nil
                 }
-                self.items = items
             } else if let error = error {
                 print("Error: \(error)")
             }
         }
     }
-    
-    func fetchAccuracyForItem(atIndex index: Int) {
-        fireDBHelper.getAccuracy(atIndex: index) { score in
-            if let accuracyScore = score {
-                DispatchQueue.main.async {
-                    accuracyScores[index] = accuracyScore
-                }
-            }
-        }
-    }
 }
+
+
+
 
 
 

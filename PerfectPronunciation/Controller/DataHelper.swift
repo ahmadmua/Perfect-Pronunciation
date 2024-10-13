@@ -245,24 +245,28 @@ class DataHelper: ObservableObject {
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
             
-            // Perform a query to filter documents with "DayOfWeek" equal to "Tue"
-            itemsCollectionRef.whereField("DayOfWeek", isEqualTo: dayOfWeek).getDocuments { (querySnapshot, error) in
-                if let error = error {
-                    print("Error fetching items for \(dayOfWeek): \(error)")
-                    completion(nil, error)
-                } else {
-                    if let documents = querySnapshot?.documents {
-                        print("Items for \(dayOfWeek) retrieved successfully")
-                        completion(documents, nil)
+            
+            itemsCollectionRef
+                .whereField("DayOfWeek", isEqualTo: dayOfWeek)
+                .whereField("lessonType", isEqualTo: "Induvidual")
+                .getDocuments { (querySnapshot, error) in
+                    if let error = error {
+                        print("Error fetching items for \(dayOfWeek): \(error)")
+                        completion(nil, error)
+                    } else {
+                        if let documents = querySnapshot?.documents {
+                            print("Items for \(dayOfWeek) with individual lessonType retrieved successfully")
+                            completion(documents, nil)
+                        }
                     }
                 }
-            }
         } else {
             // Handle the case where the user is not authenticated
             let error = NSError(domain: "Authentication Error", code: 401, userInfo: [NSLocalizedDescriptionKey: "User is not authenticated"])
             completion(nil, error)
         }
     }
+
     
     func getAvgAccuracyForDayOfWeek(weekDay: String, completion: @escaping (Float) -> Void) {
         var averageAccuracy: Float = 0
@@ -581,6 +585,8 @@ class DataHelper: ObservableObject {
               }
           }
       }
+    
+    
 
     
     func getMostRecentFourAccuracies(completion: @escaping ([Float]?) -> Void) {

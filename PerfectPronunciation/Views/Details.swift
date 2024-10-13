@@ -256,13 +256,23 @@ struct ItemsListView: View {
     @EnvironmentObject private var sharedData: SharedData
     @EnvironmentObject var fireDBHelper: DataHelper
     @State private var accuracyScores: [Float] = []
+    @State private var completenessScores: [Float] = []
+    @State private var fluencyScores: [Float] = []
+    @State private var confidence: [Float] = []
+    @State private var pronScores: [Float] = []
+    @State private var display: [String] = []
 
     var body: some View {
         NavigationView {
             List(items.indices, id: \.self) { index in
                 NavigationLink(
                     destination:
-                        AssessmentView(accuracyScore: accuracyScores.indices.contains(index) ? accuracyScores[index] : 0.0)
+                        AssessmentView(accuracyScore: accuracyScores.indices.contains(index) ? accuracyScores[index] : 0.0,
+                                       completenessScore: completenessScores.indices.contains(index) ? completenessScores[index] : 0.0,
+                                       fluencyScore: fluencyScores.indices.contains(index) ? fluencyScores[index] : 0.0,
+                                       confidence: confidence.indices.contains(index) ? confidence[index] : 0.0,
+                                       pronScores: pronScores.indices.contains(index) ? pronScores[index] : 0.0,
+                                       display: display.indices.contains(index) ? display[index] : "")
                 ) {
                     Text(items[index])
                 }
@@ -294,17 +304,52 @@ struct ItemsListView: View {
         }
     }
 
+    //For the tiles
     private func fetchItemsForDayOfWeek(day: String) {
         fireDBHelper.getItemsForDayOfWeek(dayOfWeek: day) { (documents, error) in
             if let documents = documents {
                 self.items.removeAll()
                 self.accuracyScores.removeAll()
+                self.completenessScores.removeAll()
+                self.fluencyScores.removeAll()
+                self.confidence.removeAll()
+                self.pronScores.removeAll()
+                self.display.removeAll()
+
                 for document in documents {
                     if let assessment = document.get("assessment") as? [String: Any],
-                       let nBest = assessment["NBest"] as? [[String: Any]],
-                       let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
-                        self.items.append("Accuracy: \(accuracyScore)%")
-                        self.accuracyScores.append(accuracyScore)
+                       let nBest = assessment["NBest"] as? [[String: Any]] {
+
+                        // Extract AccuracyScore
+                        if let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                            print("Fetched AccuracyScore: \(accuracyScore)") // Debugging line
+                            self.items.append("Accuracy: \(accuracyScore)%")
+                            self.accuracyScores.append(accuracyScore)
+                        }
+
+                        if let completenessScore = nBest.first?["CompletenessScore"] as? Float {
+                            print("Fetched CompletenessScore: \(completenessScore)") // Debugging line
+                            self.completenessScores.append(completenessScore)
+                        }
+
+                        if let fluencyScore = nBest.first?["FluencyScore"] as? Float {
+                            print("Fetched FluencyScore: \(fluencyScore)") // Debugging line
+                            self.fluencyScores.append(fluencyScore)
+                        }
+
+                        if let confidence = nBest.first?["Confidence"] as? Float {
+                            print("Fetched Confidence: \(confidence)") // Debugging line
+                            self.confidence.append(confidence)
+                        }
+
+                        if let pronScore = nBest.first?["PronScore"] as? Float {
+                            print("Fetched PronScore: \(pronScore)") // Debugging line
+                            self.pronScores.append(pronScore)
+                        }
+
+                        if let display = nBest.first?["Display"] as? String {
+                            self.display.append(display)
+                        }
                     }
                 }
             } else if let error = error {
@@ -312,9 +357,9 @@ struct ItemsListView: View {
             }
         }
     }
+
+
 }
-
-
 
 
 

@@ -8,7 +8,12 @@
 import SwiftUI
 
 struct AssessmentView: View {
-    @State var accuracyScore: Float // New property to receive the score
+    @State var accuracyScore: Float
+    @State var completenessScore: Float
+    @State var fluencyScore: Float
+    @State var confidence: Float
+    @State var pronScores: Float
+    @State var display: String
 
     @State private var progress: Double = 16.0
     @State private var mispronunciationsCount = 0
@@ -39,7 +44,7 @@ struct AssessmentView: View {
                 VStack(alignment: .leading) {
                     Text("Pronunciation score")
                         .font(.headline)
-                    CircularScoreView(score: Int(accuracyScore)) // Use passed score here
+                    CircularScoreView(score: pronScores)
                         .padding(.top, 8)
                 }
                 .padding(.leading)
@@ -63,9 +68,9 @@ struct AssessmentView: View {
                 Text("Score breakdown")
                     .font(.headline)
                 ScoreBar(label: "Accuracy score", score: Int(accuracyScore))
-                ScoreBar(label: "Completeness score", score: 93)
-                ScoreBar(label: "Fluency score", score: 84)
-                ScoreBar(label: "Prosody score", score: 87)
+                ScoreBar(label: "Completeness score", score: Int(completenessScore))
+                ScoreBar(label: "Fluency score", score: Int(fluencyScore))
+                ScoreBar(label: "Confidence", score: Int(confidence))
             }
             .padding(.horizontal)
 
@@ -96,28 +101,7 @@ struct AssessmentView: View {
 
     // Function to build the highlighted text
     func buildAttributedText() -> AttributedString {
-        var attributedText = AttributedString("today was a beautiful day. we had a great time taking a long walk outside in the morning. the countryside was in full bloom, yet the air was crisp and cold. towards the end of the day, clouds came in, forecasting much needed rain.")
-
-        // Apply colors and formatting for errors
-        if let range = attributedText.range(of: "long") {
-            attributedText[range].backgroundColor = .red
-            insertionsCount += 1
-        }
-
-        if let range = attributedText.range(of: "outside") {
-            attributedText[range].backgroundColor = .gray
-            omissionsCount += 1
-        }
-
-        if let range = attributedText.range(of: "countryside") {
-            attributedText[range].backgroundColor = .yellow
-            mispronunciationsCount += 1
-        }
-
-        if let range = attributedText.range(of: "the") {
-            attributedText[range].backgroundColor = .gray
-            omissionsCount += 1
-        }
+        var attributedText = AttributedString("\(display)")
 
         return attributedText
     }
@@ -166,23 +150,25 @@ struct AssessmentView: View {
 // Additional Views
 
 struct CircularScoreView: View {
-    var score: Int
+    var score: Float
 
     var body: some View {
         ZStack {
+            // Background Circle
             Circle()
                 .stroke(lineWidth: 12)
                 .opacity(0.3)
                 .foregroundColor(Color.green)
 
+            // Circular progress based on score
             Circle()
-                .trim(from: 0.0, to: CGFloat(min(Double(score) / 100.0, 1.0)))
                 .stroke(style: StrokeStyle(lineWidth: 12, lineCap: .round, lineJoin: .round))
                 .foregroundColor(Color.green)
                 .rotationEffect(Angle(degrees: 270.0))
                 .animation(.linear, value: score)
 
-            Text("\(score)")
+            // Display the score as an integer in the center
+            Text("\(score)")  // Convert Float to Int
                 .font(.largeTitle)
                 .bold()
                 .foregroundColor(Color.green)
@@ -190,7 +176,12 @@ struct CircularScoreView: View {
         .frame(width: 120, height: 120)
         .padding()
     }
+    
 }
+
+
+
+
 
 struct ScoreBar: View {
     var label: String

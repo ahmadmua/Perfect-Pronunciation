@@ -85,7 +85,7 @@ struct AssessmentView: View {
         }
         .navigationTitle("Assessment Result")
         .onAppear {
-            predictionResult = predictPronunciationImprovement(mispronunciations: 1, omissions: 2, insertions: 2, unexpectedBreak: 2, missingBreak: 2.0, monotone: 2)
+            predictionResult = predictPronunciationImprovement(mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0), omissions: Double(errorTypeCounts["Omission"] ?? 0), insertions: Double(errorTypeCounts["Insertion"] ?? 0), unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0), missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0), monotone: Double(errorTypeCounts["Monotone"] ?? 0))
         }
     }
 
@@ -207,4 +207,3 @@ struct ErrorLabelView: View {
 //        AssessmentView()
 //    }
 //}
-

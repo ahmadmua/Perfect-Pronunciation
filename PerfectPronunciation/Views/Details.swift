@@ -261,18 +261,22 @@ struct ItemsListView: View {
     @State private var confidence: [Double] = []
     @State private var pronScores: [Double] = []
     @State private var display: [String] = []
+    @State private var errorTypeCountsList: [[String: Int]] = [] // List of errorTypeCount dictionaries
 
     var body: some View {
         NavigationView {
             List(items.indices, id: \.self) { index in
                 NavigationLink(
                     destination:
-                        AssessmentView(accuracyScore: accuracyScores.indices.contains(index) ? accuracyScores[index] : 0.0,
-                                       completenessScore: completenessScores.indices.contains(index) ? completenessScores[index] : 0.0,
-                                       fluencyScore: fluencyScores.indices.contains(index) ? fluencyScores[index] : 0.0,
-                                       confidence: confidence.indices.contains(index) ? confidence[index] : 0.0,
-                                       pronScores: pronScores.indices.contains(index) ? pronScores[index] : 0.0,
-                                       display: display.indices.contains(index) ? display[index] : "")
+                        AssessmentView(
+                            accuracyScore: accuracyScores.indices.contains(index) ? accuracyScores[index] : 0.0,
+                            completenessScore: completenessScores.indices.contains(index) ? completenessScores[index] : 0.0,
+                            fluencyScore: fluencyScores.indices.contains(index) ? fluencyScores[index] : 0.0,
+                            confidence: confidence.indices.contains(index) ? confidence[index] : 0.0,
+                            pronScores: pronScores.indices.contains(index) ? pronScores[index] : 0.0,
+                            display: display.indices.contains(index) ? display[index] : "",
+                            errorTypeCounts: errorTypeCountsList.indices.contains(index) ? errorTypeCountsList[index] : [:] // Pass the errorTypeCounts dictionary
+                        )
                 ) {
                     Text(items[index])
                 }
@@ -304,10 +308,11 @@ struct ItemsListView: View {
         }
     }
 
-    //For the tiles
+    // For fetching the data
     private func fetchItemsForDayOfWeek(day: String) {
         fireDBHelper.getItemsForDayOfWeek(dayOfWeek: day) { (documents, error) in
             if let documents = documents {
+                // Clear existing data arrays
                 self.items.removeAll()
                 self.accuracyScores.removeAll()
                 self.completenessScores.removeAll()
@@ -315,51 +320,68 @@ struct ItemsListView: View {
                 self.confidence.removeAll()
                 self.pronScores.removeAll()
                 self.display.removeAll()
+                self.errorTypeCountsList.removeAll() // Clear error type counts
 
+                // Loop through documents
                 for document in documents {
+                    var errorTypeCount: [String: Int] = [:] // Dictionary to store counts of error types
+
                     if let assessment = document.get("assessment") as? [String: Any],
-                       let nBest = assessment["NBest"] as? [[String: Any]] {
+                       let nBestArray = assessment["NBest"] as? [[String: Any]] {
 
-                        // Extract AccuracyScore
-                        if let accuracyScore = nBest.first?["AccuracyScore"] as? Double {
-                            print("Fetched AccuracyScore: \(accuracyScore)") // Debugging line
-                            self.accuracyScores.append(accuracyScore)
-                        }
+                        // Loop through each entry in the NBest array
+                        for nBest in nBestArray {
+                            if let words = nBest["Words"] as? [[String: Any]] {
+                                for word in words {
+                                    // Extract ErrorType
+                                    if let errorType = word["ErrorType"] as? String {
+                                        // Increment count for the specific error type
+                                        errorTypeCount[errorType, default: 0] += 1
+                                    }
+                                }
+                            }
 
-                        if let completenessScore = nBest.first?["CompletenessScore"] as? Double {
-                            print("Fetched CompletenessScore: \(completenessScore)") // Debugging line
-                            self.completenessScores.append(completenessScore)
-                        }
+                            // Optionally, extract other scores if needed
+                            if let accuracyScore = nBest["AccuracyScore"] as? Double {
+                                self.accuracyScores.append(accuracyScore)
+                            }
 
-                        if let fluencyScore = nBest.first?["FluencyScore"] as? Double {
-                            print("Fetched FluencyScore: \(fluencyScore)") // Debugging line
-                            self.fluencyScores.append(fluencyScore)
-                        }
+                            if let completenessScore = nBest["CompletenessScore"] as? Double {
+                                self.completenessScores.append(completenessScore)
+                            }
 
-                        if let confidence = nBest.first?["Confidence"] as? Double {
-                            print("Fetched Confidence: \(confidence)") // Debugging line
-                            self.confidence.append(confidence)
-                        }
+                            if let fluencyScore = nBest["FluencyScore"] as? Double {
+                                self.fluencyScores.append(fluencyScore)
+                            }
 
-                        if let pronScore = nBest.first?["PronScore"] as? Double {
-                            print("Fetched PronScore: \(pronScore)") // Debugging line
-                            self.items.append("Score: \(pronScore)%")
-                            self.pronScores.append(pronScore)
-                        }
+                            if let confidence = nBest["Confidence"] as? Double {
+                                self.confidence.append(confidence)
+                            }
 
-                        if let display = nBest.first?["Display"] as? String {
-                            self.display.append(display)
+                            if let pronScore = nBest["PronScore"] as? Double {
+                                self.items.append("Score: \(pronScore)%")
+                                self.pronScores.append(pronScore)
+                            }
+
+                            if let display = nBest["Display"] as? String {
+                                self.display.append(display)
+                            }
                         }
                     }
+
+                    // Append the errorTypeCount for this document
+                    self.errorTypeCountsList.append(errorTypeCount)
                 }
+
+                // Print or use the errorTypeCount dictionary as needed
+                print("Error Type Counts: \(errorTypeCountsList)")
             } else if let error = error {
                 print("Error: \(error)")
             }
         }
     }
-
-
 }
+
 
 
 

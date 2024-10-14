@@ -16,13 +16,8 @@ struct AssessmentView: View {
     @State var display: String
 
     @State private var progress: Double = 16.0
-    @State private var mispronunciationsCount = 0
-    @State private var omissionsCount = 0
-    @State private var insertionsCount = 0
-    @State private var unexpectedBreaksCount = 0
-    @State private var missingBreaksCount = 0
-    @State private var monotoneCount = 0
     @State private var predictionResult: String? = nil
+    var errorTypeCounts: [String: Int]
 
     let fields = ["Mispronunciations", "Omissions", "Insertions", "Unexpected_break", "Missing_break", "Monotone"]
 
@@ -53,12 +48,12 @@ struct AssessmentView: View {
 
                 // Error Labels on the Right
                 VStack(alignment: .leading, spacing: 15) {
-                    ErrorLabelView(errorType: "Mispronunciations", color: .yellow, count: mispronunciationsCount)
-                    ErrorLabelView(errorType: "Omissions", color: .gray, count: omissionsCount)
-                    ErrorLabelView(errorType: "Insertions", color: .red, count: insertionsCount)
-                    ErrorLabelView(errorType: "Unexpected break", color: .pink, count: unexpectedBreaksCount)
-                    ErrorLabelView(errorType: "Missing break", color: .blue, count: missingBreaksCount)
-                    ErrorLabelView(errorType: "Monotone", color: .purple, count: monotoneCount)
+                    ErrorLabelView(errorType: "Mispronunciations", color: .yellow,  count: errorTypeCounts["Mispronunciation"] ?? 0)
+                    ErrorLabelView(errorType: "Omissions", color: .gray, count: errorTypeCounts["Omission"] ?? 0)
+                    ErrorLabelView(errorType: "Insertions", color: .red, count: errorTypeCounts["Insertion"] ?? 0)
+                    ErrorLabelView(errorType: "Unexpected break", color: .pink, count: errorTypeCounts["UnexpectedBreak"] ?? 0)
+                    ErrorLabelView(errorType: "Missing break", color: .blue, count: errorTypeCounts["MissingBreak"] ?? 0)
+                    ErrorLabelView(errorType: "Monotone", color: .purple, count: errorTypeCounts["Monotone"] ?? 0)
                 }
                 .padding(.leading, 12)
             }
@@ -90,7 +85,6 @@ struct AssessmentView: View {
         }
         .navigationTitle("Assessment Result")
         .onAppear {
-            updateErrorCounts()
             predictionResult = predictPronunciationImprovement(mispronunciations: 1, omissions: 2, insertions: 2, unexpectedBreak: 2, missingBreak: 2.0, monotone: 2)
         }
     }
@@ -104,20 +98,6 @@ struct AssessmentView: View {
         var attributedText = AttributedString("\(display)")
 
         return attributedText
-    }
-
-    // Function to update the error counts
-    private func updateErrorCounts() {
-        // Reset counts
-        mispronunciationsCount = 0
-        omissionsCount = 0
-        insertionsCount = 0
-        unexpectedBreaksCount = 0
-        missingBreaksCount = 0
-        monotoneCount = 0
-
-        // Call buildAttributedText to count errors
-        _ = buildAttributedText() // This will trigger the counting
     }
 
     // Function to predict pronunciation improvement

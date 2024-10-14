@@ -20,7 +20,7 @@ struct Details: View {
     @ObservedObject var modelLesson = LessonController()
     
     @State private var prediction: Double?
-    @State private var averageAccuracy: Float = 0
+    @State private var averageAccuracy: Double = 0
     @State private var totalWords: Int = 0
     @State private var userDifficulty: String = ""
     @State private var expectedDifficulty: String = ""
@@ -82,7 +82,7 @@ struct Details: View {
             
             HStack {
                 StatCard(color: .yellow, title: "Words Pronounced", value: "\(totalWords)")
-                StatCard(color: .yellow, title: "AVG Accuracy", value: "\(averageAccuracy)%")
+                StatCard(color: .yellow, title: "AVG Accuracy", value: "\(String(format: "%.1f", averageAccuracy))%")
             }
             
             HStack {

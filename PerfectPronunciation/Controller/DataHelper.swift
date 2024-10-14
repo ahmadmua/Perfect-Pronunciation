@@ -11,7 +11,7 @@ import FirebaseAuth
 
 class DataHelper: ObservableObject {
     
-    @Published var averageAccuracy: Float = 0
+    @Published var averageAccuracy: Double = 0
     @Published var wordList = [String]()
     
     
@@ -307,9 +307,9 @@ class DataHelper: ObservableObject {
     }
 
     
-    func getAvgAccuracy(completion: @escaping (Float) -> Void) {
-        var totalAccuracy: Float = 0
-        var totalDocumentCount: Float = 0
+    func getAvgAccuracy(completion: @escaping (Double) -> Void) {
+        var totalAccuracy: Double = 0
+        var totalDocumentCount: Double = 0
 
         if let user = Auth.auth().currentUser {
             let userID = user.uid
@@ -321,18 +321,20 @@ class DataHelper: ObservableObject {
 
             // Iterate through each day
             for day in daysOfWeek {
-                let dayQuery = itemsCollectionRef.whereField("DayOfWeek", isEqualTo: day)
+                let dayQuery = itemsCollectionRef
+                    .whereField("DayOfWeek", isEqualTo: day)
+                    .whereField("lessonType", isEqualTo: "Induvidual")
 
                 dayQuery.getDocuments { (querySnapshot, error) in
                     if let error = error {
                         print("Error getting documents: \(error.localizedDescription)")
                     } else {
-                        var documentCount: Float = 0
+                        var documentCount: Double = 0
 
                         for document in querySnapshot!.documents {
                             if let assessment = document["assessment"] as? [String: Any],
                                let nBest = assessment["NBest"] as? [[String: Any]],
-                               let accuracy = nBest.first?["AccuracyScore"] as? Float {
+                               let accuracy = nBest.first?["PronScore"] as? Double {
                                 totalAccuracy += accuracy
                                 documentCount += 1
                             } else {
@@ -368,6 +370,7 @@ class DataHelper: ObservableObject {
             // Iterate through each day
             for day in daysOfWeek {
                 let dayQuery = itemsCollectionRef.whereField("DayOfWeek", isEqualTo: day)
+                    .whereField("lessonType", isEqualTo: "Induvidual")
 
                 dayQuery.getDocuments { (querySnapshot, error) in
                     if let error = error {
@@ -594,7 +597,7 @@ class DataHelper: ObservableObject {
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
 
-            itemsCollectionRef.limit(to: 4).getDocuments { (querySnapshot, error) in
+            itemsCollectionRef.whereField("lessonType", isEqualTo: "Induvidual").limit(to: 4).getDocuments { (querySnapshot, error) in
                 if let error = error {
                     print("Error getting documents: \(error.localizedDescription)")
                     completion(nil)
@@ -602,7 +605,7 @@ class DataHelper: ObservableObject {
                     let accuracies: [Float] = querySnapshot?.documents.compactMap { document in
                         if let assessment = document["assessment"] as? [String: Any],
                            let nBest = assessment["NBest"] as? [[String: Any]],
-                           let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                           let accuracyScore = nBest.first?["PronScore"] as? Float {
                             return accuracyScore
                         } else {
                             print("Invalid structure or 'AccuracyScore' field in document.")

@@ -262,6 +262,7 @@ struct ItemsListView: View {
     @State private var pronScores: [Double] = []
     @State private var display: [String] = []
     @State private var errorTypeCountsList: [[String: Int]] = [] // List of errorTypeCount dictionaries
+    @State private var wordErrorData: [(word: String, errorType: String)] = []
 
     var body: some View {
         NavigationView {
@@ -275,7 +276,8 @@ struct ItemsListView: View {
                             confidence: confidence.indices.contains(index) ? confidence[index] : 0.0,
                             pronScores: pronScores.indices.contains(index) ? pronScores[index] : 0.0,
                             display: display.indices.contains(index) ? display[index] : "",
-                            errorTypeCounts: errorTypeCountsList.indices.contains(index) ? errorTypeCountsList[index] : [:] // Pass the errorTypeCounts dictionary
+                            errorTypeCounts: errorTypeCountsList.indices.contains(index) ? errorTypeCountsList[index] : [:],
+                            wordErrorData: wordErrorData // Pass the errorTypeCounts dictionary
                         )
                 ) {
                     Text(items[index])
@@ -320,66 +322,68 @@ struct ItemsListView: View {
                 self.confidence.removeAll()
                 self.pronScores.removeAll()
                 self.display.removeAll()
-                self.errorTypeCountsList.removeAll() // Clear error type counts
-
+                self.errorTypeCountsList.removeAll()
+                self.wordErrorData.removeAll()
+                
                 // Loop through documents
                 for document in documents {
                     var errorTypeCount: [String: Int] = [:] // Dictionary to store counts of error types
-
+                    
+                    // Check for the assessment dictionary
                     if let assessment = document.get("assessment") as? [String: Any],
                        let nBestArray = assessment["NBest"] as? [[String: Any]] {
-
+                        
                         // Loop through each entry in the NBest array
                         for nBest in nBestArray {
+                            // Process the words for this entry
                             if let words = nBest["Words"] as? [[String: Any]] {
                                 for word in words {
-                                    // Extract ErrorType
-                                    if let errorType = word["ErrorType"] as? String {
+                                    // Extract Word and ErrorType from the current word
+                                    if let wordText = word["Word"] as? String,
+                                       let errorType = word["ErrorType"] as? String, !errorType.isEmpty {
                                         // Increment count for the specific error type
                                         errorTypeCount[errorType, default: 0] += 1
+                                        // Store the word and its associated error type
+                                        wordErrorData.append((word: wordText, errorType: errorType))
                                     }
                                 }
                             }
-
-                            // Optionally, extract other scores if needed
+                            
+                            // Extract scores from nBest entry
                             if let accuracyScore = nBest["AccuracyScore"] as? Double {
                                 self.accuracyScores.append(accuracyScore)
                             }
-
                             if let completenessScore = nBest["CompletenessScore"] as? Double {
                                 self.completenessScores.append(completenessScore)
                             }
-
                             if let fluencyScore = nBest["FluencyScore"] as? Double {
                                 self.fluencyScores.append(fluencyScore)
                             }
-
                             if let confidence = nBest["Confidence"] as? Double {
                                 self.confidence.append(confidence)
                             }
-
                             if let pronScore = nBest["PronScore"] as? Double {
                                 self.items.append("Score: \(pronScore)%")
                                 self.pronScores.append(pronScore)
                             }
-
                             if let display = nBest["Display"] as? String {
                                 self.display.append(display)
                             }
                         }
                     }
-
+                    
                     // Append the errorTypeCount for this document
                     self.errorTypeCountsList.append(errorTypeCount)
                 }
-
+                
                 // Print or use the errorTypeCount dictionary as needed
-                print("Error Type Counts: \(errorTypeCountsList)")
+                print("Error Type Counts: \(self.errorTypeCountsList)")
             } else if let error = error {
                 print("Error: \(error)")
             }
         }
     }
+
 }
 
 

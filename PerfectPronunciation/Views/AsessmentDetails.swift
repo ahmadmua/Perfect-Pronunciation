@@ -18,6 +18,7 @@ struct AssessmentView: View {
     @State private var progress: Double = 16.0
     @State private var predictionResult: String? = nil
     var errorTypeCounts: [String: Int]
+    var wordErrorData: [(word: String, errorType: String)]
 
     let fields = ["Mispronunciations", "Omissions", "Insertions", "Unexpected_break", "Missing_break", "Monotone"]
 
@@ -95,10 +96,43 @@ struct AssessmentView: View {
 
     // Function to build the highlighted text
     func buildAttributedText() -> AttributedString {
-        var attributedText = AttributedString("\(display)")
+        var attributedText = AttributedString(display)
+
+        for wordError in wordErrorData {
+            if let range = attributedText.range(of: wordError.word) {
+                // Log the word and its error type
+                print("Processing word: '\(wordError.word)' with error type: '\(wordError.errorType)'")
+
+                // Check for a valid errorType
+                if !wordError.errorType.isEmpty { // Only process if errorType is not empty
+                    switch wordError.errorType {
+                    case "Mispronunciation":
+                        attributedText[range].foregroundColor = .yellow
+                    case "Omission":
+                        attributedText[range].foregroundColor = .gray
+                    case "Insertion":
+                        attributedText[range].foregroundColor = .red
+                    case "Unexpected_break":
+                        attributedText[range].foregroundColor = .pink
+                    case "Missing_break":
+                        attributedText[range].foregroundColor = .blue
+                    case "Monotone":
+                        attributedText[range].foregroundColor = .purple
+                    default:
+                        print("Unknown error type for word '\(wordError.word)': \(wordError.errorType)")
+                    }
+                } else {
+                    print("No error type found for word: '\(wordError.word)'")
+                }
+            } else {
+                print("Word not found in attributed text: '\(wordError.word)'")
+            }
+        }
 
         return attributedText
     }
+
+
 
     // Function to predict pronunciation improvement
     func predictPronunciationImprovement(mispronunciations: Double, omissions: Double, insertions: Double, unexpectedBreak: Double, missingBreak: Double, monotone: Double) -> String? {

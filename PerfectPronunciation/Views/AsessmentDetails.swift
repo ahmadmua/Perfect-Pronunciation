@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct AssessmentView: View {
-    @State var accuracyScore: Float
-    @State var completenessScore: Float
-    @State var fluencyScore: Float
-    @State var confidence: Float
-    @State var pronScores: Float
+    @State var accuracyScore: Double
+    @State var completenessScore: Double
+    @State var fluencyScore: Double
+    @State var confidence: Double
+    @State var pronScores: Double
     @State var display: String
 
     @State private var progress: Double = 16.0
@@ -70,7 +70,7 @@ struct AssessmentView: View {
                 ScoreBar(label: "Accuracy score", score: Int(accuracyScore))
                 ScoreBar(label: "Completeness score", score: Int(completenessScore))
                 ScoreBar(label: "Fluency score", score: Int(fluencyScore))
-                ScoreBar(label: "Confidence", score: Int(confidence))
+                ScoreBar(label: "Confidence", score: Int(confidence * 100))
             }
             .padding(.horizontal)
 
@@ -150,7 +150,7 @@ struct AssessmentView: View {
 // Additional Views
 
 struct CircularScoreView: View {
-    var score: Float
+    var score: Double
 
     var body: some View {
         ZStack {
@@ -167,8 +167,8 @@ struct CircularScoreView: View {
                 .rotationEffect(Angle(degrees: 270.0))
                 .animation(.linear, value: score)
 
-            // Display the score as an integer in the center
-            Text("\(score)")  // Convert Float to Int
+            // Display the score rounded to 2 decimal places in the center
+            Text(String(format: "%.1f", score))
                 .font(.largeTitle)
                 .bold()
                 .foregroundColor(Color.green)
@@ -176,8 +176,9 @@ struct CircularScoreView: View {
         .frame(width: 120, height: 120)
         .padding()
     }
-    
 }
+
+    
 
 
 

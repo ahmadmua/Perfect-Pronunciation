@@ -268,37 +268,36 @@ class DataHelper: ObservableObject {
     }
 
     
-    func getAvgAccuracyForDayOfWeek(weekDay: String, completion: @escaping (Float) -> Void) {
-        var averageAccuracy: Float = 0
+    func getAvgAccuracyForDayOfWeek(weekDay: String, completion: @escaping (Double) -> Void) {
+        var averageAccuracy: Double = 0
 
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
 
-            // Create a query to filter documents where "dayofweek" is "Mon"
-            let mondayQuery = itemsCollectionRef.whereField("DayOfWeek", isEqualTo: weekDay)
+            // Create a query to filter documents where "DayOfWeek" is the provided weekDay and "lessonType" is "Individual"
+            let filteredQuery = itemsCollectionRef
+                .whereField("DayOfWeek", isEqualTo: weekDay)
+                .whereField("lessonType", isEqualTo: "Induvidual")  // Add filter for lessonType
 
-            mondayQuery.getDocuments { (querySnapshot, error) in
+            filteredQuery.getDocuments { (querySnapshot, error) in
                 if let error = error {
                     print("Error getting documents: \(error.localizedDescription)")
                 } else {
-                    var totalAccuracy: Float = 0
-                    var documentCount: Float = 0
+                    var totalAccuracy: Double = 0
+                    var documentCount: Double = 0
 
                     for document in querySnapshot!.documents {
                         if let assessment = document["assessment"] as? [String: Any],
                            let nBest = assessment["NBest"] as? [[String: Any]],
-                           let accuracy = nBest.first?["AccuracyScore"] as? Float {
+                           let accuracy = nBest.first?["PronScore"] as? Double {
                             totalAccuracy += accuracy
                             documentCount += 1
-                        } else {
-                            //print("Document \(document.documentID) exists for Monday, but 'accuracy' field is missing or not a float.")
                         }
                     }
 
                     averageAccuracy = documentCount > 0 ? totalAccuracy / documentCount : 0
-                    //print("\(averageAccuracy)")
 
                     // Call the completion handler with the result
                     completion(averageAccuracy)
@@ -306,6 +305,7 @@ class DataHelper: ObservableObject {
             }
         }
     }
+
     
     func getAvgAccuracy(completion: @escaping (Float) -> Void) {
         var totalAccuracy: Float = 0
@@ -383,10 +383,9 @@ class DataHelper: ObservableObject {
                             }
                         }
 
-                        // Note: You might want to store the results for each day for further processing or reporting.
                     }
 
-                    // Check if this is the last day, and if so, call the completion handler
+                    
                    
                         completion(accuracyCount)
                     

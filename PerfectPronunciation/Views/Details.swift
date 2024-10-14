@@ -255,11 +255,11 @@ struct ItemsListView: View {
     @State private var items: [String] = []
     @EnvironmentObject private var sharedData: SharedData
     @EnvironmentObject var fireDBHelper: DataHelper
-    @State private var accuracyScores: [Float] = []
-    @State private var completenessScores: [Float] = []
-    @State private var fluencyScores: [Float] = []
-    @State private var confidence: [Float] = []
-    @State private var pronScores: [Float] = []
+    @State private var accuracyScores: [Double] = []
+    @State private var completenessScores: [Double] = []
+    @State private var fluencyScores: [Double] = []
+    @State private var confidence: [Double] = []
+    @State private var pronScores: [Double] = []
     @State private var display: [String] = []
 
     var body: some View {
@@ -321,29 +321,29 @@ struct ItemsListView: View {
                        let nBest = assessment["NBest"] as? [[String: Any]] {
 
                         // Extract AccuracyScore
-                        if let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                        if let accuracyScore = nBest.first?["AccuracyScore"] as? Double {
                             print("Fetched AccuracyScore: \(accuracyScore)") // Debugging line
-                            self.items.append("Accuracy: \(accuracyScore)%")
                             self.accuracyScores.append(accuracyScore)
                         }
 
-                        if let completenessScore = nBest.first?["CompletenessScore"] as? Float {
+                        if let completenessScore = nBest.first?["CompletenessScore"] as? Double {
                             print("Fetched CompletenessScore: \(completenessScore)") // Debugging line
                             self.completenessScores.append(completenessScore)
                         }
 
-                        if let fluencyScore = nBest.first?["FluencyScore"] as? Float {
+                        if let fluencyScore = nBest.first?["FluencyScore"] as? Double {
                             print("Fetched FluencyScore: \(fluencyScore)") // Debugging line
                             self.fluencyScores.append(fluencyScore)
                         }
 
-                        if let confidence = nBest.first?["Confidence"] as? Float {
+                        if let confidence = nBest.first?["Confidence"] as? Double {
                             print("Fetched Confidence: \(confidence)") // Debugging line
                             self.confidence.append(confidence)
                         }
 
-                        if let pronScore = nBest.first?["PronScore"] as? Float {
+                        if let pronScore = nBest.first?["PronScore"] as? Double {
                             print("Fetched PronScore: \(pronScore)") // Debugging line
+                            self.items.append("Score: \(pronScore)%")
                             self.pronScores.append(pronScore)
                         }
 

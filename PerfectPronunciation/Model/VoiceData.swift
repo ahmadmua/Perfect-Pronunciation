@@ -16,7 +16,7 @@ struct Accuracy: Identifiable {
     
     var timestamp: Date
     var weekday: String
-    var AccuracyScore: Float
+    var AccuracyScore: Double
     
     var id: String { weekday }
 }

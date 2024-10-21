@@ -178,7 +178,21 @@ class AudioAPIController: ObservableObject {
     func sendTextToVoiceGallery(testText: String, completion: @escaping (Result<Data, NetworkError>) -> Void) {
         let subscriptionKey = "YOUR_SUBSCRIPTION_KEY"
         let region = "YOUR_REGION"
-        let endpoint = "https://\(region).tts.speech.microsoft.com/cognitiveservices/v1"
+        let urlString = "https://\(region).tts.speech.microsoft.com/cognitiveservices/v1"
+        
+        guard let url = URL(string: urlString) else {
+            completion(.failure(.invalidURL))
+            return
+        }
+        
+        // Set up the request
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/ssml+xml", forHTTPHeaderField: "Content-Type")
+        request.setValue("audio-16khz-32kbitrate-mono-mp3", forHTTPHeaderField: "X-Microsoft-OutputFormat")
+        request.setValue("Bearer \(subscriptionKey)", forHTTPHeaderField: "Authorization")
+        request.setValue("YOUR-USER-AGENT", forHTTPHeaderField: "User-Agent")
+
            
      }
     

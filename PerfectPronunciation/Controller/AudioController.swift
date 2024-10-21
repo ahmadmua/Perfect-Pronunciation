@@ -49,16 +49,11 @@ class AudioController: NSObject, ObservableObject {
             DispatchQueue.main.async {
                 switch authStatus {
                 case .authorized:
-                    // Enable recording if authorized
-                    self.recordBtnDisabled = false
+                    print("Microphone access granted")
                 case .denied, .restricted, .notDetermined:
-                    // Disable recording if not authorized
-                    self.recordBtnDisabled = true
-                    self.btnTitle = "Microphone/Speech access is not authorized"
+                    print("Microphone access denied")
                 default:
-                    // Handle other cases
-                    self.recordBtnDisabled = true
-                    self.btnTitle = "Microphone/Speech access is not authorized"
+                    break
                 }
             }
         }
@@ -96,96 +91,93 @@ class AudioController: NSObject, ObservableObject {
     
     // Start the recording process
     func startRecording() {
+        // Get the shared instance of AVAudioSession to manage the app's audio behavior
         let recordingSession = AVAudioSession.sharedInstance()
-        
-        // Stop any previous recording or recognition task
+
+        // Check if the audio engine is already running (i.e., recording or recognizing)
         if audioEngine.isRunning {
+            // If it's running, stop the audio engine and end the recognition request
             audioEngine.stop()
             recognitionRequest?.endAudio()
-            isRecording = false
         } else {
-            // Set up the audio session for recording
+            // If it's not running, configure and start a new recording session
+            
+            // Set up the audio session to allow recording and playback
             do {
-                try recordingSession.setCategory(.playAndRecord, mode: .default)
-                try recordingSession.setActive(true)
+                try recordingSession.setCategory(.playAndRecord, mode: .default)  // Set the category for recording and playback
+                try recordingSession.setActive(true)  // Activate the session
             } catch {
+                // Handle errors that occur when setting up the audio session
                 print("Failed to set up recording session")
             }
-            
-            // Create a file URL for the new recording
+
+            // Define the path to save the recorded audio file in the app's documents directory
             let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY 'at' HH:mm:ss")).wav")
             
-            // Define the audio recorder settings
+            // Define the settings for the audio recorder (e.g., format, sample rate, channels, etc.)
             let settings = [
-                AVFormatIDKey: Int(kAudioFormatLinearPCM),  // Use PCM for WAV format
-                AVSampleRateKey: 16000,  // Set the correct sample rate
-                AVNumberOfChannelsKey: 1,
-                AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue
+                AVFormatIDKey: Int(kAudioFormatLinearPCM),  // Linear PCM format for uncompressed audio
+                AVSampleRateKey: 16000,  // 16 kHz sample rate (standard for speech recognition)
+                AVNumberOfChannelsKey: 1,  // Mono audio (1 channel)
+                AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue  // High audio quality
             ]
-            
-            // Start the audio recorder
+
+            // Start recording audio
             do {
+                // Initialize the AVAudioRecorder with the specified file URL and settings
                 audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
-                audioRecorder.record()
-                isRecording = true
+                audioRecorder.record()  // Start the recording
             } catch {
+                // Handle any errors that occur during the recording setup
                 print("Could not start recording")
             }
-            
-            // Reset any previous recognition tasks
+
+            // Cancel any ongoing speech recognition task if there was one before
             recognitionTask?.cancel()
             recognitionTask = nil
-            
-            // Prepare the audio engine for recording and recognition
+
+            // Configure speech recognition by accessing the input node of the audio engine
             let inputNode = audioEngine.inputNode
-            recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-            
-            guard let recognitionRequest = recognitionRequest else {
-                fatalError("Unable to create a SFSpeechAudioBufferRecognitionRequest.")
-            }
-            recognitionRequest.shouldReportPartialResults = true
-            
-            // Start the recognition task with the audio data
-            recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest, resultHandler: { [weak self] (result, error) in
-                guard let self = self else { return }
-                var isFinal = false
-                
-                // Update the transcription result as it comes in
+            recognitionRequest = SFSpeechAudioBufferRecognitionRequest()  // Create a new recognition request for live audio input
+            recognitionRequest?.shouldReportPartialResults = true  // Enable partial results to get real-time transcription
+
+            // Start the speech recognition task
+            recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest!, resultHandler: { [weak self] result, error in
                 if let result = result {
-                    self.STTresult = result.bestTranscription.formattedString
-                    isFinal = result.isFinal
+                    // If a result is returned, update the STTresult in real-time
+                    DispatchQueue.main.async {
+                        self?.STTresult = result.bestTranscription.formattedString  // Get the best transcription
+                    }
                 }
                 
-                // Stop the task if there's an error or if it's final
-                if error != nil || isFinal {
-                    self.audioEngine.stop()
-                    inputNode.removeTap(onBus: 0)
-                    self.recognitionTask = nil
-                    self.recognitionRequest = nil
-                    self.recordBtnDisabled = false
-                    self.btnTitle = "Start Listening"
-                    self.isRecording = false
+                // Handle the end of the recognition task if an error occurs or the result is final
+                if error != nil || result?.isFinal == true {
+                    self?.audioEngine.stop()  // Stop the audio engine
+                    inputNode.removeTap(onBus: 0)  // Remove the audio tap from the input node
+                    self?.recognitionTask = nil  // Clear the recognition task
+                    self?.recognitionRequest = nil  // Clear the recognition request
                 }
             })
-            
-            // Configure the audio input node
-            let recordingFormat = inputNode.outputFormat(forBus: 0)
+
+            // Configure the audio input node for real-time speech recognition
+            let recordingFormat = inputNode.outputFormat(forBus: 0)  // Get the format of the input node
             inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] (buffer, when) in
+                // Append the audio buffer to the recognition request
                 self?.recognitionRequest?.append(buffer)
             }
-            
-            // Start the audio engine
+
+            // Prepare and start the audio engine for capturing the microphone input
             do {
-                audioEngine.prepare()
-                try audioEngine.start()
+                audioEngine.prepare()  // Prepare the audio engine
+                try audioEngine.start()  // Start the audio engine
             } catch {
-                print("Could not start Audio Engine")
+                // Handle any errors during the starting of the audio engine
+                print("Could not start audio engine")
             }
-            
-            btnTitle = "Stop Listening"
         }
     }
+
     
     // Stop the recording and recognition process
     func stopRecording() {

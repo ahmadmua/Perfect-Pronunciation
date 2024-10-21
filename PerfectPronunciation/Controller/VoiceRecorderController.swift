@@ -38,7 +38,12 @@ class VoiceRecorderController: NSObject, ObservableObject {
 
     // Start the recording process using AudioController
     func startRecording() {
-        
+        audioController.startRecording()
+        mode = "Listening ..."
+        recordBtnDisabled = true  // Disable the record button while recording is in progress
+        audioController.$STTresult
+                    .receive(on: DispatchQueue.main)
+                    .assign(to: &$STTresult)
     }
 
     // Stop the recording process and update the UI state

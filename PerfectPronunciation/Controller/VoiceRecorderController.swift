@@ -48,7 +48,9 @@ class VoiceRecorderController: NSObject, ObservableObject {
 
     // Stop the recording process and update the UI state
     func stopRecording() {
-      
+        audioController.stopRecording()
+        mode = "Start Recording"
+        recordBtnDisabled = false  // Re-enable the record button once recording stops
     }
 
     // Function to submit the last recorded audio for analysis

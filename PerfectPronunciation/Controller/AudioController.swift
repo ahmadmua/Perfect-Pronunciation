@@ -179,128 +179,24 @@ class AudioController: NSObject, ObservableObject {
     }
 
     
-    // Stop the recording and recognition process
+    // Stop the recording and notify VoiceRecorderController
     func stopRecording() {
         audioEngine.stop()
         recognitionRequest?.endAudio()
         recognitionTask?.cancel()
         audioRecorder?.stop()
-        btnTitle = "Start Recording"
-        // Once audio stops, fetch the most recent recording
-        fetchRecording()
+        
+        if let fileURL = audioRecorder?.url {
+            onRecordingCompleted?(fileURL)  // Notify VoiceRecorderController when recording is completed
+        }
     }
     
-
-    // Function to submit the last recorded audio for analysis
-    func submitTestAudio(testText: String, lessonType: String) {
-        // Unwrap the optional recording URL
-        guard let audioURL = recording.fileURL else {
-            print("Error: No valid file URL for the recording.")
-            return
-        }
-        
-        // Ensure the audio file URL is valid
-        guard FileManager.default.fileExists(atPath: audioURL.path) else {
-            print("Error: File does not exist at \(audioURL.path)")
-            return
-        }
-        
-        do {
-            _ = try Data(contentsOf: audioURL)
-            // Process successful analysis result NEED TO CHANGE TO STORE DIFFERENTLY
-            audioAPIController.transcribeAndAssessAudio(audioURL: audioURL, referenceText: testText, lessonType: lessonType) { result in
-                switch result {
-                case .success(let resultJson):
-                    DispatchQueue.main.async {
-                        print("Pronunciation Assessment Result: \(resultJson)")
-                        //save the data to firebase
-                        self.dataHelper.uploadUserLessonData(data: resultJson)
-
-                    }
-                case .failure(let error):
-                    DispatchQueue.main.async {
-                        // Handle any errors during analysis
-                        print("Error during assessment: \(error)")
-                    }
-                }
-            }
-        } catch {
-            print("Error: Unable to load audio file data - \(error)")
-        }
-   }
-
-    
-    // Function that submits text to AI Voice gallery, to get an Audio File back to Play
-    func submitTextToSpeechAI(testText: String) {
-           // Call the sendTextToVoiceGallery function to obtain the audio clip
-        audioAPIController.sendTextToVoiceGallery(testText: testText) { result in
-               switch result {
-               case .success(let audioData):
-                   // Store the obtained audio clip in the audioClip variable
-                   DispatchQueue.main.async {
-                       //self.audioClip = audioData
-                       print("Audio clip successfully obtained and stored.")
-                       // You can now trigger audio playback here if needed
-                   }
-               case .failure(let error):
-                   print("Failed to get audio clip: \(error)")
-               }
-           }
-       }
-
-    func returnDate() -> String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "E"
-        let currentDayOfWeek = dateFormatter.string(from: Date())
-        return currentDayOfWeek
-    }
 }
 
 
 
     
-    
-//    func submitAudioWeekly() {
-//        // Ensure that we have a valid file URL
-//        guard let audioURL = recording.fileURL else {
-//            print("Error: Invalid file URL")
-//            return
-//        }
-//
-//        do {
-//            // Read audio data from the file
-//            let audioData = try Data(contentsOf: audioURL)
-//            let audioAPIController = AudioAPIController()
-//            // Submit the audio data to the API for analysis
-//            audioAPIController.uploadUserAudio(audioData: audioData) { result in
-//                switch result {
-//                case .success(let analysis):
-//                    DispatchQueue.main.async {
-//                        // Process successful analysis result
-//                        print("Audio Analysis: \(analysis)")
-//                        self.analysisAccuracyScore = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
-//                        //update user completion
-//                        DataHelper().updateWeeklyCompletion(score: self.analysisAccuracyScore)
-//                        //----------------------------------------
-//
-////                        self.globalAnalysisResult = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
-////                        DataHelper().addItemToUserDataCollection(itemName: "", dayOfWeek: self.returnDate(), accuracy: self.globalAnalysisResult!)
-////
-//                        //----------------------------------------
-//
-//                    }
-//                case .failure(let error):
-//                    DispatchQueue.main.async {
-//                        // Handle any errors during analysis
-//                        print("Error: \(error)")
-//                    }
-//                }
-//            }
-//        } catch {
-//            // Handle errors during audio data reading
-//            print("Error: Unable to load audio file data - \(error)")
-//        }
-//    }
+
 
 
 

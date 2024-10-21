@@ -176,8 +176,8 @@ class AudioAPIController: ObservableObject {
     
     //Still Need to Implement
     func sendTextToVoiceGallery(testText: String, completion: @escaping (Result<Data, NetworkError>) -> Void) {
-        let subscriptionKey = "YOUR_SUBSCRIPTION_KEY"
-        let region = "YOUR_REGION"
+        let subscriptionKey = "a39f6ff72e4c4ffb99deaa05019002fa"
+        let region = "eastus"
         let urlString = "https://\(region).tts.speech.microsoft.com/cognitiveservices/v1"
         
         guard let url = URL(string: urlString) else {
@@ -192,6 +192,37 @@ class AudioAPIController: ObservableObject {
         request.setValue("audio-16khz-32kbitrate-mono-mp3", forHTTPHeaderField: "X-Microsoft-OutputFormat")
         request.setValue("Bearer \(subscriptionKey)", forHTTPHeaderField: "Authorization")
         request.setValue("YOUR-USER-AGENT", forHTTPHeaderField: "User-Agent")
+        
+        // Set the body with the SSML format for input text
+            let ssml = """
+            <speak version='1.0' xml:lang='en-US'>
+                <voice xml:lang='en-US' xml:gender='Female' name='en-US-JennyNeural'>
+                    \(testText)
+                </voice>
+            </speak>
+            """
+        
+        request.httpBody = ssml.data(using: .utf8)
+        
+        // Create a URLSession task to send the request
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+                let errorDescription = error?.localizedDescription ?? "Unknown error"
+                print("Error: \(errorDescription)")
+                completion(.failure(.encodingError)) // Return an appropriate NetworkError here
+                return
+            }
+            
+            if let data = data {
+                print("Success with AI Gallery")
+                print(data)
+                completion(.success(data)) // Return the audio data on success
+            } else {
+                completion(.failure(.emptyData)) // Return failure if there's no data
+            }
+        }
+        
+        task.resume() // Start the request
 
            
      }

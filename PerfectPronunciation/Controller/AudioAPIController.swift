@@ -176,7 +176,10 @@ class AudioAPIController: ObservableObject {
     
     //Still Need to Implement
     func sendTextToVoiceGallery(testText: String, completion: @escaping (Result<Data, NetworkError>) -> Void) {
-         
+        let subscriptionKey = "YOUR_SUBSCRIPTION_KEY"
+        let region = "YOUR_REGION"
+        let endpoint = "https://\(region).tts.speech.microsoft.com/cognitiveservices/v1"
+           
      }
     
     

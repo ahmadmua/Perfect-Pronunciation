@@ -88,7 +88,7 @@ struct IndividualLesson: View {
                     .foregroundStyle(Color.red)
                     .buttonStyle(.borderless)
                     .sheet(isPresented: $isPopupPresented) {
-                        VoiceRecorder(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController(), audioAPIController: AudioAPIController(), testText: responseText, lessonType: lessonType ,isPopupPresented: $isPopupPresented).environmentObject(audioController)
+                        VoiceRecorder(voiceRecorderController: VoiceRecorderController(), testText: responseText, lessonType: lessonType,isPopupPresented: $isPopupPresented).environmentObject(audioController);
                     }
                     
                     Button(action: {

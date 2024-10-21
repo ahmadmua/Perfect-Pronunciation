@@ -22,8 +22,8 @@ class VoiceRecorderController: NSObject, ObservableObject {
     var objectWillChange = PassthroughSubject<VoiceRecorderController, Never>()
     
     var audioController = AudioController()  // Use audioController for recording and speech recognition
-    var dataHelper = DataHelper()            // Helper to manage data storage with firebase
     var audioAPIController = AudioAPIController.shared // Shared instance for audio API calls
+    var dataHelper = DataHelper()            // Helper to manage data storage with firebase
     
     override init() {
         super.init()
@@ -56,12 +56,15 @@ class VoiceRecorderController: NSObject, ObservableObject {
         recordBtnDisabled = false  // Re-enable the record button once recording stops
     }
     
-    //function that handles discarding and deleting the audio file
+    //function that handles discarding and deleting the audio file user does not want
     func discardTestAudio(){
         
     }
 
     // Function to submit the last recorded audio for analysis
+    //Notes
+    //1) we need to also need to save the audioFile its self in firebase
+    //2) once we save the recording we must delete it localy
     func submitTestAudio(testText: String, lessonType: String) {
         guard let audioURL = audioFileURL else {
             print("Error: No valid file URL for the recording.")

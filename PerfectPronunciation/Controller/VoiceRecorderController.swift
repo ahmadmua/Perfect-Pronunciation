@@ -21,7 +21,29 @@ class VoiceRecorderController: NSObject, ObservableObject {
 
     var objectWillChange = PassthroughSubject<VoiceRecorderController, Never>()
     
+    var audioController = AudioController()  // Use audioController for recording and speech recognition
+    var dataHelper = DataHelper()            // Helper to manage data storage with firebase
+    var audioAPIController = AudioAPIController.shared // Shared instance for audio API calls
     
+    override init() {
+        super.init()
+        setupAudioController()
+    }
+    
+    // Setup the connection with AudioController to update UI based on audio events
+    private func setupAudioController() {
+     
+    }
+
+    // Start the recording process using AudioController
+    func startRecording() {
+        
+    }
+
+    // Stop the recording process and update the UI state
+    func stopRecording() {
+      
+    }
 
     // Function to submit the last recorded audio for analysis
     func submitTestAudio(testText: String, lessonType: String) {

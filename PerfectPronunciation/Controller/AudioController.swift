@@ -13,44 +13,34 @@ import Speech
 // This class handles audio recording and speech recognition
 class AudioController: NSObject, ObservableObject {
     
-      // MARK: - Published Properties (for UI binding)
-      @Published var btnTitle: String = "Start Recording"
-      @Published var STTresult: String = ""
-      @Published var recordBtnDisabled = true
-      @Published var analysisAccuracyScore: Float = 0.0
-      
-      // MARK: - Audio and Speech Processing
-      var audioAPIController = AudioAPIController.shared
+    // MARK: - Published Properties (for UI binding)
+    @Published var STTresult: String = ""
     
-      var globalAnalysisResult: Float?
+    // MARK: - Combine (for subscribers)
+    let objectWillChange = PassthroughSubject<AudioController, Never>()
       
-      // MARK: - Recording Management
-      private var audioRecorder: AVAudioRecorder!
-      private var audioFile: AVAudioFile?
-      // A boolean flag to track the recording state
-      var isRecording = false {
-          didSet {
-              // Notify subscribers that the object has changed
-              objectWillChange.send(self)
-          }
-      }
-      var recording = Recording(fileURL: URL(string: "about:blank")!, createdAt: Date())
+      
+    // MARK: - Recording Management
+    private var audioRecorder: AVAudioRecorder!
+    private let audioEngine = AVAudioEngine()
+    private var audioFile: AVAudioFile?
+    var recordBtnDisabled = true
+    var onRecordingCompleted: ((URL) -> Void)?  // Closure to notify when recording is completed
+    var recording = Recording(fileURL: URL(string: "about:blank")!, createdAt: Date())
+    // A boolean flag to track the recording state
+    var isRecording = false {
+        didSet {
+            // Notify subscribers that the object has changed
+            objectWillChange.send(self)
+        }
+    }
+  
       
       // MARK: - Speech Recognition Properties
       private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
       private var recognitionTask: SFSpeechRecognitionTask?
       private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
-      private let audioEngine = AVAudioEngine()
-      
-      // MARK: - Combine (for subscribers)
-      let objectWillChange = PassthroughSubject<AudioController, Never>()
     
-      private var dataHelper: DataHelper
-        
-        // Initialize the controller with a DataHelper instance (dependency injection)
-        init(dataHelper: DataHelper = DataHelper()) {
-            self.dataHelper = dataHelper
-        }
     
     
     // Request authorization to use the microphone and speech recognition

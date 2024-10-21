@@ -32,7 +32,8 @@ class VoiceRecorderController: NSObject, ObservableObject {
     
     // Setup the connection with AudioController to update UI based on audio events
     private func setupAudioController() {
-     
+        audioController.requestAuthorization()//when audiocontroller is "setup" request authorization to have access to hardware
+
     }
 
     // Start the recording process using AudioController

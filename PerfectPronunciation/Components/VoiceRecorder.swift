@@ -11,11 +11,7 @@ import AVFoundation
 
 
 struct VoiceRecorder: View {
-    @ObservedObject var audioRecorder: AudioController
-    @ObservedObject var audioPlayer: AudioPlayBackController
-    @ObservedObject var audioAPIController = AudioAPIController.shared
-    
-    
+    @ObservedObject var voiceRecorderController : VoiceRecorderController
     @ObservedObject var model = LessonController()
     
     var testText : String
@@ -45,7 +41,7 @@ struct VoiceRecorder: View {
                     .edgesIgnoringSafeArea(.all)
                 
                 VStack {
-                    Text("Recording")
+                    Text(voiceRecorderController.mode)
                         .padding(.top, 10)
                     
                     Text(timeString(time: elapsedTime))
@@ -79,7 +75,7 @@ struct VoiceRecorder: View {
                                                 .foregroundColor(.gray)
                                                 .padding(.horizontal, 20)
                                             
-                                            Text(audioRecorder.STTresult)
+                                            Text(voiceRecorderController.STTresult)
                                                 .lineLimit(nil)
                                                 .font(.title)
                                                 .foregroundColor(.white)
@@ -103,9 +99,9 @@ struct VoiceRecorder: View {
                             if recordingState != .recording {
                                 Button(action: {
                                     self.elapsedTime = 0.0
-                                    audioRecorder.recording = Recording(fileURL: URL(string: ""), createdAt: Date())
-                                    
-                                    audioRecorder.STTresult = ""
+                                    voiceRecorderController.audioFileURL = URL(string: "")
+
+                                    voiceRecorderController.STTresult = ""
                                     recordingState = RecorderState.readyToRecord
                                 }) {
                                     Image(systemName: "xmark.circle.fill")
@@ -119,14 +115,14 @@ struct VoiceRecorder: View {
                                 switch recordingState {
                                 case .readyToRecord:
                                     do {
-                                        try audioRecorder.startRecording()
+                                        try voiceRecorderController.startRecording()
                                         recordingState = .recording
                                         startTimer()
                                     } catch {
                                         print("An error occurred while starting the recording: \(error)")
                                     }
                                 case .recording:
-                                    audioRecorder.stopRecording()
+                                    voiceRecorderController.stopRecording()
                                     stopTimer()
                                     recordingState = .playing
                                     
@@ -134,7 +130,7 @@ struct VoiceRecorder: View {
                                     
                                     
                                 case .playing:
-                                    audioPlayer.startPlayback(audio: audioRecorder.recording.fileURL!)
+                                    //audioPlayer.startPlayback(audio: voiceRecorderController.audioFileURL!)
                                     recordingState = .readyToRecord
                                     
                                 }
@@ -170,10 +166,6 @@ struct VoiceRecorder: View {
                 .padding(.top, 40)
             }
         }
-        .onAppear {
-            audioRecorder.requestAuthorization()
-        }
-
     }
     
     

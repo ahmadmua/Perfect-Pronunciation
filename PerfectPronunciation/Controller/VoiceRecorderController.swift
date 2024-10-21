@@ -55,6 +55,11 @@ class VoiceRecorderController: NSObject, ObservableObject {
         mode = "Start Recording"
         recordBtnDisabled = false  // Re-enable the record button once recording stops
     }
+    
+    //function that handles discarding and deleting the audio file
+    func discardTestAudio(){
+        
+    }
 
     // Function to submit the last recorded audio for analysis
     func submitTestAudio(testText: String, lessonType: String) {

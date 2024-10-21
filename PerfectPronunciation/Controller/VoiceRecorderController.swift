@@ -33,7 +33,10 @@ class VoiceRecorderController: NSObject, ObservableObject {
     // Setup the connection with AudioController to update UI based on audio events
     private func setupAudioController() {
         audioController.requestAuthorization()//when audiocontroller is "setup" request authorization to have access to hardware
-
+        audioController.onRecordingCompleted = { [weak self] fileURL in //closure that is executed when the AudioController completes a recording.
+            self?.audioFileURL = fileURL //sets the file URL to the one that was captured in the closure of when the stopRecording function happens
+           
+        }
     }
 
     // Start the recording process using AudioController

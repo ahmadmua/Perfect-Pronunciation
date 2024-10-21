@@ -59,36 +59,6 @@ class AudioController: NSObject, ObservableObject {
         }
     }
     
-    // Fetch the most recent recording from the documents directory
-    func fetchRecording() {
-        let fileManager = FileManager.default
-        let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        do {
-            // Get the contents of the documents directory
-            let directoryContents = try fileManager.contentsOfDirectory(at: documentDirectory, includingPropertiesForKeys: [.creationDateKey], options: .skipsHiddenFiles)
-            
-            // Filter for audio files and sort them by date
-            let audioFiles = directoryContents
-                .filter { $0.pathExtension == "wav" }  // Now filtering for .wav files
-                .sorted {
-                    let date1 = try? $0.resourceValues(forKeys: [.creationDateKey]).creationDate ?? Date.distantPast
-                    let date2 = try? $1.resourceValues(forKeys: [.creationDateKey]).creationDate ?? Date.distantPast
-                    return date1! > date2!
-                }
-            
-            // Take the most recent file and update the recording property
-            if let mostRecentFile = audioFiles.first {
-                let fileDate = try mostRecentFile.resourceValues(forKeys: [.creationDateKey]).creationDate ?? Date()
-                recording = Recording(fileURL: mostRecentFile, createdAt: fileDate)
-            }
-        } catch {
-            print("Error while fetching recordings: \(error)")
-        }
-        
-        // Notify subscribers that the object has changed
-        objectWillChange.send(self)
-    }
-    
     // Start the recording process
     func startRecording() {
         // Get the shared instance of AVAudioSession to manage the app's audio behavior

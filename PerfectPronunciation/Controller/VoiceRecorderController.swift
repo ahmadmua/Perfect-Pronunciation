@@ -15,6 +15,20 @@ enum RecordingMode {
     case recording
     case analyzing
     case playing
+    
+    // Computed property to convert enum cases to String
+        var description: String {
+            switch self {
+            case .ready:
+                return "Ready to Record"
+            case .recording:
+                return "Recording..."
+            case .analyzing:
+                return "Analyzing..."
+            case .playing:
+                return "Playing Audio"
+            }
+        }
 }
 
 // This class handles high-level functions of VoiceRecorderView and interacts with AudioController
@@ -56,18 +70,19 @@ class VoiceRecorderController: NSObject, ObservableObject {
     // Start the recording process using AudioController
     func startRecording() {
         audioController.startRecording()
-        mode = "Listening ..."
-        recordBtnDisabled = true  // Disable the record button while recording is in progress
-        audioController.$STTresult
-                    .receive(on: DispatchQueue.main)
-                    .assign(to: &$STTresult)
+        mode = .recording // Update mode to recording
+        recordBtnDisabled = true // Disable the record button while recording
+        // Bind STT result to the UI
+        audioController.onRecordingCompleted = { [weak self] url in
+            self?.audioFileURL = url
+        }
     }
 
-    // Stop the recording process and update the UI state
+        // Stop the recording process and update the UI state
     func stopRecording() {
         audioController.stopRecording()
-        mode = "Start Recording"
-        recordBtnDisabled = false  // Re-enable the record button once recording stops
+        mode = .ready // Re-enable mode once recording stops
+        recordBtnDisabled = false
     }
     
     //function that handles discarding and deleting the audio file user does not want

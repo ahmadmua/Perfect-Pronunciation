@@ -41,7 +41,7 @@ struct VoiceRecorder: View {
                     .edgesIgnoringSafeArea(.all)
                 
                 VStack {
-                    Text(voiceRecorderController.mode)
+                    Text(voiceRecorderController.mode.description)
                         .padding(.top, 10)
                     
                     Text(timeString(time: elapsedTime))

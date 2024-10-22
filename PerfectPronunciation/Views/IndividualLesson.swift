@@ -191,7 +191,9 @@ struct IndividualLesson: View {
              
             self.showNext = false
             
-            voiceRecorderController.submitTextToSpeechAI(testText: responseText)
+            Task {
+                await voiceRecorderController.submitTextToSpeechAI(testText: responseText)
+            }
          
         }
          

@@ -60,7 +60,11 @@ struct WeeklyLesson: View {
                         
                         // MARK: - Nick provide integration here
                         let singleString = fireDBHelper.wordList.joined()
-                        voiceRecorderController.submitTestAudio(testText: singleString, lessonType: lessonType)
+                        
+                        Task {
+                            await voiceRecorderController.submitTestAudio(testText: singleString, lessonType: lessonType)
+                        }
+                        
                             
 //                        fireDBHelper.getWeeklyAccuracy { accuracy in
 //                            if let accuracy = accuracy {

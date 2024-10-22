@@ -145,7 +145,9 @@ struct VoiceRecorder: View {
                                 Button(action: {
                                     
                                     DispatchQueue.main.async{
-                                        self.voiceRecorderController.submitTestAudio(testText: testText, lessonType: lessonType)
+                                        Task {
+                                            await self.voiceRecorderController.submitTestAudio(testText: testText, lessonType: lessonType)
+                                        }
                                         self.isPopupPresented = false // Add this line to dismiss the sheet
                                     }
                                     

@@ -20,19 +20,26 @@ enum RecordingMode {
 // This class handles high-level functions of VoiceRecorderView and interacts with AudioController
 class VoiceRecorderController: NSObject, ObservableObject {
     
-    // MARK: - Published Properties (for UI binding)
-    @Published var STTresult: String = ""  // Transcription result from AudioController
-    @Published var mode: String = "Start Recording"
-    @Published var recordBtnDisabled = true
-    @Published var audioFileURL: URL?  // Stores the recorded file URL
+    /// MARK: - Published Properties (for UI binding)
+    @Published var STTresult: String = ""        // Live Transcription result from AudioController
+    @Published var mode: RecordingMode = .ready  // Recorder mode
+    @Published var recordBtnDisabled = true      // Button state for record button
+    @Published var audioFileURL: URL?            // Stores the recorded file URL
+    @Published var isSubmitting: Bool = false    // Prevent double submissions
+    @Published var errorMessage: String?         // Error message for UI
 
+    // Combine for state changes
     var objectWillChange = PassthroughSubject<VoiceRecorderController, Never>()
     
-    var audioController = AudioController()  // Use audioController for recording and speech recognition
-    var audioAPIController = AudioAPIController.shared // Shared instance for audio API calls
+    // Dependencies: Audio and API controllers
+    var audioController: AudioController
+    var audioAPIController: AudioAPIController
     var dataHelper = DataHelper()            // Helper to manage data storage with firebase
     
-    override init() {
+    // Initialize with dependencies to allow for easier testing
+    init(audioController: AudioController, audioAPIController: AudioAPIController) {
+        self.audioController = audioController
+        self.audioAPIController = audioAPIController
         super.init()
         setupAudioController()
     }

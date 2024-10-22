@@ -44,7 +44,7 @@ class AudioController: NSObject, ObservableObject {
     
     
     
-    // Request authorization to use the microphone and speech recognition
+    // MARK: - Request authorization for microphone and speech recognition access
     func requestAuthorization() {
         SFSpeechRecognizer.requestAuthorization { authStatus in
             DispatchQueue.main.async {
@@ -60,94 +60,22 @@ class AudioController: NSObject, ObservableObject {
         }
     }
     
-    // Start the recording process
-    func startRecording() {
-        // Get the shared instance of AVAudioSession to manage the app's audio behavior
-        let recordingSession = AVAudioSession.sharedInstance()
-
-        // Check if the audio engine is already running (i.e., recording or recognizing)
-        if audioEngine.isRunning {
-            // If it's running, stop the audio engine and end the recognition request
-            audioEngine.stop()
-            recognitionRequest?.endAudio()
-        } else {
-            // If it's not running, configure and start a new recording session
+    // MARK: - Start the recording process
+        func startRecording() {
+            guard !isRecording else {
+                // If recording is already in progress, prevent starting a new one
+                print("Recording is already in progress")
+                return
+            }
             
-            // Set up the audio session to allow recording and playback
-            do {
-                try recordingSession.setCategory(.playAndRecord, mode: .default)  // Set the category for recording and playback
-                try recordingSession.setActive(true)  // Activate the session
-            } catch {
-                // Handle errors that occur when setting up the audio session
-                print("Failed to set up recording session")
-            }
-
-            // Define the path to save the recorded audio file in the app's documents directory
-            let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY 'at' HH:mm:ss")).wav")
+            isRecording = true  // Set the recording flag
             
-            // Define the settings for the audio recorder (e.g., format, sample rate, channels, etc.)
-            let settings = [
-                AVFormatIDKey: Int(kAudioFormatLinearPCM),  // Linear PCM format for uncompressed audio
-                AVSampleRateKey: 16000,  // 16 kHz sample rate (standard for speech recognition)
-                AVNumberOfChannelsKey: 1,  // Mono audio (1 channel)
-                AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue  // High audio quality
-            ]
-
-            // Start recording audio
-            do {
-                // Initialize the AVAudioRecorder with the specified file URL and settings
-                audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
-                audioRecorder.record()  // Start the recording
-            } catch {
-                // Handle any errors that occur during the recording setup
-                print("Could not start recording")
-            }
-
-            // Cancel any ongoing speech recognition task if there was one before
-            recognitionTask?.cancel()
-            recognitionTask = nil
-
-            // Configure speech recognition by accessing the input node of the audio engine
-            let inputNode = audioEngine.inputNode
-            recognitionRequest = SFSpeechAudioBufferRecognitionRequest()  // Create a new recognition request for live audio input
-            recognitionRequest?.shouldReportPartialResults = true  // Enable partial results to get real-time transcription
-
-            // Start the speech recognition task
-            recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest!, resultHandler: { [weak self] result, error in
-                if let result = result {
-                    // If a result is returned, update the STTresult in real-time
-                    DispatchQueue.main.async {
-                        self?.STTresult = result.bestTranscription.formattedString  // Get the best transcription
-                    }
-                }
-                
-                // Handle the end of the recognition task if an error occurs or the result is final
-                if error != nil || result?.isFinal == true {
-                    self?.audioEngine.stop()  // Stop the audio engine
-                    inputNode.removeTap(onBus: 0)  // Remove the audio tap from the input node
-                    self?.recognitionTask = nil  // Clear the recognition task
-                    self?.recognitionRequest = nil  // Clear the recognition request
-                }
-            })
-
-            // Configure the audio input node for real-time speech recognition
-            let recordingFormat = inputNode.outputFormat(forBus: 0)  // Get the format of the input node
-            inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] (buffer, when) in
-                // Append the audio buffer to the recognition request
-                self?.recognitionRequest?.append(buffer)
-            }
-
-            // Prepare and start the audio engine for capturing the microphone input
-            do {
-                audioEngine.prepare()  // Prepare the audio engine
-                try audioEngine.start()  // Start the audio engine
-            } catch {
-                // Handle any errors during the starting of the audio engine
-                print("Could not start audio engine")
-            }
+            // Setup the audio session and start recording
+            setupAudioSessionAndRecord()
+            
+            // Setup speech recognition to handle real-time transcription
+            setupSpeechRecognition()
         }
-    }
 
     
     // Stop the recording and notify VoiceRecorderController

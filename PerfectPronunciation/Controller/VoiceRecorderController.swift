@@ -68,6 +68,7 @@ class VoiceRecorderController: NSObject, ObservableObject {
     }
 
     // Start the recording process using AudioController
+    // 1) may need to discard recording if an error happens during recording before user manualy stops
     func startRecording() {
         audioController.startRecording()
         mode = .recording // Update mode to recording
@@ -107,10 +108,9 @@ class VoiceRecorderController: NSObject, ObservableObject {
         }
     }
 
-    // Function to submit the last recorded audio for analysis
-    //Notes
+    // Function to submit the last recorded audio for analysis - (NOT Fully Implemented)
     //1) we need to also need to save the audioFile its self in firebase
-    //2) once we save the recording we must delete it localy
+    //2) need to save the AI AudioClip as well to firebase
     func submitTestAudio(testText: String, lessonType: String) async {
         guard let audioURL = audioFileURL else {
             print("Error: No valid file URL for the recording.")
@@ -148,7 +148,8 @@ class VoiceRecorderController: NSObject, ObservableObject {
     }
 
 
-    // Function to submit text to AI Voice gallery and get an audio file back to play
+    // Function to submit text to AI Voice gallery and get an audio file back to play - (NOT Fully Implemented)
+    //1) need to be able to dynamicaly give a voice based on users country
     func submitTextToSpeechAI(testText: String) async {
         do {
             // Use `await` to call the async function and get the result

@@ -76,6 +76,38 @@ class AudioController: NSObject, ObservableObject {
             // Setup speech recognition to handle real-time transcription
             setupSpeechRecognition()
         }
+    
+    // MARK: - Setup the audio session and start recording audio
+      private func setupAudioSessionAndRecord() {
+          let recordingSession = AVAudioSession.sharedInstance()  // Shared instance for managing audio behavior
+          
+          do {
+              // Configure the session for both recording and playback
+              try recordingSession.setCategory(.playAndRecord, mode: .default)
+              try recordingSession.setActive(true)
+              
+              // Define the file path for saving the recording in the app's documents directory
+              let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+              let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY 'at' HH:mm:ss")).wav")
+              
+              // Audio recording settings (e.g., sample rate, channels)
+              let settings = [
+                  AVFormatIDKey: Int(kAudioFormatLinearPCM),  // PCM format for uncompressed audio
+                  AVSampleRateKey: 16000,  // Sample rate (standard for speech recognition)
+                  AVNumberOfChannelsKey: 1,  // Mono audio
+                  AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue  // High-quality audio encoding
+              ]
+              
+              // Initialize and start recording audio with the specified settings
+              audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
+              audioRecorder?.record()
+              
+          } catch {
+              // If any error occurs during setup, print the error and stop recording
+              print("Failed to start recording: \(error)")
+              stopRecording()
+          }
+      }
 
     
     // Stop the recording and notify VoiceRecorderController

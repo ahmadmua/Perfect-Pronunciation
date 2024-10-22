@@ -57,8 +57,25 @@ class VoiceRecorderController: NSObject, ObservableObject {
     }
     
     //function that handles discarding and deleting the audio file user does not want
-    func discardTestAudio(){
+    func discardTestAudio(fileURL: URL) {
+        let fileManager = FileManager.default
         
+        // Log the file URL and the path
+        print("Trying to delete file at: \(fileURL.path)")
+        
+        // Check if the file exists at the fileURL path
+        if fileManager.fileExists(atPath: fileURL.path) {
+            do {
+                // Try to remove the file
+                try fileManager.removeItem(at: fileURL)
+                print("Successfully deleted file at: \(fileURL.path)")
+            } catch {
+                // Handle errors during file deletion
+                print("Could not delete file: \(error.localizedDescription)")
+            }
+        } else {
+            print("File does not exist at: \(fileURL.path)")
+        }
     }
 
     // Function to submit the last recorded audio for analysis
@@ -84,6 +101,8 @@ class VoiceRecorderController: NSObject, ObservableObject {
                        print("Failed to update DayOfWeek and Timestamp.")
                                               }
                                           }
+                    self.discardTestAudio(fileURL: audioURL) //discard the audio after we save it to firebase
+
                 }
             case .failure(let error):
                 DispatchQueue.main.async {

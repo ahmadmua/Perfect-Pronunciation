@@ -8,16 +8,17 @@
 import SwiftUI
 
 struct AssessmentView: View {
-    @State var accuracyScore: Float // New property to receive the score
+    @State var accuracyScore: Double
+    @State var completenessScore: Double
+    @State var fluencyScore: Double
+    @State var confidence: Double
+    @State var pronScores: Double
+    @State var display: String
 
     @State private var progress: Double = 16.0
-    @State private var mispronunciationsCount = 0
-    @State private var omissionsCount = 0
-    @State private var insertionsCount = 0
-    @State private var unexpectedBreaksCount = 0
-    @State private var missingBreaksCount = 0
-    @State private var monotoneCount = 0
     @State private var predictionResult: String? = nil
+    var errorTypeCounts: [String: Int]
+    var wordErrorData: [(word: String, errorType: String)]
 
     let fields = ["Mispronunciations", "Omissions", "Insertions", "Unexpected_break", "Missing_break", "Monotone"]
 
@@ -39,7 +40,7 @@ struct AssessmentView: View {
                 VStack(alignment: .leading) {
                     Text("Pronunciation score")
                         .font(.headline)
-                    CircularScoreView(score: Int(accuracyScore)) // Use passed score here
+                    CircularScoreView(score: pronScores)
                         .padding(.top, 8)
                 }
                 .padding(.leading)
@@ -48,12 +49,12 @@ struct AssessmentView: View {
 
                 // Error Labels on the Right
                 VStack(alignment: .leading, spacing: 15) {
-                    ErrorLabelView(errorType: "Mispronunciations", color: .yellow, count: mispronunciationsCount)
-                    ErrorLabelView(errorType: "Omissions", color: .gray, count: omissionsCount)
-                    ErrorLabelView(errorType: "Insertions", color: .red, count: insertionsCount)
-                    ErrorLabelView(errorType: "Unexpected break", color: .pink, count: unexpectedBreaksCount)
-                    ErrorLabelView(errorType: "Missing break", color: .blue, count: missingBreaksCount)
-                    ErrorLabelView(errorType: "Monotone", color: .purple, count: monotoneCount)
+                    ErrorLabelView(errorType: "Mispronunciations", color: .yellow,  count: errorTypeCounts["Mispronunciation"] ?? 0)
+                    ErrorLabelView(errorType: "Omissions", color: .gray, count: errorTypeCounts["Omission"] ?? 0)
+                    ErrorLabelView(errorType: "Insertions", color: .red, count: errorTypeCounts["Insertion"] ?? 0)
+                    ErrorLabelView(errorType: "Unexpected break", color: .pink, count: errorTypeCounts["UnexpectedBreak"] ?? 0)
+                    ErrorLabelView(errorType: "Missing break", color: .blue, count: errorTypeCounts["MissingBreak"] ?? 0)
+                    ErrorLabelView(errorType: "Monotone", color: .purple, count: errorTypeCounts["Monotone"] ?? 0)
                 }
                 .padding(.leading, 12)
             }
@@ -63,9 +64,9 @@ struct AssessmentView: View {
                 Text("Score breakdown")
                     .font(.headline)
                 ScoreBar(label: "Accuracy score", score: Int(accuracyScore))
-                ScoreBar(label: "Completeness score", score: 93)
-                ScoreBar(label: "Fluency score", score: 84)
-                ScoreBar(label: "Prosody score", score: 87)
+                ScoreBar(label: "Completeness score", score: Int(completenessScore))
+                ScoreBar(label: "Fluency score", score: Int(fluencyScore))
+                ScoreBar(label: "Confidence", score: Int(confidence * 100))
             }
             .padding(.horizontal)
 
@@ -85,8 +86,7 @@ struct AssessmentView: View {
         }
         .navigationTitle("Assessment Result")
         .onAppear {
-            updateErrorCounts()
-            predictionResult = predictPronunciationImprovement(mispronunciations: 1, omissions: 2, insertions: 2, unexpectedBreak: 2, missingBreak: 2.0, monotone: 2)
+            predictionResult = predictPronunciationImprovement(mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0), omissions: Double(errorTypeCounts["Omission"] ?? 0), insertions: Double(errorTypeCounts["Insertion"] ?? 0), unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0), missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0), monotone: Double(errorTypeCounts["Monotone"] ?? 0))
         }
     }
 
@@ -96,45 +96,43 @@ struct AssessmentView: View {
 
     // Function to build the highlighted text
     func buildAttributedText() -> AttributedString {
-        var attributedText = AttributedString("today was a beautiful day. we had a great time taking a long walk outside in the morning. the countryside was in full bloom, yet the air was crisp and cold. towards the end of the day, clouds came in, forecasting much needed rain.")
+        var attributedText = AttributedString(display)
 
-        // Apply colors and formatting for errors
-        if let range = attributedText.range(of: "long") {
-            attributedText[range].backgroundColor = .red
-            insertionsCount += 1
-        }
+        for wordError in wordErrorData {
+            if let range = attributedText.range(of: wordError.word) {
+                // Log the word and its error type
+                print("Processing word: '\(wordError.word)' with error type: '\(wordError.errorType)'")
 
-        if let range = attributedText.range(of: "outside") {
-            attributedText[range].backgroundColor = .gray
-            omissionsCount += 1
-        }
-
-        if let range = attributedText.range(of: "countryside") {
-            attributedText[range].backgroundColor = .yellow
-            mispronunciationsCount += 1
-        }
-
-        if let range = attributedText.range(of: "the") {
-            attributedText[range].backgroundColor = .gray
-            omissionsCount += 1
+                // Check for a valid errorType
+                if !wordError.errorType.isEmpty { // Only process if errorType is not empty
+                    switch wordError.errorType {
+                    case "Mispronunciation":
+                        attributedText[range].foregroundColor = .yellow
+                    case "Omission":
+                        attributedText[range].foregroundColor = .gray
+                    case "Insertion":
+                        attributedText[range].foregroundColor = .red
+                    case "Unexpected_break":
+                        attributedText[range].foregroundColor = .pink
+                    case "Missing_break":
+                        attributedText[range].foregroundColor = .blue
+                    case "Monotone":
+                        attributedText[range].foregroundColor = .purple
+                    default:
+                        print("Unknown error type for word '\(wordError.word)': \(wordError.errorType)")
+                    }
+                } else {
+                    print("No error type found for word: '\(wordError.word)'")
+                }
+            } else {
+                print("Word not found in attributed text: '\(wordError.word)'")
+            }
         }
 
         return attributedText
     }
 
-    // Function to update the error counts
-    private func updateErrorCounts() {
-        // Reset counts
-        mispronunciationsCount = 0
-        omissionsCount = 0
-        insertionsCount = 0
-        unexpectedBreaksCount = 0
-        missingBreaksCount = 0
-        monotoneCount = 0
 
-        // Call buildAttributedText to count errors
-        _ = buildAttributedText() // This will trigger the counting
-    }
 
     // Function to predict pronunciation improvement
     func predictPronunciationImprovement(mispronunciations: Double, omissions: Double, insertions: Double, unexpectedBreak: Double, missingBreak: Double, monotone: Double) -> String? {
@@ -166,23 +164,25 @@ struct AssessmentView: View {
 // Additional Views
 
 struct CircularScoreView: View {
-    var score: Int
+    var score: Double
 
     var body: some View {
         ZStack {
+            // Background Circle
             Circle()
                 .stroke(lineWidth: 12)
                 .opacity(0.3)
                 .foregroundColor(Color.green)
 
+            // Circular progress based on score
             Circle()
-                .trim(from: 0.0, to: CGFloat(min(Double(score) / 100.0, 1.0)))
                 .stroke(style: StrokeStyle(lineWidth: 12, lineCap: .round, lineJoin: .round))
                 .foregroundColor(Color.green)
                 .rotationEffect(Angle(degrees: 270.0))
                 .animation(.linear, value: score)
 
-            Text("\(score)")
+            // Display the score rounded to 2 decimal places in the center
+            Text(String(format: "%.1f", score))
                 .font(.largeTitle)
                 .bold()
                 .foregroundColor(Color.green)
@@ -191,6 +191,12 @@ struct CircularScoreView: View {
         .padding()
     }
 }
+
+    
+
+
+
+
 
 struct ScoreBar: View {
     var label: String
@@ -235,4 +241,3 @@ struct ErrorLabelView: View {
 //        AssessmentView()
 //    }
 //}
-

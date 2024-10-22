@@ -20,7 +20,7 @@ struct Details: View {
     @ObservedObject var modelLesson = LessonController()
     
     @State private var prediction: Double?
-    @State private var averageAccuracy: Float = 0
+    @State private var averageAccuracy: Double = 0
     @State private var totalWords: Int = 0
     @State private var userDifficulty: String = ""
     @State private var expectedDifficulty: String = ""
@@ -82,7 +82,7 @@ struct Details: View {
             
             HStack {
                 StatCard(color: .yellow, title: "Words Pronounced", value: "\(totalWords)")
-                StatCard(color: .yellow, title: "AVG Accuracy", value: "\(averageAccuracy)%")
+                StatCard(color: .yellow, title: "AVG Accuracy", value: "\(String(format: "%.1f", averageAccuracy))%")
             }
             
             HStack {
@@ -177,6 +177,7 @@ struct Details: View {
                 totalWords = fetchedCount
             }
             
+            //for prediction model
             for index in 0..<5 {
                 fireDBHelper.getAccuracy(atIndex: index) { accuracy in
                     if let accuracy = accuracy {
@@ -251,80 +252,141 @@ struct Details: View {
 
 
 struct ItemsListView: View {
-    
     @State private var items: [String] = []
     @EnvironmentObject private var sharedData: SharedData
     @EnvironmentObject var fireDBHelper: DataHelper
-    @State private var accuracyScores: [Int: Float] = [:]
-    
+    @State private var accuracyScores: [Double] = []
+    @State private var completenessScores: [Double] = []
+    @State private var fluencyScores: [Double] = []
+    @State private var confidence: [Double] = []
+    @State private var pronScores: [Double] = []
+    @State private var display: [String] = []
+    @State private var errorTypeCountsList: [[String: Int]] = [] // List of errorTypeCount dictionaries
+    @State private var wordErrorData: [(word: String, errorType: String)] = []
+
     var body: some View {
-        
         NavigationView {
-            if(sharedData.selectedDay == "Mo") {
-                List(items.indices, id: \.self) { index in
-                    NavigationLink(
-                        destination:
-                            AssessmentView(accuracyScore: accuracyScores[index] ?? 0.0)
-                        
-                    ) {
-                        Text(items[index])
-                    }
-                    .onAppear {
-                        fetchAccuracyForItem(atIndex: index)
-                    }
-                }
-                .onAppear {
-                    fetchItemsForDayOfWeek(day: "Mon")
-                }
-            } else if sharedData.selectedDay == "Tu" {
-                List(items.indices, id: \.self) { index in
-                    NavigationLink(
-                        destination:
-                            AssessmentView(accuracyScore: accuracyScores[index] ?? 0.0)
-                        
-                    ) {
-                        Text(items[index])
-                    }
-                    .onAppear {
-                        fetchAccuracyForItem(atIndex: index)
-                    }
-                }
-                .onAppear {
-                    fetchItemsForDayOfWeek(day: "Tue")
+            List(items.indices, id: \.self) { index in
+                NavigationLink(
+                    destination:
+                        AssessmentView(
+                            accuracyScore: accuracyScores.indices.contains(index) ? accuracyScores[index] : 0.0,
+                            completenessScore: completenessScores.indices.contains(index) ? completenessScores[index] : 0.0,
+                            fluencyScore: fluencyScores.indices.contains(index) ? fluencyScores[index] : 0.0,
+                            confidence: confidence.indices.contains(index) ? confidence[index] : 0.0,
+                            pronScores: pronScores.indices.contains(index) ? pronScores[index] : 0.0,
+                            display: display.indices.contains(index) ? display[index] : "",
+                            errorTypeCounts: errorTypeCountsList.indices.contains(index) ? errorTypeCountsList[index] : [:],
+                            wordErrorData: wordErrorData // Pass the errorTypeCounts dictionary
+                        )
+                ) {
+                    Text(items[index])
                 }
             }
+            .onAppear {
+                fetchItemsForSelectedDay()
+            }
+            .onChange(of: sharedData.selectedDay) { _ in
+                fetchItemsForSelectedDay()
+            }
         }
-        
     }
-    
+
+    private func fetchItemsForSelectedDay() {
+        let day = mapDayOfWeek(from: sharedData.selectedDay)
+        fetchItemsForDayOfWeek(day: day)
+    }
+
+    private func mapDayOfWeek(from abbreviation: String) -> String {
+        switch abbreviation {
+        case "Mo": return "Mon"
+        case "Tu": return "Tue"
+        case "We": return "Wed"
+        case "Th": return "Thu"
+        case "Fr": return "Fri"
+        case "Sa": return "Sat"
+        case "Su": return "Sun"
+        default: return ""
+        }
+    }
+
+    // For fetching the data
     private func fetchItemsForDayOfWeek(day: String) {
         fireDBHelper.getItemsForDayOfWeek(dayOfWeek: day) { (documents, error) in
             if let documents = documents {
-                let items = documents.compactMap { document in
+                // Clear existing data arrays
+                self.items.removeAll()
+                self.accuracyScores.removeAll()
+                self.completenessScores.removeAll()
+                self.fluencyScores.removeAll()
+                self.confidence.removeAll()
+                self.pronScores.removeAll()
+                self.display.removeAll()
+                self.errorTypeCountsList.removeAll()
+                self.wordErrorData.removeAll()
+                
+                // Loop through documents
+                for document in documents {
+                    var errorTypeCount: [String: Int] = [:] // Dictionary to store counts of error types
+                    
+                    // Check for the assessment dictionary
                     if let assessment = document.get("assessment") as? [String: Any],
-                       let nBest = assessment["NBest"] as? [[String: Any]],
-                       let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
-                        return "Accuracy: \(accuracyScore)%"
+                       let nBestArray = assessment["NBest"] as? [[String: Any]] {
+                        
+                        // Loop through each entry in the NBest array
+                        for nBest in nBestArray {
+                            // Process the words for this entry
+                            if let words = nBest["Words"] as? [[String: Any]] {
+                                for word in words {
+                                    // Extract Word and ErrorType from the current word
+                                    if let wordText = word["Word"] as? String,
+                                       let errorType = word["ErrorType"] as? String, !errorType.isEmpty {
+                                        // Increment count for the specific error type
+                                        errorTypeCount[errorType, default: 0] += 1
+                                        // Store the word and its associated error type
+                                        wordErrorData.append((word: wordText, errorType: errorType))
+                                    }
+                                }
+                            }
+                            
+                            // Extract scores from nBest entry
+                            if let accuracyScore = nBest["AccuracyScore"] as? Double {
+                                self.accuracyScores.append(accuracyScore)
+                            }
+                            if let completenessScore = nBest["CompletenessScore"] as? Double {
+                                self.completenessScores.append(completenessScore)
+                            }
+                            if let fluencyScore = nBest["FluencyScore"] as? Double {
+                                self.fluencyScores.append(fluencyScore)
+                            }
+                            if let confidence = nBest["Confidence"] as? Double {
+                                self.confidence.append(confidence)
+                            }
+                            if let pronScore = nBest["PronScore"] as? Double {
+                                self.items.append("Score: \(pronScore)%")
+                                self.pronScores.append(pronScore)
+                            }
+                            if let display = nBest["Display"] as? String {
+                                self.display.append(display)
+                            }
+                        }
                     }
-                    return nil
+                    
+                    // Append the errorTypeCount for this document
+                    self.errorTypeCountsList.append(errorTypeCount)
                 }
-                self.items = items
+                
+                // Print or use the errorTypeCount dictionary as needed
+                print("Error Type Counts: \(self.errorTypeCountsList)")
             } else if let error = error {
                 print("Error: \(error)")
             }
         }
     }
-    
-    func fetchAccuracyForItem(atIndex index: Int) {
-        fireDBHelper.getAccuracy(atIndex: index) { score in
-            if let accuracyScore = score {
-                DispatchQueue.main.async {
-                    accuracyScores[index] = accuracyScore
-                }
-            }
-        }
-    }
+
 }
+
+
 
 
 
@@ -378,5 +440,4 @@ struct StatCard: View {
         .cornerRadius(10)
     }
 }
-
 

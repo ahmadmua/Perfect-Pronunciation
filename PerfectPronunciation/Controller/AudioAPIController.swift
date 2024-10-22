@@ -111,8 +111,8 @@ class AudioAPIController: ObservableObject {
         // Define the headers for the HTTP request.
         // These headers tell the server which subscription key to use and the content type of the request (which is a WAV audio file).
         let headers = [
-            "Ocp-Apim-Subscription-Key": subscriptionKey,  // Your subscription key for authentication
-            "Content-Type": "audio/wav"                    // The format of the data being sent
+            "Ocp-Apim-Subscription-Key": subscriptionKey,
+            "Content-Type": "audio/wav"
         ]
 
         // Use the helper function 'makePostRequest' to send the audio data to the API.
@@ -131,12 +131,12 @@ class AudioAPIController: ObservableObject {
     }
 
 
-    // Function to send audio for pronunciation assessment using Microsoft's API
+    // Function to send audio for pronunciation assessment using Microsoft's Speech Analysis API
     // It sends the audio file and a reference text for comparison, and returns the JSON response
     func sendToSpeechAnalysisAPI(audioURL: URL, referenceText: String) async throws -> [String: Any] {
         // Define the region and subscription key for the API. Replace with actual values.
-        let region = "eastus" // Replace with your region
-        let subscriptionKey = "a39f6ff72e4c4ffb99deaa05019002fa" // Replace this with your key
+        let region = "eastus"
+        let subscriptionKey = "a39f6ff72e4c4ffb99deaa05019002fa"
         
         // Create the URL for the API request
         let urlString = "https://\(region).stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=en-us"
@@ -181,61 +181,44 @@ class AudioAPIController: ObservableObject {
         return jsonResult
     }
     
-    // Function to send a text to the Voice Gallery API and get audio in response
-    func sendTextToVoiceGallery(testText: String, completion: @escaping (Result<Data, NetworkError>) -> Void) {
+    // Function to send a text to Microsoft's Text-to-Speech (TTS) API and get back an audio clip
+    // It returns the audio data in response
+    func sendTextToVoiceGallery(testText: String) async throws -> Data {
+        // Define the subscription key and region for the API. Replace with actual values.
         let subscriptionKey = "a39f6ff72e4c4ffb99deaa05019002fa"
         let region = "eastus"
+
+        // Create the URL for the API request
         let urlString = "https://\(region).tts.speech.microsoft.com/cognitiveservices/v1"
         
-        // Check if the URL is valid
+        // Validate the URL, throw an error if it's invalid
         guard let url = URL(string: urlString) else {
-            completion(.failure(.invalidURL))
-            return
+            throw NetworkError.invalidURL
         }
-        
-        // Set up the request
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        
-        // Headers required by the API
-        request.setValue("application/ssml+xml", forHTTPHeaderField: "Content-Type")
-        request.setValue("audio-16khz-32kbitrate-mono-mp3", forHTTPHeaderField: "X-Microsoft-OutputFormat")
-        request.setValue(subscriptionKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key") // Correct header for API key
-        request.setValue("YOUR-USER-AGENT", forHTTPHeaderField: "User-Agent")
-        
-        // Set the body with the SSML format for input text
+
+        // Create headers for the request, including the subscription key, output format, and user-agent
+        let headers = [
+            "Content-Type": "application/ssml+xml",  // Content type is SSML (Speech Synthesis Markup Language)
+            "X-Microsoft-OutputFormat": "audio-16khz-32kbitrate-mono-mp3",  // Specify the audio format for the response
+            "Ocp-Apim-Subscription-Key": subscriptionKey,  // Subscription key for authentication
+            "User-Agent": "YOUR-USER-AGENT"                // User-Agent header (replace with your app info)
+        ]
+
+        // The text to be converted into speech, formatted as SSML (XML-based standard for text-to-speech)
         let ssml = """
         <speak version='1.0' xml:lang='en-US'>
             <voice xml:lang='en-US' xml:gender='Female' name='en-US-JennyNeural'>
-                \(testText)
+                \(testText)  // Insert the text to be synthesized into speech
             </voice>
         </speak>
         """
-        
-        request.httpBody = ssml.data(using: .utf8)
-        
-        // Create a URLSession task to send the request
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-                let errorDescription = error?.localizedDescription ?? "Unknown error"
-                print("Voice Gallery Error: \(errorDescription)")
-                completion(.failure(.requestFailed)) // Return a more appropriate NetworkError here
-                return
-            }
-            
-            if let data = data {
-                print("Success with AI Gallery")
-                print(data)
-                completion(.success(data)) // Return the audio data on success
-            } else {
-                completion(.failure(.emptyData)) // Return failure if there's no data
-            }
-        }
-        
-        task.resume() // Start the request
-    }
 
-    
+        // Convert the SSML text to Data for sending in the body of the POST request
+        let bodyData = ssml.data(using: .utf8)
+
+        // Make a POST request to the API with the SSML body and headers
+        return try await makePostRequest(url: url, headers: headers, body: bodyData)
+    }
     
     // Function to call transcribeAudioFile func & sendToSpeechAnalysis func
     func transcribeAndAssessAudio(audioURL: URL, referenceText: String, lessonType: String ,completion: @escaping (Result<PronunciationAssessmentResult, NetworkError>) -> Void) {

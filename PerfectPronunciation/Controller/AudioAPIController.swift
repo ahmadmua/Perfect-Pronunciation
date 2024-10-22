@@ -91,7 +91,7 @@ class AudioAPIController: ObservableObject {
 
     // This function sends an audio file to Microsoft's Speech-to-Text API and transcribes the audio into text.
     // It uses async/await to handle the asynchronous HTTP request and throws errors if anything goes wrong.
-    func transcribeAudioFile(audioURL: URL) async throws -> [String: Any] {
+    private func transcribeAudioFile(audioURL: URL) async throws -> [String: Any] {
         // Specify the region and subscription key for Microsoft's Speech-to-Text service.
         // Replace "eastus" with your service's actual region and provide your own subscription key.
         let region = "eastus"
@@ -130,10 +130,9 @@ class AudioAPIController: ObservableObject {
         return jsonResult
     }
 
-
     // Function to send audio for pronunciation assessment using Microsoft's Speech Analysis API
     // It sends the audio file and a reference text for comparison, and returns the JSON response
-    func sendToSpeechAnalysisAPI(audioURL: URL, referenceText: String) async throws -> [String: Any] {
+    private func sendToSpeechAnalysisAPI(audioURL: URL, referenceText: String) async throws -> [String: Any] {
         // Define the region and subscription key for the API. Replace with actual values.
         let region = "eastus"
         let subscriptionKey = "a39f6ff72e4c4ffb99deaa05019002fa"
@@ -220,46 +219,30 @@ class AudioAPIController: ObservableObject {
         return try await makePostRequest(url: url, headers: headers, body: bodyData)
     }
     
-    // Function to call transcribeAudioFile func & sendToSpeechAnalysis func
-    func transcribeAndAssessAudio(audioURL: URL, referenceText: String, lessonType: String ,completion: @escaping (Result<PronunciationAssessmentResult, NetworkError>) -> Void) {
-          
-          // First call transcribeAudioFile
-          self.transcribeAudioFile(audioURL: audioURL) { transcriptionResult in
-              switch transcriptionResult {
-              case .success(let transcription):
-                  // Then call sendToSpeechAPI for Pronunciation Assessment
-                  self.sendToSpeechAnalysisAPI(audioURL: audioURL, referenceText: referenceText) { assessmentResult in
-                      switch assessmentResult {
-                      case .success(let assessmentData):
-                          // Merge both assessment and transcription into one dictionary with assessment first
-                          var mergedResult: [String: Any] = [:]
-                          mergedResult["lessonType"] = lessonType
-                          mergedResult["assessment"] = assessmentData // Add assessment result first
-                          mergedResult["transcription"] = transcription // Add transcription result next
-                          
-                          // Now decode the merged result into the PronunciationAssessmentResult model
-                          do {
-                              let jsonData = try JSONSerialization.data(withJSONObject: mergedResult, options: [])
-                              let decodedResult = try JSONDecoder().decode(PronunciationAssessmentResult.self, from: jsonData)
-                              //print(decodedResult)
-                              completion(.success(decodedResult))
-                          } catch {
-                              print("Decoding Error: \(error)")
-                              completion(.failure(.encodingError))
-                          }
-                          
-                      case .failure(let error):
-                          // Handle error from sendToSpeechAPI
-                          completion(.failure(error))
-                      }
-                  }
-                  
-              case .failure(let error):
-                  // Handle error from transcribeAudioFile
-                  completion(.failure(error))
-              }
-          }
-      }
+    // Function that combines both transcription and pronunciation assessment
+    // It returns a `PronunciationAssessmentResult` model by merging both results
+    func transcribeAndAssessAudio(audioURL: URL, referenceText: String, lessonType: String) async throws -> PronunciationAssessmentResult {
+        // First, transcribe the audio file using the speech-to-text API
+        let transcription = try await transcribeAudioFile(audioURL: audioURL)
+
+        // Then, assess the pronunciation of the audio file based on the reference text
+        let assessment = try await sendToSpeechAnalysisAPI(audioURL: audioURL, referenceText: referenceText)
+
+        // Combine the transcription and assessment into a single result
+        var mergedResult: [String: Any] = [:]
+        mergedResult["lessonType"] = lessonType  // Include the lesson type in the merged result
+        mergedResult["assessment"] = assessment  // Add the pronunciation assessment
+        mergedResult["transcription"] = transcription  // Add the transcription result
+
+        // Convert the combined result into JSON data
+        let jsonData = try JSONSerialization.data(withJSONObject: mergedResult, options: [])
+        
+        // Decode the JSON data into the `PronunciationAssessmentResult` model
+        let decodedResult = try JSONDecoder().decode(PronunciationAssessmentResult.self, from: jsonData)
+
+        // Return the final result
+        return decodedResult
+    }
 
     
 }

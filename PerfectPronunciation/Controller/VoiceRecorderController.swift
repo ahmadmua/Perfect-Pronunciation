@@ -10,6 +10,13 @@ import Combine
 import AVFoundation
 import Speech
 
+enum RecordingMode {
+    case ready
+    case recording
+    case analyzing
+    case playing
+}
+
 // This class handles high-level functions of VoiceRecorderView and interacts with AudioController
 class VoiceRecorderController: NSObject, ObservableObject {
     

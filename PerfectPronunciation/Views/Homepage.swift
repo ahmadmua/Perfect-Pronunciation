@@ -209,7 +209,7 @@ struct Homepage: View {
                             .frame(width: 25, height: 25)
                             .foregroundColor(.black)
                         //get the current user currency
-                        Text("\(xpModel.userXp)")
+                        Text("\(xpModel.userLevel)")
                             .foregroundColor(.black)
                         
                         
@@ -269,6 +269,7 @@ struct Homepage: View {
             }
             
             xpModel.getUserExperience()
+            xpModel.getUserLevel()
             
             //TODO: on first launch / login the user currency does not update only when going back to the homepage does it update
             //get the users current currency total

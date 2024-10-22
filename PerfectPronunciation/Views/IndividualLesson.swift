@@ -136,6 +136,7 @@ struct IndividualLesson: View {
                                     Button("OK", role: .cancel) {
                                         currModel.updateUserCurrency()
                                         xpModel.updateUserExperience()
+//                                        xpModel.calculateUserLevel()
                                     }
                                         }//
                     .navigationDestination(isPresented: $showNext){

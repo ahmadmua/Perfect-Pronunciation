@@ -591,7 +591,7 @@ class DataHelper: ObservableObject {
     
 
     
-    func getMostRecentFourAccuracies(completion: @escaping ([Float]?) -> Void) {
+    func getMostRecentFourAccuracies(completion: @escaping ([Double]?) -> Void) {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
@@ -602,10 +602,10 @@ class DataHelper: ObservableObject {
                     print("Error getting documents: \(error.localizedDescription)")
                     completion(nil)
                 } else {
-                    let accuracies: [Float] = querySnapshot?.documents.compactMap { document in
+                    let accuracies: [Double] = querySnapshot?.documents.compactMap { document in
                         if let assessment = document["assessment"] as? [String: Any],
                            let nBest = assessment["NBest"] as? [[String: Any]],
-                           let accuracyScore = nBest.first?["PronScore"] as? Float {
+                           let accuracyScore = nBest.first?["PronScore"] as? Double {
                             return accuracyScore
                         } else {
                             print("Invalid structure or 'AccuracyScore' field in document.")
@@ -632,7 +632,7 @@ class DataHelper: ObservableObject {
 
 
     // Function to get accuracy at a specific index from the most recent 4 accuracies
-    func getAccuracyAtIndex(index: Int, completion: @escaping (Float?) -> Void) {
+    func getAccuracyAtIndex(index: Int, completion: @escaping (Double?) -> Void) {
         getMostRecentFourAccuracies { accuracies in
             guard let accuracies = accuracies, index >= 0 && index < accuracies.count else {
                 completion(nil)

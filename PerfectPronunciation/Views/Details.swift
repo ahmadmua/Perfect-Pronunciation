@@ -376,6 +376,9 @@ struct ItemsListView: View {
                     self.errorTypeCountsList.append(errorTypeCount)
                 }
                 
+                // Print the contents of the wordErrorData
+                print("Word Error Data: \(self.wordErrorData)")
+                
                 // Print or use the errorTypeCount dictionary as needed
                 print("Error Type Counts: \(self.errorTypeCountsList)")
             } else if let error = error {
@@ -383,6 +386,7 @@ struct ItemsListView: View {
             }
         }
     }
+
 
 }
 

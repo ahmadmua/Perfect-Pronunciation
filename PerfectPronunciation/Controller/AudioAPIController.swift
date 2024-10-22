@@ -31,29 +31,45 @@ class AudioAPIController: ObservableObject {
             // self.fetchAPIKey()
         }
 
-     // Helper function to handle common POST request logic
-     private func makePostRequest(url: URL, headers: [String: String]?, body: Data?) async throws -> Data {
-         var request = URLRequest(url: url)
-         request.httpMethod = "POST"
-         if let headers = headers {
-             for (key, value) in headers {
-                 request.setValue(value, forHTTPHeaderField: key)
-             }
-         }
-         request.httpBody = body
+    // Helper function to make a POST request and return the response data
+    // It sends the provided URL, headers, and body, and throws an error if any issues occur
+    private func makePostRequest(url: URL, headers: [String: String]?, body: Data?) async throws -> Data {
+        // Create a URLRequest with the given URL
+        var request = URLRequest(url: url)
 
-         let (data, response) = try await URLSession.shared.data(for: request)
+        // Set the HTTP method to "POST" since we're making a POST request
+        request.httpMethod = "POST"
 
-         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-             throw NetworkError.statusCode((response as? HTTPURLResponse)?.statusCode ?? 0)
-         }
+        // If headers are provided, loop through the dictionary and set each header field on the request
+        if let headers = headers {
+            for (key, value) in headers {
+                request.setValue(value, forHTTPHeaderField: key)
+            }
+        }
 
-         guard !data.isEmpty else {
-             throw NetworkError.emptyData
-         }
+        // Attach the body data to the request (e.g., audio data or JSON data)
+        request.httpBody = body
 
-         return data
-     }
+        // Use `URLSession.shared.data(for:)` to send the request asynchronously
+        // This suspends the function until the request completes and returns the response and data
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        // Check if the response is a valid HTTP response and has a status code of 200 (Success)
+        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+            // If not, throw an error with the status code or a default status code of 0
+            throw NetworkError.statusCode((response as? HTTPURLResponse)?.statusCode ?? 0)
+        }
+
+        // Ensure that the returned data is not empty
+        guard !data.isEmpty else {
+            // If no data was returned, throw a `NetworkError.emptyData` error
+            throw NetworkError.emptyData
+        }
+
+        // If everything is successful, return the data
+        return data
+    }
+
     
     
 //    func fetchAPIKey() {
@@ -79,7 +95,7 @@ class AudioAPIController: ObservableObject {
         // Specify the region and subscription key for Microsoft's Speech-to-Text service.
         // Replace "eastus" with your service's actual region and provide your own subscription key.
         let region = "eastus"
-        let subscriptionKey = "a39f6ff72e4c4ffb99deaa05019002fa" 
+        let subscriptionKey = "a39f6ff72e4c4ffb99deaa05019002fa"
 
         // Build the URL string for the API endpoint, specifying the language and output format.
         let urlString = "https://\(region).stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=en-US&format=detailed"
@@ -115,75 +131,54 @@ class AudioAPIController: ObservableObject {
     }
 
 
-    // Function to send audio for pronunciation assessment
-    func sendToSpeechAnalysisAPI(audioURL: URL, referenceText: String, completion: @escaping (Result<[String: Any], NetworkError>) -> Void) {
+    // Function to send audio for pronunciation assessment using Microsoft's API
+    // It sends the audio file and a reference text for comparison, and returns the JSON response
+    func sendToSpeechAnalysisAPI(audioURL: URL, referenceText: String) async throws -> [String: Any] {
+        // Define the region and subscription key for the API. Replace with actual values.
         let region = "eastus" // Replace with your region
         let subscriptionKey = "a39f6ff72e4c4ffb99deaa05019002fa" // Replace this with your key
         
+        // Create the URL for the API request
         let urlString = "https://\(region).stt.speech.microsoft.com/speech/recognition/conversation/cognitiveservices/v1?language=en-us"
         
+        // Validate the URL, throw an error if it's invalid
         guard let url = URL(string: urlString) else {
-            completion(.failure(.invalidURL))
-            return
+            throw NetworkError.invalidURL
         }
-        
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue("audio/wav; codecs=audio/pcm; samplerate=16000", forHTTPHeaderField: "Content-Type")
-        request.setValue(subscriptionKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key")
-        
-        // Create pronunciation assessment params
+
+        // Create a dictionary with pronunciation assessment parameters, such as reference text and grading system
         let pronAssessmentParams: [String: Any] = [
-            "ReferenceText": referenceText,
-            "GradingSystem": "HundredMark",
-            "Dimension": "Comprehensive"
+            "ReferenceText": referenceText,  // The text to compare against the audio
+            "GradingSystem": "HundredMark",  // Grading system used
+            "Dimension": "Comprehensive"     // Assessment dimension for comprehensive grading
         ]
-        
-        do {
-            let jsonParams = try JSONSerialization.data(withJSONObject: pronAssessmentParams, options: [])
-            let base64Params = jsonParams.base64EncodedString()
-            request.setValue(base64Params, forHTTPHeaderField: "Pronunciation-Assessment")
-            
-            let audioData = try Data(contentsOf: audioURL)
-            let task = URLSession.shared.uploadTask(with: request, from: audioData) { data, response, error in
-                if let error = error {
-                    print("Analysis Error: \(error)")
-                    completion(.failure(.invalidResponse))
-                    return
-                }
-                
-                guard let response = response as? HTTPURLResponse else {
-                    completion(.failure(.invalidResponse))
-                    return
-                }
-                
-                guard response.statusCode == 200 else {
-                    completion(.failure(.statusCode(response.statusCode)))
-                    return
-                }
-                
-                guard let data = data else {
-                    completion(.failure(.emptyData))
-                    return
-                }
-                
-                do {
-                    // Debugging variable to hold the JSON data
-                    if let jsonResult = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                        // Complete with success
-                        completion(.success(jsonResult))
-                    } else {
-                        completion(.failure(.encodingError))
-                    }
-                } catch {
-                    completion(.failure(.encodingError))
-                }
-            }
-            task.resume()
-        } catch {
-            completion(.failure(.fileReadError))
+
+        // Convert the parameters to JSON format
+        let jsonParams = try JSONSerialization.data(withJSONObject: pronAssessmentParams, options: [])
+        // Encode the JSON data to Base64, as required by the API for the "Pronunciation-Assessment" header
+        let base64Params = jsonParams.base64EncodedString()
+
+        // Create headers for the request, including the subscription key and content type
+        let headers = [
+            "Ocp-Apim-Subscription-Key": subscriptionKey,  // Subscription key for authentication
+            "Accept": "application/json",                  // We expect the response to be JSON
+            "Content-Type": "audio/wav; codecs=audio/pcm; samplerate=16000",  // Audio format details
+            "Pronunciation-Assessment": base64Params       // Base64 encoded pronunciation assessment parameters
+        ]
+
+        // Load the audio data from the provided URL (audio file on disk)
+        let audioData = try Data(contentsOf: audioURL)
+
+        // Make a POST request using the audio data, headers, and URL
+        let responseData = try await makePostRequest(url: url, headers: headers, body: audioData)
+
+        // Attempt to parse the response data into a JSON object
+        guard let jsonResult = try? JSONSerialization.jsonObject(with: responseData, options: []) as? [String: Any] else {
+            throw NetworkError.encodingError  // Throw an error if the JSON can't be parsed
         }
+
+        // Return the JSON result
+        return jsonResult
     }
     
     // Function to send a text to the Voice Gallery API and get audio in response

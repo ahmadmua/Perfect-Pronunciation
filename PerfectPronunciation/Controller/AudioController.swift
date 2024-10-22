@@ -14,32 +14,33 @@ import Speech
 class AudioController: NSObject, ObservableObject {
     
     // MARK: - Published Properties (for UI binding)
-    @Published var STTresult: String = ""
+       @Published var STTresult: String = ""  // Holds the real-time transcription result
+       
+       // Combine (for subscribers)
+       let objectWillChange = PassthroughSubject<AudioController, Never>()
+       
+       // Recording management
+       private var audioRecorder: AVAudioRecorder?
+       private let audioEngine = AVAudioEngine()
+       private var audioFile: AVAudioFile?
+       var recordBtnDisabled = true  // Indicates if the recording button should be disabled
+       
+       // Callback when recording is completed
+       var onRecordingCompleted: ((URL) -> Void)?
+       var recording = Recording(fileURL: URL(string: "about:blank")!, createdAt: Date())
+       
+       // A boolean flag to track the recording state
+       var isRecording = false {
+           didSet {
+               objectWillChange.send(self)
+           }
+       }
     
-    // MARK: - Combine (for subscribers)
-    let objectWillChange = PassthroughSubject<AudioController, Never>()
-      
-      
-    // MARK: - Recording Management
-    private var audioRecorder: AVAudioRecorder!
-    private let audioEngine = AVAudioEngine()
-    private var audioFile: AVAudioFile?
-    var recordBtnDisabled = true
-    var onRecordingCompleted: ((URL) -> Void)?  // Closure to notify when recording is completed
-    var recording = Recording(fileURL: URL(string: "about:blank")!, createdAt: Date())
-    // A boolean flag to track the recording state
-    var isRecording = false {
-        didSet {
-            // Notify subscribers that the object has changed
-            objectWillChange.send(self)
-        }
-    }
-  
-      
-      // MARK: - Speech Recognition Properties
-      private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-      private var recognitionTask: SFSpeechRecognitionTask?
-      private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
+    // Speech recognition management
+       private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+       private var recognitionTask: SFSpeechRecognitionTask?
+       private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
+       
     
     
     

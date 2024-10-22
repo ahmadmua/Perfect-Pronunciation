@@ -15,6 +15,7 @@ struct IndividualLesson: View {
     //controller var
     @ObservedObject var model = LessonController()
     @ObservedObject var audioController : AudioController
+    @ObservedObject var voiceRecorderController : VoiceRecorderController
     @ObservedObject var currModel = CurrencyController()
     //question variable
     @State var questionVar: String?
@@ -131,7 +132,7 @@ struct IndividualLesson: View {
                                     }
                                         }//
                     .navigationDestination(isPresented: $showNext){
-                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                        IndividualLesson(audioController: AudioController(), voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
@@ -178,10 +179,13 @@ struct IndividualLesson: View {
                 
                 UserDefaults.standard.synchronize()
                 
+                
             }
             
              
             self.showNext = false
+            
+            voiceRecorderController.submitTextToSpeechAI(testText: responseText)
          
         }
          

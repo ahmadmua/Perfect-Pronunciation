@@ -14,6 +14,8 @@ enum NetworkError: Error {
     case emptyData
     case encodingError
     case fileReadError
+    case requestFailed
+
 }
 
 // This class is responsible for handling the audio API operations.
@@ -65,7 +67,7 @@ class AudioAPIController: ObservableObject {
             let audioData = try Data(contentsOf: audioURL)
             let task = URLSession.shared.uploadTask(with: request, from: audioData) { data, response, error in
                 if let error = error {
-                    print("Error: \(error)")
+                    print("Transcribing Error: \(error)")
                     completion(.failure(.invalidResponse))
                     return
                 }
@@ -136,7 +138,7 @@ class AudioAPIController: ObservableObject {
             let audioData = try Data(contentsOf: audioURL)
             let task = URLSession.shared.uploadTask(with: request, from: audioData) { data, response, error in
                 if let error = error {
-                    print("Error: \(error)")
+                    print("Analysis Error: \(error)")
                     completion(.failure(.invalidResponse))
                     return
                 }
@@ -174,12 +176,13 @@ class AudioAPIController: ObservableObject {
         }
     }
     
-    //Still Need to Implement
+    // Function to send a text to the Voice Gallery API and get audio in response
     func sendTextToVoiceGallery(testText: String, completion: @escaping (Result<Data, NetworkError>) -> Void) {
         let subscriptionKey = "a39f6ff72e4c4ffb99deaa05019002fa"
         let region = "eastus"
         let urlString = "https://\(region).tts.speech.microsoft.com/cognitiveservices/v1"
         
+        // Check if the URL is valid
         guard let url = URL(string: urlString) else {
             completion(.failure(.invalidURL))
             return
@@ -188,19 +191,21 @@ class AudioAPIController: ObservableObject {
         // Set up the request
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
+        
+        // Headers required by the API
         request.setValue("application/ssml+xml", forHTTPHeaderField: "Content-Type")
         request.setValue("audio-16khz-32kbitrate-mono-mp3", forHTTPHeaderField: "X-Microsoft-OutputFormat")
-        request.setValue("Bearer \(subscriptionKey)", forHTTPHeaderField: "Authorization")
+        request.setValue(subscriptionKey, forHTTPHeaderField: "Ocp-Apim-Subscription-Key") // Correct header for API key
         request.setValue("YOUR-USER-AGENT", forHTTPHeaderField: "User-Agent")
         
         // Set the body with the SSML format for input text
-            let ssml = """
-            <speak version='1.0' xml:lang='en-US'>
-                <voice xml:lang='en-US' xml:gender='Female' name='en-US-JennyNeural'>
-                    \(testText)
-                </voice>
-            </speak>
-            """
+        let ssml = """
+        <speak version='1.0' xml:lang='en-US'>
+            <voice xml:lang='en-US' xml:gender='Female' name='en-US-JennyNeural'>
+                \(testText)
+            </voice>
+        </speak>
+        """
         
         request.httpBody = ssml.data(using: .utf8)
         
@@ -208,8 +213,8 @@ class AudioAPIController: ObservableObject {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
                 let errorDescription = error?.localizedDescription ?? "Unknown error"
-                print("Error: \(errorDescription)")
-                completion(.failure(.encodingError)) // Return an appropriate NetworkError here
+                print("Voice Gallery Error: \(errorDescription)")
+                completion(.failure(.requestFailed)) // Return a more appropriate NetworkError here
                 return
             }
             
@@ -223,9 +228,8 @@ class AudioAPIController: ObservableObject {
         }
         
         task.resume() // Start the request
+    }
 
-           
-     }
     
     
     // Function to call transcribeAudioFile func & sendToSpeechAnalysis func
@@ -272,6 +276,8 @@ class AudioAPIController: ObservableObject {
     
 }
     
+// Define your NetworkError enum
+
    
 // Extension to simplify appending strings to Data objects.
 extension Data {

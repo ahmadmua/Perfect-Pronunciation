@@ -62,7 +62,7 @@ struct LessonsPage: View {
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $conversation){
-                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                            IndividualLesson(audioController: AudioController(), voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
@@ -94,7 +94,7 @@ struct LessonsPage: View {
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $numbers){
-                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                            IndividualLesson(audioController: AudioController(), voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
@@ -126,7 +126,7 @@ struct LessonsPage: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $food1){
-                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                        IndividualLesson(audioController: AudioController(), voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
@@ -144,7 +144,7 @@ struct LessonsPage: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $food2){
-                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                        IndividualLesson(audioController: AudioController(), voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
@@ -175,7 +175,7 @@ struct LessonsPage: View {
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $direction){
-                            IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                            IndividualLesson(audioController: AudioController(), voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)

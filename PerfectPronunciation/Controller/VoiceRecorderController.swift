@@ -88,16 +88,15 @@ class VoiceRecorderController: NSObject, ObservableObject {
 
     // Function to submit text to AI Voice gallery and get an audio file back to play
     func submitTextToSpeechAI(testText: String) {
-        audioAPIController.sendTextToVoiceGallery(testText: testText) { result in
+        audioAPIController.sendTextToVoiceGallery(testText: testText ) { result in
             switch result {
             case .success(let audioData):
-                DispatchQueue.main.async {
-                    print("Audio clip successfully obtained and stored.")
-                    // You can now trigger audio playback here if needed
-                }
+                print("Received AI Gallery data of size: \(audioData.count) bytes")
+                // You can now save this data as an MP3 file or play it directly
             case .failure(let error):
-                print("Failed to get audio clip: \(error)")
+                print("Error: \(error.localizedDescription)")
             }
         }
+
     }
 }

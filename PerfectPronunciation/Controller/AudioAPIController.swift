@@ -15,19 +15,46 @@ enum NetworkError: Error {
     case encodingError
     case fileReadError
     case requestFailed
-
 }
 
 // This class is responsible for handling the audio API operations.
 class AudioAPIController: ObservableObject {
-//    private var remoteConfig: RemoteConfig
-//    private var apiKey: String = ""
-    static let shared = AudioAPIController()
     
-    init() {
-        //self.remoteConfig = RemoteConfig.remoteConfig()
-        // self.fetchAPIKey()
-    }
+    
+    static let shared = AudioAPIController()
+     
+    //    private var remoteConfig: RemoteConfig
+    //    private var apiKey: String = ""
+        
+        init() {
+            //self.remoteConfig = RemoteConfig.remoteConfig()
+            // self.fetchAPIKey()
+        }
+
+     // Helper function to handle common POST request logic
+     private func makePostRequest(url: URL, headers: [String: String]?, body: Data?) async throws -> Data {
+         var request = URLRequest(url: url)
+         request.httpMethod = "POST"
+         if let headers = headers {
+             for (key, value) in headers {
+                 request.setValue(value, forHTTPHeaderField: key)
+             }
+         }
+         request.httpBody = body
+
+         let (data, response) = try await URLSession.shared.data(for: request)
+
+         guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+             throw NetworkError.statusCode((response as? HTTPURLResponse)?.statusCode ?? 0)
+         }
+
+         guard !data.isEmpty else {
+             throw NetworkError.emptyData
+         }
+
+         return data
+     }
+    
     
 //    func fetchAPIKey() {
 //        let settings = RemoteConfigSettings()

@@ -159,11 +159,11 @@ class ExperienceController: ObservableObject {
                         }
                     }else{
                         print("Document exists,")
-                        self.userLevel = 0
+                        self.userCalculatedLevel = 0
                     }
                 }else{
                     print("Document does not exist")
-                    self.userLevel = 0
+                    self.userCalculatedLevel = 0
                 }
             }
         }

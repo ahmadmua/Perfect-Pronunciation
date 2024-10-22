@@ -144,7 +144,7 @@ struct IndividualLesson: View {
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
-                        Details()
+                        ExperienceBarPage(xpController: xpModel)
                             .navigationBarBackButtonHidden(true)
                     }
                     .foregroundStyle(Color.green)

@@ -92,7 +92,7 @@ struct WeeklyGamePage: View {
             
             //list displaying the leaderboard
             List(leaderboardModel.leaderboardFull){content in
-                Text("\(leaderboardModel.getFlagForCountry(fullCountryName: content.country)) \(content.userName) \n \(content.weeklyChallengeComplete)")
+                Text("\(leaderboardModel.getFlagForCountry(fullCountryName: content.country)) \(content.userName) \n \(String(format: "%.0f", content.weeklyChallengeComplete))%")
                 
                 
             }//list

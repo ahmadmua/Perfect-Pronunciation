@@ -155,83 +155,23 @@ class AudioController: NSObject, ObservableObject {
         recognitionRequest?.endAudio()
         recognitionTask?.cancel()
         audioRecorder?.stop()
-        btnTitle = "Start Recording"
-        // Once audio stops, fetch the most recent recording
-        fetchRecording()
-    }
-    
-
-    // Function to submit the last recorded audio for analysis
-    func submitTestAudio(testText: String, lessonType: String) {
-        // Unwrap the optional recording URL
-        guard let audioURL = recording.fileURL else {
-            print("Error: No valid file URL for the recording.")
-            return
-        }
-        
-        // Ensure the audio file URL is valid
-        guard FileManager.default.fileExists(atPath: audioURL.path) else {
-            print("Error: File does not exist at \(audioURL.path)")
-            return
-        }
         
         if let fileURL = audioRecorder?.url {
             onRecordingCompleted?(fileURL)  // Notify VoiceRecorderController when recording is completed
         }
     }
+    
 }
 
 
 
     
-    
-//    func submitAudioWeekly() {
-//        // Ensure that we have a valid file URL
-//        guard let audioURL = recording.fileURL else {
-//            print("Error: Invalid file URL")
-//            return
-//        }
-//
-//        do {
-//            // Read audio data from the file
-//            let audioData = try Data(contentsOf: audioURL)
-//            let audioAPIController = AudioAPIController()
-//            // Submit the audio data to the API for analysis
-//            audioAPIController.uploadUserAudio(audioData: audioData) { result in
-//                switch result {
-//                case .success(let analysis):
-//                    DispatchQueue.main.async {
-//                        // Process successful analysis result
-//                        print("Audio Analysis: \(analysis)")
-//                        self.analysisAccuracyScore = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
-//                        //update user completion
-//                        DataHelper().updateWeeklyCompletion(score: self.analysisAccuracyScore)
-//                        //----------------------------------------
-//
-////                        self.globalAnalysisResult = Float(analysis.pronunciationScorePercentage.pronunciationScorePercentage)
-////                        DataHelper().addItemToUserDataCollection(itemName: "", dayOfWeek: self.returnDate(), accuracy: self.globalAnalysisResult!)
-////
-//                        //----------------------------------------
-//
-//                    }
-//                case .failure(let error):
-//                    DispatchQueue.main.async {
-//                        // Handle any errors during analysis
-//                        print("Error: \(error)")
-//                    }
-//                }
-//            }
-//        } catch {
-//            // Handle errors during audio data reading
-//            print("Error: Unable to load audio file data - \(error)")
-//        }
-//    }
+
 
 
 
 
     
-
 
 
 

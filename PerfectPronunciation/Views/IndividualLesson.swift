@@ -14,7 +14,6 @@ import Combine
 struct IndividualLesson: View {
     //controller var
     @ObservedObject var model = LessonController()
-    @ObservedObject var audioController : AudioController
     @ObservedObject var voiceRecorderController : VoiceRecorderController
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
@@ -90,7 +89,7 @@ struct IndividualLesson: View {
                     .foregroundStyle(Color.red)
                     .buttonStyle(.borderless)
                     .sheet(isPresented: $isPopupPresented) {
-                        VoiceRecorder(voiceRecorderController: VoiceRecorderController(), testText: responseText, lessonType: lessonType,isPopupPresented: $isPopupPresented).environmentObject(audioController);
+                        VoiceRecorder(voiceRecorderController: VoiceRecorderController(), testText: responseText, lessonType: lessonType,isPopupPresented: $isPopupPresented).environmentObject(voiceRecorderController);
                     }
                     
                     Button(action: {
@@ -141,7 +140,7 @@ struct IndividualLesson: View {
                                     }
                                         }//
                     .navigationDestination(isPresented: $showNext){
-                        IndividualLesson(audioController: AudioController(), voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                        IndividualLesson(voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){

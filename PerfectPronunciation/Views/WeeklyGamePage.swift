@@ -20,6 +20,7 @@ struct WeeklyGamePage: View {
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
+    @ObservedObject var voiceRecorderController = VoiceRecorderController()
     
     @State private var showWeeklyLesson = false
     //alert
@@ -46,7 +47,8 @@ struct WeeklyGamePage: View {
                 .foregroundStyle(Color.white)
                 .clipShape(Capsule())
                 .navigationDestination(isPresented: $showWeeklyLesson){
-                    WeeklyLesson(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController(), audioAnalysisData: AudioAPIController())
+                    //TEST
+                    WeeklyLesson(audioPlayer: AudioPlayBackController(), audioAnalysisData: AudioAPIController(), voiceRecorderController: VoiceRecorderController())
                         .navigationBarBackButtonHidden(true)
                 }
                 

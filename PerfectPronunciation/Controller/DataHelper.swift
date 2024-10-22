@@ -452,7 +452,7 @@ class DataHelper: ObservableObject {
 
     
     //update the userData to reflect the users score for the weekly challenge
-    func updateWeeklyCompletion(score: Float){
+    func updateWeeklyCompletion(score: Double){
         
         if let user = Auth.auth().currentUser {
             let userID = user.uid
@@ -462,7 +462,7 @@ class DataHelper: ObservableObject {
             userDocRef.getDocument { document, error in
                 if let document = document, document.exists{
                     // Access from UserData in firebase
-                    if var item = document.data()?["WeeklyChallengeComplete"] as? Float {
+                    if var item = document.data()?["WeeklyChallengeComplete"] as? Double {
                         
 
                             print("weekly complete UPDATE CONTROLLER UPDATE : \(item)")
@@ -496,7 +496,7 @@ class DataHelper: ObservableObject {
         
     }
     
-    func getWeeklyAccuracy(completion: @escaping (Float?) -> Void) {
+    func getWeeklyAccuracy(completion: @escaping (Double?) -> Void) {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
@@ -518,7 +518,7 @@ class DataHelper: ObservableObject {
                     if let lessonType = document["lessonType"] as? String, lessonType == "WeeklyChallenge",
                        let assessment = document["assessment"] as? [String: Any],
                        let nBest = assessment["NBest"] as? [[String: Any]],
-                       let accuracyScore = nBest.first?["PronScore"] as? Float {
+                       let accuracyScore = nBest.first?["PronScore"] as? Double {
                         // Call the completion handler with the accuracy score from the most recent document
                         completion(accuracyScore)
                     } else {

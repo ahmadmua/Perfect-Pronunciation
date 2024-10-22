@@ -77,6 +77,13 @@ class VoiceRecorderController: NSObject, ObservableObject {
                 DispatchQueue.main.async {
                     print("Pronunciation Assessment Result: \(resultJson)")
                     self.dataHelper.uploadUserLessonData(data: resultJson)
+                    self.dataHelper.fetchAndAddDayAndTimestampToAssessment { success in
+                     if success {
+                     print("DayOfWeek and Timestamp were successfully added/updated.")
+                      } else {
+                       print("Failed to update DayOfWeek and Timestamp.")
+                                              }
+                                          }
                 }
             case .failure(let error):
                 DispatchQueue.main.async {

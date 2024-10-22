@@ -24,11 +24,12 @@ struct Homepage: View {
     @State private var showStore = false
     @State private var showHome = false
     
-   
+    
     
     @State var showingAlert : Bool = false
     
     @ObservedObject var currModel = CurrencyController()
+    @ObservedObject var xpModel = ExperienceController()
     @ObservedObject var model = LessonController()
     
     @EnvironmentObject var fireDBHelper: DataHelper
@@ -36,214 +37,226 @@ struct Homepage: View {
     
     
     var body: some View {
-       //NavigationStack { // Use NavigationView
-            ScrollView(.vertical, showsIndicators: false) {
-                ZStack{
-                    
-                    
-                    
-                    VStack(spacing: 20) {
-                        Text("Hello, \(userEmail)")
-                            .font(.headline)
-                            .bold()
-                        ZStack{
-
+        //NavigationStack { // Use NavigationView
+        ScrollView(.vertical, showsIndicators: false) {
+            ZStack{
+                
+                
+                
+                VStack(spacing: 20) {
+                    Text("Hello, \(userEmail)")
+                        .font(.headline)
+                        .bold()
+                    ZStack{
+                        
+                        
+                        VStack(alignment: .leading) {
                             
-                            VStack(alignment: .leading) {
-
-                                        
-                                        Grid{
-                                            GridRow{
-                                                HStack{
-                                                    Button(action: {
-                                                        self.showLesson.toggle()
-                                                    }){
-                                                        Text("Lessons")
-                                                            .font(.headline)
-                                                            .padding()
-                                                           .frame(width: 185, height: 75)
-                                                           .background(Color("CustYell"))
-                                                           .foregroundStyle(Color.black)
-                                                           .cornerRadius(10)
-                                                           .shadow(radius: 5)
-                                                        
-                                                    }
-                                                    .navigationDestination(isPresented: $showLesson){
-                                                        LessonsPage(showingAlert: $showingAlert)
-                                                            .navigationBarBackButtonHidden(true)
-                                                    }
-                                                    
-                                                    Button(action: {
-
-                                                        self.showWeekly.toggle()
-                                                    }){
-                                                        Text("Weekly")
-                                                            .font(.headline)
-                                                            .padding()
-                                                           .frame(width: 185, height: 75)
-                                                           .background(Color("CustYell"))
-                                                           .cornerRadius(10)
-                                                           .foregroundStyle(Color.black)
-                                                           .shadow(radius: 5)
-                                                        
-                                                    }
-                                                    .navigationDestination(isPresented: $showWeekly){
-                                                        WeeklyGamePage()
-//                                                        TestFirebaseView()
-                                                            .navigationBarBackButtonHidden(true)
-                                                    }
-                                                }//hstack
-                                            }//grid row
+                            
+                            Grid{
+                                GridRow{
+                                    HStack{
+                                        Button(action: {
+                                            self.showLesson.toggle()
+                                        }){
+                                            Text("Lessons")
+                                                .font(.headline)
+                                                .padding()
+                                                .frame(width: 185, height: 75)
+                                                .background(Color("CustYell"))
+                                                .foregroundStyle(Color.black)
+                                                .cornerRadius(10)
+                                                .shadow(radius: 5)
                                             
-                                            GridRow{
-                                                HStack{
-                                                    Button(action: {
-
-                                                        self.showAchievement.toggle()
-                                                    }){
-                                                        Text("Achievments")
-                                                            .font(.headline)
-                                                            .padding()
-                                                           .frame(width: 185, height: 75)
-                                                           .background(Color("CustYell"))
-                                                           .cornerRadius(10)
-                                                           .foregroundStyle(Color.black)
-                                                           .shadow(radius: 5)
-                                                        
-                                                    }
-                                                    .navigationDestination(isPresented: $showAchievement){
-                                                        AchievementPage()
-                                                            .navigationBarBackButtonHidden(true)
-                                                    }
-                                                    
-                                                    Button(action: {
-
-                                                        self.showStore.toggle()
-                                                    }){
-                                                        Text("Store")
-                                                            .font(.headline)
-                                                            .padding()
-                                                           .frame(width: 185, height: 75)
-                                                           .background(Color("CustYell"))
-                                                           .cornerRadius(10)
-                                                           .foregroundStyle(Color.black)
-                                                           .shadow(radius: 5)
-                                                    }
-                                                    .navigationDestination(isPresented: $showStore){
-                                                        StorePage()
-                                                            .navigationBarBackButtonHidden(true)
-                                                    }
-                                                }
-                                            }
-                                        }//grid
-                                        
-                                        
-                                        
-                                        
-//                                    }
-//                                    .frame(maxWidth: .infinity)
-//                                }
-                            }
-                        }
-                        
-                        
-                        
-                        VStack(alignment: .leading){
-                            
-                            Text("Goals / Stats")
-                                .font(.largeTitle)
-                                .bold()
-                            
-                            ZStack{
-
-                                VStack(alignment: .leading) {
-                                
-                                    
-                                    HStack(spacing: 20) {
-                                        
-                                        
+                                        }
+                                        .navigationDestination(isPresented: $showLesson){
+                                            LessonsPage(showingAlert: $showingAlert)
+                                                .navigationBarBackButtonHidden(true)
+                                        }
                                         
                                         Button(action: {
-                                            //                                            self.selection = 5
-                                            self.showStats.toggle()
+                                            
+                                            self.showWeekly.toggle()
                                         }){
-                                            
-                                            
-                                            BarChart(
-                                                data: viewModel.word.data,
-                                                range: viewModel.accuracyRange
-                                            )
+                                            Text("Weekly")
+                                                .font(.headline)
+                                                .padding()
+                                                .frame(width: 185, height: 75)
+                                                .background(Color("CustYell"))
+                                                .cornerRadius(10)
+                                                .foregroundStyle(Color.black)
+                                                .shadow(radius: 5)
                                             
                                         }
-                                        .navigationDestination(isPresented: $showStats){
-                                            StatData()
-                                            //                                                .navigationBarBackButtonHidden(true)
+                                        .navigationDestination(isPresented: $showWeekly){
+                                            WeeklyGamePage()
+                                            //                                                        TestFirebaseView()
+                                                .navigationBarBackButtonHidden(true)
+                                        }
+                                    }//hstack
+                                }//grid row
+                                
+                                GridRow{
+                                    HStack{
+                                        Button(action: {
+                                            
+                                            self.showAchievement.toggle()
+                                        }){
+                                            Text("Achievments")
+                                                .font(.headline)
+                                                .padding()
+                                                .frame(width: 185, height: 75)
+                                                .background(Color("CustYell"))
+                                                .cornerRadius(10)
+                                                .foregroundStyle(Color.black)
+                                                .shadow(radius: 5)
+                                            
+                                        }
+                                        .navigationDestination(isPresented: $showAchievement){
+                                            AchievementPage()
+                                                .navigationBarBackButtonHidden(true)
                                         }
                                         
+                                        Button(action: {
+                                            
+                                            self.showStore.toggle()
+                                        }){
+                                            Text("Store")
+                                                .font(.headline)
+                                                .padding()
+                                                .frame(width: 185, height: 75)
+                                                .background(Color("CustYell"))
+                                                .cornerRadius(10)
+                                                .foregroundStyle(Color.black)
+                                                .shadow(radius: 5)
+                                        }
+                                        .navigationDestination(isPresented: $showStore){
+                                            StorePage()
+                                                .navigationBarBackButtonHidden(true)
+                                        }
                                     }
-                                    .frame(maxWidth: .infinity)
+                                }
+                            }//grid
+                            
+                            
+                            
+                            
+                            //                                    }
+                            //                                    .frame(maxWidth: .infinity)
+                            //                                }
+                        }
+                    }
+                    
+                    
+                    
+                    VStack(alignment: .leading){
+                        
+                        Text("Goals / Stats")
+                            .font(.largeTitle)
+                            .bold()
+                        
+                        ZStack{
+                            
+                            VStack(alignment: .leading) {
+                                
+                                
+                                HStack(spacing: 20) {
+                                    
+                                    
+                                    
+                                    Button(action: {
+                                        //                                            self.selection = 5
+                                        self.showStats.toggle()
+                                    }){
+                                        
+                                        
+                                        BarChart(
+                                            data: viewModel.word.data,
+                                            range: viewModel.accuracyRange
+                                        )
+                                        
+                                    }
+                                    .navigationDestination(isPresented: $showStats){
+                                        StatData()
+                                        //                                                .navigationBarBackButtonHidden(true)
+                                    }
                                     
                                 }
+                                .frame(maxWidth: .infinity)
+                                
                             }
                         }
-                        
-                        
                     }
-                    .padding(.top, 20)
-                    .padding(.horizontal, 20)
-                    .navigationBarItems(leading:
-                                            Image("Alpaca")
-                        .resizable()
-                        .padding(4)
-                        .frame(width: 45, height: 40)
-                        .clipShape(Circle())
-                        .background(Circle().fill(Color.yellow))
-                        .overlay(Circle().stroke(Color.black, lineWidth: 2)),
-                                        trailing:
-                                            HStack(spacing: 20){
-                        HStack{
-                            Image(systemName: "music.mic.circle")
-                                .resizable()
-                                .frame(width: 25, height: 25)
-                                .foregroundColor(.black)
-                            //get the current user currency
-                    Text("\(currModel.userCurr)")
-                                .foregroundColor(.black)
-                        }
-                        .padding(.horizontal, 25)
-                        .padding(.vertical, 6)
-                        .background(RoundedRectangle(cornerRadius: 30).fill(Color.yellow))
-                        .overlay(RoundedRectangle(cornerRadius: 30).stroke(Color.black, lineWidth: 2))
-                        
-                        Button(action: {
-
-                            self.showSettings.toggle()
-                        }){
-                
-                            Image(systemName: "person.circle")
-                                .resizable()
-                                .frame(width: 40, height: 40)
-                                .foregroundColor(.black)
-                                .background(Circle().fill(Color.yellow))
-                        }
-                        .navigationDestination(isPresented: $showSettings){
-                            Settings()
-//                                .navigationBarBackButtonHidden(true)
-                        }
-                    }
-
-                    )
                     
-                    Spacer()
+                    
                 }
+                .padding(.top, 20)
+                .padding(.horizontal, 20)
+                .navigationBarItems(leading:
+                                        Image("Alpaca")
+                    .resizable()
+                    .padding(4)
+                    .frame(width: 45, height: 40)
+                    .clipShape(Circle())
+                    .background(Circle().fill(Color.yellow))
+                    .overlay(Circle().stroke(Color.black, lineWidth: 2)),
+                                    trailing:
+                                        HStack(spacing: 20){
+                    HStack{
+                        
+                        Image(systemName: "trophy.circle")
+                            .resizable()
+                            .frame(width: 25, height: 25)
+                            .foregroundColor(.black)
+                        //get the current user currency
+                        Text("\(xpModel.userLevel)")
+                            .foregroundColor(.black)
+                        
+                        
+                        Image(systemName: "music.mic.circle")
+                            .resizable()
+                            .frame(width: 25, height: 25)
+                            .foregroundColor(.black)
+                        //get the current user currency
+                        Text("\(currModel.userCurr)")
+                            .foregroundColor(.black)
+                        
+                        
+                    }
+                    .padding(.horizontal, 25)
+                    .padding(.vertical, 6)
+                    .background(RoundedRectangle(cornerRadius: 30).fill(Color.yellow))
+                    .overlay(RoundedRectangle(cornerRadius: 30).stroke(Color.black, lineWidth: 2))
+                    
+                    Button(action: {
+                        
+                        self.showSettings.toggle()
+                    }){
+                        
+                        Image(systemName: "person.circle")
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(.black)
+                            .background(Circle().fill(Color.yellow))
+                    }
+                    .navigationDestination(isPresented: $showSettings){
+                        Settings()
+                        //                                .navigationBarBackButtonHidden(true)
+                    }
+                }
+                                    
+                )
+                
+                Spacer()
             }
+        }
         
-            .onAppear {
-                viewModel.objectWillChange.send()
-
+        .onAppear {
+            viewModel.objectWillChange.send()
             
-            }
             
+        }
+        
         //}
         .background(Color("Background"))
         .navigationBarBackButtonHidden(true)
@@ -255,6 +268,9 @@ struct Homepage: View {
                 }
             }
             
+            xpModel.getUserExperience()
+            xpModel.getUserLevel()
+            
             //TODO: on first launch / login the user currency does not update only when going back to the homepage does it update
             //get the users current currency total
             model.findUserDifficulty{
@@ -262,7 +278,7 @@ struct Homepage: View {
                 currModel.getUserCurrency()
             }
             
-        
+            
         }
         
         Spacer()

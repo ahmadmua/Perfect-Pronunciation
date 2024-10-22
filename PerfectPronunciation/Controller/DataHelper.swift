@@ -427,10 +427,10 @@ class DataHelper: ObservableObject {
                             // Find the accuracy of the word
                             if let assessment = document["assessment"] as? [String: Any],
                                let nBest = assessment["NBest"] as? [[String: Any]],
-                               let accuracy = nBest.first?["AccuracyScore"] as? Float {
+                               let accuracy = nBest.first?["PronScore"] as? Double {
                                 
                                 // If the accuracy of the word is equal or below 100
-                                if accuracy < 60.0 {
+                                if accuracy < 80.0 {
                                     // Add the name of the word to the list
                                     if let name = nBest.first?["Display"] as? String {
                                         self.wordList.append(name)
@@ -518,7 +518,7 @@ class DataHelper: ObservableObject {
                     if let lessonType = document["lessonType"] as? String, lessonType == "WeeklyChallenge",
                        let assessment = document["assessment"] as? [String: Any],
                        let nBest = assessment["NBest"] as? [[String: Any]],
-                       let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                       let accuracyScore = nBest.first?["PronScore"] as? Float {
                         // Call the completion handler with the accuracy score from the most recent document
                         completion(accuracyScore)
                     } else {
@@ -577,7 +577,7 @@ class DataHelper: ObservableObject {
 
                       if let assessment = selectedDocument["assessment"] as? [String: Any],
                          let nBest = assessment["NBest"] as? [[String: Any]],
-                         let accuracyScore = nBest.first?["AccuracyScore"] as? Float {
+                         let accuracyScore = nBest.first?["PronScore"] as? Float {
                           completion(accuracyScore)
                       } else {
                           print("Selected document does not have 'AccuracyScore' or the structure is not correct.")

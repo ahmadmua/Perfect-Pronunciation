@@ -17,6 +17,7 @@ struct IndividualLesson: View {
     @ObservedObject var audioController : AudioController
     @ObservedObject var voiceRecorderController : VoiceRecorderController
     @ObservedObject var currModel = CurrencyController()
+    @ObservedObject var xpModel = ExperienceController()
     //question variable
     @State var questionVar: String?
     //navigation vars
@@ -132,9 +133,11 @@ struct IndividualLesson: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
 
-                    .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
+                    .alert("Congrats, You just earned xp and currency!", isPresented: $showingAlert) {
                                     Button("OK", role: .cancel) {
                                         currModel.updateUserCurrency()
+                                        xpModel.updateUserExperience()
+//                                        xpModel.calculateUserLevel()
                                     }
                                         }//
                     .navigationDestination(isPresented: $showNext){

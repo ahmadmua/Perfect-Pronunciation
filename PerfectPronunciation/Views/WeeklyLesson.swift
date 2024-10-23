@@ -139,7 +139,7 @@ struct WeeklyLesson: View {
                                     print("An error occurred while starting the recording: \(error)")
                                 }
                             case .recording:
-                                voiceRecorderController.stopRecording()
+//                                voiceRecorderController.stopRecording()
                                 
                                 recordingState = .playing
                             

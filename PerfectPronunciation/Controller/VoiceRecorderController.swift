@@ -15,6 +15,7 @@ enum RecordingMode {
     case recording
     case analyzing
     case playing
+    case paused
     
     // Computed property to convert enum cases to String
         var description: String {
@@ -26,7 +27,9 @@ enum RecordingMode {
             case .analyzing:
                 return "Analyzing..."
             case .playing:
-                return "Playing Audio"
+                return "Audio Playing"
+            case .paused:
+                return "Audio Paused"
             }
         }
 }
@@ -49,12 +52,14 @@ class VoiceRecorderController: NSObject, ObservableObject {
     // Dependencies: Audio and API controllers
     var audioController: AudioController
     var audioAPIController: AudioAPIController
+    var audioPlaybackController: AudioPlayBackController
     var dataHelper = DataHelper()            // Helper to manage data storage with firebase
     
     // Initialize with dependencies to allow for easier testing
-    init(audioController: AudioController, audioAPIController: AudioAPIController) {
+    init(audioController: AudioController, audioAPIController: AudioAPIController, audioPlaybackController: AudioPlayBackController) {
         self.audioController = audioController
         self.audioAPIController = audioAPIController
+        self.audioPlaybackController = audioPlaybackController
         super.init()
         setupAudioController()
     }
@@ -166,6 +171,11 @@ class VoiceRecorderController: NSObject, ObservableObject {
             print("Error: \(error.localizedDescription)")
         }
     }
+    
+    
+    func playAudio(){}
+    
+    func pauseAudio(){}
 
     
     

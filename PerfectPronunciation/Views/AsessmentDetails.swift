@@ -26,7 +26,7 @@ struct AssessmentView: View {
         VStack(alignment: .leading, spacing: 16) {
             // Sentence Section - Full Width
             VStack(alignment: .leading) {
-                Text(buildAttributedText())
+                Text(buildAttributedText(display: display, wordErrorData: wordErrorData))
                     .padding()
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(10)
@@ -98,13 +98,11 @@ struct AssessmentView: View {
     
 
     // Function to build the highlighted text
-    func buildAttributedText() -> AttributedString {
-        
+    func buildAttributedText(display: String, wordErrorData: [(word: String, errorType: String)]) -> AttributedString {
         var attributedText = AttributedString(display)
 
         for wordError in wordErrorData {
             if let range = attributedText.range(of: wordError.word) {
-               
                 print("Processing word: '\(wordError.word)' with error type: '\(wordError.errorType)'")
 
                 // Check for a valid errorType

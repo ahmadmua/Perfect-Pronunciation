@@ -262,7 +262,7 @@ struct ItemsListView: View {
     @State private var pronScores: [Double] = []
     @State private var display: [String] = []
     @State private var errorTypeCountsList: [[String: Int]] = [] // List of errorTypeCount dictionaries
-    @State private var wordErrorData: [(word: String, errorType: String)] = []
+    @State private var wordErrorDataList: [[(word: String, errorType: String)]] = [] // List of error data for each assessment
 
     var body: some View {
         NavigationView {
@@ -277,7 +277,7 @@ struct ItemsListView: View {
                             pronScores: pronScores.indices.contains(index) ? pronScores[index] : 0.0,
                             display: display.indices.contains(index) ? display[index] : "",
                             errorTypeCounts: errorTypeCountsList.indices.contains(index) ? errorTypeCountsList[index] : [:],
-                            wordErrorData: wordErrorData // Pass the errorTypeCounts dictionary
+                            wordErrorData: wordErrorDataList.indices.contains(index) ? wordErrorDataList[index] : [] // Pass the specific error data for this assessment
                         )
                 ) {
                     Text(items[index])
@@ -323,11 +323,12 @@ struct ItemsListView: View {
                 self.pronScores.removeAll()
                 self.display.removeAll()
                 self.errorTypeCountsList.removeAll()
-                self.wordErrorData.removeAll()
+                self.wordErrorDataList.removeAll() // Clear data
                 
                 // Loop through documents
                 for document in documents {
                     var errorTypeCount: [String: Int] = [:] // Dictionary to store counts of error types
+                    var wordErrorData: [(word: String, errorType: String)] = [] // Temporary array for word errors
                     
                     // Check for the assessment dictionary
                     if let assessment = document.get("assessment") as? [String: Any],
@@ -372,12 +373,13 @@ struct ItemsListView: View {
                         }
                     }
                     
-                    // Append the errorTypeCount for this document
+                    // Append the errorTypeCount and wordErrorData for this document
                     self.errorTypeCountsList.append(errorTypeCount)
+                    self.wordErrorDataList.append(wordErrorData) // Store the error data for this assessment
                 }
                 
                 // Print the contents of the wordErrorData
-                print("Word Error Data: \(self.wordErrorData)")
+                print("Word Error Data: \(self.wordErrorDataList)")
                 
                 // Print or use the errorTypeCount dictionary as needed
                 print("Error Type Counts: \(self.errorTypeCountsList)")
@@ -386,9 +388,8 @@ struct ItemsListView: View {
             }
         }
     }
-
-
 }
+
 
 
 

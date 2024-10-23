@@ -89,7 +89,7 @@ struct IndividualLesson: View {
                     .foregroundStyle(Color.red)
                     .buttonStyle(.borderless)
                     .sheet(isPresented: $isPopupPresented) {
-                        VoiceRecorder(voiceRecorderController: VoiceRecorderController(), testText: responseText, lessonType: lessonType,isPopupPresented: $isPopupPresented).environmentObject(voiceRecorderController);
+                        VoiceRecorder(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), testText: responseText, lessonType: lessonType,isPopupPresented: $isPopupPresented).environmentObject(voiceRecorderController);
                     }
                     
                     Button(action: {
@@ -140,7 +140,7 @@ struct IndividualLesson: View {
                                     }
                                         }//
                     .navigationDestination(isPresented: $showNext){
-                        IndividualLesson(voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                        IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
@@ -191,7 +191,9 @@ struct IndividualLesson: View {
              
             self.showNext = false
             
-            voiceRecorderController.submitTextToSpeechAI(testText: responseText)
+            Task {
+                await voiceRecorderController.submitTextToSpeechAI(testText: responseText)
+            }
          
         }
          

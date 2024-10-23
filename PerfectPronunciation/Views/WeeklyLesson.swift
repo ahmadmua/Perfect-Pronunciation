@@ -60,7 +60,11 @@ struct WeeklyLesson: View {
                         
                         // MARK: - Nick provide integration here
                         let singleString = fireDBHelper.wordList.joined()
-                        voiceRecorderController.submitTestAudio(testText: singleString, lessonType: lessonType)
+                        
+                        Task {
+                            await voiceRecorderController.submitTestAudio(testText: singleString, lessonType: lessonType)
+                        }
+                        
                             
 //                        fireDBHelper.getWeeklyAccuracy { accuracy in
 //                            if let accuracy = accuracy {
@@ -112,7 +116,7 @@ struct WeeklyLesson: View {
                         if recordingState != .recording {
                             Button(action: {
                                 
-                                voiceRecorderController.audioFileURL = URL(string: " ")
+                                voiceRecorderController.userAudioFileURL = URL(string: " ")
                                 
                                 voiceRecorderController.STTresult = ""
                                 recordingState = RecorderState.readyToRecord
@@ -143,7 +147,7 @@ struct WeeklyLesson: View {
                                 
                             
                             case .playing:
-                                audioPlayer.startPlayback(audio: voiceRecorderController.audioFileURL!)
+                                audioPlayer.startPlayback(audio: voiceRecorderController.userAudioFileURL!)
                                 recordingState = .readyToRecord
                             }
                         }) {

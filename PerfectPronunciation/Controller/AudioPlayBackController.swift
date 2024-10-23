@@ -62,6 +62,20 @@ class AudioPlayBackController: NSObject, ObservableObject, AVAudioPlayerDelegate
         isPlaying = false
     }
     
+    func pausePlayback(){}
+    
+    func resumePlayblack(){}
+    
+    func getAudioDuration(){}
+    
+    // Start a timer to update the playback time
+    private func startPlaybackTimer() {
+    }
+
+    // Stop and invalidate the playback timer
+    private func stopPlaybackTimer() {
+    }
+    
     // Delegate method called when audio player finishes playing an audio file.
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         // If the audio finished playing successfully, set isPlaying to false.

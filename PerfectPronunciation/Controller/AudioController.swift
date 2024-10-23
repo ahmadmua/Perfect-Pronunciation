@@ -14,36 +14,37 @@ import Speech
 class AudioController: NSObject, ObservableObject {
     
     // MARK: - Published Properties (for UI binding)
-    @Published var STTresult: String = ""
+       @Published var STTresult: String = ""  // Holds the real-time transcription result
+       
+       // Combine (for subscribers)
+       let objectWillChange = PassthroughSubject<AudioController, Never>()
+       
+       // Recording management
+       private var audioRecorder: AVAudioRecorder?
+       private let audioEngine = AVAudioEngine()
+       private var audioFile: AVAudioFile?
+       var recordBtnDisabled = true  // Indicates if the recording button should be disabled
+       
+       // Callback when recording is completed
+       var onRecordingCompleted: ((URL) -> Void)?
+       var recording = Recording(fileURL: URL(string: "about:blank")!, createdAt: Date())
+       
+       // A boolean flag to track the recording state
+       var isRecording = false {
+           didSet {
+               objectWillChange.send(self)
+           }
+       }
     
-    // MARK: - Combine (for subscribers)
-    let objectWillChange = PassthroughSubject<AudioController, Never>()
-      
-      
-    // MARK: - Recording Management
-    private var audioRecorder: AVAudioRecorder!
-    private let audioEngine = AVAudioEngine()
-    private var audioFile: AVAudioFile?
-    var recordBtnDisabled = true
-    var onRecordingCompleted: ((URL) -> Void)?  // Closure to notify when recording is completed
-    var recording = Recording(fileURL: URL(string: "about:blank")!, createdAt: Date())
-    // A boolean flag to track the recording state
-    var isRecording = false {
-        didSet {
-            // Notify subscribers that the object has changed
-            objectWillChange.send(self)
-        }
-    }
-  
-      
-      // MARK: - Speech Recognition Properties
-      private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
-      private var recognitionTask: SFSpeechRecognitionTask?
-      private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
+    // Speech recognition management
+       private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
+       private var recognitionTask: SFSpeechRecognitionTask?
+       private let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: "en-US"))
+       
     
     
     
-    // Request authorization to use the microphone and speech recognition
+    // MARK: - Request authorization for microphone and speech recognition access
     func requestAuthorization() {
         SFSpeechRecognizer.requestAuthorization { authStatus in
             DispatchQueue.main.async {
@@ -59,107 +60,154 @@ class AudioController: NSObject, ObservableObject {
         }
     }
     
-    // Start the recording process
-    func startRecording() {
-        // Get the shared instance of AVAudioSession to manage the app's audio behavior
-        let recordingSession = AVAudioSession.sharedInstance()
-
-        // Check if the audio engine is already running (i.e., recording or recognizing)
-        if audioEngine.isRunning {
-            // If it's running, stop the audio engine and end the recognition request
-            audioEngine.stop()
-            recognitionRequest?.endAudio()
-        } else {
-            // If it's not running, configure and start a new recording session
+    // MARK: - Start the recording process
+        func startRecording() {
+            guard !isRecording else {
+                // If recording is already in progress, prevent starting a new one
+                print("Recording is already in progress")
+                return
+            }
             
-            // Set up the audio session to allow recording and playback
-            do {
-                try recordingSession.setCategory(.playAndRecord, mode: .default)  // Set the category for recording and playback
-                try recordingSession.setActive(true)  // Activate the session
-            } catch {
-                // Handle errors that occur when setting up the audio session
-                print("Failed to set up recording session")
-            }
-
-            // Define the path to save the recorded audio file in the app's documents directory
-            let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-            let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY 'at' HH:mm:ss")).wav")
+            isRecording = true  // Set the recording flag
             
-            // Define the settings for the audio recorder (e.g., format, sample rate, channels, etc.)
-            let settings = [
-                AVFormatIDKey: Int(kAudioFormatLinearPCM),  // Linear PCM format for uncompressed audio
-                AVSampleRateKey: 16000,  // 16 kHz sample rate (standard for speech recognition)
-                AVNumberOfChannelsKey: 1,  // Mono audio (1 channel)
-                AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue  // High audio quality
-            ]
-
-            // Start recording audio
+            self.STTresult = "" //set this to blank so that previous recording STT is removed 
+            
+            // Setup the audio session and start recording
+            setupAudioSessionAndRecord()
+            
+            // Setup speech recognition to handle real-time transcription
+            setupSpeechRecognition()
+        }
+    
+    
+    // MARK: - Stop the recording process and clean up resources
+      func stopRecording() {
+          guard isRecording else {
+              // If no recording is in progress, return early
+              print("Recording is not in progress")
+              return
+          }
+          
+          isRecording = false  // Reset the recording flag
+          
+          // Stop the audio engine and speech recognition process
+          audioEngine.stop()
+          recognitionRequest?.endAudio()
+          
+          // Stop the audio recorder
+          audioRecorder?.stop()
+          
+          // Notify the controller with the recorded file URL
+          if let fileURL = audioRecorder?.url {
+              onRecordingCompleted?(fileURL)
+          }
+          
+          // Reset the audio session for other apps
+          deactivateAudioSession()
+      }
+    
+    // MARK: - Setup the audio session and start recording audio
+      private func setupAudioSessionAndRecord() {
+          let recordingSession = AVAudioSession.sharedInstance()  // Shared instance for managing audio behavior
+          
+          do {
+              // Configure the session for both recording and playback
+              try recordingSession.setCategory(.playAndRecord, mode: .default)
+              try recordingSession.setActive(true)
+              
+              // Define the file path for saving the recording in the app's documents directory
+              let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+              let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY 'at' HH:mm:ss")).wav")
+              
+              // Audio recording settings (e.g., sample rate, channels)
+              let settings = [
+                  AVFormatIDKey: Int(kAudioFormatLinearPCM),  // PCM format for uncompressed audio
+                  AVSampleRateKey: 16000,  // Sample rate (standard for speech recognition)
+                  AVNumberOfChannelsKey: 1,  // Mono audio
+                  AVEncoderAudioQualityKey: AVAudioQuality.high.rawValue  // High-quality audio encoding
+              ]
+              
+              // Initialize and start recording audio with the specified settings
+              audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
+              audioRecorder?.record()
+              
+          } catch {
+              // If any error occurs during setup, print the error and stop recording
+              print("Failed to start recording: \(error)")
+              stopRecording()
+          }
+      }
+    
+    // MARK: - Deactivate the audio session after recording stops
+        private func deactivateAudioSession() {
             do {
-                // Initialize the AVAudioRecorder with the specified file URL and settings
-                audioRecorder = try AVAudioRecorder(url: audioFilename, settings: settings)
-                audioRecorder.record()  // Start the recording
+                // Deactivate the audio session and allow other audio apps to resume
+                try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
             } catch {
-                // Handle any errors that occur during the recording setup
-                print("Could not start recording")
-            }
-
-            // Cancel any ongoing speech recognition task if there was one before
-            recognitionTask?.cancel()
-            recognitionTask = nil
-
-            // Configure speech recognition by accessing the input node of the audio engine
-            let inputNode = audioEngine.inputNode
-            recognitionRequest = SFSpeechAudioBufferRecognitionRequest()  // Create a new recognition request for live audio input
-            recognitionRequest?.shouldReportPartialResults = true  // Enable partial results to get real-time transcription
-
-            // Start the speech recognition task
-            recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest!, resultHandler: { [weak self] result, error in
-                if let result = result {
-                    // If a result is returned, update the STTresult in real-time
-                    DispatchQueue.main.async {
-                        self?.STTresult = result.bestTranscription.formattedString  // Get the best transcription
-                    }
-                }
-                
-                // Handle the end of the recognition task if an error occurs or the result is final
-                if error != nil || result?.isFinal == true {
-                    self?.audioEngine.stop()  // Stop the audio engine
-                    inputNode.removeTap(onBus: 0)  // Remove the audio tap from the input node
-                    self?.recognitionTask = nil  // Clear the recognition task
-                    self?.recognitionRequest = nil  // Clear the recognition request
-                }
-            })
-
-            // Configure the audio input node for real-time speech recognition
-            let recordingFormat = inputNode.outputFormat(forBus: 0)  // Get the format of the input node
-            inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] (buffer, when) in
-                // Append the audio buffer to the recognition request
-                self?.recognitionRequest?.append(buffer)
-            }
-
-            // Prepare and start the audio engine for capturing the microphone input
-            do {
-                audioEngine.prepare()  // Prepare the audio engine
-                try audioEngine.start()  // Start the audio engine
-            } catch {
-                // Handle any errors during the starting of the audio engine
-                print("Could not start audio engine")
+                // Handle any errors when deactivating the audio session
+                print("Failed to deactivate audio session: \(error)")
             }
         }
-    }
+    
+    
+    
+    // MARK: - Setup and start speech recognition
+      private func setupSpeechRecognition() {
+          // Cancel any ongoing recognition task
+          recognitionTask?.cancel()
+          recognitionTask = nil
+          
+          let inputNode = audioEngine.inputNode  // Get the input node for audio capture
+          
+          // Create a new recognition request for live audio input
+          recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
+          recognitionRequest?.shouldReportPartialResults = true  // Get real-time transcription results
+          
+          // Start the speech recognition task
+          recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest!, resultHandler: { [weak self] result, error in
+              guard let self = self else { return }
+              if let result = result {
+                  // Update the transcription result (STT result) in real time
+                  DispatchQueue.main.async {
+                      self.STTresult = result.bestTranscription.formattedString
+                  }
+              }
+              
+              // If an error occurs or the recognition task finishes, stop the audio engine
+              if error != nil || result?.isFinal == true {
+                  self.stopSpeechRecognition(inputNode: inputNode)
+              }
+          })
+          
+          // Attach the audio input to the speech recognition request
+          let recordingFormat = inputNode.outputFormat(forBus: 0)  // Get the format of the input node
+          inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { [weak self] (buffer, when) in
+              // Pass audio data to the recognition request
+              self?.recognitionRequest?.append(buffer)
+          }
+          
+          // Start the audio engine to capture microphone input
+          do {
+              audioEngine.prepare()  // Prepare the audio engine for operation
+              try audioEngine.start()  // Start the audio engine
+          } catch {
+              // Handle errors that occur when starting the audio engine
+              print("Failed to start audio engine: \(error)")
+              stopRecording()
+          }
+      }
+    
+    // MARK: - Stop speech recognition and clean up
+        private func stopSpeechRecognition(inputNode: AVAudioInputNode) {
+            audioEngine.stop()  // Stop the audio engine
+            inputNode.removeTap(onBus: 0)  // Remove the audio tap
+            recognitionTask?.cancel()  // Cancel any ongoing recognition task
+            recognitionRequest = nil  // Clear the request
+            recognitionTask = nil  // Clear the task
+        }
 
     
-    // Stop the recording and notify VoiceRecorderController
-    func stopRecording() {
-        audioEngine.stop()
-        recognitionRequest?.endAudio()
-        recognitionTask?.cancel()
-        audioRecorder?.stop()
-        
-        if let fileURL = audioRecorder?.url {
-            onRecordingCompleted?(fileURL)  // Notify VoiceRecorderController when recording is completed
-        }
-    }
+    
     
 }
 

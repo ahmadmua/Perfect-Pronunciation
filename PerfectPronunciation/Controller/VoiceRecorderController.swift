@@ -38,7 +38,8 @@ class VoiceRecorderController: NSObject, ObservableObject {
     @Published var STTresult: String = ""        // Live Transcription result from AudioController
     @Published var mode: RecordingMode = .ready  // Recorder mode
     @Published var recordBtnDisabled = true      // Button state for record button
-    @Published var audioFileURL: URL?            // Stores the recorded file URL
+    @Published var userAudioFileURL: URL?            // Stores the recorded file URL
+    @Published var aiaudioFileURL: URL?            // Stores the recorded file URL
     @Published var isSubmitting: Bool = false    // Prevent double submissions
     @Published var errorMessage: String?         // Error message for UI
 
@@ -62,7 +63,7 @@ class VoiceRecorderController: NSObject, ObservableObject {
     private func setupAudioController() {
         audioController.requestAuthorization()//when audiocontroller is "setup" request authorization to have access to hardware
         audioController.onRecordingCompleted = { [weak self] fileURL in //closure that is executed when the AudioController completes a recording.
-            self?.audioFileURL = fileURL //sets the file URL to the one that was captured in the closure of when the stopRecording function happens
+            self?.userAudioFileURL = fileURL //sets the file URL to the one that was captured in the closure of when the stopRecording function happens
            
         }
     }
@@ -99,7 +100,7 @@ class VoiceRecorderController: NSObject, ObservableObject {
                 // Try to remove the file
                 try fileManager.removeItem(at: fileURL)
                 print("Successfully deleted file at: \(fileURL.path)")
-                self.audioFileURL = URL(string: "")
+                self.userAudioFileURL = URL(string: "")
             } catch {
                 // Handle errors during file deletion
                 print("Could not delete file: \(error.localizedDescription)")
@@ -113,7 +114,7 @@ class VoiceRecorderController: NSObject, ObservableObject {
     //1) we need to also need to save the audioFile its self in firebase
     //2) need to save the AI AudioClip as well to firebase
     func submitTestAudio(testText: String, lessonType: String) async {
-        guard let audioURL = audioFileURL else {
+        guard let audioURL = userAudioFileURL else {
             print("Error: No valid file URL for the recording.")
             return
         }

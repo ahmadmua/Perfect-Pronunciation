@@ -116,7 +116,7 @@ struct WeeklyLesson: View {
                         if recordingState != .recording {
                             Button(action: {
                                 
-                                voiceRecorderController.audioFileURL = URL(string: " ")
+                                voiceRecorderController.userAudioFileURL = URL(string: " ")
                                 
                                 voiceRecorderController.STTresult = ""
                                 recordingState = RecorderState.readyToRecord
@@ -147,7 +147,7 @@ struct WeeklyLesson: View {
                                 
                             
                             case .playing:
-                                audioPlayer.startPlayback(audio: voiceRecorderController.audioFileURL!)
+                                audioPlayer.startPlayback(audio: voiceRecorderController.userAudioFileURL!)
                                 recordingState = .readyToRecord
                             }
                         }) {

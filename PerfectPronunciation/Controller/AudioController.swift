@@ -70,6 +70,8 @@ class AudioController: NSObject, ObservableObject {
             
             isRecording = true  // Set the recording flag
             
+            self.STTresult = "" //set this to blank so that previous recording STT is removed 
+            
             // Setup the audio session and start recording
             setupAudioSessionAndRecord()
             
@@ -78,17 +80,31 @@ class AudioController: NSObject, ObservableObject {
         }
     
     
-    // Stop the recording and notify VoiceRecorderController
-    func stopRecording() {
-        audioEngine.stop()
-        recognitionRequest?.endAudio()
-        recognitionTask?.cancel()
-        audioRecorder?.stop()
-        
-        if let fileURL = audioRecorder?.url {
-            onRecordingCompleted?(fileURL)  // Notify VoiceRecorderController when recording is completed
-        }
-    }
+    // MARK: - Stop the recording process and clean up resources
+      func stopRecording() {
+          guard isRecording else {
+              // If no recording is in progress, return early
+              print("Recording is not in progress")
+              return
+          }
+          
+          isRecording = false  // Reset the recording flag
+          
+          // Stop the audio engine and speech recognition process
+          audioEngine.stop()
+          recognitionRequest?.endAudio()
+          
+          // Stop the audio recorder
+          audioRecorder?.stop()
+          
+          // Notify the controller with the recorded file URL
+          if let fileURL = audioRecorder?.url {
+              onRecordingCompleted?(fileURL)
+          }
+          
+          // Reset the audio session for other apps
+          deactivateAudioSession()
+      }
     
     // MARK: - Setup the audio session and start recording audio
       private func setupAudioSessionAndRecord() {
@@ -121,6 +137,19 @@ class AudioController: NSObject, ObservableObject {
               stopRecording()
           }
       }
+    
+    // MARK: - Deactivate the audio session after recording stops
+        private func deactivateAudioSession() {
+            do {
+                // Deactivate the audio session and allow other audio apps to resume
+                try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            } catch {
+                // Handle any errors when deactivating the audio session
+                print("Failed to deactivate audio session: \(error)")
+            }
+        }
+    
+    
     
     // MARK: - Setup and start speech recognition
       private func setupSpeechRecognition() {

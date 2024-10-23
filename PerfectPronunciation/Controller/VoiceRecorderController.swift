@@ -99,6 +99,7 @@ class VoiceRecorderController: NSObject, ObservableObject {
                 // Try to remove the file
                 try fileManager.removeItem(at: fileURL)
                 print("Successfully deleted file at: \(fileURL.path)")
+                self.audioFileURL = URL(string: "")
             } catch {
                 // Handle errors during file deletion
                 print("Could not delete file: \(error.localizedDescription)")

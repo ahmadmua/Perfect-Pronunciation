@@ -99,8 +99,7 @@ struct VoiceRecorder: View {
                             if recordingState != .recording {
                                 Button(action: {
                                     self.elapsedTime = 0.0
-                                    voiceRecorderController.audioFileURL = URL(string: "")
-
+                                    voiceRecorderController.discardTestAudio(fileURL: voiceRecorderController.audioFileURL!)
                                     voiceRecorderController.STTresult = ""
                                     recordingState = RecorderState.readyToRecord
                                 }) {

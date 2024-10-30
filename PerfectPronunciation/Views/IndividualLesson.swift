@@ -14,7 +14,7 @@ import Combine
 struct IndividualLesson: View {
     //controller var
     @ObservedObject var model = LessonController()
-    @ObservedObject var audioController : AudioController
+    @ObservedObject var voiceRecorderController : VoiceRecorderController
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
     //question variable
@@ -89,7 +89,7 @@ struct IndividualLesson: View {
                     .foregroundStyle(Color.red)
                     .buttonStyle(.borderless)
                     .sheet(isPresented: $isPopupPresented) {
-                        VoiceRecorder(audioRecorder: AudioController() , audioPlayer: AudioPlayBackController(), audioAPIController: AudioAPIController(), testText: responseText, lessonType: lessonType ,isPopupPresented: $isPopupPresented).environmentObject(audioController)
+                        VoiceRecorder(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), testText: responseText, lessonType: lessonType,isPopupPresented: $isPopupPresented).environmentObject(voiceRecorderController);
                     }
                     
                     Button(action: {
@@ -140,7 +140,7 @@ struct IndividualLesson: View {
                                     }
                                         }//
                     .navigationDestination(isPresented: $showNext){
-                        IndividualLesson(audioController: AudioController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                        IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
@@ -185,10 +185,15 @@ struct IndividualLesson: View {
                 
                 UserDefaults.standard.synchronize()
                 
+                
             }
             
              
             self.showNext = false
+            
+            Task {
+                await voiceRecorderController.submitTextToSpeechAI(testText: responseText)
+            }
          
         }
          

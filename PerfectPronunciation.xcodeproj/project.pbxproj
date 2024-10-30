@@ -53,6 +53,7 @@
 		4D5DD9C92CB2329A00590EE0 /* PronunciationAssessmentModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D5DD9C82CB2329A00590EE0 /* PronunciationAssessmentModel.swift */; };
 		4D6170602AEC5D0C002A02C1 /* VoiceRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */; };
 		4DAB969E2B16E62E00800058 /* AudioAPIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DAB969D2B16E62E00800058 /* AudioAPIController.swift */; };
+		4DACEF2A2CC62D4700170C2F /* VoiceRecorderController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DACEF292CC62D4700170C2F /* VoiceRecorderController.swift */; };
 		4DC3914D2B1BE1F3006C8C39 /* AudioPlayBackController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC3914C2B1BE1F3006C8C39 /* AudioPlayBackController.swift */; };
 		4DC3914F2B1BE2D3006C8C39 /* Audio.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC3914E2B1BE2D3006C8C39 /* Audio.swift */; };
 		4DC391512B1BE468006C8C39 /* Extentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DC391502B1BE468006C8C39 /* Extentions.swift */; };
@@ -114,6 +115,7 @@
 		4D5DD9C82CB2329A00590EE0 /* PronunciationAssessmentModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PronunciationAssessmentModel.swift; sourceTree = "<group>"; };
 		4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorder.swift; sourceTree = "<group>"; };
 		4DAB969D2B16E62E00800058 /* AudioAPIController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioAPIController.swift; sourceTree = "<group>"; };
+		4DACEF292CC62D4700170C2F /* VoiceRecorderController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceRecorderController.swift; sourceTree = "<group>"; };
 		4DC3914C2B1BE1F3006C8C39 /* AudioPlayBackController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayBackController.swift; sourceTree = "<group>"; };
 		4DC3914E2B1BE2D3006C8C39 /* Audio.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Audio.swift; sourceTree = "<group>"; };
 		4DC391502B1BE468006C8C39 /* Extentions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extentions.swift; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 				C5D605112B0F244A00620283 /* AchievementController.swift */,
 				C5D605172B1F23D100620283 /* LeaderboardController.swift */,
 				C5DE40C72C9F4B160002E852 /* OpenAiService.swift */,
+				4DACEF292CC62D4700170C2F /* VoiceRecorderController.swift */,
 				C57F5D9B2CBC1F0200CFAD08 /* ExperienceController.swift */,
 			);
 			name = Controller;
@@ -431,6 +434,7 @@
 				C5D605122B0F244A00620283 /* AchievementController.swift in Sources */,
 				02E2B65F2AD6131100F1FACA /* PerfectPronunciationApp.swift in Sources */,
 				029F8EBF2CB32C7400A58DF0 /* AsessmentDetails.swift in Sources */,
+				4DACEF2A2CC62D4700170C2F /* VoiceRecorderController.swift in Sources */,
 				028364752AEA513E00E88DCB /* VoiceData.swift in Sources */,
 				02E2B68E2AD617F900F1FACA /* Login.swift in Sources */,
 				4DC3914D2B1BE1F3006C8C39 /* AudioPlayBackController.swift in Sources */,

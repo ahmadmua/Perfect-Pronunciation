@@ -33,7 +33,7 @@ class LeaderboardController: ObservableObject{
                             return Leaderboard(id: d.documentID,
                                                userName: d["Username"] as? String ?? "",
                                                country: d["Country"] as? String ?? "",
-                                               weeklyChallengeComplete: d["WeeklyChallengeComplete"] as? Float ?? 0.0)
+                                               weeklyChallengeComplete: d["WeeklyChallengeComplete"] as? Double ?? 0.0)
                         }
                         
 //                        print(self.leaderboard)

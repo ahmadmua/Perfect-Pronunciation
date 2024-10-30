@@ -17,7 +17,7 @@ struct AssessmentView: View {
 
     @State private var progress: Double = 16.0
     @State private var predictionResult: String? = nil
-    var errorTypeCounts: [String: Int]
+    @State var errorTypeCounts: [String: Int]
     var wordErrorData: [(word: String, errorType: String)]
 
     let fields = ["Mispronunciations", "Omissions", "Insertions", "Unexpected_break", "Missing_break", "Monotone"]
@@ -26,7 +26,7 @@ struct AssessmentView: View {
         VStack(alignment: .leading, spacing: 16) {
             // Sentence Section - Full Width
             VStack(alignment: .leading) {
-                Text(buildAttributedText())
+                Text(buildAttributedText(display: display, wordErrorData: wordErrorData))
                     .padding()
                     .background(Color(UIColor.systemGray6))
                     .cornerRadius(10)
@@ -88,6 +88,9 @@ struct AssessmentView: View {
         .onAppear {
             predictionResult = predictPronunciationImprovement(mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0), omissions: Double(errorTypeCounts["Omission"] ?? 0), insertions: Double(errorTypeCounts["Insertion"] ?? 0), unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0), missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0), monotone: Double(errorTypeCounts["Monotone"] ?? 0))
         }
+        .onDisappear(){
+            
+        }
     }
 
     // Remaining methods stay the same
@@ -95,12 +98,11 @@ struct AssessmentView: View {
     
 
     // Function to build the highlighted text
-    func buildAttributedText() -> AttributedString {
+    func buildAttributedText(display: String, wordErrorData: [(word: String, errorType: String)]) -> AttributedString {
         var attributedText = AttributedString(display)
 
         for wordError in wordErrorData {
             if let range = attributedText.range(of: wordError.word) {
-                // Log the word and its error type
                 print("Processing word: '\(wordError.word)' with error type: '\(wordError.errorType)'")
 
                 // Check for a valid errorType
@@ -136,6 +138,11 @@ struct AssessmentView: View {
 
     // Function to predict pronunciation improvement
     func predictPronunciationImprovement(mispronunciations: Double, omissions: Double, insertions: Double, unexpectedBreak: Double, missingBreak: Double, monotone: Double) -> String? {
+        // Check if all input values are 0
+        if mispronunciations == 0 && omissions == 0 && insertions == 0 && unexpectedBreak == 0 && missingBreak == 0 && monotone == 0 {
+            return "No errors detected in the speech Assessment"
+        }
+
         do {
             let model = try PronunciationImprovementModel(configuration: .init())
             let input = PronunciationImprovementModelInput(Mispronunciations: mispronunciations,
@@ -159,6 +166,7 @@ struct AssessmentView: View {
             return nil
         }
     }
+
 }
 
 // Additional Views

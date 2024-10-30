@@ -452,7 +452,7 @@ class DataHelper: ObservableObject {
 
     
     //update the userData to reflect the users score for the weekly challenge
-    func updateWeeklyCompletion(score: Float){
+    func updateWeeklyCompletion(score: Double){
         
         if let user = Auth.auth().currentUser {
             let userID = user.uid
@@ -462,7 +462,7 @@ class DataHelper: ObservableObject {
             userDocRef.getDocument { document, error in
                 if let document = document, document.exists{
                     // Access from UserData in firebase
-                    if var item = document.data()?["WeeklyChallengeComplete"] as? Float {
+                    if var item = document.data()?["WeeklyChallengeComplete"] as? Double {
                         
 
                             print("weekly complete UPDATE CONTROLLER UPDATE : \(item)")
@@ -496,7 +496,7 @@ class DataHelper: ObservableObject {
         
     }
     
-    func getWeeklyAccuracy(completion: @escaping (Float?) -> Void) {
+    func getWeeklyAccuracy(completion: @escaping (Double?) -> Void) {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
@@ -518,7 +518,7 @@ class DataHelper: ObservableObject {
                     if let lessonType = document["lessonType"] as? String, lessonType == "WeeklyChallenge",
                        let assessment = document["assessment"] as? [String: Any],
                        let nBest = assessment["NBest"] as? [[String: Any]],
-                       let accuracyScore = nBest.first?["PronScore"] as? Float {
+                       let accuracyScore = nBest.first?["PronScore"] as? Double {
                         // Call the completion handler with the accuracy score from the most recent document
                         completion(accuracyScore)
                     } else {
@@ -591,7 +591,7 @@ class DataHelper: ObservableObject {
     
 
     
-    func getMostRecentFourAccuracies(completion: @escaping ([Float]?) -> Void) {
+    func getMostRecentFourAccuracies(completion: @escaping ([Double]?) -> Void) {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
@@ -602,10 +602,10 @@ class DataHelper: ObservableObject {
                     print("Error getting documents: \(error.localizedDescription)")
                     completion(nil)
                 } else {
-                    let accuracies: [Float] = querySnapshot?.documents.compactMap { document in
+                    let accuracies: [Double] = querySnapshot?.documents.compactMap { document in
                         if let assessment = document["assessment"] as? [String: Any],
                            let nBest = assessment["NBest"] as? [[String: Any]],
-                           let accuracyScore = nBest.first?["PronScore"] as? Float {
+                           let accuracyScore = nBest.first?["PronScore"] as? Double {
                             return accuracyScore
                         } else {
                             print("Invalid structure or 'AccuracyScore' field in document.")
@@ -632,7 +632,7 @@ class DataHelper: ObservableObject {
 
 
     // Function to get accuracy at a specific index from the most recent 4 accuracies
-    func getAccuracyAtIndex(index: Int, completion: @escaping (Float?) -> Void) {
+    func getAccuracyAtIndex(index: Int, completion: @escaping (Double?) -> Void) {
         getMostRecentFourAccuracies { accuracies in
             guard let accuracies = accuracies, index >= 0 && index < accuracies.count else {
                 completion(nil)

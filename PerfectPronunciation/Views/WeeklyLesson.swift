@@ -9,10 +9,10 @@ import SwiftUI
 
 struct WeeklyLesson: View {
     //models
-    @ObservedObject var audioRecorder: AudioController
     @ObservedObject var audioPlayer: AudioPlayBackController
     @ObservedObject var audioAnalysisData : AudioAPIController
     @ObservedObject var currModel = CurrencyController()
+    @ObservedObject var voiceRecorderController : VoiceRecorderController
     
     @EnvironmentObject var fireDBHelper: DataHelper
     //recording
@@ -56,11 +56,15 @@ struct WeeklyLesson: View {
                     if (timeRemaining == 1){
                         //end recording and submit
                         recordingState = .readyToRecord
-                        audioRecorder.stopRecording()
+                        voiceRecorderController.stopRecording()
                         
                         // MARK: - Nick provide integration here
                         let singleString = fireDBHelper.wordList.joined()
-                        audioRecorder.submitTestAudio(testText: singleString, lessonType: lessonType)
+                        
+                        Task {
+                            await voiceRecorderController.submitTestAudio(testText: singleString, lessonType: lessonType)
+                        }
+                        
                             
 //                        fireDBHelper.getWeeklyAccuracy { accuracy in
 //                            if let accuracy = accuracy {
@@ -112,9 +116,9 @@ struct WeeklyLesson: View {
                         if recordingState != .recording {
                             Button(action: {
                                 
-                                audioRecorder.recording = Recording(fileURL: URL(string: ""), createdAt: Date())
+                                voiceRecorderController.userAudioFileURL = URL(string: " ")
                                 
-                                audioRecorder.STTresult = ""
+                                voiceRecorderController.STTresult = ""
                                 recordingState = RecorderState.readyToRecord
                             }) {
                                 Image(systemName: "xmark.circle.fill")
@@ -128,14 +132,14 @@ struct WeeklyLesson: View {
                             switch recordingState {
                             case .readyToRecord:
                                 do {
-                                    try audioRecorder.startRecording()
+                                    try voiceRecorderController.startRecording()
                                     recordingState = .recording
                                     
                                 } catch {
                                     print("An error occurred while starting the recording: \(error)")
                                 }
                             case .recording:
-                                audioRecorder.stopRecording()
+//                                voiceRecorderController.stopRecording()
                                 
                                 recordingState = .playing
                             
@@ -143,7 +147,7 @@ struct WeeklyLesson: View {
                                 
                             
                             case .playing:
-                                audioPlayer.startPlayback(audio: audioRecorder.recording.fileURL!)
+                                audioPlayer.startPlayback(audio: voiceRecorderController.userAudioFileURL!)
                                 recordingState = .readyToRecord
                             }
                         }) {
@@ -186,7 +190,6 @@ struct WeeklyLesson: View {
             
             .onAppear {//request permission and check for item
                 
-                audioRecorder.requestAuthorization()
                 currModel.checkBuyTime()
                 
                 DispatchQueue.main.async{

@@ -105,6 +105,9 @@ struct IndividualLesson: View {
                             
                         //if counter is greater than number of questions
                         if counter >= 5{//let questionCount = 0
+                            currModel.updateUserCurrency()
+                            xpModel.updateUserExperience()
+                            
                             //go back to the home page
                             counter = 0
                             //update the lesson as complete
@@ -114,7 +117,9 @@ struct IndividualLesson: View {
                                 model.updateLessonQuestionData(userLesson: lessonName, userDifficulty: model.difficulty!, lessonQuestionsList: responseArray)
                             }
                             
-                            self.showingAlert.toggle()
+                            
+                            
+//                            self.showingAlert.toggle()
                             self.showLesson.toggle()
                         
                         }else{
@@ -132,13 +137,13 @@ struct IndividualLesson: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
 
-                    .alert("Congrats, You just earned xp and currency!", isPresented: $showingAlert) {
-                                    Button("OK", role: .cancel) {
-                                        currModel.updateUserCurrency()
-                                        xpModel.updateUserExperience()
-//                                        xpModel.calculateUserLevel()
-                                    }
-                                        }//
+//                    .alert("Congrats, You just earned xp and currency!", isPresented: $showingAlert) {
+//                                    Button("OK", role: .cancel) {
+//                                        currModel.updateUserCurrency()
+//                                        xpModel.updateUserExperience()
+////                                        xpModel.calculateUserLevel()
+//                                    }
+//                                        }//
                     .navigationDestination(isPresented: $showNext){
                         IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)

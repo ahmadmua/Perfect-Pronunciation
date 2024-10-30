@@ -12,12 +12,25 @@ struct ExperienceBarPage: View {
     
     @State private var showDetails = false
     
+    // timer to wait for firebase
+    @State var timeRemaining = 3
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
     var body: some View {
         VStack {
             // Display user experience
             Text("Level \(xpController.userLevel)")
                 .font(.headline)
                 .padding(.bottom, 10)
+                .onReceive(timer) { _ in
+                    if timeRemaining > 0 {
+                        timeRemaining -= 1
+                    }
+                    if (timeRemaining == 1){
+                        xpController.getUserExperience()
+                        xpController.getUserLevel()
+                    }
+                }
             
             // XP Bar
             GeometryReader { geometry in
@@ -61,7 +74,9 @@ struct ExperienceBarPage: View {
         .padding()
         .onAppear {
             xpController.getUserExperience() // Fetch user experience on view appear
+            xpController.calculateUserLevel()
             xpController.getUserLevel()
+            
         }
     }
     

@@ -60,13 +60,14 @@ class ExperienceController: ObservableObject {
                         
                         let updateData = ["Experience": value + 100]
                         
-                        self.calculateUserLevel()
+                        
                         
                         // Update the specific field in the user's document
                         userDocRef.updateData(updateData) { error in
                             if let error = error {
                                 print("Error updating document: \(error)")
                             } else {
+                                self.calculateUserLevel()
                                 print("Document updated successfully")
                             }
                         }
@@ -133,6 +134,8 @@ class ExperienceController: ObservableObject {
         
     }
     
+    //MARK: -  LEVEL SYSTEM
+    
     func calculateUserLevel() {
         //get reference to database
         if let user = Auth.auth().currentUser {
@@ -146,16 +149,32 @@ class ExperienceController: ObservableObject {
                         print("Experience CONTROLLER LEVEL : \(value)")
                         
                         //converting to proper level
-                        let calculatedLevel = value / 500
-                        self.userCalculatedLevel = calculatedLevel
-                        
-                        //saving calculated level to firebase
-                        userDocRef.updateData(["ExperienceLevel": calculatedLevel]){ err in
-                            if let err {
-                                print("Error updating document: \(err)")
-                            }else{
-                                print("Document successfully updated USERS LEVEL")
+                        if value >= 500{
+                            //get current user level
+                            self.getUserLevel()
+                            
+                            //increase user level
+                            self.userCalculatedLevel = self.userLevel + 1
+                            
+                            //reverting experience and saving to firebase
+                            userDocRef.updateData(["Experience": value - 500]){ err in
+                                if let err {
+                                    print("Error updating document: \(err)")
+                                }else{
+                                    print("Document successfully updated USERS EXPERIENCE TO 0")
+                                }
                             }
+                            
+                            
+                            //saving calculated level to firebase
+                            userDocRef.updateData(["ExperienceLevel": self.userCalculatedLevel]){ err in
+                                if let err {
+                                    print("Error updating document: \(err)")
+                                }else{
+                                    print("Document successfully updated USERS LEVEL")
+                                }
+                        }
+
                         }
                     }else{
                         print("Document exists,")

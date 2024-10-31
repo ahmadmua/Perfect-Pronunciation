@@ -11,7 +11,9 @@ struct ExperienceBarPage: View {
     @ObservedObject var xpController : ExperienceController
     
     @State private var showDetails = false
+    @State private var isAnimatingText = false
     
+    @State private var previousLevel: Int = 0
     // timer to wait for firebase
     @State var timeRemaining = 3
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -20,17 +22,33 @@ struct ExperienceBarPage: View {
         VStack {
             // Display user experience
             Text("Level \(xpController.userLevel)")
-                .font(.headline)
                 .padding(.bottom, 10)
+                .font(.system(size: isAnimatingText ? 100 : 20))
+                .foregroundStyle(isAnimatingText ? Color.yellow : Color.black)
                 .onReceive(timer) { _ in
                     if timeRemaining > 0 {
                         timeRemaining -= 1
                     }
-                    if (timeRemaining == 1){
+                    if timeRemaining == 1 {
                         xpController.getUserExperience()
                         xpController.getUserLevel()
                     }
                 }
+                .onReceive(xpController.$userCalculatedLevel) { newValue in
+                    print("New Level: \(newValue)")
+                    if newValue > previousLevel {
+                        isAnimatingText = true
+                        
+                        previousLevel = newValue
+                        // Delay to reset the animation flag
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                            isAnimatingText = false
+                        }
+                    }
+                    
+                }
+                .animation(.spring(), value: isAnimatingText)
+
             
             // XP Bar
             GeometryReader { geometry in
@@ -73,6 +91,7 @@ struct ExperienceBarPage: View {
         }
         .padding()
         .onAppear {
+            previousLevel = xpController.userLevel
             xpController.getUserExperience() // Fetch user experience on view appear
             xpController.calculateUserLevel()
             xpController.getUserLevel()

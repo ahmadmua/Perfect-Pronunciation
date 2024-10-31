@@ -213,15 +213,15 @@ class DataHelper: ObservableObject {
     }
     
 
-    func uploadUserLessonData(data: PronunciationAssessmentResult) {
+    func uploadUserLessonData(assesmentData: PronunciationAssessmentResult, userAudio : URL, voiceGalleryAudio: URL) {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             
             // Convert PronunciationAssessmentResult to dictionary
-            if let lessonData = data.toDictionary() {
+            if let AssesmentLessonData = assesmentData.toDictionary() {
                 // Add the PronunciationAssessmentResult to the "LessonData" subcollection
                 Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
-                    .addDocument(data: lessonData) { error in
+                    .addDocument(data: AssesmentLessonData) { error in
                         if let error = error {
                             print("Error adding pronunciation test data: \(error.localizedDescription)")
                         } else {

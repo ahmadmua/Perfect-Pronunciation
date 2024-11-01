@@ -16,8 +16,6 @@ struct AchievementPage: View {
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
-    //alert
-    @State var showingAlert : Bool = false
     //controller var
     @ObservedObject var achieveModel = AchievementController()
     
@@ -165,7 +163,7 @@ struct AchievementPage: View {
                         .foregroundStyle(Color.gray)
                 }
                 .navigationDestination(isPresented: $showLesson){
-                    LessonsPage(showingAlert: $showingAlert)
+                    LessonsPage()
                         .navigationBarBackButtonHidden(true)
                 }
                 

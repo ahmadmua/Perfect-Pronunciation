@@ -16,14 +16,9 @@ struct WeeklyLesson: View {
     
     @EnvironmentObject var fireDBHelper: DataHelper
     //recording
-    @State private var isRecording = false
     @State private var recordingState = RecorderState.readyToRecord
-    @State private var audioLevels: [CGFloat] = Array(repeating: 0.5, count: 50)
     //navigation
     @State private var showWeekly = false
-    //button disable
-    @State private var disableTimeBtn = 0
-    @State private var submitBtn = true
     
     @State private var countUses = 0
     
@@ -64,14 +59,6 @@ struct WeeklyLesson: View {
                         Task {
                             await voiceRecorderController.submitTestAudio(testText: singleString, lessonType: lessonType)
                         }
-                        
-                            
-//                        fireDBHelper.getWeeklyAccuracy { accuracy in
-//                            if let accuracy = accuracy {
-//                                print("THIS IS THE FUCKING ACCURACY: \(accuracy)")
-//                                DataHelper().updateWeeklyCompletion(score: accuracy)
-//                            }
-//                        }
                         
                         //return to the main screen when timer is done
                         self.showingResultAlert = true
@@ -171,7 +158,7 @@ struct WeeklyLesson: View {
                             // if user has item, allow them to add time (ONLY ONCE PER WEEK)
                             timeRemaining += 5
                             currModel.updateItemUse(itemUsed: "TimeIncrease")
-//                            self.disableTimeBtn = 1
+
                             
                         }){
                             Image(systemName: "clock.arrow.2.circlepath")

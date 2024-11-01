@@ -13,7 +13,6 @@ struct WeeklyGamePage: View {
     
     @EnvironmentObject var fireDBHelper: DataHelper
     //navigation vars
-    @State private var selection: Int? = nil
     @State private var showLesson = false
     @State private var showIndiLesson = false
     @State private var showWeekly = false
@@ -23,8 +22,6 @@ struct WeeklyGamePage: View {
    // @ObservedObject var voiceRecorderController = VoiceRecorderController()
     
     @State private var showWeeklyLesson = false
-    //alert
-    @State var showingAlert : Bool = false
     
     
     var body: some View {
@@ -121,7 +118,7 @@ struct WeeklyGamePage: View {
                         .foregroundStyle(Color.gray)
                 }
                 .navigationDestination(isPresented: $showLesson){
-                    LessonsPage(showingAlert: $showingAlert)
+                    LessonsPage()
                         .navigationBarBackButtonHidden(true)
                 }
                 

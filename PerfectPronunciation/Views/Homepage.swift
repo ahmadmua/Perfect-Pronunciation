@@ -10,10 +10,7 @@ import Firebase
 import FirebaseAuth
 
 struct Homepage: View {
-    let data = ["Lessons", "Weekly", "Badges", "Store"]
     @State private var userEmail: String = ""
-    @State var pronunciationPoints : Int = 0
-    @State private var selection: Int? = nil
     @StateObject private var viewModel = AccuracyViewModel()
     
     @State private var showLesson = false
@@ -25,23 +22,14 @@ struct Homepage: View {
     @State private var showHome = false
     
     
-    
-    @State var showingAlert : Bool = false
-    
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
     @ObservedObject var model = LessonController()
     
-    @EnvironmentObject var fireDBHelper: DataHelper
-    @State private var accuracyAtIndexText: String = ""
-    
     
     var body: some View {
-        //NavigationStack { // Use NavigationView
         ScrollView(.vertical, showsIndicators: false) {
             ZStack{
-                
-                
                 
                 VStack(spacing: 20) {
                     Text("Hello, \(userEmail)")
@@ -70,7 +58,7 @@ struct Homepage: View {
                                             
                                         }
                                         .navigationDestination(isPresented: $showLesson){
-                                            LessonsPage(showingAlert: $showingAlert)
+                                            LessonsPage()
                                                 .navigationBarBackButtonHidden(true)
                                         }
                                         
@@ -90,7 +78,6 @@ struct Homepage: View {
                                         }
                                         .navigationDestination(isPresented: $showWeekly){
                                             WeeklyGamePage()
-                                            //                                                        TestFirebaseView()
                                                 .navigationBarBackButtonHidden(true)
                                         }
                                     }//hstack
@@ -138,12 +125,6 @@ struct Homepage: View {
                                 }
                             }//grid
                             
-                            
-                            
-                            
-                            //                                    }
-                            //                                    .frame(maxWidth: .infinity)
-                            //                                }
                         }
                     }
                     
@@ -165,7 +146,6 @@ struct Homepage: View {
                                     
                                     
                                     Button(action: {
-                                        //                                            self.selection = 5
                                         self.showStats.toggle()
                                     }){
                                         
@@ -178,7 +158,6 @@ struct Homepage: View {
                                     }
                                     .navigationDestination(isPresented: $showStats){
                                         StatData()
-                                        //                                                .navigationBarBackButtonHidden(true)
                                     }
                                     
                                 }
@@ -241,7 +220,6 @@ struct Homepage: View {
                     }
                     .navigationDestination(isPresented: $showSettings){
                         Settings()
-                        //                                .navigationBarBackButtonHidden(true)
                     }
                 }
                                     

@@ -77,7 +77,6 @@
 		C5D605182B1F23D100620283 /* LeaderboardController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5D605172B1F23D100620283 /* LeaderboardController.swift */; };
 		C5DE40C82C9F4B160002E852 /* OpenAiService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DE40C72C9F4B160002E852 /* OpenAiService.swift */; };
 		C5DF79D62AFB19AA00ECB45C /* LessonController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF79D52AFB19AA00ECB45C /* LessonController.swift */; };
-		C5DF79D82AFC77AB00ECB45C /* Lesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5DF79D72AFC77AB00ECB45C /* Lesson.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -138,7 +137,6 @@
 		C5D605172B1F23D100620283 /* LeaderboardController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaderboardController.swift; sourceTree = "<group>"; };
 		C5DE40C72C9F4B160002E852 /* OpenAiService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenAiService.swift; sourceTree = "<group>"; };
 		C5DF79D52AFB19AA00ECB45C /* LessonController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonController.swift; sourceTree = "<group>"; };
-		C5DF79D72AFC77AB00ECB45C /* Lesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Lesson.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -277,7 +275,6 @@
 				02E2B6972AD6237000F1FACA /* UserData.swift */,
 				028364722AEA504000E88DCB /* AccuracyViewModel.swift */,
 				028364742AEA513E00E88DCB /* VoiceData.swift */,
-				C5DF79D72AFC77AB00ECB45C /* Lesson.swift */,
 				4DC3914E2B1BE2D3006C8C39 /* Audio.swift */,
 				C5D605152B1F1F1600620283 /* Leaderboard.swift */,
 				4D5DD9C82CB2329A00590EE0 /* PronunciationAssessmentModel.swift */,
@@ -415,7 +412,6 @@
 				C58B99F62AED94E5003C0288 /* StorePage.swift in Sources */,
 				02E2B69A2AD6250700F1FACA /* Country.swift in Sources */,
 				02E2B69C2AD63BA300F1FACA /* Difficulty.swift in Sources */,
-				C5DF79D82AFC77AB00ECB45C /* Lesson.swift in Sources */,
 				02E2B6932AD6188500F1FACA /* Components.swift in Sources */,
 				4DC391512B1BE468006C8C39 /* Extentions.swift in Sources */,
 				02E2B6982AD6237000F1FACA /* UserData.swift in Sources */,

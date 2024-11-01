@@ -12,6 +12,7 @@ struct ExperienceBarPage: View {
     
     @State private var showDetails = false
     @State private var isAnimatingText = false
+    @State private var isAnimatingCoin = false
     
     @State private var previousLevel: Int = 0
     // timer to wait for firebase
@@ -20,6 +21,27 @@ struct ExperienceBarPage: View {
     
     var body: some View {
         VStack {
+            Spacer()
+            
+            //display currency gain
+            if #available(iOS 17.0, *) {
+                Image(systemName: "music.mic.circle")
+                    .resizable()
+                    .frame(width: 50, height: 50)
+                    .foregroundColor(Color("CustYell"))
+                    .symbolEffect(.bounce, value: isAnimatingCoin)
+            } else {
+                // Fallback on earlier versions
+                Image(systemName: "music.mic.circle")
+                    .resizable()
+                    .frame(width: 50, height: 5)
+                    .foregroundColor(Color("CustYell"))
+            }
+            Text("+100 Currency")
+            
+            Spacer()
+            
+            
             // Display user experience
             Text("Level \(xpController.userLevel)")
                 .padding(.bottom, 10)
@@ -61,7 +83,7 @@ struct ExperienceBarPage: View {
                     // Foreground - Animated XP bar
                     RoundedRectangle(cornerRadius: 10)
                         .frame(width: self.barWidth(for: geometry.size.width), height: 20)
-                        .foregroundColor(.blue)
+                        .foregroundColor(Color("CustYell"))
                         .animation(.easeInOut(duration: 1.0), value: xpController.userXp)
                 }
             }
@@ -79,8 +101,8 @@ struct ExperienceBarPage: View {
             }) {
                 Text("Great!")
                     .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
+                    .background(Color("CustYell"))
+                    .foregroundColor(.black)
                     .cornerRadius(10)
             }
             .padding(.top, 20)
@@ -88,9 +110,16 @@ struct ExperienceBarPage: View {
                 Details()
                     .navigationBarBackButtonHidden(true)
             }
+            
+            Spacer()
+            Spacer()
         }
         .padding()
+        
+        
         .onAppear {
+            self.isAnimatingCoin = true
+            
             previousLevel = xpController.userLevel
             xpController.getUserExperience() // Fetch user experience on view appear
             xpController.calculateUserLevel()

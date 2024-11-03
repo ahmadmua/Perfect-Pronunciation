@@ -11,8 +11,8 @@ import CryptoKit  // Import CryptoKit for hashing
 struct UserData {
     
     
-    var registeredEmail: String = "test2024@gmail.com"
-    var registeredPassword: String = "123456"
+    var registeredEmail: String = "nini@gmail.com"
+    var registeredPassword: String = "123123"
     var country: String = ""
     var difficulty: String = ""
     var language: String = ""

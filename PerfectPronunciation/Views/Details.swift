@@ -27,7 +27,8 @@ struct Details: View {
     @State private var selection: Int? = nil
     @State private var userData = UserData()
     @ObservedObject var currModel = CurrencyController()
-    
+    @State private var feedbackMsg : [String] = ["Your Pronunciation is Great", "Your Pronunciation Needs Improvement"]
+    @State private var difficulty : [String] = ["Beginner", "Intermediate", "Advanced"]
     
     
     @State var showingAlert2 = false
@@ -57,116 +58,99 @@ struct Details: View {
     @EnvironmentObject var fireDBHelper: DataHelper
     
     var body: some View {
-        VStack {
-            HStack{
-                Button(action: {
-                    self.showHome.toggle()
-                }){
-                    
-                    Image(systemName: "arrowshape.backward.fill")
-                        .resizable()
-                        .frame(width: 30, height: 30)
-                        .foregroundColor(.yellow)
-                }
-                .navigationDestination(isPresented: $showHome){
-                    Homepage()
-                }
-                .navigationBarBackButtonHidden(true)
-                
-                Text("Detailed Stats")
-                    .fontWeight(.bold)
-                    .font(Font.system(size: 50))
-                    .foregroundColor(Color.black)
-                    .underline()
-            }
-            
-            HStack {
-                StatCard(color: .yellow, title: "Words Pronounced", value: "\(totalWords)")
-                StatCard(color: .yellow, title: "AVG Accuracy", value: "\(String(format: "%.1f", averageAccuracy))%")
-            }
-            
-            HStack {
-                
-                StatCard(color: .yellow, title: "Predicted Accuracy", value: "\(prediction ?? 0.0)%")
-            }
-            
-            .onReceive([arr[0], arr[1], arr[2], arr[3], arr[4]].publisher) { _ in
-                prediction = makePrediction()
-            }
-            
-            CalendarView()
-            
-            ItemsListView()
-            
-            Text("\(calculateAccuracyOutput())")
-                .bold()
-            
-            Text("Current Difficulty: \(userDifficulty)")
-                .onAppear {
-                    fireDBHelper.findUserDifficulty { difficulty in
-                        if let difficulty = difficulty {
-                            userDifficulty = difficulty
-                        }
+            VStack {
+                // Navigation and Title
+                HStack {
+                    Button(action: {
+                        self.showHome.toggle()
+                    }) {
+                        Image(systemName: "arrowshape.backward.fill")
+                            .resizable()
+                            .frame(width: 30, height: 30)
+                            .foregroundColor(.yellow)
                     }
+                    .navigationDestination(isPresented: $showHome) {
+                        Homepage()
+                    }
+                    .navigationBarBackButtonHidden(true)
+                    
+                    Text("Detailed Stats")
+                        .fontWeight(.bold)
+                        .font(.system(size: 50))
+                        .foregroundColor(.black)
+                        .underline()
                 }
-            
-            Text("Expected Difficulty: \(expectedDifficulty)")
-                .onAppear {
-                    fireDBHelper.findUserDifficulty { difficulty in
-                        if let difficulty = difficulty {
-                            userDifficulty = difficulty
-                            
-                            if (userDifficulty == "Intermediate") {
-                                expectedDifficulty = "Advanced"
-                                msg = "User Difficulty Successfully Reset!"
-                            }
-                            
-                            else if(userDifficulty == "Advanced"){
-                                msg = "User Difficulty Successfully Reset!"
-                                expectedDifficulty = "Advanced"
+                
+                // Statistics Cards
+                HStack {
+                    StatCard(color: .yellow, title: "Words Pronounced", value: "\(totalWords)")
+                    StatCard(color: .yellow, title: "AVG Accuracy", value: "\(String(format: "%.1f", averageAccuracy))%")
+                }
+                
+                HStack {
+                    StatCard(color: .yellow, title: "Predicted Accuracy", value: "\(prediction ?? 0.0)%")
+                }
+                .onReceive([arr[0], arr[1], arr[2], arr[3], arr[4]].publisher) { _ in
+                    prediction = makePrediction()
+                }
+                
+                // Calendar and Items List
+                CalendarView()
+                ItemsListView()
+                
+                HStack {
+                    Text("Dynamically Adjusted Difficulty:")
+                        .bold()
+                    
+//                    Image(systemName: "arrow.clockwise")
+//                        .resizable()
+//                        .frame(width: 24, height: 24)
+//                        .foregroundColor(.blue)
+//                        .onTapGesture {
+//                            updatedAdjustedDifficulty()
+//                        }
+//                        .padding(.leading)
+                    
+                }
+
+                Text("Current Difficulty: \(userDifficulty)")
+                    .onAppear {
+                        fireDBHelper.findUserDifficulty { difficulty in
+                            if let difficulty = difficulty {
+                                userDifficulty = difficulty
                             }
                         }
                     }
-                    
-                }
+
+              
+                
+                    Text("Adjusted Difficulty: \(expectedDifficulty)")
+                        .onAppear {
+                            updatedAdjustedDifficulty()
+                        }
+
+
             
-            Button(action: {
-                fireDBHelper.updateDifficulty(selectedDifficulty: expectedDifficulty, userData: &userData, selection: &selection)
-                showingAlert2 = true
-                //fireDBHelper.addItemToUserDataCollection(itemName: "TestWord", dayOfWeek: "Thu", accuracy: 98.42)
-            }) {
-                Text("Reset Difficulty")
-                    .modifier(CustomTextM(fontName: "MavenPro-Bold", fontSize: 16, fontColor: Color.black))
-                    .frame(height: 56, alignment: .leading)
-                    .frame(width: 200)
-                    .background(Color.yellow)
-                    .cornerRadius(10)
-            }
-            .alert(self.msg, isPresented: $showingAlert2) {
-                Button("OK", role: .cancel) {
-                }
-            }
+
+            
+//            Button(action: {
+//                fireDBHelper.updateDifficulty(selectedDifficulty: expectedDifficulty, userData: &userData, selection: &selection)
+//                showingAlert2 = true
+//                //fireDBHelper.addItemToUserDataCollection(itemName: "TestWord", dayOfWeek: "Thu", accuracy: 98.42)
+//            }) {
+//                Text("Reset Difficulty")
+//                    .modifier(CustomTextM(fontName: "MavenPro-Bold", fontSize: 16, fontColor: Color.black))
+//                    .frame(height: 56, alignment: .leading)
+//                    .frame(width: 200)
+//                    .background(Color.yellow)
+//                    .cornerRadius(10)
+//            }
+//            .alert(self.msg, isPresented: $showingAlert2) {
+//                Button("OK", role: .cancel) {
+//                }
+//            }
         }
-        //        .navigationBarItems(leading:
-        //
-        //            Button(action: {
-        //            self.showHome.toggle()
-        //            //get the users current currency total
-        ////            modelLesson.findUserDifficulty{
-        ////                //get the users current currency
-        ////                currModel.getUserCurrency()
-        ////            }
-        //            }){
-        //
-        //                Image(systemName: "arrowshape.backward.fill")
-        //                    .resizable()
-        //                    .frame(width: 30, height: 30)
-        //                    .foregroundColor(.yellow)
-        //            }
-        //        )
-        //        .navigationDestination(isPresented: $showHome){
-        //            Homepage()
-        //        }
+
         .navigationBarBackButtonHidden(true)
         
         .onAppear {
@@ -195,17 +179,56 @@ struct Details: View {
         
     }
     
+    func updatedAdjustedDifficulty(){
+        
+        fireDBHelper.findUserDifficulty { difficulty in
+            guard let difficulty = difficulty else { return }
+            userDifficulty = difficulty
+
+            // Determine expected difficulty based on user difficulty and accuracy output
+            switch (userDifficulty, calculateAccuracyOutput()) {
+            case (self.difficulty[0], feedbackMsg[0]): // Beginner | Great
+                expectedDifficulty = self.difficulty[1] // Move to Intermediate
+
+            case (self.difficulty[0], feedbackMsg[1]): // Beginner | Needs Improvement
+                expectedDifficulty = self.difficulty[0] // Remain Beginner
+
+            case (self.difficulty[1], feedbackMsg[0]): // Intermediate | Great
+                expectedDifficulty = self.difficulty[2] // Move to Advanced
+
+            case (self.difficulty[1], feedbackMsg[1]): // Intermediate | Needs Improvement
+                expectedDifficulty = self.difficulty[0] // Move to Beginner
+
+            case (self.difficulty[2], feedbackMsg[0]): // Advanced | Great
+                expectedDifficulty = self.difficulty[2] // Remain Advanced
+
+            case (self.difficulty[2], feedbackMsg[1]): // Advanced | Needs Improvement
+                expectedDifficulty = self.difficulty[1] // Move to Intermediate
+
+            default:
+                break
+            }
+            
+            // Update difficulty in FireDB
+            fireDBHelper.updateDifficulty(
+                selectedDifficulty: expectedDifficulty,
+                userData: &userData,
+                selection: &selection
+            )
+        }
+    }
+    
     func calculateAccuracyOutput() -> String {
-        let input = PronunciationModelInput(Feature1: arr[0], Feature2: arr[1], Feature3: arr[2], Feature4: arr[3], Feature5: arr[4])
+        let input = PronunciationModelInput(Feature1: 2, Feature2: 2, Feature3: 2, Feature4: 2, Feature5: 3)
         
         do {
             let prediction = try model.prediction(input: input)
             let outputClass = prediction.OutputClass
             
             if outputClass == 1 {
-                return "Your Pronunciation is Great"
+                return feedbackMsg[0]
             } else {
-                return "Your Pronunciation Needs Improvement"
+                return feedbackMsg[1]
             }
         } catch {
             print("Error making prediction: \(error)")

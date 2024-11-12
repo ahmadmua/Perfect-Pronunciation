@@ -20,6 +20,7 @@ struct Homepage: View {
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
+    @State private var showLeague = false
     
     
     @ObservedObject var currModel = CurrencyController()
@@ -200,12 +201,26 @@ struct Homepage: View {
                         Text("\(currModel.userCurr)")
                             .foregroundColor(.black)
                         
-                        
                     }
                     .padding(.horizontal, 25)
                     .padding(.vertical, 6)
                     .background(RoundedRectangle(cornerRadius: 30).fill(Color.yellow))
                     .overlay(RoundedRectangle(cornerRadius: 30).stroke(Color.black, lineWidth: 2))
+                    
+                    
+                    Button(action: {
+                        
+                        self.showLeague.toggle()
+                    }){
+                        
+                        Image(systemName: "hexagon.fill")
+                            .resizable()
+                            .frame(width: 40, height: 40)
+                            .foregroundColor(.yellow)
+                    }
+                    .navigationDestination(isPresented: $showLeague){
+                        LeagueLeaderboard()
+                    }//league
                     
                     Button(action: {
                         
@@ -221,9 +236,11 @@ struct Homepage: View {
                     .navigationDestination(isPresented: $showSettings){
                         Settings()
                     }
-                }
+                    
+                    
+                }//hstack
                                     
-                )
+                )// nav bar items
                 
                 Spacer()
             }

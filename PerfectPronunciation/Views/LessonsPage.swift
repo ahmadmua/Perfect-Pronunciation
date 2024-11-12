@@ -28,7 +28,7 @@ struct LessonsPage: View {
     //lesson name
     @State private var lessonName = ""
     //openai
-    @State private var responseText: String = "Press the button to get a response"
+    @State private var responseText: String = "Loading..."
     @State private var responseArray : [String] = []
     @State private var cancellable: AnyCancellable?
     private let openAIService = OpenAIService()

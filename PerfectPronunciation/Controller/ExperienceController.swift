@@ -217,5 +217,19 @@ class ExperienceController: ObservableObject {
         }
     }
     
+    //MARK: - league system
+    
+    func calculateWeeklyExperience(){
+        
+    }
+    
+    func demoteUserLeague(){
+        
+    }
+    
+    func promoteUserLeague(){
+        
+    }
+    
     
 }//class

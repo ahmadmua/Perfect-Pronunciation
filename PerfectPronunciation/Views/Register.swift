@@ -98,6 +98,7 @@ struct Register: View {
                      "Currency": 0.0,
                      "Experience": 0.0,
                      "ExperienceLevel": 1.0,
+                     "League" : "",
                      "WeeklyChallengeComplete": 0.0,
                      "LessonsCompleted": [
                         "Conversation" : false,

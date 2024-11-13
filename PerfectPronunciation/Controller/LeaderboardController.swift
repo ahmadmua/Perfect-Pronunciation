@@ -49,51 +49,58 @@ class LeaderboardController: ObservableObject{
     
     
     //MARK: - for league system
-    func getLeagueLeaderboard(){
-        
-        //get reference to DB
-        let db = Firestore.firestore()
-        //read docs at a specific path
-        db.collection("UserData").order(by: "TotalExperience", descending: true).getDocuments { snapshot, error in
-            //check for errors
-            if error == nil{
-                //no error
-                if let snapshot = snapshot {
-                    
-                    //update list property
-                    DispatchQueue.main.async{
-                    
-                        //get documents and create Leaderboard
-                        self.leagueFull = snapshot.documents.map{ d in
-                            //create a new item for the list for each doc returned
-                            return League(id: d.documentID,
-                                               userName: d["Username"] as? String ?? "",
-                                               country: d["Country"] as? String ?? "",
-                                          experience: d["TotalExperience"] as? Int ?? 0,
-                                          league: d["League"] as? String ?? "")
+    func getLeagueLeaderboard() {
+            let db = Firestore.firestore()
+            db.collection("UserData")
+                .order(by: "TotalExperience", descending: true)
+                .getDocuments { snapshot, error in
+                    if error == nil, let snapshot = snapshot {
+                        DispatchQueue.main.async {
+                            // Get documents and create leaderboard
+                            var users = snapshot.documents.map { d in
+                                return League(
+                                    id: d.documentID,
+                                    userName: d["Username"] as? String ?? "",
+                                    country: d["Country"] as? String ?? "",
+                                    experience: d["TotalExperience"] as? Int ?? 0,
+                                    league: "" // Empty for now, will be set in determineLeagueByExperience
+                                )
+                            }
+                            
+                            // Determine league for each user based on experience ranking
+                            self.determineLeague(users: &users)
+                            self.leagueFull = users
                         }
-                        
-//                        print(self.leaderboard)
+                    } else {
+                        print("Error loading documents: \(String(describing: error))")
                     }
                 }
-            }else{
-                //handle any errors
+        }
+    
+    func determineLeague(users: inout [League]) {
+            // Sort users by experience in descending order
+            users.sort { $0.experience > $1.experience }
+            
+            let totalUsers = users.count
+            for (index, user) in users.enumerated() {
+                let rankPercentage = Double(index) / Double(totalUsers)
+                
+                // Assign league based on percentage ranking
+                if rankPercentage < 0.1 {
+                    users[index].league = "True Alpaca"
+                }else if rankPercentage < 0.2 {
+                    users[index].league = "Gold"
+                } else if rankPercentage < 0.6 {
+                    users[index].league = "Silver"
+                } else {
+                    users[index].league = "Bronze"
+                }
+                
+                // Optionally, update Firebase with the assigned league
+                let db = Firestore.firestore()
+                db.collection("UserData").document(user.id).updateData(["League": users[index].league])
             }
         }
-        
-    }
-    
-    func determineLeague(forRank rank: Int, totalUsers: Int) -> String {
-        // Example: top 10% to Gold, 10-50% to Silver, bottom 50% to Bronze
-        let percentage = Double(rank) / Double(totalUsers)
-        if percentage < 0.1 {
-            return "Gold"
-        } else if percentage < 0.5 {
-            return "Silver"
-        } else {
-            return "Bronze"
-        }
-    }
     
     func getFlagForCountry(fullCountryName: String) -> String {
         

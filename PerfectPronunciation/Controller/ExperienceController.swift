@@ -210,10 +210,6 @@ class ExperienceController: ObservableObject {
     
     //MARK: - league system
     
-    func calculateWeeklyExperience(){
-        
-    }
-    
     func demoteUserLeague(){
         
     }

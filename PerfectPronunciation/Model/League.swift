@@ -10,7 +10,7 @@ struct League: Identifiable {
     var id : String
     var userName : String
     var country : String
-    var experience : Double
+    var experience : Int
     var league : String
 }
 

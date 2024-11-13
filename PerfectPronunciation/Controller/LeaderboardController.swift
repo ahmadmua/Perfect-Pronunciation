@@ -54,7 +54,7 @@ class LeaderboardController: ObservableObject{
         //get reference to DB
         let db = Firestore.firestore()
         //read docs at a specific path
-        db.collection("UserData").order(by: "Experience", descending: true).getDocuments { snapshot, error in
+        db.collection("UserData").order(by: "TotalExperience", descending: true).getDocuments { snapshot, error in
             //check for errors
             if error == nil{
                 //no error
@@ -69,7 +69,7 @@ class LeaderboardController: ObservableObject{
                             return League(id: d.documentID,
                                                userName: d["Username"] as? String ?? "",
                                                country: d["Country"] as? String ?? "",
-                                          experience: d["WeeklyChallengeComplete"] as? Double ?? 0.0,
+                                          experience: d["TotalExperience"] as? Int ?? 0,
                                           league: d["League"] as? String ?? "")
                         }
                         

@@ -18,7 +18,7 @@ struct LeagueLeaderboard: View {
             
             // List displaying the leaderboard
             List(leaderboardModel.leagueFull) { content in
-                Text("\(leaderboardModel.getFlagForCountry(fullCountryName: content.country)) \(content.userName) \n \(content.league) - \(String(format: "%.0f", content.experience))xp")
+                Text("\(leaderboardModel.getFlagForCountry(fullCountryName: content.country)) \(content.userName) \n \(content.league) - \(content.experience)xp")
             }
 
         }
@@ -26,7 +26,7 @@ struct LeagueLeaderboard: View {
             // Refresh for updating the leaderboard
             leaderboardModel.getLeagueLeaderboard()
         }
-        .padding(.top, -100)
+        .padding(.top, 10)
     }
     
     init() {

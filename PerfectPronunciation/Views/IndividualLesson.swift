@@ -132,13 +132,13 @@ struct IndividualLesson: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
 
-                    .alert("Congrats, You just earned xp and currency!", isPresented: $showingAlert) {
-                                    Button("OK", role: .cancel) {
-                                        currModel.updateUserCurrency()
-                                        xpModel.updateUserExperience()
-//                                        xpModel.calculateUserLevel()
-                                    }
-                                        }//
+//                    .alert("Congrats, You just earned xp and currency!", isPresented: $showingAlert) {
+//                                    Button("OK", role: .cancel) {
+//                                        currModel.updateUserCurrency()
+//                                        xpModel.updateUserExperience()
+////                                        xpModel.calculateUserLevel()
+//                                    }
+//                                        }//
                     .navigationDestination(isPresented: $showNext){
                         IndividualLesson(voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)

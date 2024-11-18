@@ -4,10 +4,10 @@ import Firebase
 import FirebaseAuth
 
 
-struct Day {
-    let name: String
-    var items: [String]
-}
+//struct Day {
+//    let name: String
+//    var items: [String]
+//}
 
 class SharedData: ObservableObject {
     @Published var selectedDay: String = "Mo"
@@ -17,7 +17,7 @@ class SharedData: ObservableObject {
 struct Details: View {
     
     let model = PronunciationModel()
-    @ObservedObject var modelLesson = LessonController()
+
     
     @State private var prediction: Double?
     @State private var averageAccuracy: Double = 0
@@ -26,7 +26,6 @@ struct Details: View {
     @State private var expectedDifficulty: String = ""
     @State private var selection: Int? = nil
     @State private var userData = UserData()
-    @ObservedObject var currModel = CurrencyController()
     @State private var feedbackMsg : [String] = ["Your Pronunciation is Great", "Your Pronunciation Needs Improvement"]
     @State private var difficulty : [String] = ["Beginner", "Intermediate", "Advanced"]
     
@@ -219,7 +218,7 @@ struct Details: View {
     }
     
     func calculateAccuracyOutput() -> String {
-        let input = PronunciationModelInput(Feature1: 2, Feature2: 2, Feature3: 2, Feature4: 2, Feature5: 3)
+        let input = PronunciationModelInput(Feature1: arr[0], Feature2: arr[1], Feature3: arr[2], Feature4: arr[3], Feature5: arr[4])
         
         do {
             let prediction = try model.prediction(input: input)
@@ -284,6 +283,7 @@ struct ItemsListView: View {
     @State private var confidence: [Double] = []
     @State private var pronScores: [Double] = []
     @State private var display: [String] = []
+    @State private var transcription: [String] = []
     @State private var errorTypeCountsList: [[String: Int]] = [] // List of errorTypeCount dictionaries
     @State private var wordErrorDataList: [[(word: String, errorType: String)]] = [] // List of error data for each assessment
 
@@ -299,8 +299,10 @@ struct ItemsListView: View {
                             confidence: confidence.indices.contains(index) ? confidence[index] : 0.0,
                             pronScores: pronScores.indices.contains(index) ? pronScores[index] : 0.0,
                             display: display.indices.contains(index) ? display[index] : "",
+                            transcription: transcription.indices.contains(index) ? transcription[index] : "",
                             errorTypeCounts: errorTypeCountsList.indices.contains(index) ? errorTypeCountsList[index] : [:],
-                            wordErrorData: wordErrorDataList.indices.contains(index) ? wordErrorDataList[index] : [] // Pass the specific error data for this assessment
+                            wordErrorData: wordErrorDataList.indices.contains(index) ? wordErrorDataList[index] : []
+                            // Pass the specific error data for this assessment
                         )
                 ) {
                     Text(items[index])
@@ -345,13 +347,20 @@ struct ItemsListView: View {
                 self.confidence.removeAll()
                 self.pronScores.removeAll()
                 self.display.removeAll()
+                self.transcription.removeAll() // Clear transcription data
                 self.errorTypeCountsList.removeAll()
-                self.wordErrorDataList.removeAll() // Clear data
+                self.wordErrorDataList.removeAll()
                 
                 // Loop through documents
                 for document in documents {
                     var errorTypeCount: [String: Int] = [:] // Dictionary to store counts of error types
                     var wordErrorData: [(word: String, errorType: String)] = [] // Temporary array for word errors
+                    
+                    // Fetch transcription
+                    if let transcriptionText = document.get("transcription") as? [String: Any],
+                       let displayText = transcriptionText["DisplayText"] as? String {
+                        self.transcription.append(displayText)
+                    }
                     
                     // Check for the assessment dictionary
                     if let assessment = document.get("assessment") as? [String: Any],
@@ -406,11 +415,19 @@ struct ItemsListView: View {
                 
                 // Print or use the errorTypeCount dictionary as needed
                 print("Error Type Counts: \(self.errorTypeCountsList)")
+                
+                // Print transcriptions for debugging
+                print("Transcriptions: \(self.transcription)")
             } else if let error = error {
                 print("Error: \(error)")
             }
         }
     }
+
+    
+    
+    
+    
 }
 
 

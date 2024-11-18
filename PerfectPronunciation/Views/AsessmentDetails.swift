@@ -14,25 +14,41 @@ struct AssessmentView: View {
     @State var confidence: Double
     @State var pronScores: Double
     @State var display: String
+    @State var transcription: String
 
     @State private var progress: Double = 16.0
     @State private var predictionResult: String? = nil
     @State var errorTypeCounts: [String: Int]
-    var wordErrorData: [(word: String, errorType: String)]
+    @State var wordErrorData: [(word: String, errorType: String)]
 
     let fields = ["Mispronunciations", "Omissions", "Insertions", "Unexpected_break", "Missing_break", "Monotone"]
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading) {
             // Sentence Section - Full Width
             VStack(alignment: .leading) {
-                Text(buildAttributedText(display: display, wordErrorData: wordErrorData))
-                    .padding()
-                    .background(Color(UIColor.systemGray6))
-                    .cornerRadius(10)
-                    .padding(.horizontal)
+                VStack(alignment: .leading) {
+                    
+                    Text(buildAttributedText(display: display, wordErrorData: wordErrorData))
+                            .lineLimit(nil)
+                            .multilineTextAlignment(.leading)
+                            .padding()
+                            .background(Color(UIColor.systemGray6))
+                            .cornerRadius(10)
+                            .padding(.horizontal)
+
+                        Text(buildAttributedText(display: transcription, wordErrorData: wordErrorData))
+                            .lineLimit(nil)
+                            .multilineTextAlignment(.leading)
+                            .padding()
+                            .background(Color(UIColor.systemGray6))
+                            .cornerRadius(10)
+                            .padding(.horizontal)
+                }
+
             }
             .frame(maxWidth: .infinity)
+
 
             // Pronunciation Score and Errors Section
             HStack(alignment: .top) {
@@ -87,6 +103,35 @@ struct AssessmentView: View {
         .navigationTitle("Assessment Result")
         .onAppear {
             predictionResult = predictPronunciationImprovement(mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0), omissions: Double(errorTypeCounts["Omission"] ?? 0), insertions: Double(errorTypeCounts["Insertion"] ?? 0), unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0), missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0), monotone: Double(errorTypeCounts["Monotone"] ?? 0))
+            
+            let displayWords = Set(display.split(separator: " ").map { String($0) })
+               let transcriptionWords = Set(transcription.split(separator: " ").map { String($0) })
+
+               // Find omissions (words in display but not in transcription)
+               let omissions = displayWords.subtracting(transcriptionWords)
+               for word in omissions {
+                   wordErrorData.append((word: word, errorType: "Omission"))
+               }
+
+               // Find insertions (words in transcription but not in display)
+               let insertions = transcriptionWords.subtracting(displayWords)
+               for word in insertions {
+                   wordErrorData.append((word: word, errorType: "Insertion"))
+               }
+
+               // Update counts for omissions and insertions
+               errorTypeCounts["Omission"] = omissions.count
+               errorTypeCounts["Insertion"] = insertions.count
+
+               // Update prediction result
+               predictionResult = predictPronunciationImprovement(
+                   mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0),
+                   omissions: Double(errorTypeCounts["Omission"] ?? 0),
+                   insertions: Double(errorTypeCounts["Insertion"] ?? 0),
+                   unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0),
+                   missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0),
+                   monotone: Double(errorTypeCounts["Monotone"] ?? 0)
+               )
         }
         .onDisappear(){
             
@@ -101,38 +146,37 @@ struct AssessmentView: View {
     func buildAttributedText(display: String, wordErrorData: [(word: String, errorType: String)]) -> AttributedString {
         var attributedText = AttributedString(display)
 
+        // Loop through wordErrorData to apply the correct highlight color
         for wordError in wordErrorData {
-            if let range = attributedText.range(of: wordError.word) {
-                print("Processing word: '\(wordError.word)' with error type: '\(wordError.errorType)'")
-
-                // Check for a valid errorType
-                if !wordError.errorType.isEmpty { // Only process if errorType is not empty
-                    switch wordError.errorType {
-                    case "Mispronunciation":
-                        attributedText[range].foregroundColor = .yellow
-                    case "Omission":
-                        attributedText[range].foregroundColor = .gray
-                    case "Insertion":
-                        attributedText[range].foregroundColor = .red
-                    case "Unexpected_break":
-                        attributedText[range].foregroundColor = .pink
-                    case "Missing_break":
-                        attributedText[range].foregroundColor = .blue
-                    case "Monotone":
-                        attributedText[range].foregroundColor = .purple
-                    default:
-                        print("Unknown error type for word '\(wordError.word)': \(wordError.errorType)")
-                    }
-                } else {
-                    print("No error type found for word: '\(wordError.word)'")
+            let word = wordError.word
+            let errorType = wordError.errorType
+            
+            // Find the range of the word in the attributed string
+            if let range = attributedText.range(of: word) {
+                // Apply the color based on the error type
+                switch errorType {
+                case "Mispronunciation":
+                    attributedText[range].foregroundColor = .yellow
+                case "Omission":
+                    attributedText[range].foregroundColor = .gray
+                case "Insertion":
+                    attributedText[range].foregroundColor = .red
+                case "Unexpected_break":
+                    attributedText[range].foregroundColor = .pink
+                case "Missing_break":
+                    attributedText[range].foregroundColor = .blue
+                case "Monotone":
+                    attributedText[range].foregroundColor = .purple
+                default:
+                    break
                 }
-            } else {
-                print("Word not found in attributed text: '\(wordError.word)'")
             }
         }
 
         return attributedText
     }
+
+
 
 
 

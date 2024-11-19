@@ -208,15 +208,5 @@ class ExperienceController: ObservableObject {
         }
     }
     
-    //MARK: - league system
-    
-    func demoteUserLeague(){
-        
-    }
-    
-    func promoteUserLeague(){
-        
-    }
-    
     
 }//class

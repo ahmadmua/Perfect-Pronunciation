@@ -83,11 +83,11 @@ struct Details: View {
                 // Statistics Cards
                 HStack {
                     StatCard(color: .yellow, title: "Words Pronounced", value: "\(totalWords)")
-                    StatCard(color: .yellow, title: "AVG Accuracy", value: "\(String(format: "%.1f", averageAccuracy))%")
+                    StatCard(color: .yellow, title: "Total AVG Accuracy", value: "\(String(format: "%.1f", averageAccuracy))%")
                 }
                 
                 HStack {
-                    StatCard(color: .yellow, title: "Predicted Accuracy", value: "\(prediction ?? 0.0)%")
+                    StatCard(color: .yellow, title: "Previous Lesson Predicted Accuracy", value: "\(prediction ?? 0.0)%")
                 }
                 .onReceive([arr[0], arr[1], arr[2], arr[3], arr[4]].publisher) { _ in
                     prediction = makePrediction()

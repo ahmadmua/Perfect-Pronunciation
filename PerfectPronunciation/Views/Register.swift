@@ -108,57 +108,79 @@ struct Register: View {
 
     func register() {
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
-            if error != nil {
+            if let error = error {
                 showingAlert = true
-                msg = error!.localizedDescription
-            } else {
-                Firestore.firestore().collection("UserData").document(Auth.auth().currentUser!.uid).setData(
-                    [
-                        "Country": "",
-                        "Difficulty": "",
-                        "Currency": 0.0,
-                        "Experience": 0.0,
-                        "ExperienceLevel": 1.0,
-                        "WeeklyChallengeComplete": 0.0,
-                        "LessonsCompleted": [
-                            "Conversation": false,
-                            "Numbers": false,
-                            "Directions": false,
-                            "Food1": false,
-                            "Food2": false
+                msg = error.localizedDescription
+                return
+            }
+            
+            // Send email verification after successful registration
+            sendVerificationEmail()
+            
+            // Add user data to Firestore
+            Firestore.firestore().collection("UserData").document(Auth.auth().currentUser!.uid).setData(
+                [
+                    "Country": "",
+                    "Difficulty": "",
+                    "Currency": 0.0,
+                    "Experience": 0.0,
+                    "ExperienceLevel": 1.0,
+                    "WeeklyChallengeComplete": 0.0,
+                    "LessonsCompleted": [
+                        "Conversation": false,
+                        "Numbers": false,
+                        "Directions": false,
+                        "Food1": false,
+                        "Food2": false
+                    ],
+                    "LessonQuestions": [
+                        "Conversation": [
+                            "Difficulty": "",
+                            "Questions": ""
                         ],
-                        "LessonQuestions": [
-                            "Conversation": [
-                                "Difficulty": "",
-                                "Questions": ""
-                            ],
-                            "Numbers": [
-                                "Difficulty": "",
-                                "Questions": ""
-                            ],
-                            "Directions": [
-                                "Difficulty": "",
-                                "Questions": ""
-                            ],
-                            "Food1": [
-                                "Difficulty": "",
-                                "Questions": ""
-                            ],
-                            "Food2": [
-                                "Difficulty": "",
-                                "Questions": ""
-                            ]
+                        "Numbers": [
+                            "Difficulty": "",
+                            "Questions": ""
                         ],
-                        "Achievements": [
-                            "Achievement 1": false
+                        "Directions": [
+                            "Difficulty": "",
+                            "Questions": ""
                         ],
-                        "Items": [
-                            "TimeIncrease": false
+                        "Food1": [
+                            "Difficulty": "",
+                            "Questions": ""
                         ],
-                        "Username": email.components(separatedBy: "@").first ?? "",
-                    ]
-                )
-                self.selection = 1
+                        "Food2": [
+                            "Difficulty": "",
+                            "Questions": ""
+                        ]
+                    ],
+                    "Achievements": [
+                        "Achievement 1": false
+                    ],
+                    "Items": [
+                        "TimeIncrease": false
+                    ],
+                    "Username": email.components(separatedBy: "@").first ?? "",
+                ]
+            )
+            
+            // Show the login screen after successful registration
+            self.selection = 1
+        }
+    }
+
+    func sendVerificationEmail() {
+        if let user = Auth.auth().currentUser {
+            user.sendEmailVerification { error in
+                if let error = error {
+                    showingAlert = true
+                    msg = "Error sending verification email: \(error.localizedDescription)"
+                    return
+                }
+                // Let the user know the verification email was sent
+                showingAlert = true
+                msg = "Please check your inbox to verify your email address."
             }
         }
     }

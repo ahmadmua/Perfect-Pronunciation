@@ -2,7 +2,6 @@ import SwiftUI
 import Firebase
 import FirebaseAuth
 
-
 struct Login: View {
     
     @State var email: String = ""
@@ -13,8 +12,7 @@ struct Login: View {
     @State private var msg = ""
     @State var userData = UserData()
     let notificationController = NotificationController()
-    //let openAIService = OpenAIService()
-    
+
     var body: some View {
         
         NavigationStack {
@@ -98,60 +96,62 @@ struct Login: View {
                 
                 notificationController.askPermission()
                 notificationController.scheduleNotifications()
-                
             }
             
         }
         .navigationBarBackButtonHidden(true)
     }
-    
-    
-        
+
     func login() {
         Auth.auth().signIn(withEmail: email, password: password) { result, error in
             if error != nil {
                 showingAlert = true
                 msg = "Login Information Incorrect"
             } else if let user = result?.user {
-                let ref = Firestore.firestore().collection("UserData").document(user.uid)
-                
-                ref.getDocument { (document, error) in
-                    if let document = document, document.exists {
-                        let data = document.data()
-                        let country = data?["Country"] as? String ?? ""
-                        let difficulty = data?["Difficulty"] as? String ?? ""
-                        
-                        if country.isEmpty || difficulty.isEmpty {
-                            // Redirect to Country and Difficulty selection screen if either is empty
-                            self.selection = 2
+                // Check if email is verified
+                if user.isEmailVerified {
+                    let ref = Firestore.firestore().collection("UserData").document(user.uid)
+                    
+                    ref.getDocument { (document, error) in
+                        if let document = document, document.exists {
+                            let data = document.data()
+                            let country = data?["Country"] as? String ?? ""
+                            let difficulty = data?["Difficulty"] as? String ?? ""
+                            
+                            if country.isEmpty || difficulty.isEmpty {
+                                // Redirect to Country and Difficulty selection screen if either is empty
+                                self.selection = 2
+                            } else {
+                                // Redirect to Homepage if both fields are filled
+                                self.selection = 3
+                            }
+                            
+                            // Cache the data to prevent re-selecting country and difficulty on re-login
+                            userData.setCountry(country: country)
+                            userData.setDifficulty(difficulty: difficulty)
+                            
                         } else {
-                            // Redirect to Homepage if both fields are filled
-                            self.selection = 3
+                            // Handle document does not exist scenario
+                            self.selection = 2 // Go to country and difficulty setup screen
                         }
-                        
-                        // Cache the data to prevent re-selecting country and difficulty on re-login
-                        userData.setCountry(country: country)
-                        userData.setDifficulty(difficulty: difficulty)
-                        
-                    } else {
-                        // Handle document does not exist scenario
-                        self.selection = 2 // Go to country and difficulty setup screen
+                    }
+                } else {
+                    // If email is not verified, prompt user to verify email
+                    self.msg = "Please verify your email address before logging in."
+                    self.showingAlert = true
+                    
+                    // Send verification email if not already sent
+                    user.sendEmailVerification { error in
+                        if let error = error {
+                            self.msg = "Failed to send verification email: \(error.localizedDescription)"
+                            self.showingAlert = true
+                        } else {
+                            self.msg = "Verification email sent. Please check your inbox."
+                            self.showingAlert = true
+                        }
                     }
                 }
             }
         }
     }
-
-    
-
-        
-    }
-
-    
-    struct Login_Previews: PreviewProvider {
-        static var previews: some View {
-            Login()
-        }
-    }
-    
-
+}

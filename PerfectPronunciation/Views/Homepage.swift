@@ -26,6 +26,7 @@ struct Homepage: View {
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
     @ObservedObject var model = LessonController()
+    @ObservedObject var achieveModel = AchievementController()
     
     
     var body: some View {
@@ -245,17 +246,11 @@ struct Homepage: View {
                 Spacer()
             }
         }
-        
-        .onAppear {
-            viewModel.objectWillChange.send()
-            
-            
-        }
-        
-        //}
         .background(Color("Background"))
         .navigationBarBackButtonHidden(true)
         .onAppear {
+            viewModel.objectWillChange.send()
+            
             if let user = Auth.auth().currentUser {
                 if let email = user.email {
                     userEmail = email.components(separatedBy: "@").first ?? ""
@@ -273,6 +268,12 @@ struct Homepage: View {
                 currModel.getUserCurrency()
             }
             
+            achieveModel.achievementOneCompletion { allCompleted in
+                if allCompleted {
+                    print("ALL ACHIEVEMENTS COMPLETED")
+                    achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
+                }
+            }
             
         }
         

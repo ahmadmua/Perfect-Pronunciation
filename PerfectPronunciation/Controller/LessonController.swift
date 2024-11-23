@@ -79,17 +79,17 @@ class LessonController : ObservableObject{
                                         print("Document updated successfully")
                                         
                                         //update user defaults
-                                        if(userLesson == "Conversation"){
-                                            UserDefaults.standard.set(true, forKey: "conversationCompleted")
-                                        }else if(userLesson == "Directions"){
-                                            UserDefaults.standard.set(true, forKey: "directionsCompleted")
-                                        }else if(userLesson == "Food1"){
-                                            UserDefaults.standard.set(true, forKey: "food1Completed")
-                                        }else if(userLesson == "Food2"){
-                                            UserDefaults.standard.set(true, forKey: "food2Completed")
-                                        }else if(userLesson == "Numbers"){
-                                            UserDefaults.standard.set(true, forKey: "numbersCompleted")
-                                        }
+//                                        if(userLesson == "Conversation"){
+//                                            UserDefaults.standard.set(true, forKey: "conversationCompleted")
+//                                        }else if(userLesson == "Directions"){
+//                                            UserDefaults.standard.set(true, forKey: "directionsCompleted")
+//                                        }else if(userLesson == "Food1"){
+//                                            UserDefaults.standard.set(true, forKey: "food1Completed")
+//                                        }else if(userLesson == "Food2"){
+//                                            UserDefaults.standard.set(true, forKey: "food2Completed")
+//                                        }else if(userLesson == "Numbers"){
+//                                            UserDefaults.standard.set(true, forKey: "numbersCompleted")
+//                                        }
                                     }
                                 }
                             }

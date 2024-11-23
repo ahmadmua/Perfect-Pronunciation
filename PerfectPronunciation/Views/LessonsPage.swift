@@ -301,9 +301,12 @@ struct LessonsPage: View {
                 UserDefaults.standard.synchronize()
                 
             }
-
-            if(achieveModel.achievementOneCompletion()){
-                achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
+            
+            achieveModel.achievementOneCompletion { allCompleted in
+                if allCompleted {
+                    print("ALL ACHIEVEMENTS COMPLETED")
+                    achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
+                }
             }
         }
             

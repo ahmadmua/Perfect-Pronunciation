@@ -110,20 +110,38 @@ class AchievementController : ObservableObject{
         
     }
     
-    func achievementOneCompletion() -> Bool {
-        let convComp = UserDefaults.standard.bool(forKey: "conversationCompleted")
-        let direcComp = UserDefaults.standard.bool(forKey: "directionsCompleted")
-        let numComp = UserDefaults.standard.bool(forKey: "numbersCompleted")
-        let food1Comp = UserDefaults.standard.bool(forKey: "food1Completed")
-        let food2Comp = UserDefaults.standard.bool(forKey: "food2Completed")
-        
-        //check if user completed achievement one
-        if(convComp == true && direcComp == true && numComp == true && food1Comp == true && food2Comp == true){
-            //send apop up alert
-            return true
+    func achievementOneCompletion(completion: @escaping (Bool) -> Void) {
+        // Check if a user is logged in
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            
+            // Read the document at the user's path
+            userDocRef.getDocument { document, error in
+                if let document = document, document.exists {
+                    // Access the LessonsCompleted field
+                    if let lessonsCompleted = document["LessonsCompleted"] as? [String: Bool] {
+                        // Check if all required lessons are completed
+                        let allCompleted = lessonsCompleted["Conversation"] == true &&
+                                           lessonsCompleted["Directions"] == true &&
+                                           lessonsCompleted["Food1"] == true &&
+                                           lessonsCompleted["Food2"] == true &&
+                                           lessonsCompleted["Numbers"] == true
+                        
+                        // Pass the result to the completion handler
+                        completion(allCompleted)
+                    } else {
+                        print("LessonsCompleted field is missing or not in the expected format.")
+                        completion(false)
+                    }
+                } else {
+                    print("Document does not exist.")
+                    completion(false)
+                }
+            }
+        } else {
+            print("No user is logged in.")
+            completion(false)
         }
-        return false
-        
     }
-    
 }

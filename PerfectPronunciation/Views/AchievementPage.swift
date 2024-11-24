@@ -59,10 +59,11 @@ struct AchievementPage: View {
                                     .font(.system(size: 50, weight: .light))
                             }//btn basic2
                             .buttonStyle(.borderless)
+                            .disabled(achieveModel.achievement2)
                             VStack{
-                                Text("Achievement Name")
+                                Text("Experience")
                                     .padding(.horizontal, 20)
-                                Text("Achievement Description")
+                                Text("Reach Level 5")
                                     .padding(.horizontal, 20)
                             }
                         }//hstack
@@ -77,10 +78,11 @@ struct AchievementPage: View {
                                     .font(.system(size: 50, weight: .light))
                             }//btn basic2
                             .buttonStyle(.borderless)
+                            .disabled(achieveModel.achievement3)
                             VStack{
-                                Text("Achievement Name")
+                                Text("Weekly Challenger")
                                     .padding(.horizontal, 20)
-                                Text("Achievement Description")
+                                Text("Partake in the Weekly Challenge")
                                     .padding(.horizontal, 20)
                             }
                         }//hstack

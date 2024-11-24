@@ -22,262 +22,273 @@ struct Homepage: View {
     @State private var showHome = false
     @State private var showLeague = false
     
+    @State private var showToast = false // State for showing the toast
+    @State private var toastMessage = "" // Message to display in the toast
     
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
     @ObservedObject var model = LessonController()
     @ObservedObject var achieveModel = AchievementController()
     
-    
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            ZStack{
-                
-                VStack(spacing: 20) {
-                    Text("Hello, \(userEmail)")
-                        .font(.headline)
-                        .bold()
-                    ZStack{
-                        
+        ZStack {
+            ScrollView(.vertical, showsIndicators: false) {
+                ZStack {
+                    VStack(spacing: 20) {
+                        Text("Hello, \(userEmail)")
+                            .font(.headline)
+                            .bold()
+                        ZStack {
+                            VStack(alignment: .leading) {
+                                Grid {
+                                    GridRow {
+                                        HStack {
+                                            Button(action: {
+                                                self.showLesson.toggle()
+                                            }) {
+                                                Text("Lessons")
+                                                    .font(.headline)
+                                                    .padding()
+                                                    .frame(width: 185, height: 75)
+                                                    .background(Color("CustYell"))
+                                                    .foregroundStyle(Color.black)
+                                                    .cornerRadius(10)
+                                                    .shadow(radius: 5)
+                                            }
+                                            .navigationDestination(isPresented: $showLesson) {
+                                                LessonsPage()
+                                                    .navigationBarBackButtonHidden(true)
+                                            }
+                                            
+                                            Button(action: {
+                                                self.showWeekly.toggle()
+                                            }) {
+                                                Text("Weekly")
+                                                    .font(.headline)
+                                                    .padding()
+                                                    .frame(width: 185, height: 75)
+                                                    .background(Color("CustYell"))
+                                                    .cornerRadius(10)
+                                                    .foregroundStyle(Color.black)
+                                                    .shadow(radius: 5)
+                                            }
+                                            .navigationDestination(isPresented: $showWeekly) {
+                                                WeeklyGamePage()
+                                                    .navigationBarBackButtonHidden(true)
+                                            }
+                                        }
+                                    }
+                                    
+                                    GridRow {
+                                        HStack {
+                                            Button(action: {
+                                                self.showAchievement.toggle()
+                                            }) {
+                                                Text("Achievements")
+                                                    .font(.headline)
+                                                    .padding()
+                                                    .frame(width: 185, height: 75)
+                                                    .background(Color("CustYell"))
+                                                    .cornerRadius(10)
+                                                    .foregroundStyle(Color.black)
+                                                    .shadow(radius: 5)
+                                            }
+                                            .navigationDestination(isPresented: $showAchievement) {
+                                                AchievementPage()
+                                                    .navigationBarBackButtonHidden(true)
+                                            }
+                                            
+                                            Button(action: {
+                                                self.showStore.toggle()
+                                            }) {
+                                                Text("Store")
+                                                    .font(.headline)
+                                                    .padding()
+                                                    .frame(width: 185, height: 75)
+                                                    .background(Color("CustYell"))
+                                                    .cornerRadius(10)
+                                                    .foregroundStyle(Color.black)
+                                                    .shadow(radius: 5)
+                                            }
+                                            .navigationDestination(isPresented: $showStore) {
+                                                StorePage()
+                                                    .navigationBarBackButtonHidden(true)
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                         
                         VStack(alignment: .leading) {
+                            Text("Goals / Stats")
+                                .font(.largeTitle)
+                                .bold()
                             
-                            
-                            Grid{
-                                GridRow{
-                                    HStack{
+                            ZStack {
+                                VStack(alignment: .leading) {
+                                    HStack(spacing: 20) {
                                         Button(action: {
-                                            self.showLesson.toggle()
-                                        }){
-                                            Text("Lessons")
-                                                .font(.headline)
-                                                .padding()
-                                                .frame(width: 185, height: 75)
-                                                .background(Color("CustYell"))
-                                                .foregroundStyle(Color.black)
-                                                .cornerRadius(10)
-                                                .shadow(radius: 5)
-                                            
+                                            self.showStats.toggle()
+                                        }) {
+                                            BarChart(
+                                                data: viewModel.word.data,
+                                                range: viewModel.accuracyRange
+                                            )
                                         }
-                                        .navigationDestination(isPresented: $showLesson){
-                                            LessonsPage()
-                                                .navigationBarBackButtonHidden(true)
-                                        }
-                                        
-                                        Button(action: {
-                                            
-                                            self.showWeekly.toggle()
-                                        }){
-                                            Text("Weekly")
-                                                .font(.headline)
-                                                .padding()
-                                                .frame(width: 185, height: 75)
-                                                .background(Color("CustYell"))
-                                                .cornerRadius(10)
-                                                .foregroundStyle(Color.black)
-                                                .shadow(radius: 5)
-                                            
-                                        }
-                                        .navigationDestination(isPresented: $showWeekly){
-                                            WeeklyGamePage()
-                                                .navigationBarBackButtonHidden(true)
-                                        }
-                                    }//hstack
-                                }//grid row
-                                
-                                GridRow{
-                                    HStack{
-                                        Button(action: {
-                                            
-                                            self.showAchievement.toggle()
-                                        }){
-                                            Text("Achievments")
-                                                .font(.headline)
-                                                .padding()
-                                                .frame(width: 185, height: 75)
-                                                .background(Color("CustYell"))
-                                                .cornerRadius(10)
-                                                .foregroundStyle(Color.black)
-                                                .shadow(radius: 5)
-                                            
-                                        }
-                                        .navigationDestination(isPresented: $showAchievement){
-                                            AchievementPage()
-                                                .navigationBarBackButtonHidden(true)
-                                        }
-                                        
-                                        Button(action: {
-                                            
-                                            self.showStore.toggle()
-                                        }){
-                                            Text("Store")
-                                                .font(.headline)
-                                                .padding()
-                                                .frame(width: 185, height: 75)
-                                                .background(Color("CustYell"))
-                                                .cornerRadius(10)
-                                                .foregroundStyle(Color.black)
-                                                .shadow(radius: 5)
-                                        }
-                                        .navigationDestination(isPresented: $showStore){
-                                            StorePage()
-                                                .navigationBarBackButtonHidden(true)
+                                        .navigationDestination(isPresented: $showStats) {
+                                            StatData()
                                         }
                                     }
+                                    .frame(maxWidth: .infinity)
                                 }
-                            }//grid
-                            
-                        }
-                    }
-                    
-                    
-                    
-                    VStack(alignment: .leading){
-                        
-                        Text("Goals / Stats")
-                            .font(.largeTitle)
-                            .bold()
-                        
-                        ZStack{
-                            
-                            VStack(alignment: .leading) {
-                                
-                                
-                                HStack(spacing: 20) {
-                                    
-                                    
-                                    
-                                    Button(action: {
-                                        self.showStats.toggle()
-                                    }){
-                                        
-                                        
-                                        BarChart(
-                                            data: viewModel.word.data,
-                                            range: viewModel.accuracyRange
-                                        )
-                                        
-                                    }
-                                    .navigationDestination(isPresented: $showStats){
-                                        StatData()
-                                    }
-                                    
-                                }
-                                .frame(maxWidth: .infinity)
-                                
                             }
                         }
                     }
-                    
-                    
+                    .padding(.top, 20)
+                    .padding(.horizontal, 20)
+                    .navigationBarItems(leading:
+                                            Image("Alpaca")
+                        .resizable()
+                        .padding(4)
+                        .frame(width: 45, height: 40)
+                        .clipShape(Circle())
+                        .background(Circle().fill(Color.yellow))
+                        .overlay(Circle().stroke(Color.black, lineWidth: 2)),
+                                        trailing:
+                                            HStack(spacing: 20) {
+                        HStack {
+                            Image(systemName: "trophy.circle")
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                                .foregroundColor(.black)
+                            Text("\(xpModel.userLevel)")
+                                .foregroundColor(.black)
+                            
+                            Image(systemName: "music.mic.circle")
+                                .resizable()
+                                .frame(width: 25, height: 25)
+                                .foregroundColor(.black)
+                            Text("\(currModel.userCurr)")
+                                .foregroundColor(.black)
+                        }
+                        .padding(.horizontal, 25)
+                        .padding(.vertical, 6)
+                        .background(RoundedRectangle(cornerRadius: 30).fill(Color.yellow))
+                        .overlay(RoundedRectangle(cornerRadius: 30).stroke(Color.black, lineWidth: 2))
+                        
+                        Button(action: {
+                            self.showLeague.toggle()
+                        }) {
+                            Image(systemName: "hexagon.fill")
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(.yellow)
+                        }
+                        .navigationDestination(isPresented: $showLeague) {
+                            LeagueLeaderboard()
+                        }
+                        
+                        Button(action: {
+                            self.showSettings.toggle()
+                        }) {
+                            Image(systemName: "person.circle")
+                                .resizable()
+                                .frame(width: 40, height: 40)
+                                .foregroundColor(.black)
+                                .background(Circle().fill(Color.yellow))
+                        }
+                        .navigationDestination(isPresented: $showSettings) {
+                            Settings()
+                        }
+                    })
                 }
-                .padding(.top, 20)
-                .padding(.horizontal, 20)
-                .navigationBarItems(leading:
-                                        Image("Alpaca")
-                    .resizable()
-                    .padding(4)
-                    .frame(width: 45, height: 40)
-                    .clipShape(Circle())
-                    .background(Circle().fill(Color.yellow))
-                    .overlay(Circle().stroke(Color.black, lineWidth: 2)),
-                                    trailing:
-                                        HStack(spacing: 20){
-                    HStack{
-                        
-                        Image(systemName: "trophy.circle")
-                            .resizable()
-                            .frame(width: 25, height: 25)
-                            .foregroundColor(.black)
-                        //get the current user currency
-                        Text("\(xpModel.userLevel)")
-                            .foregroundColor(.black)
-                        
-                        
-                        Image(systemName: "music.mic.circle")
-                            .resizable()
-                            .frame(width: 25, height: 25)
-                            .foregroundColor(.black)
-                        //get the current user currency
-                        Text("\(currModel.userCurr)")
-                            .foregroundColor(.black)
-                        
-                    }
-                    .padding(.horizontal, 25)
-                    .padding(.vertical, 6)
-                    .background(RoundedRectangle(cornerRadius: 30).fill(Color.yellow))
-                    .overlay(RoundedRectangle(cornerRadius: 30).stroke(Color.black, lineWidth: 2))
-                    
-                    
-                    Button(action: {
-                        
-                        self.showLeague.toggle()
-                    }){
-                        
-                        Image(systemName: "hexagon.fill")
-                            .resizable()
-                            .frame(width: 40, height: 40)
-                            .foregroundColor(.yellow)
-                    }
-                    .navigationDestination(isPresented: $showLeague){
-                        LeagueLeaderboard()
-                    }//league
-                    
-                    Button(action: {
-                        
-                        self.showSettings.toggle()
-                    }){
-                        
-                        Image(systemName: "person.circle")
-                            .resizable()
-                            .frame(width: 40, height: 40)
-                            .foregroundColor(.black)
-                            .background(Circle().fill(Color.yellow))
-                    }
-                    .navigationDestination(isPresented: $showSettings){
-                        Settings()
-                    }
-                    
-                    
-                }//hstack
-                                    
-                )// nav bar items
+            }
+            .background(Color("Background"))
+            .navigationBarBackButtonHidden(true)
+            .onAppear {
+                viewModel.objectWillChange.send()
                 
-                Spacer()
-            }
-        }
-        .background(Color("Background"))
-        .navigationBarBackButtonHidden(true)
-        .onAppear {
-            viewModel.objectWillChange.send()
-            
-            if let user = Auth.auth().currentUser {
-                if let email = user.email {
-                    userEmail = email.components(separatedBy: "@").first ?? ""
-                } else {
+                if let user = Auth.auth().currentUser {
+                    if let email = user.email {
+                        userEmail = email.components(separatedBy: "@").first ?? ""
+                    }
+                }
+                
+                xpModel.getUserExperience()
+                xpModel.getUserLevel()
+                
+                model.findUserDifficulty {
+                    currModel.getUserCurrency()
+                }
+                
+                // Check Achievement 1
+                achieveModel.checkAchievementCompletion(userAchievement: "Achievement 1") { achievementChecked in
+                    if !achievementChecked {
+                        achieveModel.achievementOneCompletion { allCompleted in
+                            if allCompleted {
+                                showToast(message: "All Lessons Completed Achievement Unlocked!")
+                                achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
+                                achieveModel.UpdateAchievementCompletionCheck(userAchievement: "Achievement 1")
+                            }
+                        }
+                    }
+                }
+
+                // Check Achievement 2
+                achieveModel.checkAchievementCompletion(userAchievement: "Achievement 2") { achievementChecked in
+                    if !achievementChecked {
+                        achieveModel.achievementLevelCompletion { allCompleted in
+                            if allCompleted {
+                                showToast(message: "Level 5 Achievement Unlocked!")
+                                achieveModel.updateUserAchievement(userAchievement: "Achievement 2")
+                                achieveModel.UpdateAchievementCompletionCheck(userAchievement: "Achievement 2")
+                            }
+                        }
+                    }
+                }
+                
+                // Check Achievement 3
+                achieveModel.checkAchievementCompletion(userAchievement: "Achievement 3") { achievementChecked in
+                    if !achievementChecked {
+                        achieveModel.achievementWeeklyCompletion { allCompleted in
+                            if allCompleted {
+                                showToast(message: "Weekly Challenge Completed!")
+                                achieveModel.updateUserAchievement(userAchievement: "Achievement 3")
+                                achieveModel.UpdateAchievementCompletionCheck(userAchievement: "Achievement 3")
+                            }
+                        }
+                    }
                 }
             }
+
             
-            xpModel.getUserExperience()
-            xpModel.getUserLevel()
-            
-            //TODO: on first launch / login the user currency does not update only when going back to the homepage does it update
-            //get the users current currency total
-            model.findUserDifficulty{
-                //get the users current currency
-                currModel.getUserCurrency()
+            // Toast View
+            if showToast {
+                Text(toastMessage)
+                    .padding()
+                    .background(Color.blue.opacity(0.8)) // Change as needed
+                    .cornerRadius(10)
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .zIndex(1)
+                    .padding()
             }
-            
-            achieveModel.achievementOneCompletion { allCompleted in
-                if allCompleted {
-                    print("ALL ACHIEVEMENTS COMPLETED")
-                    achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
-                }
-            }
-            
         }
-        
-        Spacer()
+    }
+    
+    // Function to show toast
+    private func showToast(message: String) {
+        toastMessage = message
+        withAnimation {
+            showToast = true
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            withAnimation {
+                showToast = false
+            }
+        }
     }
 }
 

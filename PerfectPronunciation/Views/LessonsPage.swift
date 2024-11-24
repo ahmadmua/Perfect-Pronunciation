@@ -11,7 +11,6 @@ import Combine
 struct LessonsPage: View {
     //controllers
     @ObservedObject var model = LessonController()
-    @ObservedObject var achieveModel = AchievementController()
     //navigation to other pages
     @State private var showLesson = false
     @State private var showWeekly = false
@@ -300,13 +299,6 @@ struct LessonsPage: View {
                 
                 UserDefaults.standard.synchronize()
                 
-            }
-            
-            achieveModel.achievementOneCompletion { allCompleted in
-                if allCompleted {
-                    print("ALL ACHIEVEMENTS COMPLETED")
-                    achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
-                }
             }
         }
             

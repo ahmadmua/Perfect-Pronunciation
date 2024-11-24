@@ -102,37 +102,45 @@ struct AssessmentView: View {
         }
         .navigationTitle("Assessment Result")
         .onAppear {
-            predictionResult = predictPronunciationImprovement(mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0), omissions: Double(errorTypeCounts["Omission"] ?? 0), insertions: Double(errorTypeCounts["Insertion"] ?? 0), unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0), missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0), monotone: Double(errorTypeCounts["Monotone"] ?? 0))
-            
-            let displayWords = Set(display.split(separator: " ").map { String($0) })
-               let transcriptionWords = Set(transcription.split(separator: " ").map { String($0) })
+            predictionResult = predictPronunciationImprovement(
+                mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0),
+                omissions: Double(errorTypeCounts["Omission"] ?? 0),
+                insertions: Double(errorTypeCounts["Insertion"] ?? 0),
+                unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0),
+                missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0),
+                monotone: Double(errorTypeCounts["Monotone"] ?? 0)
+            )
 
-               // Find omissions (words in display but not in transcription)
-               let omissions = displayWords.subtracting(transcriptionWords)
-               for word in omissions {
-                   wordErrorData.append((word: word, errorType: "Omission"))
-               }
+            let displayWords = Set(display.lowercased().split(separator: " ").map { String($0) })
+            let transcriptionWords = Set(transcription.lowercased().split(separator: " ").map { String($0) })
 
-               // Find insertions (words in transcription but not in display)
-               let insertions = transcriptionWords.subtracting(displayWords)
-               for word in insertions {
-                   wordErrorData.append((word: word, errorType: "Insertion"))
-               }
+            // Find omissions (words in display but not in transcription)
+            let omissions = displayWords.subtracting(transcriptionWords)
+            for word in omissions {
+                wordErrorData.append((word: word, errorType: "Omission"))
+            }
 
-               // Update counts for omissions and insertions
-               errorTypeCounts["Omission"] = omissions.count
-               errorTypeCounts["Insertion"] = insertions.count
+            // Find insertions (words in transcription but not in display)
+            let insertions = transcriptionWords.subtracting(displayWords)
+            for word in insertions {
+                wordErrorData.append((word: word, errorType: "Insertion"))
+            }
 
-               // Update prediction result
-               predictionResult = predictPronunciationImprovement(
-                   mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0),
-                   omissions: Double(errorTypeCounts["Omission"] ?? 0),
-                   insertions: Double(errorTypeCounts["Insertion"] ?? 0),
-                   unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0),
-                   missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0),
-                   monotone: Double(errorTypeCounts["Monotone"] ?? 0)
-               )
+            // Update counts for omissions and insertions
+            errorTypeCounts["Omission"] = omissions.count
+            errorTypeCounts["Insertion"] = insertions.count
+
+            // Update prediction result
+            predictionResult = predictPronunciationImprovement(
+                mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0),
+                omissions: Double(errorTypeCounts["Omission"] ?? 0),
+                insertions: Double(errorTypeCounts["Insertion"] ?? 0),
+                unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0),
+                missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0),
+                monotone: Double(errorTypeCounts["Monotone"] ?? 0)
+            )
         }
+
         .onDisappear(){
             
         }
@@ -148,33 +156,45 @@ struct AssessmentView: View {
 
         // Loop through wordErrorData to apply the correct highlight color
         for wordError in wordErrorData {
-            let word = wordError.word
+            let word = wordError.word.lowercased() // Normalize the word to lowercase
             let errorType = wordError.errorType
-            
-            // Find the range of the word in the attributed string
-            if let range = attributedText.range(of: word) {
-                // Apply the color based on the error type
-                switch errorType {
-                case "Mispronunciation":
-                    attributedText[range].foregroundColor = .yellow
-                case "Omission":
-                    attributedText[range].foregroundColor = .gray
-                case "Insertion":
-                    attributedText[range].foregroundColor = .red
-                case "Unexpected_break":
-                    attributedText[range].foregroundColor = .pink
-                case "Missing_break":
-                    attributedText[range].foregroundColor = .blue
-                case "Monotone":
-                    attributedText[range].foregroundColor = .purple
-                default:
-                    break
+
+            // Convert display to a standard String to find ranges
+            let lowercasedDisplay = display.lowercased()
+            var startIndex = lowercasedDisplay.startIndex
+
+            // Search for all occurrences of the word
+            while let range = lowercasedDisplay.range(of: word, options: .caseInsensitive, range: startIndex..<lowercasedDisplay.endIndex) {
+                // Convert the String range to AttributedString.Index
+                if let attributedRange = Range(range, in: attributedText) {
+                    // Apply the color based on the error type
+                    switch errorType {
+                    case "Mispronunciation":
+                        attributedText[attributedRange].foregroundColor = .yellow
+                    case "Omission":
+                        attributedText[attributedRange].foregroundColor = .gray
+                    case "Insertion":
+                        attributedText[attributedRange].foregroundColor = .red
+                    case "Unexpected_break":
+                        attributedText[attributedRange].foregroundColor = .pink
+                    case "Missing_break":
+                        attributedText[attributedRange].foregroundColor = .blue
+                    case "Monotone":
+                        attributedText[attributedRange].foregroundColor = .purple
+                    default:
+                        break
+                    }
                 }
+
+                // Move the startIndex to continue searching after the current match
+                startIndex = range.upperBound
             }
         }
 
         return attributedText
     }
+
+
 
 
 

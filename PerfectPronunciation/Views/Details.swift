@@ -98,8 +98,8 @@ struct Details: View {
                 ItemsListView()
                 
                 HStack {
-                    Text("Dynamically Adjusted Difficulty:")
-                        .bold()
+                    Text("\(calculateAccuracyOutput())")
+                    .bold()
                     
 //                    Image(systemName: "arrow.clockwise")
 //                        .resizable()

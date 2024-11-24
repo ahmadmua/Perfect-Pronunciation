@@ -149,30 +149,65 @@ struct AssessmentView: View {
     // Remaining methods stay the same
 
     
-
-    // Function to build the highlighted text
+    // Function to build the highlighted text with underlining for mispronunciations
     func buildAttributedText(display: String, wordErrorData: [(word: String, errorType: String)]) -> AttributedString {
         var attributedText = AttributedString(display)
 
-        // Loop through wordErrorData to apply the correct highlight color
-        for wordError in wordErrorData {
-            let word = wordError.word.lowercased() // Normalize the word to lowercase
-            let errorType = wordError.errorType
+        // Store ranges of omission words for overlap detection
+        var omissionRanges: [Range<String.Index>] = []
 
-            // Convert display to a standard String to find ranges
+        // First, apply all omission styles and track their ranges
+        for wordError in wordErrorData where wordError.errorType == "Omission" {
+            let word = wordError.word.lowercased()
             let lowercasedDisplay = display.lowercased()
             var startIndex = lowercasedDisplay.startIndex
 
-            // Search for all occurrences of the word
             while let range = lowercasedDisplay.range(of: word, options: .caseInsensitive, range: startIndex..<lowercasedDisplay.endIndex) {
-                // Convert the String range to AttributedString.Index
                 if let attributedRange = Range(range, in: attributedText) {
-                    // Apply the color based on the error type
-                    switch errorType {
-                    case "Mispronunciation":
+                    // Apply omission style
+                    attributedText[attributedRange].backgroundColor = .gray
+                    attributedText[attributedRange].foregroundColor = .white
+                    omissionRanges.append(range) // Track omission ranges
+                }
+                startIndex = range.upperBound
+            }
+        }
+
+        // Now, apply styles for mispronunciations
+        for wordError in wordErrorData where wordError.errorType == "Mispronunciation" {
+            let word = wordError.word.lowercased()
+            let lowercasedDisplay = display.lowercased()
+            var startIndex = lowercasedDisplay.startIndex
+
+            while let range = lowercasedDisplay.range(of: word, options: .caseInsensitive, range: startIndex..<lowercasedDisplay.endIndex) {
+                if let attributedRange = Range(range, in: attributedText) {
+                    // Check for overlap with any omission ranges
+                    let overlapsOmission = omissionRanges.contains { omissionRange in
+                        range.overlaps(omissionRange)
+                    }
+
+                    if overlapsOmission {
+                        // Apply underline style for mispronunciations if overlapping
+                        attributedText[attributedRange].underlineStyle = .single
+                        attributedText[attributedRange].underlineColor = .yellow
+                    } else {
+                        // Apply default mispronunciation style (no underline)
                         attributedText[attributedRange].foregroundColor = .yellow
-                    case "Omission":
-                        attributedText[attributedRange].foregroundColor = .gray
+                    }
+                }
+                startIndex = range.upperBound
+            }
+        }
+
+        // Handle other error types with default behavior
+        for wordError in wordErrorData where !["Omission", "Mispronunciation"].contains(wordError.errorType) {
+            let word = wordError.word.lowercased()
+            let lowercasedDisplay = display.lowercased()
+            var startIndex = lowercasedDisplay.startIndex
+
+            while let range = lowercasedDisplay.range(of: word, options: .caseInsensitive, range: startIndex..<lowercasedDisplay.endIndex) {
+                if let attributedRange = Range(range, in: attributedText) {
+                    switch wordError.errorType {
                     case "Insertion":
                         attributedText[attributedRange].foregroundColor = .red
                     case "Unexpected_break":
@@ -185,8 +220,6 @@ struct AssessmentView: View {
                         break
                     }
                 }
-
-                // Move the startIndex to continue searching after the current match
                 startIndex = range.upperBound
             }
         }
@@ -287,6 +320,7 @@ struct ScoreBar: View {
         .padding(.vertical, 5)
     }
 }
+
 
 struct ErrorLabelView: View {
     var errorType: String

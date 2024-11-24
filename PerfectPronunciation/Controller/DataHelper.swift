@@ -553,7 +553,7 @@ class DataHelper: ObservableObject {
         }
     }
     
-    func getAccuracy(atIndex index: Int, completion: @escaping (Float?) -> Void) {
+    func getAccuracy(atIndex index: Int, completion: @escaping (Double?) -> Void) {
           if let user = Auth.auth().currentUser {
               let userID = user.uid
               let userDocRef = Firestore.firestore().collection("UserData").document(userID)
@@ -577,7 +577,7 @@ class DataHelper: ObservableObject {
 
                       if let assessment = selectedDocument["assessment"] as? [String: Any],
                          let nBest = assessment["NBest"] as? [[String: Any]],
-                         let accuracyScore = nBest.first?["PronScore"] as? Float {
+                         let accuracyScore = nBest.first?["PronScore"] as? Double {
                           completion(accuracyScore)
                       } else {
                           print("Selected document does not have 'AccuracyScore' or the structure is not correct.")

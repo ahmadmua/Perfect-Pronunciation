@@ -117,19 +117,29 @@ struct Login: View {
                             let data = document.data()
                             let country = data?["Country"] as? String ?? ""
                             let difficulty = data?["Difficulty"] as? String ?? ""
-                            
-                            if country.isEmpty || difficulty.isEmpty {
-                                // Redirect to Country and Difficulty selection screen if either is empty
-                                self.selection = 2
-                            } else {
-                                // Redirect to Homepage if both fields are filled
-                                self.selection = 3
+                            let storedIP = data?["IP"] as? String ?? "" // Retrieve stored IP
+
+                            // Get current IP using Ipify
+                            getCurrentIP { currentIP in
+                                if currentIP != storedIP {
+                                    // IP mismatch, show error
+                                    self.msg = "Login attempt from a different IP address."
+                                    self.showingAlert = true
+                                } else {
+                                    // Proceed with navigation
+                                    if country.isEmpty || difficulty.isEmpty {
+                                        // Redirect to Country and Difficulty selection screen if either is empty
+                                        self.selection = 2
+                                    } else {
+                                        // Redirect to Homepage if both fields are filled
+                                        self.selection = 3
+                                    }
+
+                                    // Cache the data to prevent re-selecting country and difficulty on re-login
+                                    userData.setCountry(country: country)
+                                    userData.setDifficulty(difficulty: difficulty)
+                                }
                             }
-                            
-                            // Cache the data to prevent re-selecting country and difficulty on re-login
-                            userData.setCountry(country: country)
-                            userData.setDifficulty(difficulty: difficulty)
-                            
                         } else {
                             // Handle document does not exist scenario
                             self.selection = 2 // Go to country and difficulty setup screen
@@ -154,4 +164,21 @@ struct Login: View {
             }
         }
     }
+
+    func getCurrentIP(completion: @escaping (String) -> Void) {
+        
+        let url = URL(string: "https://api.ipify.org?format=json")!
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Error fetching IP: \(error.localizedDescription)")
+                completion("") // Return empty if error occurs
+            } else if let data = data, let json = try? JSONDecoder().decode([String: String].self, from: data), let ip = json["ip"] {
+                completion(ip)
+            } else {
+                completion("")
+            }
+        }
+        task.resume()
+    }
+
 }

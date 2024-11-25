@@ -20,296 +20,230 @@ struct StorePage: View {
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var model = LessonController()
     //alert
-    @State var showingAlert : Bool = false
-    
-    
+    @State var showingAlert: Bool = false
+
     var body: some View {
-  
-                List{
-                    Grid{
-                        VStack{
-                            GridRow{
-                                Text("Themes")
-                            }//grid row 1
-                            
-                            Divider()
-                            
-                            GridRow{
-                                HStack{
-                                    Button(action: {
-                                        print("theme1 btn press")
-                                        //this is to test subtracting small currency
-//                                        currModel.subUserCurrency(cost: 200, item: "TimeIncrease")
-                                        
-                                    }){
-                                        Image(systemName: "square.fill")
-                                            .font(.system(size: 50, weight: .light))
-                                    }//btn
-                                    .buttonStyle(.borderless)
-                                    
+        List {
+            Grid {
+                VStack(alignment: .leading) { // Align content to the left
+                    GridRow {
+                        Text("Themes")
+                    } //grid row 1
+                    
+                    Divider()
+                    
+                    GridRow {
+                        VStack(alignment: .leading) { // Ensure all rows are left-aligned
+                            HStack(alignment: .top) {
+                                Button(action: {
+                                    print("theme1 btn press")
+                                }) {
+                                    Image(systemName: "square.fill")
+                                        .font(.system(size: 50, weight: .light))
+                                } //btn
+                                .buttonStyle(.borderless)
+                                
+                                VStack(alignment: .leading) {
                                     Text("Theme 1")
-                                    
-                                    HStack(alignment: .center){
-                                        Text("200")
-                                    }
-                                    .padding(.leading, 60)
-                                }// hstack item 1
+                                    Text("200")
+                                        .padding(.leading, 20)
+                                }
+                            } // hstack item 1
+                            
+                            HStack(alignment: .top) {
+                                Button(action: {
+                                    print("Theme2 btn press")
+                                }) {
+                                    Image(systemName: "square.fill")
+                                        .font(.system(size: 50, weight: .light))
+                                } //btn
+                                .buttonStyle(.borderless)
                                 
+                                VStack(alignment: .leading) {
+                                    Text("Theme 2")
+                                    Text("200")
+                                        .padding(.leading, 20)
+                                }
+                            } //hstack item 2
+                            
+                            HStack(alignment: .top) {
+                                Button(action: {
+                                    print("theme 3 btn press")
+                                }) {
+                                    Image(systemName: "square.fill")
+                                        .font(.system(size: 50, weight: .light))
+                                } //btn
+                                .buttonStyle(.borderless)
                                 
-                                    HStack{
-                                        Button(action: {
-                                            print("Theme2 btn press")
-                                            //this is to test subtracting large currency
-//                                            currModel.subUserCurrency(cost: 1000, item: "TimeIncrease")
-                                            
-                                        }){
-                                            Image(systemName: "square.fill")
-                                                .font(.system(size: 50, weight: .light))
-                                        }//btn
-                                        .buttonStyle(.borderless)
-                                        
-                                        Text("Theme 2")
-                                        
-                                        HStack(alignment: .center){
-                                            Text("200")
-                                            
-                                        }
-                                        .padding(.leading, 60)
-                                    }//hstack item 2
-                                
-                                HStack{
-                                    Button(action: {
-                                        print("theme 3 btn press")
-                                    }){
-                                        Image(systemName: "square.fill")
-                                            .font(.system(size: 50, weight: .light))
-                                    }//btn
-                                    .buttonStyle(.borderless)
-                                    
+                                VStack(alignment: .leading) {
                                     Text("Theme 3")
-                                    
-                                    HStack(alignment: .center){
-                                        Text("200")
-                                        
-                                    }
-                                    .padding(.leading, 60)
-                                }//hstack item 3
-                              
-                            }//grid row 2
-                            .padding()
-                            
-                        }//Vstack
-                        
-                        VStack{
-                            GridRow{
-                                Text("Items")
-                            }//grid row 1
-                            
-                            Divider()
-                            
-                            GridRow{
-                                HStack{
-                                    Button(action: {
-                                        print("time increase btn press")
-                                        //purchase the item and update firebase with the purchase
-                                        currModel.subUserCurrency(cost: 300, item: "TimeIncrease")
-                                        
-//                                        if(currModel.canUserPurchase == true){
-//                                            currModel.buyItem(storeItem: "TimeIncrease")
-//                                        }
-                                        
-                                        
-                                    }){
-                                        Image(systemName: "square.fill")
-                                            .font(.system(size: 50, weight: .light))
-                                    }//btn
-                                    .buttonStyle(.borderless)
-                                    //disable when user purchases
-                                    .disabled(currModel.timeIncreasePurchase)
-                                    
+                                    Text("200")
+                                        .padding(.leading, 20)
+                                }
+                            } //hstack item 3
+                        } // VStack inside GridRow
+                        .padding()
+                    } //grid row 2
+                } //VStack Themes
+                
+                VStack(alignment: .leading) { // Align content to the left
+                    GridRow {
+                        Text("Items")
+                    } //grid row 1
+                    
+                    Divider()
+                    
+                    GridRow {
+                        VStack(alignment: .leading) { // Ensure all rows are left-aligned
+                            HStack(alignment: .top) {
+                                Button(action: {
+                                    print("time increase btn press")
+                                    currModel.subUserCurrency(cost: 300, item: "TimeIncrease")
+                                }) {
+                                    Image(systemName: "square.fill")
+                                        .font(.system(size: 50, weight: .light))
+                                } //btn
+                                .buttonStyle(.borderless)
+                                .disabled(currModel.timeIncreasePurchase)
+                                
+                                VStack(alignment: .leading) {
                                     Text("Time Increase")
-                                    
-                                    HStack(alignment: .center){
-                                        Text("300")
-                                    }
-                                    .padding(.leading, 60)
-                                }//hstack item time purchase
-                                
-                                    HStack{
-                                        Button(action: {
-                                            print("item2 btn press")
-                                            
-                                        }){
-                                            Image(systemName: "square.fill")
-                                                .font(.system(size: 50, weight: .light))
-                                        }//btn
-                                        .buttonStyle(.borderless)
-                                        
-                                        Text("Item 2")
-                                        
-                                        HStack(alignment: .center){
-                                            Text("300")
-                                        }
-                                        .padding(.leading, 60)
-                                    }//hstack item 2
-                                
-                                HStack{
-                                    Button(action: {
-                                        print("item 3 btn press")
-                                    }){
-                                        Image(systemName: "square.fill")
-                                            .font(.system(size: 50, weight: .light))
-                                    }//btn
-                                    .buttonStyle(.borderless)
-                                    
-                                    Text("Item 3")
-                                    
-                                    HStack(alignment: .center){
-                                        Text("300")
-                                    }
-                                    .padding(.leading, 60)
-                                }//hstack item 3
-                              
-                            }//grid row 2
-                            .padding()
+                                    Text("300")
+                                        .padding(.leading, 20)
+                                }
+                            } //hstack item time purchase
                             
-                        }//Vstack
-                        
-                    }//grid
-                    
-                    .background(Color("Background"))
-                    .padding(.vertical, -15)
-                    .padding(.horizontal, -20)
-                    
-                }//list
-                .background(Color("Background"))
-                .scrollContentBackground(.hidden)
+                            HStack(alignment: .top) {
+                                Button(action: {
+                                    print("item2 btn press")
+                                }) {
+                                    Image(systemName: "square.fill")
+                                        .font(.system(size: 50, weight: .light))
+                                } //btn
+                                .buttonStyle(.borderless)
+                                
+                                VStack(alignment: .leading) {
+                                    Text("Item 2")
+                                    Text("300")
+                                        .padding(.leading, 20)
+                                }
+                            } //hstack item 2
+                            
+                            HStack(alignment: .top) {
+                                Button(action: {
+                                    print("item 3 btn press")
+                                }) {
+                                    Image(systemName: "square.fill")
+                                        .font(.system(size: 50, weight: .light))
+                                } //btn
+                                .buttonStyle(.borderless)
+                                
+                                VStack(alignment: .leading) {
+                                    Text("Item 3")
+                                    Text("300")
+                                        .padding(.leading, 20)
+                                }
+                            } //hstack item 3
+                        } // VStack inside GridRow
+                        .padding()
+                    } //grid row 2
+                } //VStack Items
+            } //grid
             
-                .navigationTitle("Store")
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(Color("CustYell"), for: .navigationBar)
-                .toolbarBackground(.visible, for: .navigationBar)
-                //need more money alert
-                .alert("Sorry, You need \(currModel.neededToPurchase) more cuurency to purches this item!", isPresented: $currModel.canUserPurchase) {
-                    Button("OK", role: .cancel) {
-                        
-                    }
-                        }
-                //purchase successful
-                .alert("You successfuly bought this item", isPresented: $currModel.userDidPurchase) {
-                    Button("OK", role: .cancel) {
-                        currModel.checkBuyTime()
-                    }
-                        }
+            .background(Color("Background"))
+            .padding(.vertical, -15)
+            .padding(.horizontal, -20)
+        } //list
+        .background(Color("Background"))
+        .scrollContentBackground(.hidden)
+        .navigationTitle("Store")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(Color("CustYell"), for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .alert("Sorry, You need \(currModel.neededToPurchase) more currency to purchase this item!", isPresented: $currModel.canUserPurchase) {
+            Button("OK", role: .cancel) {}
+        }
+        .alert("You successfully bought this item", isPresented: $currModel.userDidPurchase) {
+            Button("OK", role: .cancel) {
+                currModel.checkBuyTime()
+            }
+        }
         
-        ZStack{
+        ZStack {
             Rectangle()
                 .fill(Color("Background"))
                 .shadow(color: .gray, radius: 3, x: -2, y: 2)
                 .frame(maxWidth: .infinity, maxHeight: 50)
-        HStack {
-
-            Spacer()
-            
-            Button(action: {
-                //nav to page
-                self.showLesson.toggle()
-                
-            }) {
-                Image(systemName: "book.fill")
-                    .imageScale(.large) // Adjust icon size
-                    .foregroundStyle(Color.gray)
-            }
-            .navigationDestination(isPresented: $showLesson){
-                LessonsPage()
-                    .navigationBarBackButtonHidden(true)
-            }
-            
-            Spacer()
-            
-            Button(action: {
-                //nav to page
-                self.showWeekly.toggle()
-            }) {
-                Image(systemName: "gamecontroller.fill")
-                    .imageScale(.large) // Adjust icon size
-                    .foregroundStyle(Color.gray)
-            }
-            .navigationDestination(isPresented: $showWeekly){
-                WeeklyGamePage()
-                    .navigationBarBackButtonHidden(true)
-            }
-            
-            Spacer()
-            
-            Group {
-                
-                ZStack{
+            HStack {
+                Spacer()
+                Button(action: {
+                    self.showLesson.toggle()
+                }) {
+                    Image(systemName: "book.fill")
+                        .imageScale(.large)
+                        .foregroundStyle(Color.gray)
+                }
+                .navigationDestination(isPresented: $showLesson) {
+                    LessonsPage()
+                        .navigationBarBackButtonHidden(true)
+                }
+                Spacer()
+                Button(action: {
+                    self.showWeekly.toggle()
+                }) {
+                    Image(systemName: "gamecontroller.fill")
+                        .imageScale(.large)
+                        .foregroundStyle(Color.gray)
+                }
+                .navigationDestination(isPresented: $showWeekly) {
+                    WeeklyGamePage()
+                        .navigationBarBackButtonHidden(true)
+                }
+                Spacer()
+                ZStack {
                     Circle()
                         .fill(Color("WhiteDiff"))
                         .frame(width: 50, height: 50)
                     Button(action: {
-                        //nav to page
                         self.showHome.toggle()
                     }) {
                         Image(systemName: "house.fill")
-                            .imageScale(.large) // Adjust icon size
+                            .imageScale(.large)
                             .foregroundStyle(Color("Background"))
                     }
-                    .navigationDestination(isPresented: $showHome){
+                    .navigationDestination(isPresented: $showHome) {
                         Homepage()
                             .navigationBarBackButtonHidden(true)
                     }
                 }
- 
                 Spacer()
-                
-                Button(action: {
-                    //nav to page
-                    print("buttpress")
-                }) {
+                Button(action: {}) {
                     Image(systemName: "dollarsign.circle.fill")
-                        .imageScale(.large) // Adjust icon size
-                    
+                        .imageScale(.large)
                         .foregroundStyle(Color("CustYell"))
                 }
-                
                 Spacer()
-                
                 Button(action: {
-                    //nav to page
                     self.showAchievement.toggle()
                 }) {
                     Image(systemName: "trophy.fill")
-                        .imageScale(.large) // Adjust icon size
+                        .imageScale(.large)
                         .foregroundStyle(Color.gray)
                 }
-                .navigationDestination(isPresented: $showAchievement){
+                .navigationDestination(isPresented: $showAchievement) {
                     AchievementPage()
                         .navigationBarBackButtonHidden(true)
                 }
-                
                 Spacer()
-                
-            }
-            
-        }//hstack
+            } //hstack
+            .background(Color("Background"))
+        } //zstack
         .background(Color("Background"))
-    }//zstack
-        .background(Color("Background"))
-        .onAppear(){
-            //find the users difficulty
-            model.findUserDifficulty{
-                //get the users current currency
+        .onAppear {
+            model.findUserDifficulty {
                 currModel.getUserCurrency()
             }
-            //check if the user has purchased an item
             currModel.checkBuyTime()
-        }//on appear
-        }//body view
-        
-    }//view
-
-////#Preview {
-//    StorePage()
-//}
+        } //onAppear
+    } //body view
+} //view

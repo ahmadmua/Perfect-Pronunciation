@@ -12,7 +12,13 @@ struct WeeklyLesson: View {
     @ObservedObject var audioPlayer: AudioPlayBackController
     @ObservedObject var audioAnalysisData : AudioAPIController
     @ObservedObject var currModel = CurrencyController()
+    @ObservedObject var xpModel = ExperienceController()
     @ObservedObject var voiceRecorderController : VoiceRecorderController
+    
+    //toast
+    @State private var showToast = false // State for showing the toast
+    @State private var toastMessage = "" // Message to display in the toast
+    @ObservedObject var toastModel = ToastController()
     
     @EnvironmentObject var fireDBHelper: DataHelper
     //recording
@@ -60,9 +66,15 @@ struct WeeklyLesson: View {
                             await voiceRecorderController.submitTestAudio(testText: singleString, lessonType: lessonType)
                         }
                         
+                        //give xp and currency
+                        currModel.updateUserCurrency()
+                        
                         //return to the main screen when timer is done
                         self.showingResultAlert = true
                         self.showWeekly = true
+                        
+                        
+                        
                         
                     }
                     
@@ -81,8 +93,9 @@ struct WeeklyLesson: View {
                 Text(item)
             }
             .onAppear{
+                
                 fireDBHelper.getHardWords() { (documents, error) in
-                    if let documents = documents {
+                    if documents != nil {
                         let items = fireDBHelper.wordList
                         self.items = items
                     } else if let error = error {
@@ -198,12 +211,16 @@ struct WeeklyLesson: View {
                         
             }//on appear
 
+
         }//vstack
-        .alert("You completed the weekly game! Please come back or hit the refresh button shortly to receive your results on the leaderboard!", isPresented: $showingResultAlert) {
+        .alert("+Currency \n\n You completed the weekly game! Please come back or hit the refresh button shortly to receive your results on the leaderboard!", isPresented: $showingResultAlert) {
+            
             Button("OK", role: .cancel) {
                 
             }
-        }//
+            
+        }//alert
+        
 
     }
     

@@ -290,35 +290,8 @@ struct Homepage: View {
             }
             
             ToastView(showToast: $toastModel.showToast, message: toastModel.toastMessage)
-
-            
-//            // Toast View
-//            if showToast {
-//                Text(toastMessage)
-//                    .padding()
-//                    .background(Color.blue.opacity(0.8)) // Change as needed
-//                    .cornerRadius(10)
-//                    .foregroundColor(.white)
-//                    .frame(maxWidth: .infinity)
-//                    .transition(.move(edge: .top).combined(with: .opacity))
-//                    .zIndex(1)
-//                    .padding()
-//            }
         }
     }
-    
-    // Function to show toast
-//    private func showToast(message: String) {
-//        toastMessage = message
-//        withAnimation {
-//            showToast = true
-//        }
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//            withAnimation {
-//                showToast = false
-//            }
-//        }
-//    }
 }
 
 struct Homepage_Previews: PreviewProvider {

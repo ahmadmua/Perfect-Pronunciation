@@ -9,9 +9,22 @@ import FirebaseAuth
 //    var items: [String]
 //}
 
+import Foundation
+
 class SharedData: ObservableObject {
-    @Published var selectedDay: String = "Mo"
+    @Published var selectedDay: String
+
+    init() {
+        let currentDate = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E"
+        
+        let fullDayAbbreviation = dateFormatter.string(from: currentDate)
+        
+        self.selectedDay = String(fullDayAbbreviation.prefix(2))
+    }
 }
+
 
 
 struct Details: View {
@@ -125,7 +138,7 @@ struct Details: View {
                 
                     Text("Adjusted Difficulty: \(expectedDifficulty)")
                         .onAppear {
-                            updatedAdjustedDifficulty()
+//                            updatedAdjustedDifficulty()
                         }
 
 

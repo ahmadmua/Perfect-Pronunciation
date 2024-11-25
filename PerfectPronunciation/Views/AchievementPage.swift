@@ -16,8 +16,6 @@ struct AchievementPage: View {
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
-    //alert
-    @State var showingAlert : Bool = false
     //controller var
     @ObservedObject var achieveModel = AchievementController()
     
@@ -61,10 +59,11 @@ struct AchievementPage: View {
                                     .font(.system(size: 50, weight: .light))
                             }//btn basic2
                             .buttonStyle(.borderless)
+                            .disabled(achieveModel.achievement2)
                             VStack{
-                                Text("Achievement Name")
+                                Text("Experience")
                                     .padding(.horizontal, 20)
-                                Text("Achievement Description")
+                                Text("Reach Level 5")
                                     .padding(.horizontal, 20)
                             }
                         }//hstack
@@ -79,10 +78,11 @@ struct AchievementPage: View {
                                     .font(.system(size: 50, weight: .light))
                             }//btn basic2
                             .buttonStyle(.borderless)
+                            .disabled(achieveModel.achievement3)
                             VStack{
-                                Text("Achievement Name")
+                                Text("Weekly Challenger")
                                     .padding(.horizontal, 20)
-                                Text("Achievement Description")
+                                Text("Partake in the Weekly Challenge")
                                     .padding(.horizontal, 20)
                             }
                         }//hstack
@@ -165,7 +165,7 @@ struct AchievementPage: View {
                         .foregroundStyle(Color.gray)
                 }
                 .navigationDestination(isPresented: $showLesson){
-                    LessonsPage(showingAlert: $showingAlert)
+                    LessonsPage()
                         .navigationBarBackButtonHidden(true)
                 }
                 

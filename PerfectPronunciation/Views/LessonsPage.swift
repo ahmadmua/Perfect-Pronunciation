@@ -11,15 +11,12 @@ import Combine
 struct LessonsPage: View {
     //controllers
     @ObservedObject var model = LessonController()
-    @ObservedObject var currModel = CurrencyController()
-    @ObservedObject var achieveModel = AchievementController()
     //navigation to other pages
     @State private var showLesson = false
     @State private var showWeekly = false
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
-    @State private var selection: Int? = nil
     //lesson nav
     @State private var phonetics = false
     @State private var food1 = false
@@ -29,10 +26,8 @@ struct LessonsPage: View {
     @State private var direction = false
     //lesson name
     @State private var lessonName = ""
-    //currency alert
-    @Binding var showingAlert : Bool
     //openai
-    @State private var responseText: String = "Press the button to get a response"
+    @State private var responseText: String = "Loading..."
     @State private var responseArray : [String] = []
     @State private var cancellable: AnyCancellable?
     private let openAIService = OpenAIService()
@@ -62,7 +57,7 @@ struct LessonsPage: View {
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $conversation){
-                            IndividualLesson(voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                            IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
@@ -94,7 +89,7 @@ struct LessonsPage: View {
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $numbers){
-                            IndividualLesson( voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                            IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
@@ -126,7 +121,7 @@ struct LessonsPage: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $food1){
-                        IndividualLesson( voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                        IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
@@ -144,7 +139,7 @@ struct LessonsPage: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $food2){
-                        IndividualLesson( voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                        IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
@@ -175,7 +170,7 @@ struct LessonsPage: View {
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $direction){
-                            IndividualLesson( voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                            IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                                 .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
@@ -305,30 +300,10 @@ struct LessonsPage: View {
                 UserDefaults.standard.synchronize()
                 
             }
-
-            if(achieveModel.achievementOneCompletion()){
-                achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
-            }
         }
-
-        /*
-         THIS WAS COMMENTED OUT - BUT I STILL DONT GET ALERT FOR CURRENCY WHEN IT IS UNCOMMENTED
-         */
-//        .alert("Congrats, You just earned currency!", isPresented: $showingAlert) {
-//            Button("OK", role: .cancel) {
-//                currModel.updateUserCurrency()
-//            }
-//                }//alert
             
 
     }//body view
-    
-    
-    /*
-     TODO: Save the AI response as a list and pass the list to the individual lesson
-     TODO: Need to fix the prompt generation sentence
-     
-     */
     
     func fetchOpenAiResponse() {
         openAIService.fetchMultipleOpenAIResponses(prompt: "You are a language Teacher. I am an english language learner. Please Create a unique and \(model.difficulty!) sentence about \(lessonName) to perfect my pronunciation as an English learner. Ensure that this sentence is new and unique. Only give me the language learning sentence and nothing else.") { result in

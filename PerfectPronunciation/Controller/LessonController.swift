@@ -11,19 +11,13 @@ import Combine
 
 class LessonController : ObservableObject{
     
-    @Published var list = [Lesson]()
-    @Published var question: String?
-    @Published var answer: String?
     @Published var difficulty: String?
-    @Published var totQuestions: Int = 0
-    
     @Published var openAiResponseText: String?
     private var cancellable: AnyCancellable?
 
     
     func findUserDifficulty(completion: @escaping () -> Void){
         //get reference to database
-//        let db = Firestore.firestore()
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
@@ -60,121 +54,6 @@ class LessonController : ObservableObject{
         
     }
     
-    func getLesson(){
-        //get reference to database
-        let db = Firestore.firestore()
-        
-        //read the docs at a specific path
-        db.collection("Lessons").getDocuments{ snapshot, error in
-            
-            //check for errors
-            if error == nil{
-                //no errors
-                
-                if let snapshot = snapshot {
-                    
-                    DispatchQueue.main.async{
-                        
-                        // get all documents and create Lessons
-                        self.list = snapshot.documents.map { d in
-//                            return Lesson(id: d.documentID,
-//                                          answer: d["answer"] as? String ?? "",
-//                                          question: d["question"] as? String ?? "")
-                            return Lesson(id: d.documentID)
-                        }
-                    }
-                }
-            }else{
-                //error handling
-            }
-            
-        }
-    }
-    
-    func getQuestion(lesson: String, difficulty: String, question: String){
-        //get reference to database
-        let db = Firestore.firestore()
-        
-        //read the docs at a specific path
-        db.collection("Lessons").document(lesson).collection(difficulty).document(question).getDocument { document, error in
-            if let document = document, document.exists{
-                //set question text value
-                if let value = document["Question"] as? String {
-                    print("\(value)")
-                    self.question = value
-                }else{
-                    print("Document exists,")
-                    self.question = nil
-                }
-                //set answer text value
-                if let value = document["Answer"] as? String {
-                    print("\(value)")
-                    self.answer = value
-                }else{
-                    print("Document exists,")
-                    self.answer = nil
-                }
-            }else{
-                print("Document does not exist")
-                self.question = nil
-            }
-        }
-    }
-        
-        func getAnswer(lesson: String, difficulty: String, question: String){
-            //get reference to database
-            let db = Firestore.firestore()
-            
-            //read the docs at a specific path
-            db.collection("Lessons").document(lesson).collection(difficulty).document(question).getDocument { document, error in
-                if let document = document, document.exists{
-                    //set question text value
-                    if let value = document["Question"] as? String {
-                        print("\(value)")
-                        self.question = value
-                    }else{
-                        print("Document exists,")
-                        self.question = nil
-                    }
-                    //set answer text value
-                    if let value = document["Answer"] as? String {
-                        print("\(value)")
-                        self.answer = value
-                    }else{
-                        print("Document exists,")
-                        self.answer = nil
-                    }
-                }else{
-                    print("Document does not exist")
-                    self.question = nil
-                }
-            }
-        
-        
-        
-    }
-    
-    func getNumberOfQuestion(lesson: String, difficulty: String){
-        //get reference to database
-        let db = Firestore.firestore()
-        
-        //read the docs at a specific path
-        db.collection("Lessons").document(lesson).collection(difficulty).getDocuments { document, error in
-            if let error = error{
-                print("Error getting documents \(error)")
-            }else{
-                var count = 0
-                for doc in document!.documents{
-                    count+=1
-                    print("\(doc.documentID) => \(doc.data())")
-                }
-                self.totQuestions = count
-                print("Count = \(count)")
-            }
-        }
-        
-        
-    }
     
     func updateLessonCompletion(userLesson: String){
             if let user = Auth.auth().currentUser {
@@ -200,17 +79,17 @@ class LessonController : ObservableObject{
                                         print("Document updated successfully")
                                         
                                         //update user defaults
-                                        if(userLesson == "Conversation"){
-                                            UserDefaults.standard.set(true, forKey: "conversationCompleted")
-                                        }else if(userLesson == "Directions"){
-                                            UserDefaults.standard.set(true, forKey: "directionsCompleted")
-                                        }else if(userLesson == "Food1"){
-                                            UserDefaults.standard.set(true, forKey: "food1Completed")
-                                        }else if(userLesson == "Food2"){
-                                            UserDefaults.standard.set(true, forKey: "food2Completed")
-                                        }else if(userLesson == "Numbers"){
-                                            UserDefaults.standard.set(true, forKey: "numbersCompleted")
-                                        }
+//                                        if(userLesson == "Conversation"){
+//                                            UserDefaults.standard.set(true, forKey: "conversationCompleted")
+//                                        }else if(userLesson == "Directions"){
+//                                            UserDefaults.standard.set(true, forKey: "directionsCompleted")
+//                                        }else if(userLesson == "Food1"){
+//                                            UserDefaults.standard.set(true, forKey: "food1Completed")
+//                                        }else if(userLesson == "Food2"){
+//                                            UserDefaults.standard.set(true, forKey: "food2Completed")
+//                                        }else if(userLesson == "Numbers"){
+//                                            UserDefaults.standard.set(true, forKey: "numbersCompleted")
+//                                        }
                                     }
                                 }
                             }

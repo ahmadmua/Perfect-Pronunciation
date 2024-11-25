@@ -11,6 +11,8 @@ import Firebase
 class AchievementController : ObservableObject{
     
     @Published var achievement1: Bool = false
+    @Published var achievement2: Bool = false
+    @Published var achievement3: Bool = false
     
     
     func checkUserAchievement(){
@@ -48,6 +50,33 @@ class AchievementController : ObservableObject{
                         }
 
                         // acheivement 2
+                        if let achievement2 = achievements["Achievement 2"] {
+                            
+                            // Use the achievement data as needed
+                            print("Achievement 2: \(achievement2)")
+                            print("\(achievement2.description)")
+                            if(achievement2.description == "false"){
+                                self.achievement2 = true
+                                
+                            }else if(achievement2.description == "true"){
+                                self.achievement2 = false
+                            }
+                        }
+                        
+                        // acheivement 3
+                        if let achievement3 = achievements["Achievement 3"] {
+                            
+                            // Use the achievement data as needed
+                            print("Achievement 3: \(achievement3)")
+                            print("\(achievement3.description)")
+                            if(achievement3.description == "false"){
+                                self.achievement3 = true
+                                
+                            }else if(achievement3.description == "true"){
+                                self.achievement3 = false
+                            }
+                        }
+                        
                     }
                 } else {
                     print("Document does not exist or there was an error: \(error?.localizedDescription ?? "Unknown error")")
@@ -110,20 +139,192 @@ class AchievementController : ObservableObject{
         
     }
     
-    func achievementOneCompletion() -> Bool {
-        let convComp = UserDefaults.standard.bool(forKey: "conversationCompleted")
-        let direcComp = UserDefaults.standard.bool(forKey: "directionsCompleted")
-        let numComp = UserDefaults.standard.bool(forKey: "numbersCompleted")
-        let food1Comp = UserDefaults.standard.bool(forKey: "food1Completed")
-        let food2Comp = UserDefaults.standard.bool(forKey: "food2Completed")
+    func UpdateAchievementCompletionCheck(userAchievement: String){
         
-        //check if user completed achievement one
-        if(convComp == true && direcComp == true && numComp == true && food1Comp == true && food2Comp == true){
-            //send apop up alert
-            return true
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            
+            //read the docs at a specific path
+            userDocRef.getDocument { document, error in
+                if let document = document, document.exists{
+                    // Access the "AchievementsCHeck" from UserData in firebase
+                    if var achievementsCheck = document.data()?["AchievementsCheck"] as? [String: Bool] {
+                        
+                        if let achievement = achievementsCheck[userAchievement] {
+                            print("ACHIEVEMENT CONTROLLER UPDATE : \(achievement)")
+                            
+                            achievementsCheck[userAchievement] = true
+                            
+                            // Update the specific field in the user's document
+                            userDocRef.updateData(["AchievementsCheck" : achievementsCheck]) { error in
+                                if let error = error {
+                                    print("Error updating document: \(error)")
+                                } else {
+                                    print("Document updated successfully")
+                                }
+                            }
+                            
+                        }
+                        
+                    }else{
+                        print("Document exists,")
+                    }
+                }else{
+                    print("Document does not exist")
+                    
+                }
+                
+            }
+        } else {
+            // Handle the case where the user is not authenticated
+            print("User is not authenticated")
         }
-        return false
         
+    }
+    
+    
+    func checkAchievementCompletion(userAchievement: String, completion: @escaping (Bool) -> Void) {
+        guard let user = Auth.auth().currentUser else {
+            // Handle the case where the user is not authenticated
+            print("User is not authenticated")
+            completion(false)
+            return
+        }
+        
+        let userID = user.uid
+        let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+        
+        // Read the document from Firestore
+        userDocRef.getDocument { document, error in
+            if let error = error {
+                // Handle the error 
+                print("Error getting document: \(error.localizedDescription)")
+                completion(false)
+                return
+            }
+            
+            guard let document = document, document.exists else {
+                // Handle the case where the document does not exist
+                print("Document does not exist")
+                completion(false)
+                return
+            }
+            
+            // Access the "AchievementsCheck" dictionary from UserData in Firestore
+            if let achievementsCheck = document.data()?["AchievementsCheck"] as? [String: Bool] {
+                // Check if the specified achievement is marked as true
+                let achievementChecked = achievementsCheck[userAchievement] == true
+                completion(achievementChecked)
+            } else {
+                // Handle the case where AchievementsCheck is not found or is in an unexpected format
+                print("AchievementsCheck data is not available or is in an unexpected format")
+                completion(false)
+            }
+        }
+    }
+
+    
+    
+    //complete all lessons
+    func achievementOneCompletion(completion: @escaping (Bool) -> Void) {
+        // Check if a user is logged in
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            
+            // Read the document at the user's path
+            userDocRef.getDocument { document, error in
+                if let document = document, document.exists {
+                    // Access the LessonsCompleted field
+                    if let lessonsCompleted = document["LessonsCompleted"] as? [String: Bool] {
+                        // Check if all required lessons are completed
+                        let allCompleted = lessonsCompleted["Conversation"] == true &&
+                                           lessonsCompleted["Directions"] == true &&
+                                           lessonsCompleted["Food1"] == true &&
+                                           lessonsCompleted["Food2"] == true &&
+                                           lessonsCompleted["Numbers"] == true
+                        
+                        // Pass the result to the completion handler
+                        completion(allCompleted)
+                    } else {
+                        print("LessonsCompleted field is missing or not in the expected format.")
+                        completion(false)
+                    }
+                } else {
+                    print("Document does not exist.")
+                    completion(false)
+                }
+            }
+        } else {
+            print("No user is logged in.")
+            completion(false)
+        }
+    }
+    
+    
+    //Reach Level 5
+    func achievementLevelCompletion(completion: @escaping (Bool) -> Void) {
+        // Check if a user is logged in
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            
+            // Read the document at the users path
+            userDocRef.getDocument { document, error in
+                if let error = error {
+                    print("Error fetching document: \(error)")
+                    completion(false)
+                    return
+                }
+                
+                if let document = document, document.exists {
+                    // ExperienceLevel field
+                    if let xpLevel = document["ExperienceLevel"] as? Int {
+                        // Check if user reached level 5
+                        completion(xpLevel >= 5)
+                    } else {
+                        print("ExperienceLevel field is missing or not in the expected format.")
+                        completion(false)
+                    }
+                } else {
+                    print("Document does not exist.")
+                    completion(false)
+                }
+            }
+        } else {
+            print("No user is logged in.")
+            completion(false)
+        }
+    }
+
+    
+    //Participate/complete Weekly Lesson
+    func achievementWeeklyCompletion(completion: @escaping (Bool) -> Void) {
+        // Check if a user is logged in
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            
+            // Read the document at the user's path
+            userDocRef.getDocument { document, error in
+                if let document = document, document.exists {
+                    if let weekly = document["WeeklyChallengeComplete"] as? Double {
+                        // Check completed the weekly lesson
+                        completion(weekly >= 0.1)
+                    } else {
+                        print("ExperienceLevel field is missing or not in the expected format.")
+                        completion(false)
+                    }
+                } else {
+                    print("Document does not exist.")
+                    completion(false)
+                }
+            }
+        } else {
+            print("No user is logged in.")
+            completion(false)
+        }
     }
     
 }

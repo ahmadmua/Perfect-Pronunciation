@@ -450,7 +450,7 @@ class DataHelper: ObservableObject {
         }
     }
 
-    
+
     //update the userData to reflect the users score for the weekly challenge
     func updateWeeklyCompletion(score: Double){
         
@@ -674,7 +674,6 @@ class DataHelper: ObservableObject {
             }
         }
     }
-
 
     // Function to get name at a specific index from the most recent 4 names
     func getNameAtIndex(index: Int, completion: @escaping (String?) -> Void) {

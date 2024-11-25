@@ -17,17 +17,11 @@ struct IndividualLesson: View {
     @ObservedObject var voiceRecorderController : VoiceRecorderController
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
-    //question variable
-    @State var questionVar: String?
+    
     //navigation vars
     @State private var showRecord = false
     @State private var showNext = false
     @State private var showLesson = false
-    //user difficulty
-    @State private var userDifficulty: String = "Easy"
-    //alrt
-    @State private var showingAlert = false
-    
     
     //pop up for recorder view
     @State  private var isPopupPresented = false
@@ -45,29 +39,22 @@ struct IndividualLesson: View {
     
     var body: some View {
         
-            ZStack{
-                Color("Background")
+        ZStack{
+            Color("Background")
             Grid{
                 
                 Spacer()
                 
                 VStack{
                     GridRow{
-                       //display question
-                        //Text(model.question ?? "Could not get the question")
+                        //display question
                         Text(responseText)
                             .background(Rectangle().fill(Color.gray).padding(.all, -30))
                             .padding(.bottom, 80)
                     }
-//                    GridRow{
-//                        //displays uers response
-//                        Text("User Pronunciation")
-//                            .background(Rectangle().fill(Color.gray).padding(.all, -30))
-//                            .padding(.bottom, 40)
-//                    }
                     Divider()
                     
-                   
+                    
                     
                 }//vstack
                 
@@ -78,7 +65,7 @@ struct IndividualLesson: View {
                     Button(action: {
                         //nav to the next word
                         print("record btn press")
-
+                        
                         self.showRecord.toggle()
                         self.isPopupPresented.toggle()
                         
@@ -89,22 +76,23 @@ struct IndividualLesson: View {
                     .foregroundStyle(Color.red)
                     .buttonStyle(.borderless)
                     .sheet(isPresented: $isPopupPresented) {
-                        VoiceRecorder(voiceRecorderController: VoiceRecorderController(), testText: responseText, lessonType: lessonType,isPopupPresented: $isPopupPresented).environmentObject(voiceRecorderController);
+                        VoiceRecorder(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), testText: responseText, lessonType: lessonType,isPopupPresented: $isPopupPresented).environmentObject(voiceRecorderController);
                     }
                     
                     Button(action: {
                         //nav to the nexet question
                         print("Continue btn press")
-                    
-//                        print("Numo q's \(model.totQuestions)")
-//                        print("QUESTION \(model.question ?? "WHY NO WORK")")
+
                         //increment counter to track what question the user is on
                         counter+=1
                         
                         
-                            
+                        
                         //if counter is greater than number of questions
                         if counter >= 5{//let questionCount = 0
+                            currModel.updateUserCurrency()
+                            xpModel.updateUserExperience()
+                            
                             //go back to the home page
                             counter = 0
                             //update the lesson as complete
@@ -114,37 +102,25 @@ struct IndividualLesson: View {
                                 model.updateLessonQuestionData(userLesson: lessonName, userDifficulty: model.difficulty!, lessonQuestionsList: responseArray)
                             }
                             
-                            self.showingAlert.toggle()
                             self.showLesson.toggle()
-                        
+                            
                         }else{
                             //else counter is not more than the number of questions, continue to the next question
                             self.showNext.toggle()
                         }
                         
-//                        //assign the question var
-//                        questionVar = model.answer!
-//                        print("THIS IS THE QUESTION \(questionVar ?? "NA")")
-                                             
-                    
+                        
                     }){
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 50, weight: .light))
                     }//btn
-
-//                    .alert("Congrats, You just earned xp and currency!", isPresented: $showingAlert) {
-//                                    Button("OK", role: .cancel) {
-//                                        currModel.updateUserCurrency()
-//                                        xpModel.updateUserExperience()
-////                                        xpModel.calculateUserLevel()
-//                                    }
-//                                        }//
+                    
                     .navigationDestination(isPresented: $showNext){
-                        IndividualLesson(voiceRecorderController: VoiceRecorderController(), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
+                        IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
                             .navigationBarBackButtonHidden(true)
                     }
                     .navigationDestination(isPresented: $showLesson){
-                        Details()
+                        ExperienceBarPage(xpController: xpModel)
                             .navigationBarBackButtonHidden(true)
                     }
                     .foregroundStyle(Color.green)
@@ -158,13 +134,10 @@ struct IndividualLesson: View {
         .background(Color("Background"))
         .onAppear{
             for _ in responseArray{
-//                print("RESPONSES : \(response)")
+                //                print("RESPONSES : \(response)")
                 responseText = responseArray[4-counter]
                 
             }
-            
-//            let responseArray = responseText.split(separator: "~")
-//            print("ARRAY : \(responseArray)")
             
             openAIService.fetchAPIKey()
             
@@ -172,30 +145,21 @@ struct IndividualLesson: View {
             model.findUserDifficulty{
                 print("USER DIFICULTY!! : \(model.difficulty!)")
                 
-                /*
-                 ------------------------------------
-                 WILL PROBABLY HAVE TO RE-WRITE THIS - wont be having lessons stored like this anymore?
-                 vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-                 */
-                //find the number of questions for the lesson
-//                model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty!)
-//                
-//                //get the current question for the page number
-//                model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
-                
                 UserDefaults.standard.synchronize()
                 
                 
             }
             
-             
+            
             self.showNext = false
             
-            voiceRecorderController.submitTextToSpeechAI(testText: responseText)
-         
+            Task {
+                await voiceRecorderController.submitTextToSpeechAI(testText: responseText)
+            }
+            
         }
-         
+        
     }
-
+    
 }//view
 

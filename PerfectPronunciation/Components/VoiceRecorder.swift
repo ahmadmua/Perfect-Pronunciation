@@ -41,7 +41,7 @@ struct VoiceRecorder: View {
                     .edgesIgnoringSafeArea(.all)
                 
                 VStack {
-                    Text(voiceRecorderController.mode)
+                    Text(voiceRecorderController.mode.description)
                         .padding(.top, 10)
                     
                     Text(timeString(time: elapsedTime))
@@ -99,8 +99,7 @@ struct VoiceRecorder: View {
                             if recordingState != .recording {
                                 Button(action: {
                                     self.elapsedTime = 0.0
-                                    voiceRecorderController.audioFileURL = URL(string: "")
-
+                                    voiceRecorderController.discardTestAudio(fileURL: voiceRecorderController.userAudioFileURL!)
                                     voiceRecorderController.STTresult = ""
                                     recordingState = RecorderState.readyToRecord
                                 }) {
@@ -145,7 +144,9 @@ struct VoiceRecorder: View {
                                 Button(action: {
                                     
                                     DispatchQueue.main.async{
-                                        self.voiceRecorderController.submitTestAudio(testText: testText, lessonType: lessonType)
+                                        Task {
+                                            await self.voiceRecorderController.submitTestAudio(testText: testText, lessonType: lessonType)
+                                        }
                                         self.isPopupPresented = false // Add this line to dismiss the sheet
                                     }
                                     

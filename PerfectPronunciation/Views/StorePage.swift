@@ -221,7 +221,7 @@ struct StorePage: View {
                     .foregroundStyle(Color.gray)
             }
             .navigationDestination(isPresented: $showLesson){
-                LessonsPage(showingAlert: $showingAlert)
+                LessonsPage()
                     .navigationBarBackButtonHidden(true)
             }
             

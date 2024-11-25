@@ -97,10 +97,11 @@ struct AchievementPage: View {
                                     .font(.system(size: 50, weight: .light))
                             }//btn basic2
                             .buttonStyle(.borderless)
+                            .disabled(achieveModel.achievement4)
                             VStack{
-                                Text("Achievement Name")
+                                Text("Ultimate Learner")
                                     .padding(.horizontal, 20)
-                                Text("Achievement Description")
+                                Text("Reach Level 10")
                                     .padding(.horizontal, 20)
                             }
                         }//hstack
@@ -115,10 +116,11 @@ struct AchievementPage: View {
                                     .font(.system(size: 50, weight: .light))
                             }//btn basic2
                             .buttonStyle(.borderless)
+                            .disabled(achieveModel.achievement5)
                             VStack{
-                                Text("Achievement Name")
+                                Text("Rich")
                                     .padding(.horizontal, 20)
-                                Text("Achievement Description")
+                                Text("Have 1000 currency at one time")
                                     .padding(.horizontal, 20)
                             }//vstack
                         }//hstack

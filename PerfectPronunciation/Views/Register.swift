@@ -133,12 +133,16 @@ struct Register: View {
                      "Achievements": [
                         "Achievement 1" : false,
                         "Achievement 2" : false,
-                        "Achievement 3" : false
+                        "Achievement 3" : false,
+                        "Achievement 4" : false,
+                        "Achievement 5" : false,
                      ],
                      "AchievementsCheck": [
                         "Achievement 1" : false,
                         "Achievement 2" : false,
-                        "Achievement 3" : false
+                        "Achievement 3" : false,
+                        "Achievement 4" : false,
+                        "Achievement 5" : false
                      ],
                      "Items": [
                         "TimeIncrease" : false

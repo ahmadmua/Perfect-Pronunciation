@@ -65,6 +65,8 @@
 		C57F5D9E2CC7404A00CFAD08 /* ExperienceBarPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57F5D9D2CC7404A00CFAD08 /* ExperienceBarPage.swift */; };
 		C57F5DA02CE2F5B200CFAD08 /* League.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57F5D9F2CE2F5B200CFAD08 /* League.swift */; };
 		C57F5DA22CE3002700CFAD08 /* LeagueLeaderboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57F5DA12CE3002700CFAD08 /* LeagueLeaderboard.swift */; };
+		C57F5DA42CF449FE00CFAD08 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57F5DA32CF449FE00CFAD08 /* ToastView.swift */; };
+		C57F5DA62CF44AE900CFAD08 /* ToastController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57F5DA52CF44AE900CFAD08 /* ToastController.swift */; };
 		C58B99F22AECDACB003C0288 /* LessonsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F12AECDACB003C0288 /* LessonsPage.swift */; };
 		C58B99F42AED7CC4003C0288 /* IndividualLesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F32AED7CC4003C0288 /* IndividualLesson.swift */; };
 		C58B99F62AED94E5003C0288 /* StorePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F52AED94E5003C0288 /* StorePage.swift */; };
@@ -128,6 +130,8 @@
 		C57F5D9D2CC7404A00CFAD08 /* ExperienceBarPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceBarPage.swift; sourceTree = "<group>"; };
 		C57F5D9F2CE2F5B200CFAD08 /* League.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = League.swift; sourceTree = "<group>"; };
 		C57F5DA12CE3002700CFAD08 /* LeagueLeaderboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueLeaderboard.swift; sourceTree = "<group>"; };
+		C57F5DA32CF449FE00CFAD08 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
+		C57F5DA52CF44AE900CFAD08 /* ToastController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastController.swift; sourceTree = "<group>"; };
 		C58B99F12AECDACB003C0288 /* LessonsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonsPage.swift; sourceTree = "<group>"; };
 		C58B99F32AED7CC4003C0288 /* IndividualLesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndividualLesson.swift; sourceTree = "<group>"; };
 		C58B99F52AED94E5003C0288 /* StorePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorePage.swift; sourceTree = "<group>"; };
@@ -229,6 +233,7 @@
 				C5DE40C72C9F4B160002E852 /* OpenAiService.swift */,
 				4DACEF292CC62D4700170C2F /* VoiceRecorderController.swift */,
 				C57F5D9B2CBC1F0200CFAD08 /* ExperienceController.swift */,
+				C57F5DA52CF44AE900CFAD08 /* ToastController.swift */,
 			);
 			name = Controller;
 			path = PerfectPronunciation/Controller;
@@ -267,6 +272,7 @@
 				02E2B6922AD6188500F1FACA /* Components.swift */,
 				028364782AEA534800E88DCB /* Sequence.swift */,
 				4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */,
+				C57F5DA32CF449FE00CFAD08 /* ToastView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -410,6 +416,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				02F7635E2AF7215B001BEAFA /* PronunciationModel.mlmodel in Sources */,
+				C57F5DA42CF449FE00CFAD08 /* ToastView.swift in Sources */,
 				02E2B6612AD6131100F1FACA /* ContentView.swift in Sources */,
 				4D5DD9C92CB2329A00590EE0 /* PronunciationAssessmentModel.swift in Sources */,
 				C5D6050E2B0B3BCB00620283 /* CurrencyController.swift in Sources */,
@@ -451,6 +458,7 @@
 				4DC3914F2B1BE2D3006C8C39 /* Audio.swift in Sources */,
 				02E2B6902AD6180500F1FACA /* Register.swift in Sources */,
 				02E2B6952AD61E6600F1FACA /* Homepage.swift in Sources */,
+				C57F5DA62CF44AE900CFAD08 /* ToastController.swift in Sources */,
 				C57F5D9C2CBC1F0200CFAD08 /* ExperienceController.swift in Sources */,
 				C5DF79D62AFB19AA00ECB45C /* LessonController.swift in Sources */,
 				C5D605142B1DAC8A00620283 /* WeeklyLesson.swift in Sources */,

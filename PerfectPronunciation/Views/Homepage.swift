@@ -29,6 +29,7 @@ struct Homepage: View {
     @ObservedObject var xpModel = ExperienceController()
     @ObservedObject var model = LessonController()
     @ObservedObject var achieveModel = AchievementController()
+    @ObservedObject var toastModel = ToastController()
     
     var body: some View {
         ZStack {
@@ -227,7 +228,7 @@ struct Homepage: View {
                     if !achievementChecked {
                         achieveModel.achievementOneCompletion { allCompleted in
                             if allCompleted {
-                                showToast(message: "All Lessons Completed Achievement Unlocked!")
+                                toastModel.showToast(message: "All Lessons Completed Achievement Unlocked!")
                                 achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
                                 achieveModel.UpdateAchievementCompletionCheck(userAchievement: "Achievement 1")
                             }
@@ -240,7 +241,7 @@ struct Homepage: View {
                     if !achievementChecked {
                         achieveModel.achievementLevelCompletion { allCompleted in
                             if allCompleted {
-                                showToast(message: "Level 5 Achievement Unlocked!")
+                                toastModel.showToast(message: "Level 5 Achievement Unlocked!")
                                 achieveModel.updateUserAchievement(userAchievement: "Achievement 2")
                                 achieveModel.UpdateAchievementCompletionCheck(userAchievement: "Achievement 2")
                             }
@@ -253,43 +254,71 @@ struct Homepage: View {
                     if !achievementChecked {
                         achieveModel.achievementWeeklyCompletion { allCompleted in
                             if allCompleted {
-                                showToast(message: "Weekly Challenge Completed!")
+                                toastModel.showToast(message: "Weekly Challenge Achievement Unlocked!")
                                 achieveModel.updateUserAchievement(userAchievement: "Achievement 3")
                                 achieveModel.UpdateAchievementCompletionCheck(userAchievement: "Achievement 3")
                             }
                         }
                     }
                 }
+                
+                // Check Achievement 4
+                achieveModel.checkAchievementCompletion(userAchievement: "Achievement 4") { achievementChecked in
+                    if !achievementChecked {
+                        achieveModel.achievementLevelTenCompletion { allCompleted in
+                            if allCompleted {
+                                toastModel.showToast(message: "Ultimate Learner Achievement Unlocked!")
+                                achieveModel.updateUserAchievement(userAchievement: "Achievement 4")
+                                achieveModel.UpdateAchievementCompletionCheck(userAchievement: "Achievement 4")
+                            }
+                        }
+                    }
+                }
+                
+                // Check Achievement 5
+                achieveModel.checkAchievementCompletion(userAchievement: "Achievement 5") { achievementChecked in
+                    if !achievementChecked {
+                        achieveModel.achievementCurrencyCompletion { allCompleted in
+                            if allCompleted {
+                                toastModel.showToast(message: "Rich Achievement Unlocked!")
+                                achieveModel.updateUserAchievement(userAchievement: "Achievement 5")
+                                achieveModel.UpdateAchievementCompletionCheck(userAchievement: "Achievement 5")
+                            }
+                        }
+                    }
+                }
             }
+            
+            ToastView(showToast: $toastModel.showToast, message: toastModel.toastMessage)
 
             
-            // Toast View
-            if showToast {
-                Text(toastMessage)
-                    .padding()
-                    .background(Color.blue.opacity(0.8)) // Change as needed
-                    .cornerRadius(10)
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                    .zIndex(1)
-                    .padding()
-            }
+//            // Toast View
+//            if showToast {
+//                Text(toastMessage)
+//                    .padding()
+//                    .background(Color.blue.opacity(0.8)) // Change as needed
+//                    .cornerRadius(10)
+//                    .foregroundColor(.white)
+//                    .frame(maxWidth: .infinity)
+//                    .transition(.move(edge: .top).combined(with: .opacity))
+//                    .zIndex(1)
+//                    .padding()
+//            }
         }
     }
     
     // Function to show toast
-    private func showToast(message: String) {
-        toastMessage = message
-        withAnimation {
-            showToast = true
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            withAnimation {
-                showToast = false
-            }
-        }
-    }
+//    private func showToast(message: String) {
+//        toastMessage = message
+//        withAnimation {
+//            showToast = true
+//        }
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//            withAnimation {
+//                showToast = false
+//            }
+//        }
+//    }
 }
 
 struct Homepage_Previews: PreviewProvider {

@@ -13,6 +13,8 @@ class AchievementController : ObservableObject{
     @Published var achievement1: Bool = false
     @Published var achievement2: Bool = false
     @Published var achievement3: Bool = false
+    @Published var achievement4: Bool = false
+    @Published var achievement5: Bool = false
     
     
     func checkUserAchievement(){
@@ -314,6 +316,76 @@ class AchievementController : ObservableObject{
                         completion(weekly >= 0.1)
                     } else {
                         print("ExperienceLevel field is missing or not in the expected format.")
+                        completion(false)
+                    }
+                } else {
+                    print("Document does not exist.")
+                    completion(false)
+                }
+            }
+        } else {
+            print("No user is logged in.")
+            completion(false)
+        }
+    }
+    
+    //Reach Level 10
+    func achievementLevelTenCompletion(completion: @escaping (Bool) -> Void) {
+        // Check if a user is logged in
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            
+            // Read the document at the users path
+            userDocRef.getDocument { document, error in
+                if let error = error {
+                    print("Error fetching document: \(error)")
+                    completion(false)
+                    return
+                }
+                
+                if let document = document, document.exists {
+                    // ExperienceLevel field
+                    if let xpLevel = document["ExperienceLevel"] as? Int {
+                        // Check if user reached level 10
+                        completion(xpLevel >= 10)
+                    } else {
+                        print("ExperienceLevel field is missing or not in the expected format.")
+                        completion(false)
+                    }
+                } else {
+                    print("Document does not exist.")
+                    completion(false)
+                }
+            }
+        } else {
+            print("No user is logged in.")
+            completion(false)
+        }
+    }
+    
+    //have 1000 currency at once
+    func achievementCurrencyCompletion(completion: @escaping (Bool) -> Void) {
+        // Check if a user is logged in
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            
+            // Read the document at the users path
+            userDocRef.getDocument { document, error in
+                if let error = error {
+                    print("Error fetching document: \(error)")
+                    completion(false)
+                    return
+                }
+                
+                if let document = document, document.exists {
+                    // ExperienceLevel field
+                    if let money = document["Currency"] as? Int {
+                        // Check if currency is over 1000
+                        completion(money >= 1000)
+                    } else {
+                        print("Currency field is missing or not in the expected format.")
                         completion(false)
                     }
                 } else {

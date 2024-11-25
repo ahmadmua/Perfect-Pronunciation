@@ -15,12 +15,12 @@ struct Register: View {
     
     // Placeholder for the IP address
     @State private var userIP: String = ""
-
+    
     var body: some View {
         NavigationView {
             VStack(spacing: 30) {
                 NavigationLink(destination: Login(), tag: 1, selection: self.$selection) {}
-
+                
                 Spacer()
                 
                 Text("REGISTER")
@@ -41,14 +41,14 @@ struct Register: View {
                             .padding(10)
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 0.5).frame(height: 45))
                             .multilineTextAlignment(.center)
-
+                        
                         SecureField("Confirm Password", text: $confirmPassword)
                             .padding(10)
                             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.black, lineWidth: 0.5).frame(height: 45))
                             .multilineTextAlignment(.center)
                     }
                 }
-            
+                
                 Button(action: {
                     if validatePassword(password, confirmPassword: confirmPassword) {
                         userData.setEmail(registeredEmail: email)
@@ -77,7 +77,7 @@ struct Register: View {
             .padding(.vertical, 25)
         }
     }
-
+    
     func fetchUserIP() {
         if let url = URL(string: "https://api.ipify.org?format=json") {
             let task = URLSession.shared.dataTask(with: url) { data, response, error in
@@ -93,14 +93,14 @@ struct Register: View {
             task.resume()
         }
     }
-
+    
     func validatePassword(_ password: String, confirmPassword: String) -> Bool {
         if password != confirmPassword {
             msg = "Passwords do not match."
             showingAlert = true
             return false
         }
-
+        
         if password.count < 8 {
             msg = "Password must be at least 8 characters long."
             showingAlert = true
@@ -128,7 +128,7 @@ struct Register: View {
         }
         return true
     }
-
+    
     func register() {
         Auth.auth().createUser(withEmail: email, password: password) { result, error in
             if let error = error {
@@ -139,7 +139,7 @@ struct Register: View {
             
             // Send email verification after successful registration
             sendVerificationEmail()
-
+            
             // Add user data to Firestore, including the captured IP address
             Firestore.firestore().collection("UserData").document(Auth.auth().currentUser!.uid).setData(
                 [
@@ -174,7 +174,7 @@ struct Register: View {
             self.selection = 1
         }
     }
-
+    
     func sendVerificationEmail() {
         if let user = Auth.auth().currentUser {
             user.sendEmailVerification { error in
@@ -188,81 +188,11 @@ struct Register: View {
             }
         }
     }
-}
-
-    }
     
-    func register(){
-        
-        Auth.auth().createUser(withEmail: email, password: password){result, error in
-            if error != nil {
-                showingAlert = true
-                msg = error!.localizedDescription
-            } else {
-                
-                Firestore.firestore().collection("UserData").document(Auth.auth().currentUser!.uid).setData(
-                    ["Country": "",
-                     "Difficulty": "",
-                     "Currency": 0.0,
-                     "Experience": 0.0,
-                     "TotalExperience": 0.0,
-                     "ExperienceLevel": 1.0,
-                     "League" : "",
-                     "WeeklyChallengeComplete": 0.0,
-                     "LessonsCompleted": [
-                        "Conversation" : false,
-                        "Numbers" : false,
-                        "Directions" : false,
-                        "Food1" : false,
-                        "Food2" : false
-                     ],
-                     "LessonQuestions": [
-                        "Conversation" : [
-                            "Difficulty" : "",
-                            "Questions" : ""
-                        ],
-                        "Numbers" : [
-                            "Difficulty" : "",
-                            "Questions" : ""
-                        ],
-                        "Directions" : [
-                            "Difficulty" : "",
-                            "Questions" : ""
-                        ],
-                        "Food1" : [
-                            "Difficulty" : "",
-                            "Questions" : ""
-                        ],
-                        "Food2" : [
-                            "Difficulty" : "",
-                            "Questions" : ""
-                        ]
-                     ],
-                     "Achievements": [
-                        "Achievement 1" : false,
-                        "Achievement 2" : false,
-                        "Achievement 3" : false
-                     ],
-                     "AchievementsCheck": [
-                        "Achievement 1" : false,
-                        "Achievement 2" : false,
-                        "Achievement 3" : false
-                     ],
-                     "Items": [
-                        "TimeIncrease" : false
-                     ],
-                     "Username" : email.components(separatedBy: "@").first ?? "",
-         
-                    ])
-                self.selection = 1
-            }
-            
-        }
-        
-    }
-        
-        
-    }
+    
+    
+}
+    
 
 
 //struct Register_Previews: PreviewProvider {

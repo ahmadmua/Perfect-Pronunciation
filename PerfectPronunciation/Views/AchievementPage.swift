@@ -19,154 +19,143 @@ struct AchievementPage: View {
     //controller var
     @ObservedObject var achieveModel = AchievementController()
     
-    
     var body: some View {
-        
-        
-        List{
-            Grid{
-                VStack{
-                    GridRow{
-                        HStack{
+        List {
+            Grid {
+                VStack(alignment: .leading) { // Align all VStack content to the left
+                    GridRow {
+                        HStack {
                             Button(action: {
                                 print("basic1 btn press")
-
-                            }){
+                            }) {
                                 Image(systemName: "square.fill")
                                     .font(.system(size: 50, weight: .light))
                             }//btn
                             .buttonStyle(.borderless)
                             .disabled(achieveModel.achievement1)
-                            VStack{
+                            VStack(alignment: .leading) { // Align texts to the left
                                 Text("Completion")
                                     .padding(.horizontal, 20)
                                 Text("Complete all the lessons")
                                     .padding(.horizontal, 20)
-                            }//vstack to explain the achievement
+                            }
                         }//hstack
                     }
                     .padding()
-                    GridRow{
-                        HStack{
+                    
+                    GridRow {
+                        HStack {
                             Button(action: {
                                 print("basic2 btn press")
-                                
-                                //test the achievement capabilities
-//                                achieveModel.updateUserAchievement(userAchievement: "Achievement 1")
-                                
-                            }){
+                            }) {
                                 Image(systemName: "square.fill")
                                     .font(.system(size: 50, weight: .light))
                             }//btn basic2
                             .buttonStyle(.borderless)
                             .disabled(achieveModel.achievement2)
-                            VStack{
+                            VStack(alignment: .leading) { // Align texts to the left
                                 Text("Experience")
                                     .padding(.horizontal, 20)
                                 Text("Reach Level 5")
                                     .padding(.horizontal, 20)
                             }
                         }//hstack
-                    }//grid row 4
+                    }
                     .padding()
-                    GridRow{
-                        HStack{
+                    
+                    GridRow {
+                        HStack {
                             Button(action: {
                                 print("basic2 btn press")
-                            }){
+                            }) {
                                 Image(systemName: "square.fill")
                                     .font(.system(size: 50, weight: .light))
                             }//btn basic2
                             .buttonStyle(.borderless)
                             .disabled(achieveModel.achievement3)
-                            VStack{
+                            VStack(alignment: .leading) { // Align texts to the left
                                 Text("Weekly Challenger")
                                     .padding(.horizontal, 20)
                                 Text("Partake in the Weekly Challenge")
                                     .padding(.horizontal, 20)
                             }
                         }//hstack
-                    }//grid row 4
+                    }
                     .padding()
-                    GridRow{
-                        HStack{
+                    
+                    GridRow {
+                        HStack {
                             Button(action: {
                                 print("basic2 btn press")
-                            }){
+                            }) {
                                 Image(systemName: "square.fill")
                                     .font(.system(size: 50, weight: .light))
                             }//btn basic2
                             .buttonStyle(.borderless)
                             .disabled(achieveModel.achievement4)
-                            VStack{
+                            VStack(alignment: .leading) { // Align texts to the left
                                 Text("Ultimate Learner")
                                     .padding(.horizontal, 20)
                                 Text("Reach Level 10")
                                     .padding(.horizontal, 20)
                             }
                         }//hstack
-                    }//grid row 4
+                    }
                     .padding()
-                    GridRow{
-                        HStack{
+                    
+                    GridRow {
+                        HStack {
                             Button(action: {
                                 print("basic2 btn press")
-                            }){
+                            }) {
                                 Image(systemName: "square.fill")
                                     .font(.system(size: 50, weight: .light))
                             }//btn basic2
                             .buttonStyle(.borderless)
                             .disabled(achieveModel.achievement5)
-                            VStack{
+                            VStack(alignment: .leading) { // Align texts to the left
                                 Text("Rich")
                                     .padding(.horizontal, 20)
                                 Text("Have 1000 currency at one time")
                                     .padding(.horizontal, 20)
                             }//vstack
                         }//hstack
-                    }//grid row 4
+                    }
                     .padding()
                 }//vstack
             }//grid
             .background(Color("Background"))
             .padding(.vertical, -15)
             .padding(.horizontal, -20)
-            
             .onAppear(){
                 //check the current users achievements and update accordingly
                 achieveModel.checkUserAchievement()
             }
-            
-            
         }//list
         .background(Color("Background"))
         .scrollContentBackground(.hidden)
-        
         .navigationTitle("Achievements")
         .navigationBarTitleDisplayMode(.inline)
         .toolbarBackground(Color("CustYell"), for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         
-        
         //navigation bar
-        ZStack{
+        ZStack {
             Rectangle()
                 .fill(Color("Background"))
                 .shadow(color: .gray, radius: 3, x: -2, y: 2)
                 .frame(maxWidth: .infinity, maxHeight: 50)
             HStack {
-                
                 Spacer()
                 
                 Button(action: {
                     self.showLesson.toggle()
-                    
                 }) {
                     Image(systemName: "book.fill")
                         .imageScale(.large) // Adjust icon size
                         .foregroundStyle(Color.gray)
                 }
-                .navigationDestination(isPresented: $showLesson){
+                .navigationDestination(isPresented: $showLesson) {
                     LessonsPage()
                         .navigationBarBackButtonHidden(true)
                 }
@@ -180,7 +169,7 @@ struct AchievementPage: View {
                         .imageScale(.large) // Adjust icon size
                         .foregroundStyle(Color.gray)
                 }
-                .navigationDestination(isPresented: $showWeekly){
+                .navigationDestination(isPresented: $showWeekly) {
                     WeeklyGamePage()
                         .navigationBarBackButtonHidden(true)
                 }
@@ -188,8 +177,7 @@ struct AchievementPage: View {
                 Spacer()
                 
                 Group {
-                    
-                    ZStack{
+                    ZStack {
                         Circle()
                             .fill(Color("WhiteDiff"))
                             .frame(width: 50, height: 50)
@@ -200,12 +188,11 @@ struct AchievementPage: View {
                                 .imageScale(.large) // Adjust icon size
                                 .foregroundStyle(Color("Background"))
                         }
-                        .navigationDestination(isPresented: $showHome){
+                        .navigationDestination(isPresented: $showHome) {
                             Homepage()
                                 .navigationBarBackButtonHidden(true)
                         }
                     }
-                    
                     
                     Spacer()
                     
@@ -216,7 +203,7 @@ struct AchievementPage: View {
                             .imageScale(.large) // Adjust icon size
                             .foregroundStyle(Color.gray)
                     }
-                    .navigationDestination(isPresented: $showStore){
+                    .navigationDestination(isPresented: $showStore) {
                         StorePage()
                             .navigationBarBackButtonHidden(true)
                     }
@@ -232,8 +219,7 @@ struct AchievementPage: View {
                     }
                     
                     Spacer()
-                    
-                }//gropu
+                }//group
             }//hstack
             .background(Color("Background"))
         }//zstack

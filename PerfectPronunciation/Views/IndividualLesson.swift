@@ -22,6 +22,7 @@ struct IndividualLesson: View {
     @State private var showRecord = false
     @State private var showNext = false
     @State private var showLesson = false
+    @State private var canContinue: Bool = false
     
     //pop up for recorder view
     @State  private var isPopupPresented = false
@@ -34,6 +35,8 @@ struct IndividualLesson: View {
     @Binding var responseArray: [String]
     @State private var cancellable: AnyCancellable?
     private let openAIService = OpenAIService()
+    
+    
     
     
     
@@ -68,6 +71,7 @@ struct IndividualLesson: View {
                         
                         self.showRecord.toggle()
                         self.isPopupPresented.toggle()
+                        self.canContinue = false
                         
                     }){
                         Image(systemName: "record.circle.fill")
@@ -114,6 +118,7 @@ struct IndividualLesson: View {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 50, weight: .light))
                     }//btn
+                    .disabled(canContinue)
                     
                     .navigationDestination(isPresented: $showNext){
                         IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
@@ -133,6 +138,10 @@ struct IndividualLesson: View {
         }//nanstack
         .background(Color("Background"))
         .onAppear{
+            //set so that users can't continue to the next question until they record
+            self.canContinue = true
+
+            
             for _ in responseArray{
                 //                print("RESPONSES : \(response)")
                 responseText = responseArray[4-counter]

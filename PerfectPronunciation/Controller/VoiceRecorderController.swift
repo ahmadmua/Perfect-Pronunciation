@@ -10,6 +10,7 @@ import Combine
 import AVFoundation
 import Speech
 
+
 enum RecordingMode {
     case ready
     case recording
@@ -119,21 +120,61 @@ class VoiceRecorderController: NSObject, ObservableObject {
     //1) we need to also need to save the audioFile its self in firebase
     //2) need to save the AI AudioClip as well to firebase
     func submitTestAudio(testText: String, lessonType: String) async {
+        // Ensure `testText` is valid and not empty
+        guard !testText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            print("Error: Reference text is empty. Please provide valid input.")
+            return
+        }
+
+        // Ensure `userAudioFileURL` is not nil
         guard let audioURL = userAudioFileURL else {
-            print("Error: No valid file URL for the recording.")
+            print("Warning: userAudioFileURL is nil. Attempting to recover...")
+            return
+        }
+
+        // Ensure the file exists at `userAudioFileURL`
+        guard FileManager.default.fileExists(atPath: audioURL.path) else {
+            print("Error: Audio file does not exist at path: \(audioURL.path)")
             return
         }
 
         do {
-            // Use `await` to call the async function and get the result
-            let resultJson = try await audioAPIController.transcribeAndAssessAudio(audioURL: audioURL, referenceText: testText, lessonType: lessonType)
+            // Call the async function to transcribe and assess the audio
+            let resultJson = try await audioAPIController.transcribeAndAssessAudio(
+                audioURL: audioURL,
+                referenceText: testText,
+                lessonType: lessonType
+            )
 
-            // Main thread UI updates and Firebase upload
-            DispatchQueue.main.async {
+            // Validate the `resultJson` by checking essential fields
+            guard !resultJson.assessment.isValid, // Assuming `assessment` has an `isEmpty` property
+                  !resultJson.lessonType.isEmpty, // Assuming `lessonType` is a String
+                  !resultJson.transcription.isEmpty else { // Assuming `transcription` is a String
+                print("Error: Received invalid or incomplete result from audio assessment API.")
+                return
+            }
+
+
+
+
+            // Perform UI updates and Firebase upload on the main thread
+            DispatchQueue.main.async { [self] in
                 print("Pronunciation Assessment Result: \(resultJson)")
-                self.dataHelper.uploadUserLessonData(data: resultJson)
 
-                // Adding Day and Timestamp after upload
+                // Ensure both `userAudio` and `voiceGalleryAudio` are valid URLs
+                if let userAudio = userAudioFileURL, FileManager.default.fileExists(atPath: userAudio.path),
+                   let voiceGalleryAudio = aiaudioFileURL, FileManager.default.fileExists(atPath: voiceGalleryAudio.path) {
+                    // Upload the assessment data and audio files to Firebase
+                    self.dataHelper.uploadUserLessonData(
+                        assessmentData: resultJson,
+                        userAudio: userAudio,
+                        voiceGalleryAudio: voiceGalleryAudio
+                    )
+                } else {
+                    print("Error: One or both audio files are missing or invalid.")
+                }
+
+                // Add Day and Timestamp after upload
                 self.dataHelper.fetchAndAddDayAndTimestampToAssessment { success in
                     if success {
                         print("DayOfWeek and Timestamp were successfully added/updated.")
@@ -142,17 +183,29 @@ class VoiceRecorderController: NSObject, ObservableObject {
                     }
                 }
 
-                // Discard the local audio file after uploading to Firebase
-                self.discardTestAudio(fileURL: audioURL)
+                // Attempt to discard the local audio file after uploading
+                print("Discarding Audio After Submission")
+                do {
+                    try self.discardTestAudio(fileURL: audioURL)
+                    print("Successfully discarded audio file: \(audioURL.lastPathComponent)")
+                } catch {
+                    print("Error discarding audio file: \(error.localizedDescription)")
+                }
             }
-
+        } catch let error as URLError {
+            // Handle network-related errors specifically
+            print("Network error: \(error.localizedDescription)")
+        } catch let error as DecodingError {
+            // Handle decoding-related errors specifically
+            print("Decoding error: \(error.localizedDescription)")
         } catch {
-            // Handle any errors that occurred during API calls
-            DispatchQueue.main.async {
-                print("Error during assessment: \(error.localizedDescription)")
-            }
+            // Handle any unexpected errors
+            print("Unexpected error during assessment: \(error.localizedDescription)")
         }
     }
+
+
+
 
 
     // Function to submit text to AI Voice gallery and get an audio file back to play - (NOT Fully Implemented)
@@ -164,13 +217,47 @@ class VoiceRecorderController: NSObject, ObservableObject {
 
             // Process the received audio data
             print("Received AI Gallery data of size: \(audioData.count) bytes")
-            // You can now save this data as an MP3 file or play it directly
 
+            // Save the audio data to a WAV file in the Documents directory
+            if let fileURL = saveWavAudioToFile(audioData: audioData) {
+                self.aiaudioFileURL = fileURL
+                print("Saved AI audio file at: \(fileURL.path)")
+                audioPlaybackController.fileURL = fileURL
+                audioPlaybackController.startPlayback()
+                audioPlaybackController.fileURL = URL(string: "")
+
+            } else {
+                print("Failed to save AI audio file.")
+            }
         } catch {
             // Handle any errors that occurred during API calls
             print("Error: \(error.localizedDescription)")
         }
     }
+
+    // Function to save WAV audio data to a file
+    func saveWavAudioToFile(audioData: Data) -> URL? {
+        let fileManager = FileManager.default
+        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dd-MM-YY 'at' HH:mm:ss"
+        let timestamp = dateFormatter.string(from: Date())
+        
+        let audioFilename = documentsURL.appendingPathComponent("AIAudio \(timestamp).wav")
+
+        do {
+            try audioData.write(to: audioFilename)
+            print("WAV file saved at: \(audioFilename.path)")
+            return audioFilename
+        } catch {
+            print("Failed to save WAV file: \(error.localizedDescription)")
+            return nil
+        }
+    }
+
+    
+
     
     
     func playAudio(){}

@@ -198,7 +198,7 @@ class AudioAPIController: ObservableObject {
         // Create headers for the request, including the subscription key, output format, and user-agent
         let headers = [
             "Content-Type": "application/ssml+xml",  // Content type is SSML (Speech Synthesis Markup Language)
-            "X-Microsoft-OutputFormat": "audio-16khz-32kbitrate-mono-mp3",  // Specify the audio format for the response
+            "X-Microsoft-OutputFormat": "riff-16khz-16bit-mono-pcm",  // WAV format
             "Ocp-Apim-Subscription-Key": subscriptionKey,  // Subscription key for authentication
             "User-Agent": "YOUR-USER-AGENT"                // User-Agent header (replace with your app info)
         ]
@@ -207,10 +207,13 @@ class AudioAPIController: ObservableObject {
         let ssml = """
         <speak version='1.0' xml:lang='en-US'>
             <voice xml:lang='en-US' xml:gender='Female' name='en-US-JennyNeural'>
-                \(testText)  // Insert the text to be synthesized into speech
+                \(testText)
             </voice>
         </speak>
         """
+        
+        // Log the generated SSML for debugging purposes
+        print("Generated SSML: \(ssml)")
 
         // Convert the SSML text to Data for sending in the body of the POST request
         let bodyData = ssml.data(using: .utf8)
@@ -218,6 +221,7 @@ class AudioAPIController: ObservableObject {
         // Make a POST request to the API with the SSML body and headers
         return try await makePostRequest(url: url, headers: headers, body: bodyData)
     }
+
     
     // Function that combines both transcription and pronunciation assessment
     // It returns a `PronunciationAssessmentResult` model by merging both results

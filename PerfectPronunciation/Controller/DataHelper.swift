@@ -213,28 +213,41 @@ class DataHelper: ObservableObject {
     }
     
 
-    func uploadUserLessonData(assesmentData: PronunciationAssessmentResult, userAudio : URL, voiceGalleryAudio: URL) {
-        if let user = Auth.auth().currentUser {
-            let userID = user.uid
+    func uploadUserLessonData(assessmentData: PronunciationAssessmentResult, userAudio: URL, voiceGalleryAudio: URL) {
+        guard let user = Auth.auth().currentUser else {
+            print("User is not authenticated.")
+            return
+        }
+
+        let userID = user.uid
+
+        // Convert PronunciationAssessmentResult to dictionary
+        if var assessmentLessonData = assessmentData.toDictionary() {
             
-            // Convert PronunciationAssessmentResult to dictionary
-            if let AssesmentLessonData = assesmentData.toDictionary() {
-                // Add the PronunciationAssessmentResult to the "LessonData" subcollection
+            do {
+                // Convert userAudio and voiceGalleryAudio to binary data
+                let userAudioData = try Data(contentsOf: userAudio).base64EncodedString()
+                let voiceGalleryAudioData = try Data(contentsOf: voiceGalleryAudio).base64EncodedString()
+
+                // Add the audio data to the dictionary
+                assessmentLessonData["userAudioData"] = userAudioData
+                assessmentLessonData["voiceGalleryAudioData"] = voiceGalleryAudioData
+
+                // Save assessment data and audio to Firestore in the user's LessonData
                 Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
-                    .addDocument(data: AssesmentLessonData) { error in
+                    .addDocument(data: assessmentLessonData) { error in
                         if let error = error {
                             print("Error adding pronunciation test data: \(error.localizedDescription)")
                         } else {
-                            print("Pronunciation test data successfully added with a unique ID.")
+                            print("Pronunciation test data and audio data successfully added with a unique ID.")
                         }
                     }
 
-            } else {
-                print("Failed to convert PronunciationAssessmentResult to dictionary.")
+            } catch {
+                print("Failed to convert audio to data: \(error.localizedDescription)")
             }
         } else {
-            // Handle the case where the user is not authenticated
-            print("User is not authenticated.")
+            print("Failed to convert PronunciationAssessmentResult to dictionary.")
         }
     }
 

@@ -147,7 +147,7 @@ struct WeeklyLesson: View {
                                 
                             
                             case .playing:
-                                audioPlayer.startPlayback(audio: voiceRecorderController.userAudioFileURL!)
+                                //audioPlayer.startPlayback(audio: voiceRecorderController.userAudioFileURL!)
                                 recordingState = .readyToRecord
                             }
                         }) {

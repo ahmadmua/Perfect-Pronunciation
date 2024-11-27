@@ -78,6 +78,32 @@ class AchievementController : ObservableObject{
                                 self.achievement3 = false
                             }
                         }
+                        // acheivement 4
+                        if let achievement4 = achievements["Achievement 4"] {
+                            
+                            // Use the achievement data as needed
+                            print("Achievement 4: \(achievement4)")
+                            print("\(achievement4.description)")
+                            if(achievement4.description == "false"){
+                                self.achievement4 = true
+                                
+                            }else if(achievement4.description == "true"){
+                                self.achievement4 = false
+                            }
+                        }
+                        // acheivement 5
+                        if let achievement5 = achievements["Achievement 5"] {
+                            
+                            // Use the achievement data as needed
+                            print("Achievement 5: \(achievement5)")
+                            print("\(achievement5.description)")
+                            if(achievement5.description == "false"){
+                                self.achievement5 = true
+                                
+                            }else if(achievement5.description == "true"){
+                                self.achievement5 = false
+                            }
+                        }
                         
                     }
                 } else {

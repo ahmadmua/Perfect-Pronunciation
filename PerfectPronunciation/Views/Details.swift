@@ -12,17 +12,17 @@ import FirebaseAuth
 import Foundation
 
 class SharedData: ObservableObject {
-    @Published var selectedDay: String = "Mo"
+    @Published var selectedDay: String
 
-//    init() {
-//        let currentDate = Date()
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "E"
-//        
-//        let fullDayAbbreviation = dateFormatter.string(from: currentDate)
-//        
-//        self.selectedDay = String(fullDayAbbreviation.prefix(2))
-//    }
+    init() {
+        let currentDate = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E"
+        
+        let fullDayAbbreviation = dateFormatter.string(from: currentDate)
+        
+        self.selectedDay = String(fullDayAbbreviation.prefix(2))
+    }
 }
 
 

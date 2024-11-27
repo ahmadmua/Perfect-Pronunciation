@@ -5,199 +5,197 @@
 //  Created by Nichoalas Cammisuli on 2023-10-28.
 //
 
-
 import SwiftUI
 import Firebase
 import FirebaseAuth
 import Combine
 
 struct IndividualLesson: View {
-    //controller var
+    // Controller variables
     @ObservedObject var model = LessonController()
-    @ObservedObject var voiceRecorderController : VoiceRecorderController
+    @ObservedObject var voiceRecorderController: VoiceRecorderController
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
-    //question variable
+    
+    // Question variable
     @State var questionVar: String?
-    //navigation vars
+    
+    // Navigation variables
     @State private var showRecord = false
     @State private var showNext = false
     @State private var showLesson = false
-    //user difficulty
+    
+    // User difficulty
     @State private var userDifficulty: String = "Easy"
-    //alrt
+    
+    // Alert
     @State private var showingAlert = false
     
+    // Pop-up for recorder view
+    @State private var isPopupPresented = false
     
-    //pop up for recorder view
-    @State  private var isPopupPresented = false
-    //lesson name
-    @Binding var lessonName : String
-    //counter
+    // Lesson name
+    @Binding var lessonName: String
+    
+    // Counter
     @AppStorage("counter") var counter: Int = 0
-    var lessonType : String = "Induvidual"
+    
+    // Lesson type
+    var lessonType: String = "Individual"
+    
+    // Response variables
     @Binding var responseText: String
     @Binding var responseArray: [String]
-    @State private var cancellable: AnyCancellable?
+    
+    // Track whether the first question is loaded
+    @State private var isFirstQuestionLoaded = false
+    
     private let openAIService = OpenAIService()
-    
-    
+
     
     var body: some View {
-        
-            ZStack{
-                Color("Background")
-            Grid{
-                
+        ZStack {
+            Color("Background")
+            Grid {
                 Spacer()
                 
-                VStack{
-                    GridRow{
-                       //display question
-                        //Text(model.question ?? "Could not get the question")
+                VStack {
+                    GridRow {
+                        // Display the current question
                         Text(responseText)
                             .background(Rectangle().fill(Color.gray).padding(.all, -30))
                             .padding(.bottom, 80)
                     }
-//                    GridRow{
-//                        //displays uers response
-//                        Text("User Pronunciation")
-//                            .background(Rectangle().fill(Color.gray).padding(.all, -30))
-//                            .padding(.bottom, 40)
-//                    }
+                    
                     Divider()
-                    
-                   
-                    
-                }//vstack
+                } // VStack
                 
                 Spacer()
                 
-                GridRow{
-                    
+                GridRow {
                     Button(action: {
-                        //nav to the next word
-                        print("record btn press")
-
+                        // Record button action
+                        print("Record button pressed")
                         self.showRecord.toggle()
                         self.isPopupPresented.toggle()
-                        
-                    }){
+                    }) {
                         Image(systemName: "record.circle.fill")
                             .font(.system(size: 50, weight: .light))
-                    }//btn
+                    } // Button
                     .foregroundStyle(Color.red)
                     .buttonStyle(.borderless)
                     .sheet(isPresented: $isPopupPresented) {
-                        VoiceRecorder(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), testText: responseText, lessonType: lessonType,isPopupPresented: $isPopupPresented).environmentObject(voiceRecorderController);
+                        VoiceRecorder(
+                            voiceRecorderController: VoiceRecorderController(
+                                audioController: AudioController(),
+                                audioAPIController: AudioAPIController(),
+                                audioPlaybackController: AudioPlayBackController()
+                            ),
+                            testText: responseText,
+                            lessonType: lessonType,
+                            isPopupPresented: $isPopupPresented
+                        ).environmentObject(voiceRecorderController)
                     }
                     
                     Button(action: {
-                        //nav to the nexet question
-                        print("Continue btn press")
-                    
-//                        print("Numo q's \(model.totQuestions)")
-//                        print("QUESTION \(model.question ?? "WHY NO WORK")")
-                        //increment counter to track what question the user is on
-                        counter+=1
+                        // Continue button action
+                        print("Continue button pressed")
+                        counter += 1
                         
-                        
-                            
-                        //if counter is greater than number of questions
-                        if counter >= 5{//let questionCount = 0
-                            //go back to the home page
+                        if counter >= responseArray.count {
+                            // If all questions are completed
                             counter = 0
-                            //update the lesson as complete
                             model.updateLessonCompletion(userLesson: lessonName)
-                            
-                            model.findUserDifficulty{
-                                model.updateLessonQuestionData(userLesson: lessonName, userDifficulty: model.difficulty!, lessonQuestionsList: responseArray)
+                            model.findUserDifficulty {
+                                model.updateLessonQuestionData(
+                                    userLesson: lessonName,
+                                    userDifficulty: model.difficulty!,
+                                    lessonQuestionsList: responseArray
+                                )
                             }
-                            
                             self.showingAlert.toggle()
                             self.showLesson.toggle()
-                        
-                        }else{
-                            //else counter is not more than the number of questions, continue to the next question
-                            self.showNext.toggle()
+                        } else {
+                            // Update `responseText` for the next question dynamically
+                            if counter < responseArray.count {
+                                responseText = responseArray[responseArray.count - 1 - counter]
+                                print("Next question: \(responseText)")
+                                Task {
+                                    await voiceRecorderController.submitTextToSpeechAI(testText: responseText)
+                                }
+                            } else {
+                                print("Error: Counter exceeds the bounds of responseArray. Counter: \(counter), Array Count: \(responseArray.count)")
+                            }
                         }
-                        
-//                        //assign the question var
-//                        questionVar = model.answer!
-//                        print("THIS IS THE QUESTION \(questionVar ?? "NA")")
-                                             
-                    
-                    }){
+                    }) {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 50, weight: .light))
-                    }//btn
-
-                    .alert("Congrats, You just earned xp and currency!", isPresented: $showingAlert) {
-                                    Button("OK", role: .cancel) {
-                                        currModel.updateUserCurrency()
-                                        xpModel.updateUserExperience()
-//                                        xpModel.calculateUserLevel()
-                                    }
-                                        }//
-                    .navigationDestination(isPresented: $showNext){
-                        IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
-                            .navigationBarBackButtonHidden(true)
+                    } // Button
+                    .alert("Congrats, You just earned XP and currency!", isPresented: $showingAlert) {
+                        Button("OK", role: .cancel) {
+                            currModel.updateUserCurrency()
+                            xpModel.updateUserExperience()
+                        }
                     }
-                    .navigationDestination(isPresented: $showLesson){
+                    .navigationDestination(isPresented: $showNext) {
+                        IndividualLesson(
+                            voiceRecorderController: VoiceRecorderController(
+                                audioController: AudioController(),
+                                audioAPIController: AudioAPIController(),
+                                audioPlaybackController: AudioPlayBackController()
+                            ),
+                            lessonName: $lessonName,
+                            responseText: $responseText,
+                            responseArray: $responseArray
+                        ).navigationBarBackButtonHidden(true)
+                    }
+                    .navigationDestination(isPresented: $showLesson) {
                         Details()
                             .navigationBarBackButtonHidden(true)
                     }
                     .foregroundStyle(Color.green)
                     .buttonStyle(.borderless)
-                    
-                }//grid row
-            }//grid
+                } // GridRow
+            } // Grid
             .background(Color("Background"))
-            
-        }//nanstack
+        } // ZStack
         .background(Color("Background"))
-        .onAppear{
-            for _ in responseArray{
-//                print("RESPONSES : \(response)")
-                responseText = responseArray[4-counter]
-                
+        .onAppear {
+            // On initial load, setup the first question dynamically
+            if counter == 0 {
+                if !responseArray.isEmpty {
+                    responseText = responseArray[responseArray.count - 1 - counter]
+                    print("First question loaded: \(responseText)")
+                    
+                    Task {
+                        // Trigger text-to-speech processing for the first question
+                        await voiceRecorderController.submitTextToSpeechAI(testText: responseText)
+                        // Mark the first question as loaded to ensure playback
+                        isFirstQuestionLoaded = true
+                    }
+                } else {
+                    print("Error: responseArray is empty.")
+                }
             }
-            
-//            let responseArray = responseText.split(separator: "~")
-//            print("ARRAY : \(responseArray)")
-            
+
             openAIService.fetchAPIKey()
             
-            //find the difficulty the user has set
-            model.findUserDifficulty{
-                print("USER DIFICULTY!! : \(model.difficulty!)")
-                
-                /*
-                 ------------------------------------
-                 WILL PROBABLY HAVE TO RE-WRITE THIS - wont be having lessons stored like this anymore?
-                 vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-                 */
-                //find the number of questions for the lesson
-//                model.getNumberOfQuestion(lesson: lessonName, difficulty: model.difficulty!)
-//                
-//                //get the current question for the page number
-//                model.getQuestion(lesson: lessonName, difficulty: model.difficulty!, question: "Question\(counter)")
-                
+            // Find the user's difficulty
+            model.findUserDifficulty {
+                print("User difficulty: \(model.difficulty!)")
                 UserDefaults.standard.synchronize()
-                
-                
             }
-            
-             
+
             self.showNext = false
-            
-            Task {
-                await voiceRecorderController.submitTextToSpeechAI(testText: responseText)
-            }
-         
         }
-         
+        .onChange(of: isFirstQuestionLoaded) { loaded in
+            if loaded {
+                // Play the first question's audio after it has been processed
+                print("Playing audio for the first question.")
+                Task {
+                    await voiceRecorderController.audioPlaybackController.startPlayback()
+                }
+            }
+        }
     }
-
-}//view
-
+}

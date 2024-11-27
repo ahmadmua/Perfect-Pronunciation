@@ -145,9 +145,10 @@ struct WeeklyLesson: View {
                             
                             //case .readyToPlay:
                                 
-                            
+                            //MARK: CHANGED NICKS CODE HERE REMEBER TO CHANGE BACK
                             case .playing:
-                                //audioPlayer.startPlayback(audio: voiceRecorderController.userAudioFileURL!)
+                                audioPlayer.fileURL = voiceRecorderController.userAudioFileURL
+                                audioPlayer.startPlayback()
                                 recordingState = .readyToRecord
                             }
                         }) {

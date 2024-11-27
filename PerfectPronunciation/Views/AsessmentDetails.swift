@@ -102,37 +102,45 @@ struct AssessmentView: View {
         }
         .navigationTitle("Assessment Result")
         .onAppear {
-            predictionResult = predictPronunciationImprovement(mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0), omissions: Double(errorTypeCounts["Omission"] ?? 0), insertions: Double(errorTypeCounts["Insertion"] ?? 0), unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0), missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0), monotone: Double(errorTypeCounts["Monotone"] ?? 0))
-            
-            let displayWords = Set(display.split(separator: " ").map { String($0) })
-               let transcriptionWords = Set(transcription.split(separator: " ").map { String($0) })
+            predictionResult = predictPronunciationImprovement(
+                mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0),
+                omissions: Double(errorTypeCounts["Omission"] ?? 0),
+                insertions: Double(errorTypeCounts["Insertion"] ?? 0),
+                unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0),
+                missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0),
+                monotone: Double(errorTypeCounts["Monotone"] ?? 0)
+            )
 
-               // Find omissions (words in display but not in transcription)
-               let omissions = displayWords.subtracting(transcriptionWords)
-               for word in omissions {
-                   wordErrorData.append((word: word, errorType: "Omission"))
-               }
+            let displayWords = Set(display.lowercased().split(separator: " ").map { String($0) })
+            let transcriptionWords = Set(transcription.lowercased().split(separator: " ").map { String($0) })
 
-               // Find insertions (words in transcription but not in display)
-               let insertions = transcriptionWords.subtracting(displayWords)
-               for word in insertions {
-                   wordErrorData.append((word: word, errorType: "Insertion"))
-               }
+            // Find omissions (words in display but not in transcription)
+            let omissions = displayWords.subtracting(transcriptionWords)
+            for word in omissions {
+                wordErrorData.append((word: word, errorType: "Omission"))
+            }
 
-               // Update counts for omissions and insertions
-               errorTypeCounts["Omission"] = omissions.count
-               errorTypeCounts["Insertion"] = insertions.count
+            // Find insertions (words in transcription but not in display)
+            let insertions = transcriptionWords.subtracting(displayWords)
+            for word in insertions {
+                wordErrorData.append((word: word, errorType: "Insertion"))
+            }
 
-               // Update prediction result
-               predictionResult = predictPronunciationImprovement(
-                   mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0),
-                   omissions: Double(errorTypeCounts["Omission"] ?? 0),
-                   insertions: Double(errorTypeCounts["Insertion"] ?? 0),
-                   unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0),
-                   missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0),
-                   monotone: Double(errorTypeCounts["Monotone"] ?? 0)
-               )
+            // Update counts for omissions and insertions
+            errorTypeCounts["Omission"] = omissions.count
+            errorTypeCounts["Insertion"] = insertions.count
+
+            // Update prediction result
+            predictionResult = predictPronunciationImprovement(
+                mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0),
+                omissions: Double(errorTypeCounts["Omission"] ?? 0),
+                insertions: Double(errorTypeCounts["Insertion"] ?? 0),
+                unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0),
+                missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0),
+                monotone: Double(errorTypeCounts["Monotone"] ?? 0)
+            )
         }
+
         .onDisappear(){
             
         }
@@ -141,40 +149,85 @@ struct AssessmentView: View {
     // Remaining methods stay the same
 
     
-
-    // Function to build the highlighted text
+    // Function to build the highlighted text with underlining for mispronunciations
     func buildAttributedText(display: String, wordErrorData: [(word: String, errorType: String)]) -> AttributedString {
         var attributedText = AttributedString(display)
 
-        // Loop through wordErrorData to apply the correct highlight color
-        for wordError in wordErrorData {
-            let word = wordError.word
-            let errorType = wordError.errorType
-            
-            // Find the range of the word in the attributed string
-            if let range = attributedText.range(of: word) {
-                // Apply the color based on the error type
-                switch errorType {
-                case "Mispronunciation":
-                    attributedText[range].foregroundColor = .yellow
-                case "Omission":
-                    attributedText[range].foregroundColor = .gray
-                case "Insertion":
-                    attributedText[range].foregroundColor = .red
-                case "Unexpected_break":
-                    attributedText[range].foregroundColor = .pink
-                case "Missing_break":
-                    attributedText[range].foregroundColor = .blue
-                case "Monotone":
-                    attributedText[range].foregroundColor = .purple
-                default:
-                    break
+        // Store ranges of omission words for overlap detection
+        var omissionRanges: [Range<String.Index>] = []
+
+        // First, apply all omission styles and track their ranges
+        for wordError in wordErrorData where wordError.errorType == "Omission" {
+            let word = wordError.word.lowercased()
+            let lowercasedDisplay = display.lowercased()
+            var startIndex = lowercasedDisplay.startIndex
+
+            while let range = lowercasedDisplay.range(of: word, options: .caseInsensitive, range: startIndex..<lowercasedDisplay.endIndex) {
+                if let attributedRange = Range(range, in: attributedText) {
+                    // Apply omission style
+                    attributedText[attributedRange].backgroundColor = .gray
+                    attributedText[attributedRange].foregroundColor = .white
+                    omissionRanges.append(range) // Track omission ranges
                 }
+                startIndex = range.upperBound
+            }
+        }
+
+        // Now, apply styles for mispronunciations
+        for wordError in wordErrorData where wordError.errorType == "Mispronunciation" {
+            let word = wordError.word.lowercased()
+            let lowercasedDisplay = display.lowercased()
+            var startIndex = lowercasedDisplay.startIndex
+
+            while let range = lowercasedDisplay.range(of: word, options: .caseInsensitive, range: startIndex..<lowercasedDisplay.endIndex) {
+                if let attributedRange = Range(range, in: attributedText) {
+                    // Check for overlap with any omission ranges
+                    let overlapsOmission = omissionRanges.contains { omissionRange in
+                        range.overlaps(omissionRange)
+                    }
+
+                    if overlapsOmission {
+                        // Apply underline style for mispronunciations if overlapping
+                        attributedText[attributedRange].underlineStyle = .single
+                        attributedText[attributedRange].underlineColor = .yellow
+                    } else {
+                        // Apply default mispronunciation style (no underline)
+                        attributedText[attributedRange].foregroundColor = .yellow
+                    }
+                }
+                startIndex = range.upperBound
+            }
+        }
+
+        // Handle other error types with default behavior
+        for wordError in wordErrorData where !["Omission", "Mispronunciation"].contains(wordError.errorType) {
+            let word = wordError.word.lowercased()
+            let lowercasedDisplay = display.lowercased()
+            var startIndex = lowercasedDisplay.startIndex
+
+            while let range = lowercasedDisplay.range(of: word, options: .caseInsensitive, range: startIndex..<lowercasedDisplay.endIndex) {
+                if let attributedRange = Range(range, in: attributedText) {
+                    switch wordError.errorType {
+                    case "Insertion":
+                        attributedText[attributedRange].foregroundColor = .red
+                    case "Unexpected_break":
+                        attributedText[attributedRange].foregroundColor = .pink
+                    case "Missing_break":
+                        attributedText[attributedRange].foregroundColor = .blue
+                    case "Monotone":
+                        attributedText[attributedRange].foregroundColor = .purple
+                    default:
+                        break
+                    }
+                }
+                startIndex = range.upperBound
             }
         }
 
         return attributedText
     }
+
+
 
 
 
@@ -267,6 +320,7 @@ struct ScoreBar: View {
         .padding(.vertical, 5)
     }
 }
+
 
 struct ErrorLabelView: View {
     var errorType: String

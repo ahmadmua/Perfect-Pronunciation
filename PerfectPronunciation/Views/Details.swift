@@ -9,9 +9,22 @@ import FirebaseAuth
 //    var items: [String]
 //}
 
+import Foundation
+
 class SharedData: ObservableObject {
-    @Published var selectedDay: String = "Mo"
+    @Published var selectedDay: String
+
+    init() {
+        let currentDate = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E"
+        
+        let fullDayAbbreviation = dateFormatter.string(from: currentDate)
+        
+        self.selectedDay = String(fullDayAbbreviation.prefix(2))
+    }
 }
+
 
 
 struct Details: View {
@@ -28,6 +41,10 @@ struct Details: View {
     @State private var userData = UserData()
     @State private var feedbackMsg : [String] = ["Your Pronunciation is Great", "Your Pronunciation Needs Improvement"]
     @State private var difficulty : [String] = ["Beginner", "Intermediate", "Advanced"]
+    
+    @State private var initialDifficulty: String = ""
+    @State private var updatedDifficulty: String = ""
+
     
     
     @State var showingAlert2 = false
@@ -83,23 +100,25 @@ struct Details: View {
                 // Statistics Cards
                 HStack {
                     StatCard(color: .yellow, title: "Words Pronounced", value: "\(totalWords)")
-                    StatCard(color: .yellow, title: "AVG Accuracy", value: "\(String(format: "%.1f", averageAccuracy))%")
+                    StatCard(color: .yellow, title: "Total AVG Accuracy", value: "\(String(format: "%.1f", averageAccuracy))%")
                 }
                 
                 HStack {
-                    StatCard(color: .yellow, title: "Predicted Accuracy", value: "\(prediction ?? 0.0)%")
+                    StatCard(color: .yellow, title: "Previous Lesson Predicted Accuracy", value: "\(prediction ?? 0.0)%")
                 }
                 .onReceive([arr[0], arr[1], arr[2], arr[3], arr[4]].publisher) { _ in
                     prediction = makePrediction()
+                    updatedAdjustedDifficulty() // Call this to update the difficulty
                 }
+
                 
                 // Calendar and Items List
                 CalendarView()
                 ItemsListView()
                 
                 HStack {
-                    Text("Dynamically Adjusted Difficulty:")
-                        .bold()
+                    Text("\(calculateAccuracyOutput())")
+                    .bold()
                     
 //                    Image(systemName: "arrow.clockwise")
 //                        .resizable()
@@ -112,21 +131,14 @@ struct Details: View {
                     
                 }
 
-                Text("Current Difficulty: \(userDifficulty)")
-                    .onAppear {
-                        fireDBHelper.findUserDifficulty { difficulty in
-                            if let difficulty = difficulty {
-                                userDifficulty = difficulty
-                            }
-                        }
-                    }
+//                Text("Previous Difficulty: \(initialDifficulty)")
+//                    .font(.headline)
+                    
 
-              
-                
-                    Text("Adjusted Difficulty: \(expectedDifficulty)")
-                        .onAppear {
-                            updatedAdjustedDifficulty()
-                        }
+                Text("Adjusted Difficulty: \(updatedDifficulty)")
+                    .font(.headline)
+                   
+
 
 
             
@@ -153,14 +165,22 @@ struct Details: View {
         .navigationBarBackButtonHidden(true)
         
         .onAppear {
+            // Fetch the initial difficulty from Firestore (or wherever it is stored)
+            fireDBHelper.findUserDifficulty { difficulty in
+                if let difficulty = difficulty {
+                    initialDifficulty = difficulty
+                    updatedDifficulty = difficulty // Initialize updatedDifficulty to match the initial one
+                }
+            }
+
+            // Fetch other necessary data as usual
             fireDBHelper.getAvgAccuracy { fetchedAccuracy in
                 averageAccuracy = fetchedAccuracy
             }
             fireDBHelper.getPronunciationWordCount { fetchedCount in
                 totalWords = fetchedCount
             }
-            
-            //for prediction model
+
             for index in 0..<5 {
                 fireDBHelper.getAccuracy(atIndex: index) { accuracy in
                     if let accuracy = accuracy {
@@ -168,54 +188,55 @@ struct Details: View {
                     }
                 }
             }
-            
+
             prediction = makePrediction()
-            
-            
         }
+
         
         Spacer()
         
     }
     
-    func updatedAdjustedDifficulty(){
         
+    func updatedAdjustedDifficulty() {
         fireDBHelper.findUserDifficulty { difficulty in
             guard let difficulty = difficulty else { return }
             userDifficulty = difficulty
 
-            // Determine expected difficulty based on user difficulty and accuracy output
-            switch (userDifficulty, calculateAccuracyOutput()) {
-            case (self.difficulty[0], feedbackMsg[0]): // Beginner | Great
-                expectedDifficulty = self.difficulty[1] // Move to Intermediate
+            // Calculate the accuracy output
+            let accuracyOutput = calculateAccuracyOutput()
 
-            case (self.difficulty[0], feedbackMsg[1]): // Beginner | Needs Improvement
-                expectedDifficulty = self.difficulty[0] // Remain Beginner
-
-            case (self.difficulty[1], feedbackMsg[0]): // Intermediate | Great
-                expectedDifficulty = self.difficulty[2] // Move to Advanced
-
-            case (self.difficulty[1], feedbackMsg[1]): // Intermediate | Needs Improvement
-                expectedDifficulty = self.difficulty[0] // Move to Beginner
-
-            case (self.difficulty[2], feedbackMsg[0]): // Advanced | Great
-                expectedDifficulty = self.difficulty[2] // Remain Advanced
-
-            case (self.difficulty[2], feedbackMsg[1]): // Advanced | Needs Improvement
-                expectedDifficulty = self.difficulty[1] // Move to Intermediate
-
-            default:
-                break
+            // Determine updated difficulty based on accuracy
+            if userDifficulty == self.difficulty[0] { // Beginner
+                if accuracyOutput == feedbackMsg[0] { // Great
+                    updatedDifficulty = self.difficulty[2] // Skip Intermediate, move to Advanced
+                } else {
+                    updatedDifficulty = self.difficulty[0] // Remain Beginner
+                }
+            } else if userDifficulty == self.difficulty[1] { // Intermediate
+                if accuracyOutput == feedbackMsg[0] { // Great
+                    updatedDifficulty = self.difficulty[2] // Move to Advanced
+                } else { // Needs Improvement
+                    updatedDifficulty = self.difficulty[0] // Move to Beginner
+                }
+            } else if userDifficulty == self.difficulty[2] { // Advanced
+                if accuracyOutput == feedbackMsg[0] { // Great
+                    updatedDifficulty = self.difficulty[2] // Remain Advanced
+                } else { // Needs Improvement
+                    updatedDifficulty = self.difficulty[1] // Move to Intermediate
+                }
             }
-            
-            // Update difficulty in FireDB
+
+            // Update Firestore with the new expected difficulty
             fireDBHelper.updateDifficulty(
-                selectedDifficulty: expectedDifficulty,
+                selectedDifficulty: updatedDifficulty,
                 userData: &userData,
                 selection: &selection
             )
         }
     }
+
+
     
     func calculateAccuracyOutput() -> String {
         let input = PronunciationModelInput(Feature1: arr[0], Feature2: arr[1], Feature3: arr[2], Feature4: arr[3], Feature5: arr[4])

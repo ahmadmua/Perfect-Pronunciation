@@ -12,6 +12,11 @@ struct PronunciationAssessmentResult: Codable {
     let transcription: Transcription
     let assessment: Assessment
     let lessonType: String
+
+    // Validation logic for PronunciationAssessmentResult
+    var isValid: Bool {
+        return transcription.isValid && assessment.isValid && !lessonType.isEmpty
+    }
 }
 
 // MARK: - Transcription
@@ -28,6 +33,11 @@ struct Transcription: Codable {
         case recognitionStatus = "RecognitionStatus"
         case nBest = "NBest"
         case offset = "Offset"
+    }
+    
+    // Validation logic for Transcription
+    var isValid: Bool {
+        return !displayText.isEmpty && !recognitionStatus.isEmpty && !nBest.isEmpty
     }
 }
 
@@ -57,6 +67,12 @@ struct Assessment: Codable {
         case recognitionStatus = "RecognitionStatus"
         case nBest = "NBest"
     }
+    
+    // Validation logic for Assessment
+    var isValid: Bool {
+           // Return true if `recognitionStatus` is not empty and `nBest` contains at least one valid entry
+           return !recognitionStatus.isEmpty && !nBest.isEmpty
+       }
 }
 
 // MARK: - AssessmentNBest
@@ -167,3 +183,4 @@ struct Syllable: Codable {
         case syllable = "Syllable"
     }
 }
+

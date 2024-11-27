@@ -12,8 +12,8 @@ struct WeeklyLesson: View {
     @ObservedObject var audioPlayer: AudioPlayBackController
     @ObservedObject var audioAnalysisData : AudioAPIController
     @ObservedObject var currModel = CurrencyController()
-    @ObservedObject var voiceRecorderController : VoiceRecorderController
-    
+    @ObservedObject var voiceRecorderController = VoiceRecorderController.shared
+
     @EnvironmentObject var fireDBHelper: DataHelper
     //recording
     @State private var isRecording = false
@@ -62,8 +62,10 @@ struct WeeklyLesson: View {
                         let singleString = fireDBHelper.wordList.joined()
                         
                         Task {
-                            await voiceRecorderController.submitTestAudio(testText: singleString, lessonType: lessonType)
+                            await VoiceRecorderController.shared.submitTestAudio(testText: singleString, lessonType: lessonType)
                         }
+
+
                         
                             
 //                        fireDBHelper.getWeeklyAccuracy { accuracy in

@@ -261,7 +261,7 @@ class DataHelper: ObservableObject {
             
             itemsCollectionRef
                 .whereField("DayOfWeek", isEqualTo: dayOfWeek)
-                .whereField("lessonType", isEqualTo: "Induvidual")
+                .whereField("lessonType", isEqualTo: "Individual")
                 .getDocuments { (querySnapshot, error) in
                     if let error = error {
                         print("Error fetching items for \(dayOfWeek): \(error)")
@@ -292,7 +292,7 @@ class DataHelper: ObservableObject {
             // Create a query to filter documents where "DayOfWeek" is the provided weekDay and "lessonType" is "Individual"
             let filteredQuery = itemsCollectionRef
                 .whereField("DayOfWeek", isEqualTo: weekDay)
-                .whereField("lessonType", isEqualTo: "Induvidual")  // Add filter for lessonType
+                .whereField("lessonType", isEqualTo: "Individual")  // Add filter for lessonType
 
             filteredQuery.getDocuments { (querySnapshot, error) in
                 if let error = error {
@@ -336,7 +336,7 @@ class DataHelper: ObservableObject {
             for day in daysOfWeek {
                 let dayQuery = itemsCollectionRef
                     .whereField("DayOfWeek", isEqualTo: day)
-                    .whereField("lessonType", isEqualTo: "Induvidual")
+                    .whereField("lessonType", isEqualTo: "Individual")
 
                 dayQuery.getDocuments { (querySnapshot, error) in
                     if let error = error {
@@ -383,7 +383,7 @@ class DataHelper: ObservableObject {
             // Iterate through each day
             for day in daysOfWeek {
                 let dayQuery = itemsCollectionRef.whereField("DayOfWeek", isEqualTo: day)
-                    .whereField("lessonType", isEqualTo: "Induvidual")
+                    .whereField("lessonType", isEqualTo: "Individual")
 
                 dayQuery.getDocuments { (querySnapshot, error) in
                     if let error = error {
@@ -428,7 +428,7 @@ class DataHelper: ObservableObject {
                 // Perform a query to filter documents for the current day and lessonType
                 let dayQuery = itemsCollectionRef
                     .whereField("DayOfWeek", isEqualTo: day)
-                    .whereField("lessonType", isEqualTo: "Induvidual")
+                    .whereField("lessonType", isEqualTo: "Individual")
 
                 dayQuery.getDocuments { (querySnapshot, error) in
                     if let error = error {
@@ -610,7 +610,7 @@ class DataHelper: ObservableObject {
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
 
-            itemsCollectionRef.whereField("lessonType", isEqualTo: "Induvidual").limit(to: 4).getDocuments { (querySnapshot, error) in
+            itemsCollectionRef.whereField("lessonType", isEqualTo: "Individual").limit(to: 4).getDocuments { (querySnapshot, error) in
                 if let error = error {
                     print("Error getting documents: \(error.localizedDescription)")
                     completion(nil)

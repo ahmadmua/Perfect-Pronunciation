@@ -5,6 +5,13 @@
 //  Created by Nichoalas Cammisuli on 2023-10-28.
 //
 
+//
+//  IndividualLesson.swift
+//  PerfectPronunciation
+//
+//  Created by Nichoalas Cammisuli on 2023-10-28.
+//
+
 import SwiftUI
 import Firebase
 import FirebaseAuth
@@ -109,12 +116,6 @@ struct IndividualLesson: View {
                             if counter < responseArray.count {
                                 responseText = responseArray[responseArray.count - 1 - counter]
                                 print("Next question: \(responseText)")
-                                Task {
-                                    VoiceRecorderController.shared.clearAudioFiles() // Access directly from the singleton
-                                    await VoiceRecorderController.shared.submitTextToSpeechAI(testText: responseText) // Access directly
-                                    
-                                    VoiceRecorderController.shared.playAudio(fileURL: self.voiceRecorderController.aiaudioFileURL) // Access directly for playback
-                                }
                             } else {
                                 print("Error: Counter exceeds the bounds of responseArray. Counter: \(counter), Array Count: \(responseArray.count)")
                             }
@@ -147,14 +148,15 @@ struct IndividualLesson: View {
         }
         .background(Color("Background"))
         .onAppear {
-            if counter == 0, !responseArray.isEmpty {
-                responseText = responseArray[responseArray.count - 1 - counter]
-                print("First question loaded: \(responseText)")
-                
-                Task {
-                    await voiceRecorderController.submitTextToSpeechAI(testText: responseText)
-                    voiceRecorderController.playAudio(fileURL:  self.voiceRecorderController.aiaudioFileURL) // Play AI audio for the first question
-                }
+            Task {
+                await voiceRecorderController.submitTextToSpeechAI(testText: responseText)
+                voiceRecorderController.playAudio(fileURL: self.voiceRecorderController.aiaudioFileURL) // Play AI audio for the first question
+            }
+        }
+        .onChange(of: responseText) { newValue in
+            Task {
+                await voiceRecorderController.submitTextToSpeechAI(testText: newValue)
+                voiceRecorderController.playAudio(fileURL: voiceRecorderController.aiaudioFileURL) // Play AI audio for the updated question
             }
         }
     }

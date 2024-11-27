@@ -148,6 +148,7 @@ class VoiceRecorderController: NSObject, ObservableObject {
 
             DispatchQueue.main.async { [self] in
                 print("Pronunciation Assessment Result: \(resultJson)")
+                //MARK: For Some Reason this wont submit the First Audio Test After Starting Application, Issue with the If Statement, seems the AI audio does not get called properly on first Induvidual Test View so there wont be an AudioFIle
                 if let userAudio = userAudioFileURL, let voiceGalleryAudio = aiaudioFileURL {
                     dataHelper.uploadUserLessonData(assessmentData: resultJson, userAudio: userAudio, voiceGalleryAudio: voiceGalleryAudio)
                 }

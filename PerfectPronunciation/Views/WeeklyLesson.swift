@@ -13,7 +13,7 @@ struct WeeklyLesson: View {
     @ObservedObject var audioAnalysisData : AudioAPIController
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
-    @ObservedObject var voiceRecorderController : VoiceRecorderController
+    @ObservedObject var voiceRecorderController  =  VoiceRecorderController.shared
     
     //toast
     @State private var showToast = false // State for showing the toast
@@ -63,8 +63,10 @@ struct WeeklyLesson: View {
                         let singleString = fireDBHelper.wordList.joined()
                         
                         Task {
-                            await voiceRecorderController.submitTestAudio(testText: singleString, lessonType: lessonType)
+                            await VoiceRecorderController.shared.submitTestAudio(testText: singleString, lessonType: lessonType)
                         }
+
+
                         
                         //give xp and currency
                         currModel.updateUserCurrency()
@@ -145,9 +147,10 @@ struct WeeklyLesson: View {
                             
                             //case .readyToPlay:
                                 
-                            
+                            //MARK: CHANGED NICKS CODE HERE REMEBER TO CHANGE BACK
                             case .playing:
-                                audioPlayer.startPlayback(audio: voiceRecorderController.userAudioFileURL!)
+                                audioPlayer.fileURL = voiceRecorderController.userAudioFileURL
+                                audioPlayer.startPlayback()
                                 recordingState = .readyToRecord
                             }
                         }) {

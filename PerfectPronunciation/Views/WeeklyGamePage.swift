@@ -45,8 +45,13 @@ struct WeeklyGamePage: View {
                 .clipShape(Capsule())
                 .navigationDestination(isPresented: $showWeeklyLesson){
                     //TEST
-                    WeeklyLesson(audioPlayer: AudioPlayBackController(), audioAnalysisData: AudioAPIController(), voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()))
-                        .navigationBarBackButtonHidden(true)
+                    WeeklyLesson(
+                        audioPlayer: AudioPlayBackController(),
+                        audioAnalysisData: AudioAPIController(),
+                        voiceRecorderController: VoiceRecorderController.shared
+                    )
+                    .navigationBarBackButtonHidden(true)
+
                 }
                 
                 

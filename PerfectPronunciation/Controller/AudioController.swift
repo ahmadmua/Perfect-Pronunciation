@@ -117,7 +117,7 @@ class AudioController: NSObject, ObservableObject {
               
               // Define the file path for saving the recording in the app's documents directory
               let documentPath = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-              let audioFilename = documentPath.appendingPathComponent("\(Date().toString(dateFormat: "dd-MM-YY 'at' HH:mm:ss")).wav")
+              let audioFilename = documentPath.appendingPathComponent("User Audio\(Date().toString(dateFormat: "dd-MM-YY 'at' HH:mm:ss")).wav")
               
               // Audio recording settings (e.g., sample rate, channels)
               let settings = [
@@ -206,9 +206,6 @@ class AudioController: NSObject, ObservableObject {
             recognitionTask = nil  // Clear the task
         }
 
-    
-    
-    
 }
 
 

@@ -56,10 +56,17 @@ struct LessonsPage: View {
                             Image(systemName: "rectangle.3.group.bubble.left.fill")
                                 .font(.system(size: 50, weight: .light))
                         }//btn
-                        .navigationDestination(isPresented: $conversation){
-                            IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
-                                .navigationBarBackButtonHidden(true)
+                        .navigationDestination(isPresented: $conversation) {
+                            IndividualLesson(
+                                voiceRecorderController: VoiceRecorderController.shared, // Singleton instance
+                                lessonName: $lessonName,
+                                responseText: $responseText,
+                                responseArray: $responseArray
+                            )
+                            .navigationBarBackButtonHidden(true)
                         }
+
+
                         .buttonStyle(.borderless)
                     }//grid row 2 conversation
                     .padding()
@@ -89,8 +96,13 @@ struct LessonsPage: View {
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $numbers){
-                            IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
-                                .navigationBarBackButtonHidden(true)
+                            IndividualLesson(
+                                voiceRecorderController: VoiceRecorderController.shared, // Singleton instance
+                                lessonName: $lessonName,
+                                responseText: $responseText,
+                                responseArray: $responseArray
+                            )
+                            .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
                         
@@ -121,8 +133,13 @@ struct LessonsPage: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $food1){
-                        IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
-                            .navigationBarBackButtonHidden(true)
+                        IndividualLesson(
+                            voiceRecorderController: VoiceRecorderController.shared, // Singleton instance
+                            lessonName: $lessonName,
+                            responseText: $responseText,
+                            responseArray: $responseArray
+                        )
+                        .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
                     
@@ -139,8 +156,13 @@ struct LessonsPage: View {
                             .font(.system(size: 50, weight: .light))
                     }//btn
                     .navigationDestination(isPresented: $food2){
-                        IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
-                            .navigationBarBackButtonHidden(true)
+                        IndividualLesson(
+                            voiceRecorderController: VoiceRecorderController.shared, // Singleton instance
+                            lessonName: $lessonName,
+                            responseText: $responseText,
+                            responseArray: $responseArray
+                        )
+                        .navigationBarBackButtonHidden(true)
                     }
                     .buttonStyle(.borderless)
                 }//grid row food
@@ -170,8 +192,13 @@ struct LessonsPage: View {
                                 .font(.system(size: 50, weight: .light))
                         }//btn
                         .navigationDestination(isPresented: $direction){
-                            IndividualLesson(voiceRecorderController: VoiceRecorderController(audioController: AudioController(), audioAPIController: AudioAPIController(), audioPlaybackController: AudioPlayBackController()), lessonName: $lessonName, responseText: $responseText, responseArray: $responseArray)
-                                .navigationBarBackButtonHidden(true)
+                            IndividualLesson(
+                                voiceRecorderController: VoiceRecorderController.shared, // Singleton instance
+                                lessonName: $lessonName,
+                                responseText: $responseText,
+                                responseArray: $responseArray
+                            )
+                            .navigationBarBackButtonHidden(true)
                         }
                         .buttonStyle(.borderless)
                         

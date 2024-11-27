@@ -16,24 +16,40 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "163"
             endingLineNumber = "163"
-            landmarkName = "uploadUserLessonData(data:)"
+            landmarkName = "fetchAndAddDayAndTimestampToAssessment(completion:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9AE16E6C-C498-43E5-A5F3-C34F815D7F8B"
+            uuid = "96D8B463-0167-4D79-95B7-E81685D110AB"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PerfectPronunciation/Controller/DataHelper.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "216"
+            endingLineNumber = "216"
+            landmarkName = "uploadUserLessonData(assessmentData:userAudio:voiceGalleryAudio:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "E814471F-7D36-4F95-95F2-3585D0DEAE31"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "PerfectPronunciation/Views/IndividualLesson.swift"
+            filePath = "PerfectPronunciation/Controller/VoiceRecorderController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "188"
-            endingLineNumber = "188"
-            landmarkName = "body"
-            landmarkType = "24">
+            startingLineNumber = "152"
+            endingLineNumber = "152"
+            landmarkName = "submitTestAudio(testText:lessonType:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

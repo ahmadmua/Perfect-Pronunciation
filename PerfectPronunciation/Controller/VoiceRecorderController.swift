@@ -151,7 +151,15 @@ class VoiceRecorderController: NSObject, ObservableObject {
                 //MARK: For Some Reason this wont submit the First Audio Test After Starting Application, Issue with the If Statement, seems the AI audio does not get called properly on first Induvidual Test View so there wont be an AudioFIle
                 if let userAudio = userAudioFileURL, let voiceGalleryAudio = aiaudioFileURL {
                     dataHelper.uploadUserLessonData(assessmentData: resultJson, userAudio: userAudio, voiceGalleryAudio: voiceGalleryAudio)
+                    
                 }
+                self.dataHelper.fetchAndAddDayAndTimestampToAssessment { success in
+                                    if success {
+                                        print("DayOfWeek and Timestamp were successfully added/updated.")
+                                    } else {
+                                        print("Failed to update DayOfWeek and Timestamp.")
+                                    }
+                                }
                 print("Discarding Audio After Submission")
                 do {
                     try discardTestAudio(fileURL: audioURL)

@@ -106,7 +106,7 @@ struct IndividualLesson: View {
                     Button(action: {
                         //nav to the nexet question
                         print("Continue btn press")
-
+                        
                         //increment counter to track what question the user is on
                         counter+=1
                         
@@ -157,60 +157,59 @@ struct IndividualLesson: View {
                         IndividualLesson(
                             lessonName: $lessonName,
                             responseText: $responseText,
-                    .navigationDestination(isPresented: $showLesson){
-                        ExperienceBarPage(xpController: xpModel)
-                            .navigationBarBackButtonHidden(true)
+                            responseArray: $responseArray
+                        ).navigationBarBackButtonHidden(true)
+                    }
                     .navigationDestination(isPresented: $showLesson){
                         ExperienceBarPage(xpController: xpModel)
                             .navigationBarBackButtonHidden(true)
                     }
                     .foregroundStyle(Color.green)
                     .buttonStyle(.borderless)
+                    .onAppear{
+                        //set so that users can't continue to the next question until they record
+                        self.canContinue = true
+                        
+                        
+                        for _ in responseArray{
+                            //                print("RESPONSES : \(response)")
+                            responseText = responseArray[4-counter]
+                            
+                        }
+                        
+                        openAIService.fetchAPIKey()
+                        
+                        //find the difficulty the user has set
+                        model.findUserDifficulty{
+                            print("USER DIFICULTY!! : \(model.difficulty!)")
+                            
+                            UserDefaults.standard.synchronize()
+                            
+                            
+                        }
+                        
+                        
+                        self.showNext = false
+                        
+                        
+                        self.showNext = false
+                        
+                        Task {
+                            await voiceRecorderController.submitTextToSpeechAI(testText: responseText)
+                            voiceRecorderController.playAudio(fileURL: self.voiceRecorderController.aiaudioFileURL) // Play AI audio for the first question
+                        }
+                    }
+                    .onChange(of: responseText) { newValue in
+                        Task {
+                            await voiceRecorderController.submitTextToSpeechAI(testText: newValue)
+                            voiceRecorderController.playAudio(fileURL: voiceRecorderController.aiaudioFileURL) // Play AI audio for the updated question
+                        }
+                    }
+                    
                 }
-            }
-        .onAppear{
-            //set so that users can't continue to the next question until they record
-            self.canContinue = true
-
-            
-            for _ in responseArray{
-                //                print("RESPONSES : \(response)")
-                responseText = responseArray[4-counter]
                 
             }
             
-            openAIService.fetchAPIKey()
-            
-            //find the difficulty the user has set
-            model.findUserDifficulty{
-                print("USER DIFICULTY!! : \(model.difficulty!)")
-                
-                UserDefaults.standard.synchronize()
-                
-                
-            }
-            
-            
-            self.showNext = false
-            
-            
-            self.showNext = false
-            
-            Task {
-                await voiceRecorderController.submitTextToSpeechAI(testText: responseText)
-                voiceRecorderController.playAudio(fileURL: self.voiceRecorderController.aiaudioFileURL) // Play AI audio for the first question
-            }
-        }
-        .onChange(of: responseText) { newValue in
-            Task {
-                await voiceRecorderController.submitTextToSpeechAI(testText: newValue)
-                voiceRecorderController.playAudio(fileURL: voiceRecorderController.aiaudioFileURL) // Play AI audio for the updated question
-            }
-        }
-            
-        }
-        
+        }//view
     }
-    
-}//view
-
+}

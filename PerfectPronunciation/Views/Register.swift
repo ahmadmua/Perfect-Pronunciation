@@ -78,73 +78,7 @@ struct Register: View {
         }
     }
     
-    func register(){
-        
-        Auth.auth().createUser(withEmail: email, password: password){result, error in
-            if error != nil {
-                showingAlert = true
-                msg = error!.localizedDescription
-            } else {
-                
-                Firestore.firestore().collection("UserData").document(Auth.auth().currentUser!.uid).setData(
-                    ["Country": "",
-                     "Difficulty": "",
-                     "Currency": 0.0,
-                     "Experience": 0.0,
-                     "TotalExperience": 0.0,
-                     "ExperienceLevel": 1.0,
-                     "League" : "",
-                     "WeeklyChallengeComplete": 0.0,
-                     "LessonsCompleted": [
-                        "Conversation" : false,
-                        "Numbers" : false,
-                        "Directions" : false,
-                        "Food1" : false,
-                        "Food2" : false
-                     ],
-                     "LessonQuestions": [
-                        "Conversation" : [
-                            "Difficulty" : "",
-                            "Questions" : ""
-                        ],
-                        "Numbers" : [
-                            "Difficulty" : "",
-                            "Questions" : ""
-                        ],
-                        "Directions" : [
-                            "Difficulty" : "",
-                            "Questions" : ""
-                        ],
-                        "Food1" : [
-                            "Difficulty" : "",
-                            "Questions" : ""
-                        ],
-                        "Food2" : [
-                            "Difficulty" : "",
-                            "Questions" : ""
-                        ]
-                     ],
-                     "Achievements": [
-                        "Achievement 1" : false,
-                        "Achievement 2" : false,
-                        "Achievement 3" : false,
-                        "Achievement 4" : false,
-                        "Achievement 5" : false,
-                     ],
-                     "AchievementsCheck": [
-                        "Achievement 1" : false,
-                        "Achievement 2" : false,
-                        "Achievement 3" : false,
-                        "Achievement 4" : false,
-                        "Achievement 5" : false
-                     ],
-                     "Items": [
-                        "TimeIncrease" : false
-                     ],
-                     "Username" : email.components(separatedBy: "@").first ?? "",
-         
-                    ])
-                self.selection = 1
+    
     func fetchUserIP() {
         if let url = URL(string: "https://api.ipify.org?format=json") {
             let task = URLSession.shared.dataTask(with: url) { data, response, error in
@@ -209,30 +143,61 @@ struct Register: View {
             
             // Add user data to Firestore, including the captured IP address
             Firestore.firestore().collection("UserData").document(Auth.auth().currentUser!.uid).setData(
-                [
-                    "Country": "",
-                    "Difficulty": "",
-                    "Currency": 0.0,
-                    "Experience": 0.0,
-                    "ExperienceLevel": 1.0,
-                    "WeeklyChallengeComplete": 0.0,
-                    "LessonsCompleted": [
-                        "Conversation": false,
-                        "Numbers": false,
-                        "Directions": false,
-                        "Food1": false,
-                        "Food2": false
+                ["Country": "",
+                 "Difficulty": "",
+                 "Currency": 0.0,
+                 "Experience": 0.0,
+                 "TotalExperience": 0.0,
+                 "ExperienceLevel": 1.0,
+                 "League" : "",
+                 "WeeklyChallengeComplete": 0.0,
+                 "LessonsCompleted": [
+                    "Conversation" : false,
+                    "Numbers" : false,
+                    "Directions" : false,
+                    "Food1" : false,
+                    "Food2" : false
+                 ],
+                 "LessonQuestions": [
+                    "Conversation" : [
+                        "Difficulty" : "",
+                        "Questions" : ""
                     ],
-                    "LessonQuestions": [
-                        "Conversation": ["Difficulty": "", "Questions": ""],
-                        "Numbers": ["Difficulty": "", "Questions": ""],
-                        "Directions": ["Difficulty": "", "Questions": ""],
-                        "Food1": ["Difficulty": "", "Questions": ""],
-                        "Food2": ["Difficulty": "", "Questions": ""]
+                    "Numbers" : [
+                        "Difficulty" : "",
+                        "Questions" : ""
                     ],
-                    "Achievements": ["Achievement 1": false],
-                    "Items": ["TimeIncrease": false],
-                    "Username": email.components(separatedBy: "@").first ?? "",
+                    "Directions" : [
+                        "Difficulty" : "",
+                        "Questions" : ""
+                    ],
+                    "Food1" : [
+                        "Difficulty" : "",
+                        "Questions" : ""
+                    ],
+                    "Food2" : [
+                        "Difficulty" : "",
+                        "Questions" : ""
+                    ]
+                 ],
+                 "Achievements": [
+                    "Achievement 1" : false,
+                    "Achievement 2" : false,
+                    "Achievement 3" : false,
+                    "Achievement 4" : false,
+                    "Achievement 5" : false,
+                 ],
+                 "AchievementsCheck": [
+                    "Achievement 1" : false,
+                    "Achievement 2" : false,
+                    "Achievement 3" : false,
+                    "Achievement 4" : false,
+                    "Achievement 5" : false
+                 ],
+                 "Items": [
+                    "TimeIncrease" : false
+                 ],
+                 "Username" : email.components(separatedBy: "@").first ?? "",
                     "IP": userIP // Store the user's IP address here
                 ]
             )

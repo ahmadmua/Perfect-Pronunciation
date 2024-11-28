@@ -212,52 +212,72 @@ struct Login: View {
     }
     
     func sendVerificationEmail(to email: String, userId: String, currentIP: String, completion: @escaping (Bool) -> Void) {
-        let verificationLink = "https://us-central1-perfectpronunciation-3aeeb.cloudfunctions.net/verifyIP?uid=\(userId)&ip=\(currentIP)"
-        let subject = "New Login Attempt from a Different IP Address"
-        let body = """
-        We've detected a login attempt from a new location.
-        If this was you, please verify your identity by clicking the link below:
-        \(verificationLink)
+        let remoteConfig = RemoteConfig.remoteConfig()
+        let settings = RemoteConfigSettings()
+        settings.minimumFetchInterval = 3600
+        remoteConfig.configSettings = settings
+        
+        remoteConfig.fetchAndActivate { status, error in
+            if let error = error {
+                print("Failed to fetch remote config: \(error.localizedDescription)")
+                completion(false)
+                return
+            }
 
-        If you did not attempt to log in, we recommend securing your account.
-        """
+            // Retrieve the API key from Remote Config
+            guard let mailerSendAPIKey = remoteConfig["mailer_send_api_key"].stringValue else {
+                print("API key not found in Remote Config")
+                completion(false)
+                return
+            }
 
-        let mailerSendAPIKey = "mlsn.13534ebe78e89d69613cbe6ad60d9f5ed9d5269ab96b96a7579de9347578fdb1" // Replace with your API key
-        let payload: [String: Any] = [
-            "from": ["email": "MS_Fm0USK@trial-v69oxl5rr5xg785k.mlsender.net", "name": "Perfect Pronunciation"],
-            "to": [["email": email]],
-            "subject": subject,
-            "text": body
-        ]
+            let verificationLink = "https://us-central1-perfectpronunciation-3aeeb.cloudfunctions.net/verifyIP?uid=\(userId)&ip=\(currentIP)"
+            let subject = "New Login Attempt from a Different IP Address"
+            let body = """
+            We've detected a login attempt from a new location.
+            If this was you, please verify your identity by clicking the link below:
+            \(verificationLink)
 
-        guard let url = URL(string: "https://api.mailersend.com/v1/email") else {
-            completion(false)
-            return
-        }
+            If you did not attempt to log in, we recommend securing your account.
+            """
 
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        request.setValue("Bearer \(mailerSendAPIKey)", forHTTPHeaderField: "Authorization")
-        request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+            let payload: [String: Any] = [
+                "from": ["email": "MS_Fm0USK@trial-v69oxl5rr5xg785k.mlsender.net", "name": "Perfect Pronunciation"],
+                "to": [["email": email]],
+                "subject": subject,
+                "text": body
+            ]
 
-        URLSession.shared.dataTask(with: request) { data, response, error in
-            if let httpResponse = response as? HTTPURLResponse {
-                if httpResponse.statusCode == 202 {
-                    completion(true) // Email sent successfully
-                } else {
-                    print("Failed with status code: \(httpResponse.statusCode)")
-                    if let responseData = data {
-                        print("Response: \(String(data: responseData, encoding: .utf8) ?? "No data")")
+            guard let url = URL(string: "https://api.mailersend.com/v1/email") else {
+                completion(false)
+                return
+            }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("Bearer \(mailerSendAPIKey)", forHTTPHeaderField: "Authorization")
+            request.httpBody = try? JSONSerialization.data(withJSONObject: payload)
+
+            URLSession.shared.dataTask(with: request) { data, response, error in
+                if let httpResponse = response as? HTTPURLResponse {
+                    if httpResponse.statusCode == 202 {
+                        completion(true) // Email sent successfully
+                    } else {
+                        print("Failed with status code: \(httpResponse.statusCode)")
+                        if let responseData = data {
+                            print("Response: \(String(data: responseData, encoding: .utf8) ?? "No data")")
+                        }
+                        completion(false)
                     }
+                } else {
+                    print("Error: \(error?.localizedDescription ?? "Unknown error")")
                     completion(false)
                 }
-            } else {
-                print("Error: \(error?.localizedDescription ?? "Unknown error")")
-                completion(false)
-            }
-        }.resume()
+            }.resume()
+        }
     }
+
 
 
 

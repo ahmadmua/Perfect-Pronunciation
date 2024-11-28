@@ -198,7 +198,7 @@ struct Register: View {
                     "TimeIncrease" : false
                  ],
                  "Username" : email.components(separatedBy: "@").first ?? "",
-                    "IP": userIP // Store the user's IP address here
+                    "IP": [userIP] // Store the user's IP address here
                 ]
             )
             

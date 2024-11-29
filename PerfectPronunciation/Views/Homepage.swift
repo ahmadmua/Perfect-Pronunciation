@@ -25,6 +25,10 @@ struct Homepage: View {
     @State private var showToast = false // State for showing the toast
     @State private var toastMessage = "" // Message to display in the toast
     
+    // timer to wait for firebase
+    @State var timeRemaining = 3
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
     @ObservedObject var model = LessonController()
@@ -165,6 +169,15 @@ struct Homepage: View {
                                 .foregroundColor(.black)
                             Text("\(xpModel.userLevel)")
                                 .foregroundColor(.black)
+                                .onReceive(timer) { _ in
+                                    if timeRemaining > 0 {
+                                        timeRemaining -= 1
+                                    }
+                                    if timeRemaining == 1 {
+                                        xpModel.getUserExperience()
+                                        xpModel.getUserLevel()
+                                    }
+                                }//onReceive
                             
                             Image(systemName: "music.mic.circle")
                                 .resizable()
@@ -208,6 +221,7 @@ struct Homepage: View {
             .background(Color("Background"))
             .navigationBarBackButtonHidden(true)
             .onAppear {
+                
                 viewModel.objectWillChange.send()
                 
                 if let user = Auth.auth().currentUser {
@@ -288,10 +302,14 @@ struct Homepage: View {
                     }
                 }
             }
+
             
             ToastView(showToast: $toastModel.showToast, message: toastModel.toastMessage)
         }
     }
+    
+
+    
 }
 
 struct Homepage_Previews: PreviewProvider {

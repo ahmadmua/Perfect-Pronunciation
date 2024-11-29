@@ -174,6 +174,7 @@ struct Homepage: View {
                                         timeRemaining -= 1
                                     }
                                     if timeRemaining == 1 {
+                                        currModel.getUserCurrency()
                                         xpModel.getUserExperience()
                                         xpModel.getUserLevel()
                                     }

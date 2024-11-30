@@ -44,6 +44,35 @@ class ExperienceController: ObservableObject {
         }
     }
     
+    func getTotalUserExperience(){
+        //get reference to database
+        //        let db = Firestore.firestore()
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            
+            //read the docs at a specific path
+            userDocRef.getDocument { document, error in
+                if let document = document, document.exists{
+                    if let value = document["TotalExperience"] as? Int {
+                        print("Experience CONTROLLER : \(value)")
+                        
+                        //converting to proper experience
+                        self.userTotalXp = value
+                        
+                        
+                    }else{
+                        print("Document exists,")
+                        self.userTotalXp = 0
+                    }
+                }else{
+                    print("Document does not exist")
+                    self.userTotalXp = 0
+                }
+            }
+        }
+    }
+    
     func updateUserExperience() {
         if let user = Auth.auth().currentUser {
             let userID = user.uid

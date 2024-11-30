@@ -67,6 +67,7 @@
 		C57F5DA22CE3002700CFAD08 /* LeagueLeaderboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57F5DA12CE3002700CFAD08 /* LeagueLeaderboard.swift */; };
 		C57F5DA42CF449FE00CFAD08 /* ToastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57F5DA32CF449FE00CFAD08 /* ToastView.swift */; };
 		C57F5DA62CF44AE900CFAD08 /* ToastController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57F5DA52CF44AE900CFAD08 /* ToastController.swift */; };
+		C57F5DA82CFAA9D800CFAD08 /* HardWordsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C57F5DA72CFAA9D800CFAD08 /* HardWordsView.swift */; };
 		C58B99F22AECDACB003C0288 /* LessonsPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F12AECDACB003C0288 /* LessonsPage.swift */; };
 		C58B99F42AED7CC4003C0288 /* IndividualLesson.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F32AED7CC4003C0288 /* IndividualLesson.swift */; };
 		C58B99F62AED94E5003C0288 /* StorePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C58B99F52AED94E5003C0288 /* StorePage.swift */; };
@@ -132,6 +133,7 @@
 		C57F5DA12CE3002700CFAD08 /* LeagueLeaderboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeagueLeaderboard.swift; sourceTree = "<group>"; };
 		C57F5DA32CF449FE00CFAD08 /* ToastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastView.swift; sourceTree = "<group>"; };
 		C57F5DA52CF44AE900CFAD08 /* ToastController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastController.swift; sourceTree = "<group>"; };
+		C57F5DA72CFAA9D800CFAD08 /* HardWordsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HardWordsView.swift; sourceTree = "<group>"; };
 		C58B99F12AECDACB003C0288 /* LessonsPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonsPage.swift; sourceTree = "<group>"; };
 		C58B99F32AED7CC4003C0288 /* IndividualLesson.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndividualLesson.swift; sourceTree = "<group>"; };
 		C58B99F52AED94E5003C0288 /* StorePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorePage.swift; sourceTree = "<group>"; };
@@ -273,6 +275,7 @@
 				028364782AEA534800E88DCB /* Sequence.swift */,
 				4D61705F2AEC5D0C002A02C1 /* VoiceRecorder.swift */,
 				C57F5DA32CF449FE00CFAD08 /* ToastView.swift */,
+				C57F5DA72CFAA9D800CFAD08 /* HardWordsView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -443,6 +446,7 @@
 				C5D605122B0F244A00620283 /* AchievementController.swift in Sources */,
 				02E2B65F2AD6131100F1FACA /* PerfectPronunciationApp.swift in Sources */,
 				C57F5DA22CE3002700CFAD08 /* LeagueLeaderboard.swift in Sources */,
+				C57F5DA82CFAA9D800CFAD08 /* HardWordsView.swift in Sources */,
 				029F8EBF2CB32C7400A58DF0 /* AsessmentDetails.swift in Sources */,
 				4DACEF2A2CC62D4700170C2F /* VoiceRecorderController.swift in Sources */,
 				028364752AEA513E00E88DCB /* VoiceData.swift in Sources */,

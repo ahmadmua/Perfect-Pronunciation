@@ -110,27 +110,39 @@ struct AssessmentView: View {
                 missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0),
                 monotone: Double(errorTypeCounts["Monotone"] ?? 0)
             )
-
+            
+            // Using regular expression to match whole words
+            let wordPattern = "\\b\(display.lowercased())\\b"
+            
             let displayWords = Set(display.lowercased().split(separator: " ").map { String($0) })
             let transcriptionWords = Set(transcription.lowercased().split(separator: " ").map { String($0) })
-
+            
             // Find omissions (words in display but not in transcription)
             let omissions = displayWords.subtracting(transcriptionWords)
             for word in omissions {
                 wordErrorData.append((word: word, errorType: "Omission"))
             }
-
+            
             // Find insertions (words in transcription but not in display)
             let insertions = transcriptionWords.subtracting(displayWords)
             for word in insertions {
                 wordErrorData.append((word: word, errorType: "Insertion"))
             }
-
+            
             // Update counts for omissions and insertions
             errorTypeCounts["Omission"] = omissions.count
             errorTypeCounts["Insertion"] = insertions.count
+            
+            // Ensure exact match for word boundaries (to avoid partial word matching)
+            let regex = try! NSRegularExpression(pattern: "\\b(?:\(display.lowercased()))\\b")
+            
+            // Update error counts for other errors (e.g., mispronunciations, unexpected breaks)
+            errorTypeCounts["Mispronunciation"] = wordErrorData.filter { $0.errorType == "Mispronunciation" }.count
+            errorTypeCounts["UnexpectedBreak"] = wordErrorData.filter { $0.errorType == "UnexpectedBreak" }.count
+            errorTypeCounts["MissingBreak"] = wordErrorData.filter { $0.errorType == "MissingBreak" }.count
+            errorTypeCounts["Monotone"] = wordErrorData.filter { $0.errorType == "Monotone" }.count
 
-            // Update prediction result
+            // Update prediction result after adjusting error counts
             predictionResult = predictPronunciationImprovement(
                 mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0),
                 omissions: Double(errorTypeCounts["Omission"] ?? 0),
@@ -140,6 +152,8 @@ struct AssessmentView: View {
                 monotone: Double(errorTypeCounts["Monotone"] ?? 0)
             )
         }
+
+
 
         .onDisappear(){
             
@@ -162,14 +176,19 @@ struct AssessmentView: View {
             let lowercasedDisplay = display.lowercased()
             var startIndex = lowercasedDisplay.startIndex
 
-            while let range = lowercasedDisplay.range(of: word, options: .caseInsensitive, range: startIndex..<lowercasedDisplay.endIndex) {
+            // Use regular expression to find standalone words
+            let regex = try! NSRegularExpression(pattern: "\\b\(NSRegularExpression.escapedPattern(for: word))\\b", options: .caseInsensitive)
+
+            let matches = regex.matches(in: lowercasedDisplay, options: [], range: NSRange(lowercasedDisplay.startIndex..<lowercasedDisplay.endIndex, in: lowercasedDisplay))
+
+            for match in matches {
+                let range = Range(match.range, in: display)!
                 if let attributedRange = Range(range, in: attributedText) {
                     // Apply omission style
                     attributedText[attributedRange].backgroundColor = .gray
                     attributedText[attributedRange].foregroundColor = .white
                     omissionRanges.append(range) // Track omission ranges
                 }
-                startIndex = range.upperBound
             }
         }
 
@@ -179,7 +198,13 @@ struct AssessmentView: View {
             let lowercasedDisplay = display.lowercased()
             var startIndex = lowercasedDisplay.startIndex
 
-            while let range = lowercasedDisplay.range(of: word, options: .caseInsensitive, range: startIndex..<lowercasedDisplay.endIndex) {
+            // Use regular expression to find standalone words
+            let regex = try! NSRegularExpression(pattern: "\\b\(NSRegularExpression.escapedPattern(for: word))\\b", options: .caseInsensitive)
+
+            let matches = regex.matches(in: lowercasedDisplay, options: [], range: NSRange(lowercasedDisplay.startIndex..<lowercasedDisplay.endIndex, in: lowercasedDisplay))
+
+            for match in matches {
+                let range = Range(match.range, in: display)!
                 if let attributedRange = Range(range, in: attributedText) {
                     // Check for overlap with any omission ranges
                     let overlapsOmission = omissionRanges.contains { omissionRange in
@@ -195,7 +220,6 @@ struct AssessmentView: View {
                         attributedText[attributedRange].foregroundColor = .yellow
                     }
                 }
-                startIndex = range.upperBound
             }
         }
 
@@ -205,7 +229,13 @@ struct AssessmentView: View {
             let lowercasedDisplay = display.lowercased()
             var startIndex = lowercasedDisplay.startIndex
 
-            while let range = lowercasedDisplay.range(of: word, options: .caseInsensitive, range: startIndex..<lowercasedDisplay.endIndex) {
+            // Use regular expression to find standalone words
+            let regex = try! NSRegularExpression(pattern: "\\b\(NSRegularExpression.escapedPattern(for: word))\\b", options: .caseInsensitive)
+
+            let matches = regex.matches(in: lowercasedDisplay, options: [], range: NSRange(lowercasedDisplay.startIndex..<lowercasedDisplay.endIndex, in: lowercasedDisplay))
+
+            for match in matches {
+                let range = Range(match.range, in: display)!
                 if let attributedRange = Range(range, in: attributedText) {
                     switch wordError.errorType {
                     case "Insertion":
@@ -220,12 +250,12 @@ struct AssessmentView: View {
                         break
                     }
                 }
-                startIndex = range.upperBound
             }
         }
 
         return attributedText
     }
+
 
 
 

@@ -371,18 +371,18 @@ struct ItemsListView: View {
                 self.transcription.removeAll() // Clear transcription data
                 self.errorTypeCountsList.removeAll()
                 self.wordErrorDataList.removeAll()
-                
+
                 // Loop through documents
                 for document in documents {
                     var errorTypeCount: [String: Int] = [:] // Dictionary to store counts of error types
                     var wordErrorData: [(word: String, errorType: String)] = [] // Temporary array for word errors
-                    
+
                     // Fetch transcription
                     if let transcriptionText = document.get("transcription") as? [String: Any],
                        let displayText = transcriptionText["DisplayText"] as? String {
                         self.transcription.append(displayText)
                     }
-                    
+
                     // Check for the assessment dictionary
                     if let assessment = document.get("assessment") as? [String: Any],
                        let nBestArray = assessment["NBest"] as? [[String: Any]] {
@@ -417,7 +417,20 @@ struct ItemsListView: View {
                                 self.confidence.append(confidence)
                             }
                             if let pronScore = nBest["PronScore"] as? Double {
-                                self.items.append("Score: \(pronScore)%")
+                                // Create score string
+                                var scoreString = "Score: \(pronScore)%"
+                                
+                                // Append the timestamp if it exists
+                                if let timestamp = document.get("Timestamp") as? Timestamp {
+                                    let dateFormatter = DateFormatter()
+                                    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss" // Format for date and time only
+                                    let timestampString = dateFormatter.string(from: timestamp.dateValue())
+                                    scoreString += " | \(timestampString)"
+                                }
+
+                                // Append the score string with timestamp to items
+                                self.items.append(scoreString)
+                                
                                 self.pronScores.append(pronScore)
                             }
                             if let display = nBest["Display"] as? String {
@@ -425,18 +438,18 @@ struct ItemsListView: View {
                             }
                         }
                     }
-                    
+
                     // Append the errorTypeCount and wordErrorData for this document
                     self.errorTypeCountsList.append(errorTypeCount)
                     self.wordErrorDataList.append(wordErrorData) // Store the error data for this assessment
                 }
-                
+
                 // Print the contents of the wordErrorData
                 print("Word Error Data: \(self.wordErrorDataList)")
-                
+
                 // Print or use the errorTypeCount dictionary as needed
                 print("Error Type Counts: \(self.errorTypeCountsList)")
-                
+
                 // Print transcriptions for debugging
                 print("Transcriptions: \(self.transcription)")
             } else if let error = error {
@@ -444,6 +457,8 @@ struct ItemsListView: View {
             }
         }
     }
+
+
 
     
     

@@ -17,6 +17,7 @@ struct LessonsPage: View {
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
+    @State private var showHardWords = false
     //lesson nav
     @State private var phonetics = false
     @State private var food1 = false
@@ -35,6 +36,16 @@ struct LessonsPage: View {
     
     var body: some View {
         ScrollView{
+            Text("Click to explore your hard to pronounce words!")
+                .padding(.top, 15)
+                .onTapGesture {
+                    self.showHardWords = true
+                }
+                .sheet(isPresented: $showHardWords) {
+                    HardWordsView()
+                }
+
+            
             Grid{
                 VStack{
                     GridRow{

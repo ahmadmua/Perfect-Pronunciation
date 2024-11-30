@@ -187,11 +187,11 @@ struct AssessmentView: View {
                     }
 
                     if overlapsOmission {
-                        // Apply underline style for mispronunciations if overlapping
-                        attributedText[attributedRange].underlineStyle = .single
-                        attributedText[attributedRange].underlineColor = .yellow
+                        // Apply combined style for overlap: grey background, yellow text
+                        attributedText[attributedRange].backgroundColor = .gray
+                        attributedText[attributedRange].foregroundColor = .yellow
                     } else {
-                        // Apply default mispronunciation style (no underline)
+                        // Apply default mispronunciation style
                         attributedText[attributedRange].foregroundColor = .yellow
                     }
                 }

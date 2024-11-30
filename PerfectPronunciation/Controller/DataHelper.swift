@@ -669,7 +669,7 @@ class DataHelper: ObservableObject {
                     completion(nil)
                 } else {
                     let names: [String] = querySnapshot?.documents.compactMap { document in
-                        guard let name = document["Name"] as? String else {
+                        guard let name = document["Timestamp"] as? String else {
                             print("Invalid 'Name' field in document.")
                             return nil
                         }

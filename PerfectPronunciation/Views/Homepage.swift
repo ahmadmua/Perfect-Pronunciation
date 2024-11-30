@@ -233,9 +233,11 @@ struct Homepage: View {
                 
                 xpModel.getUserExperience()
                 xpModel.getUserLevel()
+                currModel.getUserCurrency()
+                
                 
                 model.findUserDifficulty {
-                    currModel.getUserCurrency()
+                    print("USER DIFICULTY!! : \(model.difficulty!)")
                 }
                 
                 // Check Achievement 1

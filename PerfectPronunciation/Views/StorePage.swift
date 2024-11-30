@@ -23,6 +23,13 @@ struct StorePage: View {
     @State var showingAlert: Bool = false
 
     var body: some View {
+        Text("Current Currency: \(currModel.userCurr)")
+            .font(.title2)  // Set a nice, prominent font size
+            .fontWeight(.bold)  // Make the text bold for emphasis
+            .padding()  // Add padding around the text
+            .cornerRadius(10)  // Round the corners of the background
+            .padding(.horizontal)  // Extra horizontal padding
+
         List {
             Grid {
                 VStack(alignment: .leading) { // Align content to the left
@@ -241,8 +248,9 @@ struct StorePage: View {
         .background(Color("Background"))
         .onAppear {
             model.findUserDifficulty {
-                currModel.getUserCurrency()
+                print("USER DIFICULTY!! : \(model.difficulty!)")
             }
+            currModel.getUserCurrency()
             currModel.checkBuyTime()
         } //onAppear
     } //body view

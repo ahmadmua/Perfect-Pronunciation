@@ -344,6 +344,7 @@ struct LessonsPage: View {
     }//body view
     
     func fetchOpenAiResponse() {
+        print("DEBUG: model.difficulty = \(String(describing: model.difficulty))")
         openAIService.fetchMultipleOpenAIResponses(prompt: "You are a language Teacher. I am an english language learner. Please Create a unique and \(model.difficulty!) sentence about \(lessonName) to perfect my pronunciation as an English learner. Ensure that this sentence is new and unique. Only give me the language learning sentence and nothing else.") { result in
             switch result {
             case .success(let responses):

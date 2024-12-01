@@ -5,13 +5,6 @@
 //  Created by Nichoalas Cammisuli on 2023-10-28.
 //
 
-//
-//  IndividualLesson.swift
-//  PerfectPronunciation
-//
-//  Created by Nichoalas Cammisuli on 2023-10-28.
-//
-
 import SwiftUI
 import Firebase
 import FirebaseAuth
@@ -62,15 +55,40 @@ struct IndividualLesson: View {
             Color("Background")
             Grid{
                 
-                Spacer()
+                
                 
                 VStack{
+                    Spacer()
+                    Text("\(counter+1)/5 Sentences")
+                        .padding()
                     GridRow{
+                        
+                        Text("Pronounce this sentence")
+                            .font(.title2)
+                        
+                        
+                        
                         //display question
                         Text(responseText)
-                            .background(Rectangle().fill(Color.gray).padding(.all, -30))
-                            .padding(.bottom, 80)
+                            .padding()
+                            .font(.title2)
+                            .lineLimit(nil) // Allow the text to wrap onto multiple lines
+                            .minimumScaleFactor(0.5) // Shrinks the text if it overflows the bubble
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                            .listRowSeparator(.hidden)
+                            .overlay(alignment: .bottomLeading){
+                                Image(systemName: "arrowtriangle.down.fill")
+                                    .font(.title)
+                                    .rotationEffect(.degrees(45))
+                                    .offset(x: -10, y: 10)
+                                    .foregroundColor(.blue)
+                            }
+                        
+                        Spacer()
                     }
+                    .padding()
                     Divider()
                     
                     
@@ -170,6 +188,7 @@ struct IndividualLesson: View {
                         //set so that users can't continue to the next question until they record
                         self.canContinue = true
                         
+//                        print("Counter: \(counter)")
                         
                         for _ in responseArray{
                             //                print("RESPONSES : \(response)")
@@ -210,6 +229,6 @@ struct IndividualLesson: View {
                 
             }
             
-        }//view
-    }
-}
+        }//zstack
+    }//body
+}//view

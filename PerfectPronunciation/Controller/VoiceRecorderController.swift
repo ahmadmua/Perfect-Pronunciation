@@ -112,6 +112,7 @@ class VoiceRecorderController: NSObject, ObservableObject, PlaybackDelegate {
             do {
                 try fileManager.removeItem(at: fileURL)
                 self.userAudioFileURL = nil    // Clear the stored file URL
+                print("User Audio File Deleted")
             } catch {
                 print("Could not delete file: \(error.localizedDescription)")
             }

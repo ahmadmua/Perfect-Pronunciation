@@ -106,7 +106,7 @@ struct VoiceRecorder: View {
                                     if recordingState == .recorded || recordingState == .playing {
                                         Button(action: {
                                             // Action to discard the recorded audio
-                                            print("discarding Audio Error")
+                                            print("Discarding Audio")
                                             voiceRecorderController.discardTestAudio(fileURL: voiceRecorderController.userAudioFileURL!)
                                             voiceRecorderController.STTresult = ""
                                             recordingState = .readyToRecord
@@ -135,6 +135,7 @@ struct VoiceRecorder: View {
                                         Button(action: {
                                             // Action to submit the recorded audio
                                             Task {
+                                                print("Submiting Audio")
                                                 await voiceRecorderController.submitTestAudio(testText: testText, lessonType: lessonType)
                                                 isPopupPresented = false
                                             }

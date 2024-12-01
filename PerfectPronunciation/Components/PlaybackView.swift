@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PlaybackView: View {
     @ObservedObject var voiceRecorderController: VoiceRecorderController
-    @State private var playbackState = PlaybackState.ready
+    @State private var playbackState = PlaybackState.ready // Local playback state to manage button behavior
     
     enum PlaybackState {
         case ready
@@ -49,6 +49,20 @@ struct PlaybackView: View {
             }
         }
         .padding()
+        .onAppear {
+            // Observe the playbackFinished notification
+            NotificationCenter.default.addObserver(
+                forName: .playbackFinished,
+                object: nil,
+                queue: .main
+            ) { _ in
+                playbackState = .ready // Reset the playback state to ready when playback finishes
+            }
+        }
+        .onDisappear {
+            // Remove the observer to avoid memory leaks
+            NotificationCenter.default.removeObserver(self, name: .playbackFinished, object: nil)
+        }
     }
     
     // Function to handle playback button actions
@@ -116,9 +130,10 @@ struct PlaybackView: View {
     }
 }
 
-// Preview for the AIPlaybackView
+// Preview for the PlaybackView
 struct PlaybackView_Previews: PreviewProvider {
     static var previews: some View {
         PlaybackView(voiceRecorderController: VoiceRecorderController.shared)
     }
 }
+

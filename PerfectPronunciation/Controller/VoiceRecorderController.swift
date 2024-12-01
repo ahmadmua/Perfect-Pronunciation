@@ -88,6 +88,8 @@ class VoiceRecorderController: NSObject, ObservableObject, PlaybackDelegate {
 
     // MARK: - Recording Functions
     func startRecording() {
+        print("User Started Recording")
+
         // Start recording audio
         audioController.startRecording()
         mode = .recording                      // Update mode to recording
@@ -99,6 +101,7 @@ class VoiceRecorderController: NSObject, ObservableObject, PlaybackDelegate {
     }
 
     func stopRecording() {
+        print("User Stoped Recording")
         // Stop recording audio
         audioController.stopRecording()
         mode = .ready                          // Update mode to ready
@@ -106,6 +109,11 @@ class VoiceRecorderController: NSObject, ObservableObject, PlaybackDelegate {
     }
 
     func discardTestAudio(fileURL: URL) {
+        
+        print("User Discarded Audio")
+        if self.mode == .playing{ //when button is pressed, if the audio is playing stop playing audio
+            self.stopAudio()
+        }
         // Delete the recorded audio file
         let fileManager = FileManager.default
         if fileManager.fileExists(atPath: fileURL.path) {
@@ -123,6 +131,7 @@ class VoiceRecorderController: NSObject, ObservableObject, PlaybackDelegate {
 
     // MARK: - Submission Functions
     func submitTestAudio(testText: String, lessonType: String) async {
+        print("User is Submiting Audio")
         guard !testText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             print("Error: Reference text is empty. Please provide valid input.")
             return
@@ -157,6 +166,7 @@ class VoiceRecorderController: NSObject, ObservableObject, PlaybackDelegate {
     }
 
     func submitTextToSpeechAI(testText: String) async {
+        print("Retreving AI Audio Recording")
         do {
             // Request AI-generated audio from the API
             let audioData = try await audioAPIController.sendTextToVoiceGallery(testText: testText)

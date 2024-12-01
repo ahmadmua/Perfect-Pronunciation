@@ -20,9 +20,9 @@ struct PlaybackView: View {
     var body: some View {
         VStack {
             // Display playback mode description
-            Text(voiceRecorderController.mode.description)
-                .font(.headline)
-                .padding()
+//            Text(voiceRecorderController.mode.description)
+//                .font(.headline)
+//                .padding()
             
             HStack(spacing: 20) {
                 // Start/Resume/Pause button

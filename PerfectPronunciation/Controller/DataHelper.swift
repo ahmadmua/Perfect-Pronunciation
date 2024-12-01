@@ -221,7 +221,7 @@ class DataHelper: ObservableObject {
 
         let userID = user.uid
 
-        // Verify file existence
+        // Check if files exist at the given URLs
         guard FileManager.default.fileExists(atPath: userAudio.path) else {
             print("User audio file does not exist at path: \(userAudio.path)")
             return
@@ -232,51 +232,48 @@ class DataHelper: ObservableObject {
             return
         }
 
-        // Debug the file paths
-        print("User audio file path: \(userAudio.path)")
-        print("Voice gallery audio file path: \(voiceGalleryAudio.path)")
+        // Debugging the paths
+        print("Local user audio file path: \(userAudio.path)")
+        print("Local voice gallery audio file path: \(voiceGalleryAudio.path)")
 
         let storage = Storage.storage()
         let storageRef = storage.reference(forURL: "gs://perfectpronunciation-3aeeb.appspot.com")
 
+        // Firebase storage references
         let userAudioRef = storageRef.child("userAudio/\(userID)/\(UUID().uuidString).wav")
         let voiceGalleryAudioRef = storageRef.child("voiceGalleryAudio/\(userID)/\(UUID().uuidString).wav")
 
         let metadata = StorageMetadata()
         metadata.contentType = "audio/wav"
 
-        
-        //MARK: Fails here "Failed to upload user audio: Object userAudio/wmXsW7qcS5NOKrbNlHrJsLgqgX42/9B791A0D-09D3-437B-8767-A06D75EE159C.wav does not exist."
         // Upload user audio
-        let uploadTask = userAudioRef.putFile(from: userAudio, metadata: metadata) { metadata, error in
+        let userAudioUploadTask = userAudioRef.putFile(from: userAudio, metadata: metadata) { metadata, error in
             if let error = error {
                 print("Failed to upload user audio: \(error.localizedDescription)")
                 return
             }
-            print("User audio uploaded successfully!")
 
-            // Get download URL
+            print("User audio uploaded successfully.")
             userAudioRef.downloadURL { url, error in
                 if let error = error {
-                    print("Failed to retrieve user audio URL: \(error.localizedDescription)")
+                    print("Failed to get user audio URL: \(error.localizedDescription)")
                     return
                 }
 
                 guard let userAudioURL = url?.absoluteString else { return }
                 print("User audio URL: \(userAudioURL)")
 
-                // Proceed to upload voice gallery audio
+                // Upload voice gallery audio
                 let voiceGalleryUploadTask = voiceGalleryAudioRef.putFile(from: voiceGalleryAudio, metadata: metadata) { metadata, error in
                     if let error = error {
                         print("Failed to upload voice gallery audio: \(error.localizedDescription)")
                         return
                     }
-                    print("Voice gallery audio uploaded successfully!")
 
-                    // Get download URL for voice gallery audio
+                    print("Voice gallery audio uploaded successfully.")
                     voiceGalleryAudioRef.downloadURL { url, error in
                         if let error = error {
-                            print("Failed to retrieve voice gallery audio URL: \(error.localizedDescription)")
+                            print("Failed to get voice gallery audio URL: \(error.localizedDescription)")
                             return
                         }
 
@@ -301,6 +298,7 @@ class DataHelper: ObservableObject {
             }
         }
     }
+
 
 
 

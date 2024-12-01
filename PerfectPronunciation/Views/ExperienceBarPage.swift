@@ -37,7 +37,7 @@ struct ExperienceBarPage: View {
                     .frame(width: 50, height: 5)
                     .foregroundColor(Color("CustYell"))
             }
-            Text("+100 Currency")
+            Text("+ Currency")
             
             Spacer()
             

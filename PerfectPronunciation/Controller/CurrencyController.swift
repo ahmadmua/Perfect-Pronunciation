@@ -50,7 +50,7 @@ class CurrencyController : ObservableObject{
         
     }
     
-    func updateUserCurrency(){
+    func updateUserCurrency(difficulty: String){
         
         if let user = Auth.auth().currentUser {
             let userID = user.uid
@@ -65,7 +65,22 @@ class CurrencyController : ObservableObject{
                     if let value = document["Currency"] as? Int {
                         print("CURRENCY CONTROLLER UPDATE : \(value)")
                         
-                        let updateData = ["Currency": value + 100]
+                        //Currency based on difficulty
+                        let baseCurr = 100
+                        var currGain = baseCurr
+                        
+                        switch difficulty {
+                        case "Easy":
+                            currGain = baseCurr
+                        case "Intermediate":
+                            currGain = baseCurr * 2
+                        case "Advanced":
+                            currGain = baseCurr * 3
+                        default:
+                            print("Unknown difficulty level. Using base experience.")
+                        }
+                        
+                        let updateData = ["Currency": value + currGain]
                         
                         // Update the specific field in the user's document
                         userDocRef.updateData(updateData) { error in

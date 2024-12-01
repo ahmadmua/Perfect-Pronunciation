@@ -13,6 +13,8 @@ class DataHelper: ObservableObject {
     
     @Published var averageAccuracy: Double = 0
     @Published var wordList = [String]()
+    @Published var harderWordList = [String]()
+//    private let openAIService = OpenAIService()
     
     
     init(){}
@@ -419,6 +421,7 @@ class DataHelper: ObservableObject {
 
             // Delete contents of word list
             self.wordList = []
+            self.harderWordList = []
 
             // Create an array of days
             let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -447,6 +450,7 @@ class DataHelper: ObservableObject {
                                     // Add the name of the word to the list
                                     if let name = nBest.first?["Display"] as? String {
                                         self.wordList.append(name)
+                                        self.harderWordList.append(name)
                                     }
                                 }
                             } else {
@@ -463,6 +467,24 @@ class DataHelper: ObservableObject {
         }
     }
 
+    
+//    private func fetchMoreHardSentences() {
+//         
+//         // Combine existing words into a single prompt
+//        let prompt = "Generate new, unique hard sentences similar to these: \(self.harderWordList)"
+//
+//         openAIService.fetchMultipleOpenAIResponses(prompt: prompt) { result in
+//             switch result {
+//             case .success(let newSentences):
+//                 // Append new sentences to the wordList
+//                 DispatchQueue.main.async {
+//                     self.harderWordList.append(contentsOf: newSentences)
+//                 }
+//             case .failure(let error):
+//                 print("Error fetching hard sentences: \(error.localizedDescription)")
+//             }
+//         }
+//     }
 
     //update the userData to reflect the users score for the weekly challenge
     func updateWeeklyCompletion(score: Double){

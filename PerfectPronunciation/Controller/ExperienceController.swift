@@ -73,7 +73,7 @@ class ExperienceController: ObservableObject {
         }
     }
     
-    func updateUserExperience() {
+    func updateUserExperience(difficulty: String) {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
@@ -84,13 +84,28 @@ class ExperienceController: ObservableObject {
                     if let experience = document["Experience"] as? Int,
                        let totalExperience = document["TotalExperience"] as? Int {
                         print("EXPERIENCE CONTROLLER UPDATE: \(experience)")
-
+                        
+                        //Experience based on difficulty
+                        let baseExperience = 100
+                        var experienceGain = baseExperience
+                        
+                        switch difficulty {
+                        case "Easy":
+                            experienceGain = baseExperience
+                        case "Intermediate":
+                            experienceGain = baseExperience * 2
+                        case "Advanced":
+                            experienceGain = baseExperience * 3
+                        default:
+                            print("Unknown difficulty level. Using base experience.")
+                        }
+                        
                         // Prepare the updated data for Experience and TotalExperience
                         let updateData: [String: Any] = [
-                            "Experience": experience + 100,
-                            "TotalExperience": totalExperience + 100
+                            "Experience": experience + experienceGain,
+                            "TotalExperience": totalExperience + experienceGain
                         ]
-
+                        
                         //FOR LATER - will make users mroe xp depending on difficulty
                         //                        if(self.model.difficulty == "Easy"){
                         //                            let updateData = ["Currency": value + 50]
@@ -150,9 +165,9 @@ class ExperienceController: ObservableObject {
             print("User is not authenticated")
         }
     }
-
     
-
+    
+    
     
     //MARK: -  LEVEL SYSTEM
     
@@ -193,8 +208,8 @@ class ExperienceController: ObservableObject {
                                 }else{
                                     print("Document successfully updated USERS LEVEL")
                                 }
-                        }
-
+                            }
+                            
                         }
                     }else{
                         print("Document exists,")

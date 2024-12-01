@@ -114,9 +114,6 @@ struct IndividualLesson: View {
                         
                         //if counter is greater than number of questions
                         if counter >= 5{//let questionCount = 0
-                            currModel.updateUserCurrency()
-                            xpModel.updateUserExperience()
-                            
                             //go back to the home page
                             counter = 0
                             model.updateLessonCompletion(userLesson: lessonName)
@@ -126,6 +123,9 @@ struct IndividualLesson: View {
                                     userDifficulty: model.difficulty!,
                                     lessonQuestionsList: responseArray
                                 )
+                                
+                                currModel.updateUserCurrency(difficulty: model.difficulty!)
+                                xpModel.updateUserExperience(difficulty: model.difficulty!)
                             }
                             
                             self.showLesson.toggle()

@@ -14,6 +14,8 @@ struct WeeklyLesson: View {
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
     @ObservedObject var voiceRecorderController  =  VoiceRecorderController.shared
+    @ObservedObject var model = LessonController()
+    private let openAIService = OpenAIService()
     
     //toast
     @State private var showToast = false // State for showing the toast
@@ -37,6 +39,7 @@ struct WeeklyLesson: View {
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     @State private var items: [String] = []
+    @State private var responseArray : [String] = []
     
     //state for recorder
     enum RecorderState {
@@ -68,8 +71,10 @@ struct WeeklyLesson: View {
 
 
                         
-                        //give xp and currency
-                        currModel.updateUserCurrency()
+                        //give currency
+                        model.findUserDifficulty {
+                            currModel.updateUserCurrency(difficulty: model.difficulty!)
+                        }
                         
                         //return to the main screen when timer is done
                         self.showingResultAlert = true
@@ -91,21 +96,20 @@ struct WeeklyLesson: View {
             Divider()
             Spacer()
             
-            List(fireDBHelper.wordList, id: \.self) { item in
+            List(fireDBHelper.harderWordList, id: \.self) { item in
                 Text(item)
             }
             .onAppear{
                 
                 fireDBHelper.getHardWords() { (documents, error) in
                     if documents != nil {
-                        let items = fireDBHelper.wordList
+                        let items = fireDBHelper.harderWordList
                         self.items = items
                     } else if let error = error {
                         // Handle the error
                         print("Error: \(error)")
                     }
                 }
-
             }
             
             Spacer()

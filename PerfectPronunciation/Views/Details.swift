@@ -172,35 +172,63 @@ struct Details: View {
             // Calculate the accuracy output
             let accuracyOutput = calculateAccuracyOutput()
 
-            // Determine updated difficulty based on accuracy
+            // Initialize updatedDifficulty to the current difficulty
+            updatedDifficulty = userDifficulty
+
+            // Check current difficulty and update accordingly
             if userDifficulty == self.difficulty[0] { // Beginner
-                if accuracyOutput == feedbackMsg[0] { // Great
-                    updatedDifficulty = self.difficulty[2] // Skip Intermediate, move to Advanced
-                } else {
-                    updatedDifficulty = self.difficulty[0] // Remain Beginner
-                }
-            } else if userDifficulty == self.difficulty[1] { // Intermediate
-                if accuracyOutput == feedbackMsg[0] { // Great
-                    updatedDifficulty = self.difficulty[2] // Move to Advanced
-                } else { // Needs Improvement
-                    updatedDifficulty = self.difficulty[0] // Move to Beginner
-                }
-            } else if userDifficulty == self.difficulty[2] { // Advanced
-                if accuracyOutput == feedbackMsg[0] { // Great
-                    updatedDifficulty = self.difficulty[2] // Remain Advanced
-                } else { // Needs Improvement
+                if accuracyOutput == feedbackMsg[0] { // "Great"
                     updatedDifficulty = self.difficulty[1] // Move to Intermediate
+                    return // Exit immediately to prevent further updates
                 }
             }
 
-            // Update Firestore with the new expected difficulty
-            fireDBHelper.updateDifficulty(
-                selectedDifficulty: updatedDifficulty,
-                userData: &userData,
-                selection: &selection
-            )
+            if userDifficulty == self.difficulty[1] { // Intermediate
+                if accuracyOutput == feedbackMsg[0] { // "Great"
+                    updatedDifficulty = self.difficulty[2] // Move to Advanced
+                    fireDBHelper.updateDifficulty(
+                        selectedDifficulty: updatedDifficulty,
+                        userData: &userData,
+                        selection: &selection
+                    )
+                    return // Exit immediately to prevent further updates
+                } else if accuracyOutput == feedbackMsg[1] { // "Needs Improvement"
+                    updatedDifficulty = self.difficulty[0] // Move to Beginner
+                    fireDBHelper.updateDifficulty(
+                        selectedDifficulty: updatedDifficulty,
+                        userData: &userData,
+                        selection: &selection
+                    )
+                    return // Exit immediately to prevent further updates
+                }
+            }
+
+            if userDifficulty == self.difficulty[2] { // Advanced
+                if accuracyOutput == feedbackMsg[1] { // "Needs Improvement"
+                    updatedDifficulty = self.difficulty[1] // Move to Intermediate
+                    fireDBHelper.updateDifficulty(
+                        selectedDifficulty: updatedDifficulty,
+                        userData: &userData,
+                        selection: &selection
+                    )
+                    return // Exit immediately to prevent further updates
+                }
+            }
+
+            // If no changes occurred, no need to update Firestore
+            if updatedDifficulty != userDifficulty {
+                fireDBHelper.updateDifficulty(
+                    selectedDifficulty: updatedDifficulty,
+                    userData: &userData,
+                    selection: &selection
+                )
+            }
         }
     }
+
+
+
+
 
 
     

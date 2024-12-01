@@ -27,9 +27,10 @@ struct AssessmentView: View {
         VStack(alignment: .leading) {
             // Sentence Section - Full Width
             VStack(alignment: .leading) {
-                VStack(alignment: .leading) {
-                    
-                 
+                ScrollView{
+                    VStack(alignment: .leading) {
+                        
+                        
                         Text(buildAttributedText(display: display, wordErrorData: wordErrorData))
                             .lineLimit(nil)
                             .multilineTextAlignment(.leading)
@@ -38,7 +39,8 @@ struct AssessmentView: View {
                             .cornerRadius(10)
                             .padding(.horizontal)
                         
-                    
+                        
+                        
                         Text(buildTranscriptionText(transcription: transcription, wordErrorData: wordErrorData))
                             .lineLimit(nil)
                             .multilineTextAlignment(.leading)
@@ -46,9 +48,10 @@ struct AssessmentView: View {
                             .background(Color(UIColor.systemGray6))
                             .cornerRadius(10)
                             .padding(.horizontal)
-                    
+                        
+                        
+                    }
                 }
-
             }
             .frame(maxWidth: .infinity)
 

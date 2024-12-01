@@ -83,7 +83,7 @@ struct IndividualLesson: View {
                     Button(action: {
                         //nav to the next word
                         print("record btn press")
-                        
+                        voiceRecorderController.stopAudio()
                         self.showRecord.toggle()
                         self.isPopupPresented.toggle()
                         self.canContinue = false

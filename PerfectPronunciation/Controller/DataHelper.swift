@@ -8,6 +8,7 @@
 import Foundation
 import Firebase
 import FirebaseAuth
+import FirebaseStorage
 
 class DataHelper: ObservableObject {
     
@@ -212,7 +213,6 @@ class DataHelper: ObservableObject {
         }
     }
     
-
     func uploadUserLessonData(assessmentData: PronunciationAssessmentResult, userAudio: URL, voiceGalleryAudio: URL) {
         guard let user = Auth.auth().currentUser else {
             print("User is not authenticated.")
@@ -221,35 +221,90 @@ class DataHelper: ObservableObject {
 
         let userID = user.uid
 
-        // Convert PronunciationAssessmentResult to dictionary
-        if var assessmentLessonData = assessmentData.toDictionary() {
-            
-            do {
-                // Convert userAudio and voiceGalleryAudio to binary data
-                let userAudioData = try Data(contentsOf: userAudio).base64EncodedString()
-                let voiceGalleryAudioData = try Data(contentsOf: voiceGalleryAudio).base64EncodedString()
+        // Verify file existence
+        guard FileManager.default.fileExists(atPath: userAudio.path) else {
+            print("User audio file does not exist at path: \(userAudio.path)")
+            return
+        }
 
-                // Add the audio data to the dictionary
-                assessmentLessonData["userAudioData"] = userAudioData
-                assessmentLessonData["voiceGalleryAudioData"] = voiceGalleryAudioData
+        guard FileManager.default.fileExists(atPath: voiceGalleryAudio.path) else {
+            print("Voice gallery audio file does not exist at path: \(voiceGalleryAudio.path)")
+            return
+        }
 
-                // Save assessment data and audio to Firestore in the user's LessonData
-                Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
-                    .addDocument(data: assessmentLessonData) { error in
-                        if let error = error {
-                            print("Error adding pronunciation test data: \(error.localizedDescription)")
-                        } else {
-                            print("Pronunciation test data and audio data successfully added with a unique ID.")
-                        }
-                    }
+        // Debug the file paths
+        print("User audio file path: \(userAudio.path)")
+        print("Voice gallery audio file path: \(voiceGalleryAudio.path)")
 
-            } catch {
-                print("Failed to convert audio to data: \(error.localizedDescription)")
+        let storage = Storage.storage()
+        let storageRef = storage.reference(forURL: "gs://perfectpronunciation-3aeeb.appspot.com")
+
+        let userAudioRef = storageRef.child("userAudio/\(userID)/\(UUID().uuidString).wav")
+        let voiceGalleryAudioRef = storageRef.child("voiceGalleryAudio/\(userID)/\(UUID().uuidString).wav")
+
+        let metadata = StorageMetadata()
+        metadata.contentType = "audio/wav"
+
+        
+        //MARK: Fails here "Failed to upload user audio: Object userAudio/wmXsW7qcS5NOKrbNlHrJsLgqgX42/9B791A0D-09D3-437B-8767-A06D75EE159C.wav does not exist."
+        // Upload user audio
+        let uploadTask = userAudioRef.putFile(from: userAudio, metadata: metadata) { metadata, error in
+            if let error = error {
+                print("Failed to upload user audio: \(error.localizedDescription)")
+                return
             }
-        } else {
-            print("Failed to convert PronunciationAssessmentResult to dictionary.")
+            print("User audio uploaded successfully!")
+
+            // Get download URL
+            userAudioRef.downloadURL { url, error in
+                if let error = error {
+                    print("Failed to retrieve user audio URL: \(error.localizedDescription)")
+                    return
+                }
+
+                guard let userAudioURL = url?.absoluteString else { return }
+                print("User audio URL: \(userAudioURL)")
+
+                // Proceed to upload voice gallery audio
+                let voiceGalleryUploadTask = voiceGalleryAudioRef.putFile(from: voiceGalleryAudio, metadata: metadata) { metadata, error in
+                    if let error = error {
+                        print("Failed to upload voice gallery audio: \(error.localizedDescription)")
+                        return
+                    }
+                    print("Voice gallery audio uploaded successfully!")
+
+                    // Get download URL for voice gallery audio
+                    voiceGalleryAudioRef.downloadURL { url, error in
+                        if let error = error {
+                            print("Failed to retrieve voice gallery audio URL: \(error.localizedDescription)")
+                            return
+                        }
+
+                        guard let voiceGalleryAudioURL = url?.absoluteString else { return }
+                        print("Voice gallery audio URL: \(voiceGalleryAudioURL)")
+
+                        // Save the data to Firestore
+                        var assessmentLessonData = assessmentData.toDictionary() ?? [:]
+                        assessmentLessonData["userAudioURL"] = userAudioURL
+                        assessmentLessonData["voiceGalleryAudioURL"] = voiceGalleryAudioURL
+
+                        Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
+                            .addDocument(data: assessmentLessonData) { error in
+                                if let error = error {
+                                    print("Error adding pronunciation test data: \(error.localizedDescription)")
+                                } else {
+                                    print("Pronunciation test data and audio files successfully uploaded.")
+                                }
+                            }
+                    }
+                }
+            }
         }
     }
+
+
+
+
 
     
     func getItemsForDayOfWeek(dayOfWeek: String, completion: @escaping ([DocumentSnapshot]?, Error?) -> Void) {

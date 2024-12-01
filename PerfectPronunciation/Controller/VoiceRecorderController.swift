@@ -150,6 +150,7 @@ class VoiceRecorderController: NSObject, ObservableObject {
                 print("Pronunciation Assessment Result: \(resultJson)")
                 //MARK: For Some Reason this wont submit the First Audio Test After Starting Application, Issue with the If Statement, seems the AI audio does not get called properly on first Induvidual Test View so there wont be an AudioFIle
                 if let userAudio = userAudioFileURL, let voiceGalleryAudio = aiaudioFileURL {
+                    print("uploading User Data")
                     dataHelper.uploadUserLessonData(assessmentData: resultJson, userAudio: userAudio, voiceGalleryAudio: voiceGalleryAudio)
                     
                 }
@@ -162,7 +163,7 @@ class VoiceRecorderController: NSObject, ObservableObject {
                                 }
                 print("Discarding Audio After Submission")
                 do {
-                    try discardTestAudio(fileURL: audioURL)
+                    //try discardTestAudio(fileURL: audioURL)
                 } catch {
                     print("Error discarding audio file: \(error.localizedDescription)")
                 }
@@ -180,7 +181,6 @@ class VoiceRecorderController: NSObject, ObservableObject {
         let audioFilename = documentsURL.appendingPathComponent("AIAudio \(timestamp).wav")
         do {
             try audioData.write(to: audioFilename)
-            print("WAV file saved at: \(audioFilename.path)")
             return audioFilename
         } catch {
             print("Failed to save WAV file: \(error.localizedDescription)")

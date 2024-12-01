@@ -106,6 +106,7 @@ struct VoiceRecorder: View {
                                     if recordingState == .recorded || recordingState == .playing {
                                         Button(action: {
                                             // Action to discard the recorded audio
+                                            print("discarding Audio Error")
                                             voiceRecorderController.discardTestAudio(fileURL: voiceRecorderController.userAudioFileURL!)
                                             voiceRecorderController.STTresult = ""
                                             recordingState = .readyToRecord

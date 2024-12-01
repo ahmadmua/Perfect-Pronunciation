@@ -9,6 +9,10 @@ import SwiftUI
 import Combine
 import AVFoundation
 
+protocol PlaybackDelegate: AnyObject {
+    func playbackDidFinishSuccessfully()
+}
+
 // This class handles audio playback functionality, including playing, pausing, resuming, stopping, and seeking audio.
 class AudioPlayBackController: NSObject, ObservableObject, AVAudioPlayerDelegate {
     
@@ -37,6 +41,9 @@ class AudioPlayBackController: NSObject, ObservableObject, AVAudioPlayerDelegate
             }
         }
     }
+    
+    // Delegate for playback completion notifications
+    weak var playbackDelegate: PlaybackDelegate?
     
     // Method to start playing the audio file from the `fileURL`.
     func startPlayback() {
@@ -129,53 +136,13 @@ class AudioPlayBackController: NSObject, ObservableObject, AVAudioPlayerDelegate
         print("Audio playback resumed.")
     }
     
-    // Method to get the total duration of the audio file in seconds.
-    func getAudioDuration() -> TimeInterval? {
-        // Ensure that an audio file is loaded.
-        guard let audioPlayer = audioPlayer else {
-            print("Error: No audio is loaded to get its duration.")
-            return nil
-        }
-        // Return the total duration of the audio file.
-        return audioPlayer.duration
-    }
-    
-    // Method to get the current playback time in seconds.
-    func getCurrentPlaybackTime() -> TimeInterval? {
-        // Ensure that an audio file is loaded.
-        guard let audioPlayer = audioPlayer else {
-            print("Error: No audio is loaded to get its current playback time.")
-            return nil
-        }
-        // Return the current playback time.
-        return audioPlayer.currentTime
-    }
-    
-    // Method to set the playback time to a specific point (seek functionality).
-    func seekTo(time: TimeInterval) {
-        // Ensure that an audio file is loaded.
-        guard let audioPlayer = audioPlayer else {
-            print("Error: No audio is loaded to seek.")
-            return
-        }
-        
-        // Ensure the specified time is within the valid range of the audio file's duration.
-        guard time >= 0 && time <= audioPlayer.duration else {
-            print("Error: Invalid seek time. It must be between 0 and \(audioPlayer.duration) seconds.")
-            return
-        }
-        
-        // Set the playback time to the specified point.
-        audioPlayer.currentTime = time
-        print("Playback seeked to \(time) seconds.")
-    }
-    
     // Delegate method that gets called when the audio player finishes playing an audio file.
     func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         // If playback finishes successfully, update the `isPlaying` property to false.
         if flag {
             isPlaying = false
             print("Audio playback finished successfully.")
+            playbackDelegate?.playbackDidFinishSuccessfully() // Notify the delegate
         } else {
             print("Audio playback finished with errors.")
         }

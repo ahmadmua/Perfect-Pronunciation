@@ -10,12 +10,15 @@ import Combine
 import AVFoundation
 import Speech
 
+
+
+// Enum representing the different states of the recorder and playback
 enum Mode {
-    case ready
-    case recording
-    case analyzing
-    case playing
-    case paused
+    case ready          // Ready to start recording or playback
+    case recording      // Currently recording audio
+    case analyzing      // Analyzing the recorded audio
+    case playing        // Audio is being played back
+    case paused         // Playback is paused
 
     var description: String {
         switch self {
@@ -33,45 +36,51 @@ enum Mode {
     }
 }
 
-class VoiceRecorderController: NSObject, ObservableObject {
-
-    /// MARK: - Singleton Instance
-    static let shared = VoiceRecorderController(audioController: AudioController(),
-                                                audioAPIController: AudioAPIController(),
-                                                audioPlaybackController: AudioPlayBackController())
-    
-    
+// Main controller class managing recording, playback, and submissions
+class VoiceRecorderController: NSObject, ObservableObject, PlaybackDelegate {
+    // Singleton instance for global access
+    static let shared = VoiceRecorderController(
+        audioController: AudioController(),
+        audioAPIController: AudioAPIController(),
+        audioPlaybackController: AudioPlayBackController()
+    )
 
     /// MARK: - Published Properties
-    @Published var STTresult: String = ""
-    @Published var mode: Mode = .ready
-    @Published var recordBtnDisabled = true
-    @Published var userAudioFileURL: URL? // Stores the recorded file URL
-    @Published var aiaudioFileURL: URL?   // Stores the AI-generated audio file URL
-    @Published var isSubmitting: Bool = false
-    @Published var errorMessage: String?
+    @Published var STTresult: String = ""          // Holds the Speech-to-Text result
+    @Published var mode: Mode = .ready            // Tracks the current mode/state
+    @Published var recordBtnDisabled = true       // Indicates if the record button should be disabled
+    @Published var userAudioFileURL: URL?         // URL for the recorded audio file
+    @Published var aiaudioFileURL: URL?           // URL for the AI-generated audio file
+    @Published var isSubmitting: Bool = false     // Indicates if submission is in progress
+    @Published var errorMessage: String?          // Holds error messages (if any)
 
-    var objectWillChange = PassthroughSubject<VoiceRecorderController, Never>()
-    
+    var objectWillChange = PassthroughSubject<VoiceRecorderController, Never>() // Notifies the UI of state changes
+
     // Dependencies
-    var audioController: AudioController
-    var audioAPIController: AudioAPIController
-    var audioPlaybackController: AudioPlayBackController
-    var dataHelper = DataHelper()
-    
-    
+    var audioController: AudioController          // Handles audio recording functionality
+    var audioAPIController: AudioAPIController    // Manages interactions with APIs for speech analysis
+    var audioPlaybackController: AudioPlayBackController // Manages audio playback
+    var dataHelper = DataHelper()                 // Helper for saving and uploading data
 
-    // Private initializer for singleton
+    // Private initializer to enforce singleton pattern
     private init(audioController: AudioController, audioAPIController: AudioAPIController, audioPlaybackController: AudioPlayBackController) {
         self.audioController = audioController
         self.audioAPIController = audioAPIController
         self.audioPlaybackController = audioPlaybackController
         super.init()
-        setupAudioController()
+
+        // Assign this class as the playback delegate
+        self.audioPlaybackController.playbackDelegate = self
+
+        setupAudioController() // Configure the audio controller
     }
 
+    // MARK: - Setup Audio Controller
     private func setupAudioController() {
+        // Request microphone access from the user
         audioController.requestAuthorization()
+
+        // Callback to store the URL of the completed recording
         audioController.onRecordingCompleted = { [weak self] fileURL in
             self?.userAudioFileURL = fileURL
         }
@@ -79,26 +88,30 @@ class VoiceRecorderController: NSObject, ObservableObject {
 
     // MARK: - Recording Functions
     func startRecording() {
+        // Start recording audio
         audioController.startRecording()
-        mode = .recording
-        recordBtnDisabled = true
+        mode = .recording                      // Update mode to recording
+        recordBtnDisabled = true               // Disable the record button during recording
+        // Assign Speech-to-Text result binding
         audioController.$STTresult
             .receive(on: DispatchQueue.main)
             .assign(to: &$STTresult)
     }
 
     func stopRecording() {
+        // Stop recording audio
         audioController.stopRecording()
-        mode = .ready
-        recordBtnDisabled = false
+        mode = .ready                          // Update mode to ready
+        recordBtnDisabled = false              // Enable the record button
     }
 
     func discardTestAudio(fileURL: URL) {
+        // Delete the recorded audio file
         let fileManager = FileManager.default
         if fileManager.fileExists(atPath: fileURL.path) {
             do {
                 try fileManager.removeItem(at: fileURL)
-                self.userAudioFileURL = nil
+                self.userAudioFileURL = nil    // Clear the stored file URL
             } catch {
                 print("Could not delete file: \(error.localizedDescription)")
             }
@@ -114,17 +127,20 @@ class VoiceRecorderController: NSObject, ObservableObject {
             return
         }
 
+        // Validate recorded audio file existence
         guard let userAudio = userAudioFileURL, FileManager.default.fileExists(atPath: userAudio.path) else {
             print("Error: User audio file does not exist.")
             return
         }
 
+        // Validate AI-generated audio file existence
         guard let aiAudio = aiaudioFileURL, FileManager.default.fileExists(atPath: aiAudio.path) else {
             print("Error: AI-generated audio file does not exist.")
             return
         }
 
         do {
+            // Perform pronunciation assessment using the API
             let resultJson = try await audioAPIController.transcribeAndAssessAudio(
                 audioURL: userAudio,
                 referenceText: testText,
@@ -141,9 +157,10 @@ class VoiceRecorderController: NSObject, ObservableObject {
 
     func submitTextToSpeechAI(testText: String) async {
         do {
+            // Request AI-generated audio from the API
             let audioData = try await audioAPIController.sendTextToVoiceGallery(testText: testText)
             if let fileURL = saveWavAudioToFile(audioData: audioData) {
-                aiaudioFileURL = fileURL
+                aiaudioFileURL = fileURL // Save the AI-generated audio file URL
                 print("Saved AI audio file at: \(fileURL.path)")
             } else {
                 print("Failed to save AI audio file.")
@@ -155,6 +172,7 @@ class VoiceRecorderController: NSObject, ObservableObject {
 
     // MARK: - Helper Functions
     func saveWavAudioToFile(audioData: Data) -> URL? {
+        // Save audio data to a file and return its URL
         let fileManager = FileManager.default
         let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let timestamp = DateFormatter.localizedString(from: Date(), dateStyle: .short, timeStyle: .short)
@@ -168,8 +186,6 @@ class VoiceRecorderController: NSObject, ObservableObject {
         }
     }
 
-
-
     // MARK: - Playback Functions
     func playAudio(fileURL: URL?) {
         guard let fileURL = fileURL else {
@@ -177,26 +193,39 @@ class VoiceRecorderController: NSObject, ObservableObject {
             return
         }
         audioPlaybackController.fileURL = fileURL
-        audioPlaybackController.startPlayback()
-        mode = .playing
+        audioPlaybackController.startPlayback() // Start audio playback
+        mode = .playing                        // Update mode to playing
     }
 
     func pauseAudio() {
+        // Pause audio playback
         audioPlaybackController.pausePlayback()
-        mode = .paused
+        mode = .paused                         // Update mode to paused
     }
-    
+
     func resumeAudio() {
+        // Resume audio playback if paused
         guard mode == .paused else {
             print("Error: Cannot resume audio, as it is not paused.")
             return
         }
         audioPlaybackController.resumePlayback()
-        mode = .playing
+        mode = .playing                        // Update mode to playing
     }
 
     func stopAudio() {
+        // Stop audio playback
         audioPlaybackController.stopPlayback()
-        mode = .ready
+        mode = .ready                          // Update mode to ready
+    }
+
+    // MARK: - PlaybackDelegate Method
+    func playbackDidFinishSuccessfully() {
+        // Called when playback finishes successfully
+        DispatchQueue.main.async {
+            self.mode = .ready                 // Reset mode to ready
+            print("Playback finished, state reset to ready.")
+        }
     }
 }
+

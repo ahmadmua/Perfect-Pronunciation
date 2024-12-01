@@ -10,7 +10,7 @@ import Combine
 import AVFoundation
 import Speech
 
-enum RecordingMode {
+enum Mode {
     case ready
     case recording
     case analyzing
@@ -39,10 +39,12 @@ class VoiceRecorderController: NSObject, ObservableObject {
     static let shared = VoiceRecorderController(audioController: AudioController(),
                                                 audioAPIController: AudioAPIController(),
                                                 audioPlaybackController: AudioPlayBackController())
+    
+    
 
     /// MARK: - Published Properties
     @Published var STTresult: String = ""
-    @Published var mode: RecordingMode = .ready
+    @Published var mode: Mode = .ready
     @Published var recordBtnDisabled = true
     @Published var userAudioFileURL: URL? // Stores the recorded file URL
     @Published var aiaudioFileURL: URL?   // Stores the AI-generated audio file URL
@@ -56,6 +58,8 @@ class VoiceRecorderController: NSObject, ObservableObject {
     var audioAPIController: AudioAPIController
     var audioPlaybackController: AudioPlayBackController
     var dataHelper = DataHelper()
+    
+    
 
     // Private initializer for singleton
     private init(audioController: AudioController, audioAPIController: AudioAPIController, audioPlaybackController: AudioPlayBackController) {
@@ -166,6 +170,7 @@ class VoiceRecorderController: NSObject, ObservableObject {
 
 
 
+    // MARK: - Playback Functions
     func playAudio(fileURL: URL?) {
         guard let fileURL = fileURL else {
             print("Error: No audio file URL is provided.")
@@ -173,13 +178,25 @@ class VoiceRecorderController: NSObject, ObservableObject {
         }
         audioPlaybackController.fileURL = fileURL
         audioPlaybackController.startPlayback()
+        mode = .playing
     }
 
     func pauseAudio() {
         audioPlaybackController.pausePlayback()
+        mode = .paused
+    }
+    
+    func resumeAudio() {
+        guard mode == .paused else {
+            print("Error: Cannot resume audio, as it is not paused.")
+            return
+        }
+        audioPlaybackController.resumePlayback()
+        mode = .playing
     }
 
     func stopAudio() {
         audioPlaybackController.stopPlayback()
+        mode = .ready
     }
 }

@@ -80,6 +80,35 @@ struct IndividualLesson: View {
                 Spacer()
                 
                 GridRow {
+                    // Play/Pause Button
+                    Button(action: {
+                        if voiceRecorderController.audioPlaybackController.isPlaying {
+                            voiceRecorderController.pauseAudio()
+                        } else {
+                            voiceRecorderController.playAudio(fileURL: voiceRecorderController.aiaudioFileURL)
+                        }
+                    }) {
+                        Image(systemName: voiceRecorderController.audioPlaybackController.isPlaying ? "pause.circle.fill" : "play.circle.fill")
+                            .font(.system(size: 50, weight: .light))
+                    }
+                    .foregroundStyle(voiceRecorderController.audioPlaybackController.isPlaying ? Color.blue : Color.green)
+                    .buttonStyle(.borderless)
+                    
+                    // Stop Button
+                    Button(action: {
+                        voiceRecorderController.stopAudio()
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 50, weight: .light))
+                    }
+                    .foregroundStyle(Color.red)
+                    .buttonStyle(.borderless)
+                }
+
+                
+                Spacer()
+                
+                GridRow {
                     Button(action: {
                         //nav to the next word
                         print("record btn press")
@@ -196,13 +225,13 @@ struct IndividualLesson: View {
                         
                         Task {
                             await voiceRecorderController.submitTextToSpeechAI(testText: responseText)
-                            voiceRecorderController.playAudio(fileURL: self.voiceRecorderController.aiaudioFileURL) // Play AI audio for the first question
+                            //voiceRecorderController.playAudio(fileURL: self.voiceRecorderController.aiaudioFileURL) // Play AI audio for the first question
                         }
                     }
                     .onChange(of: responseText) { newValue in
                         Task {
                             await voiceRecorderController.submitTextToSpeechAI(testText: newValue)
-                            voiceRecorderController.playAudio(fileURL: voiceRecorderController.aiaudioFileURL) // Play AI audio for the updated question
+                            //voiceRecorderController.playAudio(fileURL: voiceRecorderController.aiaudioFileURL) // Play AI audio for the updated question
                         }
                     }
                     

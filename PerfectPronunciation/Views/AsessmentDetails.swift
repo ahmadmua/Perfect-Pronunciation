@@ -29,21 +29,24 @@ struct AssessmentView: View {
             VStack(alignment: .leading) {
                 VStack(alignment: .leading) {
                     
-                    Text(buildAttributedText(display: display, wordErrorData: wordErrorData))
+                 
+                        Text(buildAttributedText(display: display, wordErrorData: wordErrorData))
                             .lineLimit(nil)
                             .multilineTextAlignment(.leading)
                             .padding()
                             .background(Color(UIColor.systemGray6))
                             .cornerRadius(10)
                             .padding(.horizontal)
-
-                        Text(buildAttributedText(display: transcription, wordErrorData: wordErrorData))
+                        
+                    
+                        Text(buildTranscriptionText(transcription: transcription, wordErrorData: wordErrorData))
                             .lineLimit(nil)
                             .multilineTextAlignment(.leading)
                             .padding()
                             .background(Color(UIColor.systemGray6))
                             .cornerRadius(10)
                             .padding(.horizontal)
+                    
                 }
 
             }
@@ -101,48 +104,38 @@ struct AssessmentView: View {
             Spacer()
         }
         .navigationTitle("Assessment Result")
+        
         .onAppear {
-            predictionResult = predictPronunciationImprovement(
-                mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0),
-                omissions: Double(errorTypeCounts["Omission"] ?? 0),
-                insertions: Double(errorTypeCounts["Insertion"] ?? 0),
-                unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0),
-                missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0),
-                monotone: Double(errorTypeCounts["Monotone"] ?? 0)
-            )
-            
             // Using regular expression to match whole words
-            let wordPattern = "\\b\(display.lowercased())\\b"
-            
-            let displayWords = Set(display.lowercased().split(separator: " ").map { String($0) })
-            let transcriptionWords = Set(transcription.lowercased().split(separator: " ").map { String($0) })
+            let displayWords = display.lowercased().split(separator: " ").map { String($0) }
+            let transcriptionWords = transcription.lowercased().split(separator: " ").map { String($0) }
             
             // Find omissions (words in display but not in transcription)
-            let omissions = displayWords.subtracting(transcriptionWords)
+            let omissions = Set(displayWords).subtracting(Set(transcriptionWords))
             for word in omissions {
                 wordErrorData.append((word: word, errorType: "Omission"))
             }
             
             // Find insertions (words in transcription but not in display)
-            let insertions = transcriptionWords.subtracting(displayWords)
+            let insertions = Set(transcriptionWords).subtracting(Set(displayWords))
             for word in insertions {
                 wordErrorData.append((word: word, errorType: "Insertion"))
             }
             
             // Update counts for omissions and insertions
             errorTypeCounts["Omission"] = omissions.count
+            
+            
+            
             errorTypeCounts["Insertion"] = insertions.count
             
-            // Ensure exact match for word boundaries (to avoid partial word matching)
-            let regex = try! NSRegularExpression(pattern: "\\b(?:\(display.lowercased()))\\b")
-            
-            // Update error counts for other errors (e.g., mispronunciations, unexpected breaks)
+            // Update other error counts
             errorTypeCounts["Mispronunciation"] = wordErrorData.filter { $0.errorType == "Mispronunciation" }.count
             errorTypeCounts["UnexpectedBreak"] = wordErrorData.filter { $0.errorType == "UnexpectedBreak" }.count
             errorTypeCounts["MissingBreak"] = wordErrorData.filter { $0.errorType == "MissingBreak" }.count
             errorTypeCounts["Monotone"] = wordErrorData.filter { $0.errorType == "Monotone" }.count
-
-            // Update prediction result after adjusting error counts
+            
+            // Update prediction result
             predictionResult = predictPronunciationImprovement(
                 mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0),
                 omissions: Double(errorTypeCounts["Omission"] ?? 0),
@@ -161,88 +154,72 @@ struct AssessmentView: View {
     }
 
     // Remaining methods stay the same
+    
+    func buildTranscriptionText(transcription: String, wordErrorData: [(word: String, errorType: String)]) -> AttributedString {
+        var attributedText = AttributedString(transcription)
+        let words = transcription.split(separator: " ")
+        
+        for (index, word) in words.enumerated() {
+            let wordString = String(word)
+            let lowercasedWord = wordString.lowercased()
+            
+            if let range = attributedText.range(of: wordString) {
+                let errorType = wordErrorData.first { $0.word.lowercased() == lowercasedWord }?.errorType
+                
+                if errorType == "Insertion" {
+                    attributedText[range].backgroundColor = .red
+                    attributedText[range].foregroundColor = .white
+                }
+            }
+        }
+        
+        return attributedText
+    }
 
     
     // Function to build the highlighted text with underlining for mispronunciations
     func buildAttributedText(display: String, wordErrorData: [(word: String, errorType: String)]) -> AttributedString {
         var attributedText = AttributedString(display)
+        let lowercasedDisplay = display.lowercased()
 
-        // Store ranges of omission words for overlap detection
-        var omissionRanges: [Range<String.Index>] = []
-
-        // First, apply all omission styles and track their ranges
+        // First pass: Apply styles for omissions
         for wordError in wordErrorData where wordError.errorType == "Omission" {
             let word = wordError.word.lowercased()
-            let lowercasedDisplay = display.lowercased()
-            var startIndex = lowercasedDisplay.startIndex
-
-            // Use regular expression to find standalone words
             let regex = try! NSRegularExpression(pattern: "\\b\(NSRegularExpression.escapedPattern(for: word))\\b", options: .caseInsensitive)
-
             let matches = regex.matches(in: lowercasedDisplay, options: [], range: NSRange(lowercasedDisplay.startIndex..<lowercasedDisplay.endIndex, in: lowercasedDisplay))
-
+            
             for match in matches {
-                let range = Range(match.range, in: display)!
-                if let attributedRange = Range(range, in: attributedText) {
-                    // Apply omission style
+                if let range = Range(match.range, in: display),
+                   let attributedRange = Range(range, in: attributedText) {
                     attributedText[attributedRange].backgroundColor = .gray
                     attributedText[attributedRange].foregroundColor = .white
-                    omissionRanges.append(range) // Track omission ranges
                 }
             }
         }
 
-        // Now, apply styles for mispronunciations
-        for wordError in wordErrorData where wordError.errorType == "Mispronunciation" {
+        // Second pass: Apply styles for other error types, including mispronunciations
+        for wordError in wordErrorData where wordError.errorType != "Omission" {
             let word = wordError.word.lowercased()
-            let lowercasedDisplay = display.lowercased()
-            var startIndex = lowercasedDisplay.startIndex
-
-            // Use regular expression to find standalone words
             let regex = try! NSRegularExpression(pattern: "\\b\(NSRegularExpression.escapedPattern(for: word))\\b", options: .caseInsensitive)
-
             let matches = regex.matches(in: lowercasedDisplay, options: [], range: NSRange(lowercasedDisplay.startIndex..<lowercasedDisplay.endIndex, in: lowercasedDisplay))
-
+            
             for match in matches {
-                let range = Range(match.range, in: display)!
-                if let attributedRange = Range(range, in: attributedText) {
-                    // Check for overlap with any omission ranges
-                    let overlapsOmission = omissionRanges.contains { omissionRange in
-                        range.overlaps(omissionRange)
-                    }
-
-                    if overlapsOmission {
-                        // Apply combined style for overlap: grey background, yellow text
-                        attributedText[attributedRange].backgroundColor = .gray
-                        attributedText[attributedRange].foregroundColor = .yellow
-                    } else {
-                        // Apply default mispronunciation style
-                        attributedText[attributedRange].foregroundColor = .yellow
-                    }
-                }
-            }
-        }
-
-        // Handle other error types with default behavior
-        for wordError in wordErrorData where !["Omission", "Mispronunciation"].contains(wordError.errorType) {
-            let word = wordError.word.lowercased()
-            let lowercasedDisplay = display.lowercased()
-            var startIndex = lowercasedDisplay.startIndex
-
-            // Use regular expression to find standalone words
-            let regex = try! NSRegularExpression(pattern: "\\b\(NSRegularExpression.escapedPattern(for: word))\\b", options: .caseInsensitive)
-
-            let matches = regex.matches(in: lowercasedDisplay, options: [], range: NSRange(lowercasedDisplay.startIndex..<lowercasedDisplay.endIndex, in: lowercasedDisplay))
-
-            for match in matches {
-                let range = Range(match.range, in: display)!
-                if let attributedRange = Range(range, in: attributedText) {
+                if let range = Range(match.range, in: display),
+                   let attributedRange = Range(range, in: attributedText) {
                     switch wordError.errorType {
+                    case "Mispronunciation":
+                        // If the word is already highlighted as an omission, change text color to yellow
+                        if attributedText[attributedRange].backgroundColor == .gray {
+                            attributedText[attributedRange].foregroundColor = .yellow
+                        } else {
+                            attributedText[attributedRange].foregroundColor = .yellow
+                        }
                     case "Insertion":
-                        attributedText[attributedRange].foregroundColor = .red
-                    case "Unexpected_break":
+                        // Insertions are not highlighted in the display text
+                        break
+                    case "UnexpectedBreak":
                         attributedText[attributedRange].foregroundColor = .pink
-                    case "Missing_break":
+                    case "MissingBreak":
                         attributedText[attributedRange].foregroundColor = .blue
                     case "Monotone":
                         attributedText[attributedRange].foregroundColor = .purple
@@ -255,7 +232,6 @@ struct AssessmentView: View {
 
         return attributedText
     }
-
 
 
 

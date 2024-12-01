@@ -120,46 +120,12 @@ struct Details: View {
                     Text("\(calculateAccuracyOutput())")
                     .bold()
                     
-//                    Image(systemName: "arrow.clockwise")
-//                        .resizable()
-//                        .frame(width: 24, height: 24)
-//                        .foregroundColor(.blue)
-//                        .onTapGesture {
-//                            updatedAdjustedDifficulty()
-//                        }
-//                        .padding(.leading)
-                    
                 }
-
-//                Text("Previous Difficulty: \(initialDifficulty)")
-//                    .font(.headline)
                     
 
                 Text("Adjusted Difficulty: \(updatedDifficulty)")
                     .font(.headline)
                    
-
-
-
-            
-
-            
-//            Button(action: {
-//                fireDBHelper.updateDifficulty(selectedDifficulty: expectedDifficulty, userData: &userData, selection: &selection)
-//                showingAlert2 = true
-//                //fireDBHelper.addItemToUserDataCollection(itemName: "TestWord", dayOfWeek: "Thu", accuracy: 98.42)
-//            }) {
-//                Text("Reset Difficulty")
-//                    .modifier(CustomTextM(fontName: "MavenPro-Bold", fontSize: 16, fontColor: Color.black))
-//                    .frame(height: 56, alignment: .leading)
-//                    .frame(width: 200)
-//                    .background(Color.yellow)
-//                    .cornerRadius(10)
-//            }
-//            .alert(self.msg, isPresented: $showingAlert2) {
-//                Button("OK", role: .cancel) {
-//                }
-//            }
         }
 
         .navigationBarBackButtonHidden(true)

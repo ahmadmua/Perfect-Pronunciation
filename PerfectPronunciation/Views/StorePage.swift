@@ -149,7 +149,7 @@ struct StorePage: View {
                 
                 VStack(alignment: .leading) { // Align content to the left
                     GridRow {
-                        Text("Wager")
+                        Text("Lessons")
                             .font(.headline) // Make it more prominent
                             .padding(.vertical, 8) // Add vertical padding to prevent cutting off
                             .frame(maxWidth: .infinity, alignment: .leading) // Ensure alignment to the left
@@ -161,17 +161,17 @@ struct StorePage: View {
                         VStack(alignment: .leading, spacing: 16) { // Add spacing between items
                             HStack(alignment: .top) {
                                 Button(action: {
-                                    print("Weekly Challenge Wager btn press")
-                                    currModel.subUserCurrency(cost: 300, item: "WeeklyChallengeWager")
+                                    print("Christmas Lesson btn press")
+                                    currModel.subUserCurrency(cost: 500, item: "ChristmasLesson")
                                 }) {
                                     Image(systemName: "square.fill")
                                         .font(.system(size: 50, weight: .light))
                                 } // Button
                                 .buttonStyle(.borderless)
-                                .disabled(currModel.timeIncreasePurchase)
+                                .disabled(currModel.xMasLessonPurchase)
                                 
                                 VStack(alignment: .leading) {
-                                    Text("Weekly Challenge Wager")
+                                    Text("Christmas Lesson Pack")
                                         .font(.body) // Consistent font size
                                     Text("500")
                                         .padding(.leading, 20)
@@ -209,6 +209,12 @@ struct StorePage: View {
             Button("OK", role: .cancel) {
                 currModel.getUserCurrency()
                 currModel.userBuyLevel()
+            }
+        }
+        .alert("You successfully bought the Christmas Lesson", isPresented: $currModel.userDidPurchaseXMas) {
+            Button("OK", role: .cancel) {
+                currModel.getUserCurrency()
+                currModel.checkBuyChristmas()
             }
         }
         
@@ -288,6 +294,7 @@ struct StorePage: View {
             }
             currModel.getUserCurrency()
             currModel.checkBuyTime()
+            currModel.checkBuyChristmas()
         } //onAppear
     } //body view
 } //view

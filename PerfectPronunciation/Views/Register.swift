@@ -156,7 +156,9 @@ struct Register: View {
                     "Numbers" : false,
                     "Directions" : false,
                     "Food1" : false,
-                    "Food2" : false
+                    "Food2" : false,
+                    "Christmas" : false
+                    
                  ],
                  "LessonQuestions": [
                     "Conversation" : [
@@ -178,6 +180,10 @@ struct Register: View {
                     "Food2" : [
                         "Difficulty" : "",
                         "Questions" : ""
+                    ],
+                    "Christmas" : [
+                        "Difficulty" : "",
+                        "Questions" : ""
                     ]
                  ],
                  "Achievements": [
@@ -196,6 +202,7 @@ struct Register: View {
                  ],
                  "Items": [
                     "TimeIncrease" : false,
+                    "ChristmasLesson" : false,
                     "LevelBoost" : false,//dont really need this one as the level up happens right on the store page
                     "WeeklyChallengeWager" : false
                  ],

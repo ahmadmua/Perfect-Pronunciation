@@ -11,6 +11,7 @@ import Combine
 struct LessonsPage: View {
     //controllers
     @ObservedObject var model = LessonController()
+    @ObservedObject var currModel = CurrencyController()
     //navigation to other pages
     @State private var showLesson = false
     @State private var showWeekly = false
@@ -25,6 +26,9 @@ struct LessonsPage: View {
     @State private var conversation = false
     @State private var numbers = false
     @State private var direction = false
+    @State private var christmas = false
+    
+    @State private var xmasUnlock = 0
     //lesson name
     @State private var lessonName = ""
     //openai
@@ -218,6 +222,45 @@ struct LessonsPage: View {
                     .padding()
                 }//Directions vstack
                 
+                VStack{//seasonal
+                    GridRow{
+                        Text("Seasonal - Christmas")
+                    }//grid row 1
+                    
+                    Divider()
+                    
+                    GridRow{
+                        
+                        Button(action: {
+                            //go to lesson
+                            print("xmas btn press")
+    
+                            self.lessonName = "Christmas"
+                            self.christmas.toggle()
+                            
+                            fetchOpenAiResponse()
+                            
+                        }){
+                            Image(systemName: "gift.fill")
+                                .font(.system(size: 50, weight: .light))
+                        }//btn
+                        .disabled(xmasUnlock == 1)
+                        .navigationDestination(isPresented: $christmas){
+                            IndividualLesson(
+                                voiceRecorderController: VoiceRecorderController.shared, // Singleton instance
+                                lessonName: $lessonName,
+                                responseText: $responseText,
+                                responseArray: $responseArray
+                            )
+                            .navigationBarBackButtonHidden(true)
+                        }
+                        .buttonStyle(.borderless)
+                        
+                        
+                    }//grid row directions
+                    .padding()
+                }//seasonal
+                
             }//grid
             .background(Color("Background"))
             .padding(.vertical, 30)
@@ -337,6 +380,25 @@ struct LessonsPage: View {
                 
                 UserDefaults.standard.synchronize()
                 
+            }
+            
+            //bought items
+            currModel.checkBuyChristmas()
+            
+            DispatchQueue.main.async{
+                
+                print("PURCHASED : \(currModel.xMasLessonPurchase)")
+                
+                print(UserDefaults.standard.bool(forKey: "xMasLessonAvailable"))
+                
+                if(UserDefaults.standard.bool(forKey: "xMasLessonAvailable") == false){
+                    self.xmasUnlock = 1
+                    
+                }else{
+                    self.xmasUnlock = 0
+                }
+                
+                print("COUNT USES : \(self.xmasUnlock)")
             }
         }
             

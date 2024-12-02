@@ -15,9 +15,13 @@ class CurrencyController : ObservableObject{
     @Published var userDidPurchase: Bool = false
     @Published var neededToPurchase: Int = 0
     @Published var timeIncreasePurchase: Bool = false
-    
+    //lvl boost
     @Published var userLevel: Int = 0
     @Published var userDidPurchaseLevel: Bool = false
+    //xmas lesson
+    @Published var xMasLessonPurchase: Bool = false
+    @Published var userDidPurchaseXMas: Bool = false
+    
     var model = LessonController()
     
     init() {
@@ -157,6 +161,8 @@ class CurrencyController : ObservableObject{
                                 self.userDidPurchase = true
                             } else if (item == "LevelBoost"){
                                 self.userDidPurchaseLevel = true
+                            }else if (item == "ChristmasLesson"){
+                                self.userDidPurchaseXMas = true
                             }
                             
                         }else{
@@ -285,6 +291,60 @@ class CurrencyController : ObservableObject{
                                     self.timeIncreasePurchase = true
                                     UserDefaults.standard.set(true, forKey: "TimeIncreaseAvailable")
                                     print("TIME INCREASE TRUE : \(timeIncrease.description)")
+                                    self.objectWillChange.send()
+                                }
+                        }
+                        }
+
+                        // acheivement 2
+                    }
+                } else {
+                    print("Document does not exist or there was an error: \(error?.localizedDescription ?? "Unknown error")")
+                }
+            }
+        } else {
+            // Handle the case when the user is not authenticated
+        }
+        
+        
+    }
+    
+    func checkBuyChristmas(){
+        
+        
+        //Firestore reference
+        let firestore = Firestore.firestore()
+
+        // authenticated user
+        if let currentUserID = Auth.auth().currentUser?.uid {
+            let userDataRef = firestore.collection("UserData").document(currentUserID)
+            
+
+            // Read UserData document
+            userDataRef.getDocument { (document, error) in
+                if let document = document, document.exists {
+                    
+                    // Access "Achievements" from firebase
+                    if let items = document.data()?["Items"] as? [String: Bool] {
+                        
+                        print("\(items)")
+                        if let xMasLesson = items["ChristmasLesson"] {
+                            
+                            // Use the achievement data as needed
+                            print("Item : \(xMasLesson)")
+                            print("\(xMasLesson.description)")
+                            
+                            DispatchQueue.main.async{
+                                if(xMasLesson.description == "false"){
+                                    UserDefaults.standard.set(false, forKey: "xMasLessonAvailable")
+                                    self.xMasLessonPurchase = false
+                                    print("XMAS FALSE : \(xMasLesson.description)")
+                                    self.objectWillChange.send()
+                                    
+                                }else if(xMasLesson.description == "true"){
+                                    self.xMasLessonPurchase = true
+                                    UserDefaults.standard.set(true, forKey: "xMasLessonAvailable")
+                                    print("XMAS TRUE : \(xMasLesson.description)")
                                     self.objectWillChange.send()
                                 }
                         }

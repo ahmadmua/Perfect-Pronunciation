@@ -25,9 +25,6 @@ struct Homepage: View {
     @State private var showToast = false // State for showing the toast
     @State private var toastMessage = "" // Message to display in the toast
     
-    // timer to wait for firebase
-    @State var timeRemaining = 3
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
@@ -169,16 +166,6 @@ struct Homepage: View {
                                 .foregroundColor(.black)
                             Text("\(xpModel.userLevel)")
                                 .foregroundColor(.black)
-                                .onReceive(timer) { _ in
-                                    if timeRemaining > 0 {
-                                        timeRemaining -= 1
-                                    }
-                                    if timeRemaining == 1 {
-                                        currModel.getUserCurrency()
-                                        xpModel.getUserExperience()
-                                        xpModel.getUserLevel()
-                                    }
-                                }//onReceive
                             
                             Image(systemName: "music.mic.circle")
                                 .resizable()

@@ -17,6 +17,10 @@ class CurrencyController : ObservableObject{
     @Published var timeIncreasePurchase: Bool = false
     var model = LessonController()
     
+    init() {
+            getUserCurrency()
+        }
+    
     func getUserCurrency(){
         //get reference to database
 //        let db = Firestore.firestore()

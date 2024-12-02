@@ -13,7 +13,12 @@ class ExperienceController: ObservableObject {
     @Published var userTotalXp: Int = 0
     @Published var userCalculatedLevel: Int = 0
     @Published var userLevel: Int = 0
+    @Published var difficulty: String?
     
+    init() {
+            getUserExperience()
+            getUserLevel()
+        }
     
     func getUserExperience(){
         //get reference to database
@@ -90,7 +95,7 @@ class ExperienceController: ObservableObject {
                         var experienceGain = baseExperience
                         
                         switch difficulty {
-                        case "Easy":
+                        case "Beginner":
                             experienceGain = baseExperience
                         case "Intermediate":
                             experienceGain = baseExperience * 2
@@ -105,45 +110,7 @@ class ExperienceController: ObservableObject {
                             "Experience": experience + experienceGain,
                             "TotalExperience": totalExperience + experienceGain
                         ]
-                        
-                        //FOR LATER - will make users mroe xp depending on difficulty
-                        //                        if(self.model.difficulty == "Easy"){
-                        //                            let updateData = ["Currency": value + 50]
-                        //
-                        //                            // Update the specific field in the user's document
-                        //                            userDocRef.updateData(updateData) { error in
-                        //                                if let error = error {
-                        //                                    print("Error updating document: \(error)")
-                        //                                } else {
-                        //                                    print("Document updated successfully")
-                        //                                }
-                        //                            }
-                        //
-                        //                        }else if(self.model.difficulty == "Intermediate"){
-                        //                            let updateData = ["Currency": value + 100]
-                        //
-                        //                            // Update the specific field in the user's document
-                        //                            userDocRef.updateData(updateData) { error in
-                        //                                if let error = error {
-                        //                                    print("Error updating document: \(error)")
-                        //                                } else {
-                        //                                    print("Document updated successfully")
-                        //                                }
-                        //                            }
-                        //
-                        //                        }else if(self.model.difficulty == "Advanced"){
-                        //                            let updateData = ["Currency": value + 150]
-                        //
-                        //                            // Update the specific field in the user's document
-                        //                            userDocRef.updateData(updateData) { error in
-                        //                                if let error = error {
-                        //                                    print("Error updating document: \(error)")
-                        //                                } else {
-                        //                                    print("Document updated successfully")
-                        //                                }
-                        //                            }
-                        //                        }
-                        
+                                                
                         // Update the fields in the user's document
                         userDocRef.updateData(updateData) { error in
                             if let error = error {
@@ -172,56 +139,40 @@ class ExperienceController: ObservableObject {
     //MARK: -  LEVEL SYSTEM
     
     func calculateUserLevel() {
-        //get reference to database
-        if let user = Auth.auth().currentUser {
-            let userID = user.uid
-            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-            
-            //read the docs at a specific path
-            userDocRef.getDocument { document, error in
-                if let document = document, document.exists{
-                    if let value = document["Experience"] as? Int {
-                        print("Experience CONTROLLER LEVEL : \(value)")
-                        
-                        //converting to proper level
-                        if value >= 500{
-                            //get current user level
-                            self.getUserLevel()
-                            
-                            //increase user level
-                            self.userCalculatedLevel = self.userLevel + 1
-                            
-                            //reverting experience and saving to firebase
-                            userDocRef.updateData(["Experience": value - 500]){ err in
-                                if let err {
-                                    print("Error updating document: \(err)")
-                                }else{
-                                    print("Document successfully updated USERS EXPERIENCE TO 0")
-                                }
+        guard let user = Auth.auth().currentUser else { return }
+        let userID = user.uid
+        let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+
+        userDocRef.getDocument { document, error in
+            if let document = document, document.exists,
+               let currentXP = document["Experience"] as? Int,
+               let currentLevel = document["ExperienceLevel"] as? Int {
+
+                if currentXP >= 500 {
+                    let newXP = currentXP - 500
+                    let newLevel = currentLevel + 1
+
+                    // Update both XP and level in Firebase
+                    userDocRef.updateData([
+                        "Experience": newXP,
+                        "ExperienceLevel": newLevel
+                    ]) { error in
+                        if let error = error {
+                            print("Error updating level: \(error)")
+                        } else {
+                            DispatchQueue.main.async {
+                                self.userXp = newXP
+                                self.userLevel = newLevel
                             }
-                            
-                            
-                            //saving calculated level to firebase
-                            userDocRef.updateData(["ExperienceLevel": self.userCalculatedLevel]){ err in
-                                if let err {
-                                    print("Error updating document: \(err)")
-                                }else{
-                                    print("Document successfully updated USERS LEVEL")
-                                }
-                            }
-                            
                         }
-                    }else{
-                        print("Document exists,")
-                        self.userCalculatedLevel = 0
                     }
-                }else{
-                    print("Document does not exist")
-                    self.userCalculatedLevel = 0
                 }
+            } else {
+                print("Document does not exist or is missing fields")
             }
         }
     }
+
     
     
     func getUserLevel(){
@@ -251,6 +202,41 @@ class ExperienceController: ObservableObject {
             }
         }
     }
+    
+    func getUserDifficultyForRewards(completion: @escaping (String?) -> Void) {
+        // Get reference to database
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            
+            // Read the document at the specific path
+            userDocRef.getDocument { document, error in
+                if let document = document, document.exists {
+                    if let value = document["Difficulty"] as? String {
+                        print("LESSON CONTROLLER : \(value)")
+                        
+                        // Converting to proper difficulty
+                        switch value {
+                        case "Beginner", "Intermediate", "Advanced":
+                            completion(value) // Return the value through the completion handler
+                        default:
+                            completion(nil) // Handle unexpected values
+                        }
+                    } else {
+                        print("Document exists but Difficulty field is missing")
+                        completion(nil)
+                    }
+                } else {
+                    print("Document does not exist")
+                    completion(nil)
+                }
+            }
+        } else {
+            print("No authenticated user")
+            completion(nil)
+        }
+    }
+
     
     
 }//class

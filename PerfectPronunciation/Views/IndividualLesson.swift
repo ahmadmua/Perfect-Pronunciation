@@ -142,6 +142,8 @@ struct IndividualLesson: View {
                                     lessonQuestionsList: responseArray
                                 )
                                 
+                                xpModel.getUserExperience() // Fetch user experience on view appear
+                                
                                 currModel.updateUserCurrency(difficulty: model.difficulty!)
                                 xpModel.updateUserExperience(difficulty: model.difficulty!)
                             }
@@ -201,7 +203,6 @@ struct IndividualLesson: View {
                         //find the difficulty the user has set
                         model.findUserDifficulty{
                             print("USER DIFICULTY!! : \(model.difficulty!)")
-                            
                             UserDefaults.standard.synchronize()
                             
                             

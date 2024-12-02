@@ -63,7 +63,7 @@ struct WeeklyLesson: View {
                         let singleString = fireDBHelper.wordList.joined()
                         
                         Task {
-                            await VoiceRecorderController.shared.submitTestAudio(testText: singleString, lessonType: lessonType)
+                            await voiceRecorderController.submitTestAudio(testText: singleString, lessonType: lessonType)
                         }
 
 

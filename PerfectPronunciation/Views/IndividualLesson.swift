@@ -132,7 +132,7 @@ struct IndividualLesson: View {
                         
                         //if counter is greater than number of questions
                         if counter >= 5{//let questionCount = 0
-                            //go back to the home page
+                            //finish lesson -> go to xpbarpage
                             counter = 0
                             model.updateLessonCompletion(userLesson: lessonName)
                             model.findUserDifficulty {
@@ -192,6 +192,7 @@ struct IndividualLesson: View {
                         
 //                        print("Counter: \(counter)")
                         
+                        //set the published variable for the question text from the lesson list
                         for _ in responseArray{
                             //                print("RESPONSES : \(response)")
                             responseText = responseArray[4-counter]
@@ -207,9 +208,6 @@ struct IndividualLesson: View {
                             
                             
                         }
-                        
-                        
-                        self.showNext = false
                         
                         
                         self.showNext = false

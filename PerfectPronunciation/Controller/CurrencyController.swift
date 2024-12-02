@@ -15,6 +15,9 @@ class CurrencyController : ObservableObject{
     @Published var userDidPurchase: Bool = false
     @Published var neededToPurchase: Int = 0
     @Published var timeIncreasePurchase: Bool = false
+    
+    @Published var userLevel: Int = 0
+    @Published var userDidPurchaseLevel: Bool = false
     var model = LessonController()
     
     init() {
@@ -96,45 +99,6 @@ class CurrencyController : ObservableObject{
                         }
                         
                         
-                        //FOR LATER - will make users mroe money depending on difficulty
-//                        if(self.model.difficulty == "Easy"){
-//                            let updateData = ["Currency": value + 50]
-//                            
-//                            // Update the specific field in the user's document
-//                            userDocRef.updateData(updateData) { error in
-//                                if let error = error {
-//                                    print("Error updating document: \(error)")
-//                                } else {
-//                                    print("Document updated successfully")
-//                                }
-//                            }
-//                            
-//                        }else if(self.model.difficulty == "Intermediate"){
-//                            let updateData = ["Currency": value + 100]
-//                            
-//                            // Update the specific field in the user's document
-//                            userDocRef.updateData(updateData) { error in
-//                                if let error = error {
-//                                    print("Error updating document: \(error)")
-//                                } else {
-//                                    print("Document updated successfully")
-//                                }
-//                            }
-//                            
-//                        }else if(self.model.difficulty == "Advanced"){
-//                            let updateData = ["Currency": value + 150]
-//                            
-//                            // Update the specific field in the user's document
-//                            userDocRef.updateData(updateData) { error in
-//                                if let error = error {
-//                                    print("Error updating document: \(error)")
-//                                } else {
-//                                    print("Document updated successfully")
-//                                }
-//                            }
-//                        }
-                        
-                        
                     }else{
                         print("Document exists,")
                         
@@ -146,10 +110,6 @@ class CurrencyController : ObservableObject{
                 
 //                completion()
             }
-            
-            
-
-            
             
         } else {
             // Handle the case where the user is not authenticated
@@ -193,8 +153,12 @@ class CurrencyController : ObservableObject{
                             
                             self.buyItem(storeItem: item)
                             
+                            if (item == "TimeIncrease"){
+                                self.userDidPurchase = true
+                            } else if (item == "LevelBoost"){
+                                self.userDidPurchaseLevel = true
+                            }
                             
-                            self.userDidPurchase = true
                         }else{
                             //else - they cannot
                             //send an alert saying they are too broke
@@ -337,6 +301,36 @@ class CurrencyController : ObservableObject{
         }
         
         
+    }
+    
+    func userBuyLevel(){
+        guard let user = Auth.auth().currentUser else { return }
+        let userID = user.uid
+        let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+
+        userDocRef.getDocument { document, error in
+            if let document = document, document.exists,
+               let currentLevel = document["ExperienceLevel"] as? Int {
+
+                    let newLevel = currentLevel + 1
+
+                    // Update both XP and level in Firebase
+                    userDocRef.updateData([
+                        "ExperienceLevel": newLevel
+                    ]) { error in
+                        if let error = error {
+                            print("Error updating level: \(error)")
+                        } else {
+                            DispatchQueue.main.async {
+                                self.userLevel = newLevel
+                            }
+                        }
+                    }
+                
+            } else {
+                print("Document does not exist or is missing fields")
+            }
+        }
     }
     
     func updateItemUse(itemUsed: String){

@@ -195,7 +195,9 @@ struct Register: View {
                     "Achievement 5" : false
                  ],
                  "Items": [
-                    "TimeIncrease" : false
+                    "TimeIncrease" : false,
+                    "LevelBoost" : false,//dont really need this one as the level up happens right on the store page
+                    "WeeklyChallengeWager" : false
                  ],
                  "Username" : email.components(separatedBy: "@").first ?? "",
                     "IP": [userIP] // Store the user's IP address here

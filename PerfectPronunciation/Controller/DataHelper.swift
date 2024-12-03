@@ -213,6 +213,119 @@ class DataHelper: ObservableObject {
         }
     }
     
+//    func uploadUserLessonData(assessmentData: PronunciationAssessmentResult, userAudio: URL, voiceGalleryAudio: URL) {
+//        // Ensure the user is authenticated before proceeding
+//        guard let user = Auth.auth().currentUser else {
+//            print("User is not authenticated.")
+//            return
+//        }
+//
+//        // Get the authenticated user's unique ID
+//        let userID = user.uid
+//
+//        do {
+//            // Read the user audio file into memory as Data
+//            let userAudioData = try Data(contentsOf: userAudio)
+//            // Read the voice gallery audio file into memory as Data
+//            let voiceGalleryAudioData = try Data(contentsOf: voiceGalleryAudio)
+//
+//            // Debug: Ensure data is successfully loaded
+//            print("User audio data size: \(userAudioData.count) bytes")
+//            print("Voice gallery audio data size: \(voiceGalleryAudioData.count) bytes")
+//
+//            // Ensure user audio data is not empty
+//            guard !userAudioData.isEmpty else {
+//                print("Error: User audio data is empty.")
+//                return
+//            }
+//
+//            // Ensure voice gallery audio data is not empty
+//            guard !voiceGalleryAudioData.isEmpty else {
+//                print("Error: Voice gallery audio data is empty.")
+//                return
+//            }
+//
+//            // Firebase Storage reference
+//            let storage = Storage.storage()
+//            let storageRef = storage.reference() // Root reference for Firebase Storage
+//
+//            // Create unique storage paths for the audio files
+//            let userAudioRef = storageRef.child("userAudio/\(userID)/\(UUID().uuidString).wav") // Path for user audio
+//            let voiceGalleryAudioRef = storageRef.child("voiceGalleryAudio/\(userID)/\(UUID().uuidString).wav") // Path for voice gallery audio
+//
+//            // Debug: Log the storage paths
+//            print("User audio Firebase storage path: \(userAudioRef.fullPath)")
+//            print("Voice gallery audio Firebase storage path: \(voiceGalleryAudioRef.fullPath)")
+//
+//            // Metadata for the files being uploaded (content type as audio/wav)
+//            let metadata = StorageMetadata()
+//            metadata.contentType = "audio/wav"
+//
+//            // Upload the user audio data to Firebase Storage
+//            userAudioRef.putData(userAudioData, metadata: metadata) { metadata, error in
+//                if let error = error {
+//                    // Handle errors during the upload
+//                    print("Failed to upload user audio: \(error.localizedDescription)")
+//                    return
+//                }
+//
+//                print("User audio uploaded successfully.")
+//                // Get the download URL for the uploaded user audio
+//                userAudioRef.downloadURL { url, error in
+//                    if let error = error {
+//                        // Handle errors while retrieving the download URL
+//                        print("Failed to get user audio URL: \(error.localizedDescription)")
+//                        return
+//                    }
+//
+//                    guard let userAudioURL = url?.absoluteString else { return }
+//                    print("User audio URL: \(userAudioURL)")
+//
+//                    // Upload the voice gallery audio data to Firebase Storage
+//                    voiceGalleryAudioRef.putData(voiceGalleryAudioData, metadata: metadata) { metadata, error in
+//                        if let error = error {
+//                            // Handle errors during the upload
+//                            print("Failed to upload voice gallery audio: \(error.localizedDescription)")
+//                            return
+//                        }
+//
+//                        print("Voice gallery audio uploaded successfully.")
+//                        // Get the download URL for the uploaded voice gallery audio
+//                        voiceGalleryAudioRef.downloadURL { url, error in
+//                            if let error = error {
+//                                // Handle errors while retrieving the download URL
+//                                print("Failed to get voice gallery audio URL: \(error.localizedDescription)")
+//                                return
+//                            }
+//
+//                            guard let voiceGalleryAudioURL = url?.absoluteString else { return }
+//                            print("Voice gallery audio URL: \(voiceGalleryAudioURL)")
+//
+//                            // Prepare data to save in Firestore
+//                            var assessmentLessonData = assessmentData.toDictionary() ?? [:]
+//                            assessmentLessonData["userAudioURL"] = userAudioURL // Save user audio URL
+//                            assessmentLessonData["voiceGalleryAudioURL"] = voiceGalleryAudioURL // Save voice gallery audio URL
+//
+//                            // Save the data in Firestore under "UserData" collection
+//                            Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
+//                                .addDocument(data: assessmentLessonData) { error in
+//                                    if let error = error {
+//                                        // Handle errors while saving data to Firestore
+//                                        print("Error adding pronunciation test data: \(error.localizedDescription)")
+//                                    } else {
+//                                        print("Pronunciation test data and audio files successfully uploaded.")
+//                                    }
+//                                }
+//                        }
+//                    }
+//                }
+//            }
+//        } catch {
+//            // Handle errors while reading the files into memory
+//            print("Error reading file data: \(error.localizedDescription)")
+//        }
+//    }
+
     func uploadUserLessonData(assessmentData: PronunciationAssessmentResult, userAudio: URL, voiceGalleryAudio: URL) {
         // Ensure the user is authenticated before proceeding
         guard let user = Auth.auth().currentUser else {
@@ -278,8 +391,9 @@ class DataHelper: ObservableObject {
                         return
                     }
 
-                    guard let userAudioURL = url?.absoluteString else { return }
-                    print("User audio URL: \(userAudioURL)")
+                    // Instead of saving the absolute URL, save the file path to Firestore
+                    let userAudioPath = userAudioRef.fullPath // Save the path instead of the URL
+                    print("User audio file path: \(userAudioPath)")
 
                     // Upload the voice gallery audio data to Firebase Storage
                     voiceGalleryAudioRef.putData(voiceGalleryAudioData, metadata: metadata) { metadata, error in
@@ -298,13 +412,14 @@ class DataHelper: ObservableObject {
                                 return
                             }
 
-                            guard let voiceGalleryAudioURL = url?.absoluteString else { return }
-                            print("Voice gallery audio URL: \(voiceGalleryAudioURL)")
+                            // Instead of saving the absolute URL, save the file path to Firestore
+                            let voiceGalleryAudioPath = voiceGalleryAudioRef.fullPath // Save the path instead of the URL
+                            print("Voice gallery audio file path: \(voiceGalleryAudioPath)")
 
                             // Prepare data to save in Firestore
                             var assessmentLessonData = assessmentData.toDictionary() ?? [:]
-                            assessmentLessonData["userAudioURL"] = userAudioURL // Save user audio URL
-                            assessmentLessonData["voiceGalleryAudioURL"] = voiceGalleryAudioURL // Save voice gallery audio URL
+                            assessmentLessonData["userAudioPath"] = userAudioPath // Save user audio file path
+                            assessmentLessonData["voiceGalleryAudioPath"] = voiceGalleryAudioPath // Save voice gallery audio file path
 
                             // Save the data in Firestore under "UserData" collection
                             Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
@@ -325,10 +440,6 @@ class DataHelper: ObservableObject {
             print("Error reading file data: \(error.localizedDescription)")
         }
     }
-
-
-
-
 
     
     func getItemsForDayOfWeek(dayOfWeek: String, completion: @escaping ([DocumentSnapshot]?, Error?) -> Void) {

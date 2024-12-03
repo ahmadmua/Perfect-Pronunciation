@@ -148,6 +148,7 @@ class AudioPlayBackController: NSObject, ObservableObject, AVAudioPlayerDelegate
         if flag {
             isPlaying = false
             print("Audio playback finished successfully.")
+            self.fileURL = URL(string: "")
             playbackDelegate?.playbackDidFinishSuccessfully() // Notify the delegate
             NotificationCenter.default.post(name: .playbackFinished, object: nil) // Post notification
         } else {

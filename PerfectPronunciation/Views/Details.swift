@@ -301,6 +301,7 @@ struct ItemsListView: View {
     @State private var transcription: [String] = []
     @State private var errorTypeCountsList: [[String: Int]] = [] // List of errorTypeCount dictionaries
     @State private var wordErrorDataList: [[(word: String, errorType: String)]] = [] // List of error data for each assessment
+    @State private var userAudioPaths: [String] = []
 
     var body: some View {
         NavigationView {
@@ -315,9 +316,9 @@ struct ItemsListView: View {
                             pronScores: pronScores.indices.contains(index) ? pronScores[index] : 0.0,
                             display: display.indices.contains(index) ? display[index] : "",
                             transcription: transcription.indices.contains(index) ? transcription[index] : "",
+                            userAudioPath: userAudioPaths.indices.contains(index) ? userAudioPaths[index] : "",
                             errorTypeCounts: errorTypeCountsList.indices.contains(index) ? errorTypeCountsList[index] : [:],
                             wordErrorData: wordErrorDataList.indices.contains(index) ? wordErrorDataList[index] : []
-                            // Pass the specific error data for this assessment
                         )
                 ) {
                     Text(items[index])
@@ -362,14 +363,23 @@ struct ItemsListView: View {
                 self.confidence.removeAll()
                 self.pronScores.removeAll()
                 self.display.removeAll()
-                self.transcription.removeAll() // Clear transcription data
+                self.transcription.removeAll()
                 self.errorTypeCountsList.removeAll()
                 self.wordErrorDataList.removeAll()
+                self.userAudioPaths.removeAll()
 
                 // Loop through documents
                 for document in documents {
                     var errorTypeCount: [String: Int] = [:] // Dictionary to store counts of error types
                     var wordErrorData: [(word: String, errorType: String)] = [] // Temporary array for word errors
+                    
+                    if let userAudioDataPath = document.get("userAudioPath") as? String {
+                        // The Firestore field "userAudioPath" already contains the full path, no need to add "userAudio/\(userID)/"
+                        self.userAudioPaths.append(userAudioDataPath)
+                    } else {
+                        self.userAudioPaths.append("") // Fallback in case no audio path is available
+                    }
+     
 
                     // Fetch transcription
                     if let transcriptionText = document.get("transcription") as? [String: Any],

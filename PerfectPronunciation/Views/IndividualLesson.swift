@@ -5,12 +5,6 @@
 //  Created by Nichoalas Cammisuli on 2023-10-28.
 //
 
-//
-//  IndividualLesson.swift
-//  PerfectPronunciation
-//
-//  Created by Nichoalas Cammisuli on 2023-10-28.
-//
 
 import SwiftUI
 import Firebase
@@ -67,10 +61,18 @@ struct IndividualLesson: View {
                     }
                     Divider()
                     
-                    // Integrate AIPlaybackView component here
-                    PlaybackView(voiceRecorderController: voiceRecorderController)
-                        .padding(.top, 20) // Optional padding for spacing
-                        .padding(.bottom, 20)
+                    // Integrate PlaybackView component
+                    GridRow {
+                        if let aiAudioURL = voiceRecorderController.aiaudioFileURL {
+                            PlaybackView(voiceRecorderController: voiceRecorderController, fileURL: aiAudioURL)
+                                .padding(.top, 20) // Optional padding for spacing
+                                .padding(.bottom, 20)
+                        } else {
+                            Text("AI audio is not available yet. Please try again later.")
+                                .foregroundColor(.red)
+                                .padding()
+                        }
+                    }
                 }
                 
                 Spacer() // Second spacer
@@ -132,7 +134,7 @@ struct IndividualLesson: View {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 50, weight: .light))
                     }
-                    .disabled(canContinue)
+                    .disabled(!canContinue)
                     .navigationDestination(isPresented: $showNext) {
                         IndividualLesson(
                             lessonName: $lessonName,

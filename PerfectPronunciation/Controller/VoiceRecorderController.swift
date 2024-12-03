@@ -163,6 +163,14 @@ class VoiceRecorderController: NSObject, ObservableObject, PlaybackDelegate {
         } catch {
             print("Error during assessment: \(error.localizedDescription)")
         }
+        
+        self.dataHelper.fetchAndAddDayAndTimestampToAssessment { success in
+                                           if success {
+                                               //print("DayOfWeek and Timestamp were successfully added/updated.")
+                                           } else {
+                                               print("Failed to update DayOfWeek and Timestamp.")
+                                           }
+                                       }
     }
 
     func submitTextToSpeechAI(testText: String) async {

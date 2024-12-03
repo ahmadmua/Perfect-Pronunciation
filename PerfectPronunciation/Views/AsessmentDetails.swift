@@ -29,7 +29,7 @@ struct AssessmentView: View {
     @State var errorTypeCounts: [String: Int]
     @State var wordErrorData: [(word: String, errorType: String)]
     
-    let fields = ["Mispronunciations", "Omissions", "Insertions", "Unexpected_break", "Missing_break", "Monotone"]
+   @State var fields = ["Mispronunciations", "Omissions", "Insertions", "Unexpected_break", "Missing_break", "Monotone"]
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -332,6 +332,7 @@ struct AssessmentView: View {
         if mispronunciations == 0 && omissions == 0 && insertions == 0 && unexpectedBreak == 0 && missingBreak == 0 && monotone == 0 {
             return "No errors detected in the speech Assessment"
         }
+        
         
         do {
             let model = try PronunciationImprovementModel(configuration: .init())

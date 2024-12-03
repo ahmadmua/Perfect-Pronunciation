@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseStorage
 
 struct AssessmentView: View {
     @State var accuracyScore: Double
@@ -15,41 +16,116 @@ struct AssessmentView: View {
     @State var pronScores: Double
     @State var display: String
     @State var transcription: String
-
+    @State var userAudioPath: String
+    @State var aiAudioPath: String
+    
+    @ObservedObject var voiceRecorderController = VoiceRecorderController.shared
+    @State private var aiAudioURL: URL?
+    @State private var userAudioURL: URL?
+    @State private var playbackState: PlaybackView.PlaybackState = .ready
+    
     @State private var progress: Double = 16.0
     @State private var predictionResult: String? = nil
     @State var errorTypeCounts: [String: Int]
     @State var wordErrorData: [(word: String, errorType: String)]
-
-    let fields = ["Mispronunciations", "Omissions", "Insertions", "Unexpected_break", "Missing_break", "Monotone"]
-
+    
+   @State var fields = ["Mispronunciations", "Omissions", "Insertions", "Unexpected_break", "Missing_break", "Monotone"]
+    
     var body: some View {
         VStack(alignment: .leading) {
             // Sentence Section - Full Width
             VStack(alignment: .leading) {
-                VStack(alignment: .leading) {
-                    
-                    Text(buildAttributedText(display: display, wordErrorData: wordErrorData))
-                            .lineLimit(nil)
-                            .multilineTextAlignment(.leading)
-                            .padding()
-                            .background(Color(UIColor.systemGray6))
-                            .cornerRadius(10)
-                            .padding(.horizontal)
-
-                        Text(buildAttributedText(display: transcription, wordErrorData: wordErrorData))
-                            .lineLimit(nil)
-                            .multilineTextAlignment(.leading)
-                            .padding()
-                            .background(Color(UIColor.systemGray6))
-                            .cornerRadius(10)
-                            .padding(.horizontal)
+                ScrollView {
+                    VStack(alignment: .leading) {
+                        
+                        // First Text Field with Playback Control
+                            Spacer() // Push the PlaybackView to the right
+                            
+                        HStack(alignment: .top) {
+                            
+                            PlaybackView(voiceRecorderController: VoiceRecorderController.shared, fileURL: aiAudioURL ?? URL(string: "https://example.com/placeholder.wav")!)
+                                .onAppear {
+                                    // Fetch audio file from Firebase Storage using the provided path
+                                    fetchAudioFile(from: aiAudioPath) { url in
+                                        if let audioURL = url {
+                                            print("AI Audio File URL: \(audioURL)")
+                                            DispatchQueue.main.async {
+                                                self.aiAudioURL = audioURL
+                                            }
+                                            VoiceRecorderController.shared.aiaudioFileURL = audioURL
+                                        } else {
+                                            print("Failed to fetch audio file URL")
+                                        }
+                                    }
+                                }
+                        
+                            
+                            
+                            VStack {
+                                Text("Display Text")
+                                    .bold()
+                                    .underline()
+                                
+                                Text(buildAttributedText(display: display, wordErrorData: wordErrorData))
+                                    .lineLimit(nil)
+                                    .multilineTextAlignment(.leading)
+                                    .padding()
+                                    .background(Color(UIColor.systemGray6))
+                                    .cornerRadius(10)
+                                    .padding(.horizontal)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            
+                            
+                        }
+                        .padding(.top, 20) // Optional padding
+                        
+                        Divider()
+                        
+                        HStack(alignment: .top) {
+                            
+                            PlaybackView(voiceRecorderController: VoiceRecorderController.shared, fileURL: userAudioURL ?? URL(string: "https://example.com/placeholder.wav")!)
+                                .onAppear {
+                                    // Fetch audio file from Firebase Storage using the provided path
+                                    fetchAudioFile(from: userAudioPath) { url in
+                                        if let audioURL = url {
+                                            print("User Audio File URL: \(audioURL)")
+                                            DispatchQueue.main.async {
+                                                self.userAudioURL = audioURL
+                                            }
+                                            VoiceRecorderController.shared.userAudioFileURL = audioURL
+                                        } else {
+                                            print("Failed to fetch audio file URL")
+                                        }
+                                    }
+                                }
+                            
+                            
+                            VStack {
+                                Text("Transcription Text")
+                                    .bold()
+                                    .underline()
+                                
+                                Text(buildTranscriptionText(transcription: transcription, wordErrorData: wordErrorData))
+                                    .lineLimit(nil)
+                                    .multilineTextAlignment(.leading)
+                                    .padding()
+                                    .background(Color(UIColor.systemGray6))
+                                    .cornerRadius(10)
+                                    .padding(.horizontal)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            
+                            Spacer()
+                            
+                        }
+                        
+                        .padding(.top, 20) // Optional padding
+                    }
                 }
-
             }
             .frame(maxWidth: .infinity)
-
-
+            
             // Pronunciation Score and Errors Section
             HStack(alignment: .top) {
                 // Pronunciation Score
@@ -60,9 +136,9 @@ struct AssessmentView: View {
                         .padding(.top, 8)
                 }
                 .padding(.leading)
-
+                
                 Spacer()
-
+                
                 // Error Labels on the Right
                 VStack(alignment: .leading, spacing: 15) {
                     ErrorLabelView(errorType: "Mispronunciations", color: .yellow,  count: errorTypeCounts["Mispronunciation"] ?? 0)
@@ -74,7 +150,7 @@ struct AssessmentView: View {
                 }
                 .padding(.leading, 12)
             }
-
+            
             // Score Breakdown
             VStack(alignment: .leading, spacing: 10) {
                 Text("Score breakdown")
@@ -85,51 +161,48 @@ struct AssessmentView: View {
                 ScoreBar(label: "Confidence", score: Int(confidence * 100))
             }
             .padding(.horizontal)
-
+            
             // Display the prediction result below the score breakdown
             if let result = predictionResult {
                 Text(result)
                     .font(.title2) // Increased font size
                     .fontWeight(.semibold) // Make the text semi-bold for emphasis
                     .multilineTextAlignment(.center) // Center align text
-                    .padding() // Add some padding around the text
                     .frame(maxWidth: .infinity) // Ensure it takes full width
                     .foregroundColor(.primary) // Use primary color for better visibility
                     .padding(.horizontal) // Add horizontal padding for spacing
             }
-
+            
             Spacer()
         }
         .navigationTitle("Assessment Result")
         .onAppear {
-            predictionResult = predictPronunciationImprovement(
-                mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0),
-                omissions: Double(errorTypeCounts["Omission"] ?? 0),
-                insertions: Double(errorTypeCounts["Insertion"] ?? 0),
-                unexpectedBreak: Double(errorTypeCounts["UnexpectedBreak"] ?? 0),
-                missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0),
-                monotone: Double(errorTypeCounts["Monotone"] ?? 0)
-            )
-
-            let displayWords = Set(display.lowercased().split(separator: " ").map { String($0) })
-            let transcriptionWords = Set(transcription.lowercased().split(separator: " ").map { String($0) })
-
+            // Using regular expression to match whole words
+            let displayWords = display.lowercased().split(separator: " ").map { String($0) }
+            let transcriptionWords = transcription.lowercased().split(separator: " ").map { String($0) }
+            
             // Find omissions (words in display but not in transcription)
-            let omissions = displayWords.subtracting(transcriptionWords)
+            let omissions = Set(displayWords).subtracting(Set(transcriptionWords))
             for word in omissions {
                 wordErrorData.append((word: word, errorType: "Omission"))
             }
-
+            
             // Find insertions (words in transcription but not in display)
-            let insertions = transcriptionWords.subtracting(displayWords)
+            let insertions = Set(transcriptionWords).subtracting(Set(displayWords))
             for word in insertions {
                 wordErrorData.append((word: word, errorType: "Insertion"))
             }
-
+            
             // Update counts for omissions and insertions
             errorTypeCounts["Omission"] = omissions.count
             errorTypeCounts["Insertion"] = insertions.count
-
+            
+            // Update other error counts
+            errorTypeCounts["Mispronunciation"] = wordErrorData.filter { $0.errorType == "Mispronunciation" }.count
+            errorTypeCounts["UnexpectedBreak"] = wordErrorData.filter { $0.errorType == "UnexpectedBreak" }.count
+            errorTypeCounts["MissingBreak"] = wordErrorData.filter { $0.errorType == "MissingBreak" }.count
+            errorTypeCounts["Monotone"] = wordErrorData.filter { $0.errorType == "Monotone" }.count
+            
             // Update prediction result
             predictionResult = predictPronunciationImprovement(
                 mispronunciations: Double(errorTypeCounts["Mispronunciation"] ?? 0),
@@ -139,80 +212,101 @@ struct AssessmentView: View {
                 missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0),
                 monotone: Double(errorTypeCounts["Monotone"] ?? 0)
             )
+          
         }
-
-        .onDisappear(){
-            
+        
+    }
+    
+    // Fetch audio from Firebase Storage using the path
+    private func fetchAudioFile(from path: String, completion: @escaping (URL?) -> Void) {
+        let storage = Storage.storage()
+        let storageRef = storage.reference().child(path)
+        
+        // Temporary directory for the downloaded audio
+        let localURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(UUID().uuidString + ".wav")
+        
+        // Start downloading the file
+        storageRef.write(toFile: localURL) { url, error in
+            if let error = error {
+                print("Error downloading audio file: \(error.localizedDescription)")
+                completion(nil)
+            } else {
+                print("Audio file successfully downloaded to: \(localURL)")
+                completion(localURL)  // Provide the local URL where the file is saved
+            }
         }
     }
 
-    // Remaining methods stay the same
 
+
+
+    
+    
+    func buildTranscriptionText(transcription: String, wordErrorData: [(word: String, errorType: String)]) -> AttributedString {
+        var attributedText = AttributedString(transcription)
+        let words = transcription.split(separator: " ")
+        
+        for (index, word) in words.enumerated() {
+            let wordString = String(word)
+            let lowercasedWord = wordString.lowercased()
+            
+            if let range = attributedText.range(of: wordString) {
+                let errorType = wordErrorData.first { $0.word.lowercased() == lowercasedWord }?.errorType
+                
+                if errorType == "Insertion" {
+                    attributedText[range].backgroundColor = .red
+                    attributedText[range].foregroundColor = .white
+                }
+            }
+        }
+        
+        return attributedText
+    }
+    
     
     // Function to build the highlighted text with underlining for mispronunciations
     func buildAttributedText(display: String, wordErrorData: [(word: String, errorType: String)]) -> AttributedString {
         var attributedText = AttributedString(display)
-
-        // Store ranges of omission words for overlap detection
-        var omissionRanges: [Range<String.Index>] = []
-
-        // First, apply all omission styles and track their ranges
+        let lowercasedDisplay = display.lowercased()
+        
+        // First pass: Apply styles for omissions
         for wordError in wordErrorData where wordError.errorType == "Omission" {
             let word = wordError.word.lowercased()
-            let lowercasedDisplay = display.lowercased()
-            var startIndex = lowercasedDisplay.startIndex
-
-            while let range = lowercasedDisplay.range(of: word, options: .caseInsensitive, range: startIndex..<lowercasedDisplay.endIndex) {
-                if let attributedRange = Range(range, in: attributedText) {
-                    // Apply omission style
+            let regex = try! NSRegularExpression(pattern: "\\b\(NSRegularExpression.escapedPattern(for: word))\\b", options: .caseInsensitive)
+            let matches = regex.matches(in: lowercasedDisplay, options: [], range: NSRange(lowercasedDisplay.startIndex..<lowercasedDisplay.endIndex, in: lowercasedDisplay))
+            
+            for match in matches {
+                if let range = Range(match.range, in: display),
+                   let attributedRange = Range(range, in: attributedText) {
                     attributedText[attributedRange].backgroundColor = .gray
                     attributedText[attributedRange].foregroundColor = .white
-                    omissionRanges.append(range) // Track omission ranges
                 }
-                startIndex = range.upperBound
             }
         }
-
-        // Now, apply styles for mispronunciations
-        for wordError in wordErrorData where wordError.errorType == "Mispronunciation" {
+        
+        // Second pass: Apply styles for other error types, including mispronunciations
+        for wordError in wordErrorData where wordError.errorType != "Omission" {
             let word = wordError.word.lowercased()
-            let lowercasedDisplay = display.lowercased()
-            var startIndex = lowercasedDisplay.startIndex
-
-            while let range = lowercasedDisplay.range(of: word, options: .caseInsensitive, range: startIndex..<lowercasedDisplay.endIndex) {
-                if let attributedRange = Range(range, in: attributedText) {
-                    // Check for overlap with any omission ranges
-                    let overlapsOmission = omissionRanges.contains { omissionRange in
-                        range.overlaps(omissionRange)
-                    }
-
-                    if overlapsOmission {
-                        // Apply underline style for mispronunciations if overlapping
-                        attributedText[attributedRange].underlineStyle = .single
-                        attributedText[attributedRange].underlineColor = .yellow
-                    } else {
-                        // Apply default mispronunciation style (no underline)
-                        attributedText[attributedRange].foregroundColor = .yellow
-                    }
-                }
-                startIndex = range.upperBound
-            }
-        }
-
-        // Handle other error types with default behavior
-        for wordError in wordErrorData where !["Omission", "Mispronunciation"].contains(wordError.errorType) {
-            let word = wordError.word.lowercased()
-            let lowercasedDisplay = display.lowercased()
-            var startIndex = lowercasedDisplay.startIndex
-
-            while let range = lowercasedDisplay.range(of: word, options: .caseInsensitive, range: startIndex..<lowercasedDisplay.endIndex) {
-                if let attributedRange = Range(range, in: attributedText) {
+            let regex = try! NSRegularExpression(pattern: "\\b\(NSRegularExpression.escapedPattern(for: word))\\b", options: .caseInsensitive)
+            let matches = regex.matches(in: lowercasedDisplay, options: [], range: NSRange(lowercasedDisplay.startIndex..<lowercasedDisplay.endIndex, in: lowercasedDisplay))
+            
+            for match in matches {
+                if let range = Range(match.range, in: display),
+                   let attributedRange = Range(range, in: attributedText) {
                     switch wordError.errorType {
+                    case "Mispronunciation":
+                        // If the word is already highlighted as an omission, change text color to yellow
+                        if attributedText[attributedRange].backgroundColor == .gray {
+                            attributedText[attributedRange].foregroundColor = .yellow
+                        } else {
+                            attributedText[attributedRange].foregroundColor = .yellow
+                        }
                     case "Insertion":
-                        attributedText[attributedRange].foregroundColor = .red
-                    case "Unexpected_break":
+                        // Insertions are not highlighted in the display text
+                        break
+                    case "UnexpectedBreak":
                         attributedText[attributedRange].foregroundColor = .pink
-                    case "Missing_break":
+                    case "MissingBreak":
                         attributedText[attributedRange].foregroundColor = .blue
                     case "Monotone":
                         attributedText[attributedRange].foregroundColor = .purple
@@ -220,26 +314,26 @@ struct AssessmentView: View {
                         break
                     }
                 }
-                startIndex = range.upperBound
             }
         }
-
+        
         return attributedText
     }
-
-
-
-
-
-
-
+    
+    
+    
+    
+    
+    
+    
     // Function to predict pronunciation improvement
     func predictPronunciationImprovement(mispronunciations: Double, omissions: Double, insertions: Double, unexpectedBreak: Double, missingBreak: Double, monotone: Double) -> String? {
         // Check if all input values are 0
         if mispronunciations == 0 && omissions == 0 && insertions == 0 && unexpectedBreak == 0 && missingBreak == 0 && monotone == 0 {
             return "No errors detected in the speech Assessment"
         }
-
+        
+        
         do {
             let model = try PronunciationImprovementModel(configuration: .init())
             let input = PronunciationImprovementModelInput(Mispronunciations: mispronunciations,
@@ -248,29 +342,29 @@ struct AssessmentView: View {
                                                            Unexpected_break: unexpectedBreak,
                                                            Missing_break: missingBreak,
                                                            Monotone: monotone)
-
+            
             let output = try model.prediction(input: input)
             let predictedIndex = Int(output.classLabel)
-
+            
             if predictedIndex >= 0 && predictedIndex < fields.count {
                 return "Field needing improvement: \(fields[predictedIndex])"
             } else {
                 return "Invalid prediction index"
             }
-
+            
         } catch {
             print("Error predicting pronunciation improvement: \(error)")
             return nil
         }
     }
-
+    
 }
 
 // Additional Views
 
 struct CircularScoreView: View {
     var score: Double
-
+    
     var body: some View {
         ZStack {
             // Background Circle
@@ -278,14 +372,14 @@ struct CircularScoreView: View {
                 .stroke(lineWidth: 12)
                 .opacity(0.3)
                 .foregroundColor(Color.green)
-
+            
             // Circular progress based on score
             Circle()
                 .stroke(style: StrokeStyle(lineWidth: 12, lineCap: .round, lineJoin: .round))
                 .foregroundColor(Color.green)
                 .rotationEffect(Angle(degrees: 270.0))
                 .animation(.linear, value: score)
-
+            
             // Display the score rounded to 2 decimal places in the center
             Text(String(format: "%.1f", score))
                 .font(.largeTitle)
@@ -297,7 +391,7 @@ struct CircularScoreView: View {
     }
 }
 
-    
+
 
 
 
@@ -306,7 +400,7 @@ struct CircularScoreView: View {
 struct ScoreBar: View {
     var label: String
     var score: Int
-
+    
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -326,17 +420,17 @@ struct ErrorLabelView: View {
     var errorType: String
     var color: Color
     var count: Int
-
+    
     var body: some View {
         HStack {
             Circle()
                 .fill(color)
                 .frame(width: 15, height: 15)
-
+            
             Text("\(errorType) (\(count))")
                 .font(.subheadline)
                 .foregroundColor(.primary)
-
+            
             Spacer()
         }
     }
@@ -344,6 +438,6 @@ struct ErrorLabelView: View {
 
 //struct AssessmentView_Previews: PreviewProvider {
 //    static var previews: some View {
-//        AssessmentView()
+//        AssessmentView(accuracyScore: 0, completenessScore: 0, fluencyScore: 0, confidence: 0, pronScores: 0, display: "HELLO WORLD", transcription: "HELLO WORLD", errorTypeCounts: ["HELLO": 1], wordErrorData: [("HELLO", "CAT")])
 //    }
 //}

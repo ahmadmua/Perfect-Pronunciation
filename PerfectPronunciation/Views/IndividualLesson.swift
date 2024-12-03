@@ -5,6 +5,7 @@
 //  Created by Nichoalas Cammisuli on 2023-10-28.
 //
 
+
 import SwiftUI
 import Firebase
 import FirebaseAuth
@@ -26,11 +27,11 @@ struct IndividualLesson: View {
     @State private var showLesson = false
     @State private var canContinue: Bool = false
     
-    //pop up for recorder view
-    @State  private var isPopupPresented = false
-    //lesson name
-    @Binding var lessonName : String
-    //counter
+    // Pop-up for recorder view
+    @State private var isPopupPresented = false
+    // Lesson name
+    @Binding var lessonName: String
+    // Counter
     @AppStorage("counter") var counter: Int = 0
     
     // Lesson type
@@ -45,13 +46,8 @@ struct IndividualLesson: View {
     
     private let openAIService = OpenAIService()
     
-    
-    
-    
-    
     var body: some View {
-        
-        ZStack{
+        ZStack {
             Color("Background")
             Grid{
                 
@@ -91,22 +87,32 @@ struct IndividualLesson: View {
                     .padding()
                     Divider()
                     
-                    
-                    
-                }//vstack
+                    // Integrate PlaybackView component
+                    GridRow {
+                        if let aiAudioURL = voiceRecorderController.aiaudioFileURL {
+                            PlaybackView(voiceRecorderController: voiceRecorderController, fileURL: aiAudioURL)
+                                .padding(.top, 20) // Optional padding for spacing
+                                .padding(.bottom, 20)
+                        } else {
+                            Text("AI audio is not available yet. Please try again later.")
+                                .foregroundColor(.red)
+                                .padding()
+                        }
+                    }
+                }
                 
-                Spacer()
+                Spacer() // Second spacer
                 
                 GridRow {
                     Button(action: {
-                        //nav to the next word
+                        // Record button action
                         print("record btn press")
-                        
+                        voiceRecorderController.stopAudio()
+                        voiceRecorderController.STTresult = ""
                         self.showRecord.toggle()
                         self.isPopupPresented.toggle()
                         self.canContinue = false
-                        
-                    }){
+                    }) {
                         Image(systemName: "record.circle.fill")
                             .font(.system(size: 50, weight: .light))
                     }
@@ -122,13 +128,11 @@ struct IndividualLesson: View {
                     }
                     
                     Button(action: {
-                        //nav to the nexet question
+                        // Continue button action
                         print("Continue btn press")
                         
-                        //increment counter to track what question the user is on
-                        counter+=1
-                        
-                        
+                        // Increment counter to track the question number
+                        counter += 1
                         
                         //if counter is greater than number of questions
                         if counter >= 5{//let questionCount = 0
@@ -147,32 +151,21 @@ struct IndividualLesson: View {
                                 currModel.updateUserCurrency(difficulty: model.difficulty!)
                                 xpModel.updateUserExperience(difficulty: model.difficulty!)
                             }
-                            
                             self.showLesson.toggle()
                         } else {
-                            //else counter is not more than the number of questions, continue to the next question
                             self.showNext.toggle()
                             if counter < responseArray.count {
                                 responseText = responseArray[responseArray.count - 1 - counter]
                                 print("Next question: \(responseText)")
                             } else {
-                                print("Error: Counter exceeds the bounds of responseArray. Counter: \(counter), Array Count: \(responseArray.count)")
-                            }
-                            if counter < responseArray.count {
-                                responseText = responseArray[responseArray.count - 1 - counter]
-                                print("Next question: \(responseText)")
-                            } else {
-                                print("Error: Counter exceeds the bounds of responseArray. Counter: \(counter), Array Count: \(responseArray.count)")
+                                print("Error: Counter exceeds bounds of responseArray.")
                             }
                         }
-                        
-                        
-                    }){
+                    }) {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 50, weight: .light))
-                    }//btn
-                    .disabled(canContinue)
-                    
+                    }
+                    //.disabled(!canContinue)
                     .navigationDestination(isPresented: $showNext) {
                         IndividualLesson(
                             lessonName: $lessonName,
@@ -180,14 +173,14 @@ struct IndividualLesson: View {
                             responseArray: $responseArray
                         ).navigationBarBackButtonHidden(true)
                     }
-                    .navigationDestination(isPresented: $showLesson){
+                    .navigationDestination(isPresented: $showLesson) {
                         ExperienceBarPage(xpController: xpModel)
                             .navigationBarBackButtonHidden(true)
                     }
                     .foregroundStyle(Color.green)
                     .buttonStyle(.borderless)
-                    .onAppear{
-                        //set so that users can't continue to the next question until they record
+                    .onAppear {
+                        // Set up the view when it appears
                         self.canContinue = true
                         
 //                        print("Counter: \(counter)")
@@ -198,15 +191,10 @@ struct IndividualLesson: View {
                             responseText = responseArray[4-counter]
                             
                         }
-                        
                         openAIService.fetchAPIKey()
-                        
-                        //find the difficulty the user has set
-                        model.findUserDifficulty{
-                            print("USER DIFICULTY!! : \(model.difficulty!)")
+                        model.findUserDifficulty {
+                            print("User difficulty: \(model.difficulty ?? "Unknown")")
                             UserDefaults.standard.synchronize()
-                            
-                            
                         }
                         
                         
@@ -214,18 +202,14 @@ struct IndividualLesson: View {
                         
                         Task {
                             await voiceRecorderController.submitTextToSpeechAI(testText: responseText)
-                            voiceRecorderController.playAudio(fileURL: self.voiceRecorderController.aiaudioFileURL) // Play AI audio for the first question
                         }
                     }
                     .onChange(of: responseText) { newValue in
                         Task {
                             await voiceRecorderController.submitTextToSpeechAI(testText: newValue)
-                            voiceRecorderController.playAudio(fileURL: voiceRecorderController.aiaudioFileURL) // Play AI audio for the updated question
                         }
                     }
-                    
                 }
-                
             }
             
         }//zstack

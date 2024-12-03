@@ -17,6 +17,7 @@ struct AssessmentView: View {
     @State var display: String
     @State var transcription: String
     @State var userAudioPath: String
+    @State var aiAudioPath: String
     
     @ObservedObject var voiceRecorderController = VoiceRecorderController.shared
     @State private var aiAudioURL: URL?
@@ -38,34 +39,50 @@ struct AssessmentView: View {
                     VStack(alignment: .leading) {
                         
                         // First Text Field with Playback Control
-                        HStack(alignment: .top) {
-                            Text(buildAttributedText(display: display, wordErrorData: wordErrorData))
-                                .lineLimit(nil)
-                                .multilineTextAlignment(.leading)
-                                .padding()
-                                .background(Color(UIColor.systemGray6))
-                                .cornerRadius(10)
-                                .padding(.horizontal)
-                            
                             Spacer() // Push the PlaybackView to the right
                             
-                            if let aiAudioURL = voiceRecorderController.aiaudioFileURL {
-                                PlaybackView(voiceRecorderController: voiceRecorderController, fileURL: aiAudioURL)
+                        HStack(alignment: .top) {
+                            
+                            PlaybackView(voiceRecorderController: VoiceRecorderController.shared, fileURL: aiAudioURL ?? URL(string: "https://example.com/placeholder.wav")!)
+                                .onAppear {
+                                    // Fetch audio file from Firebase Storage using the provided path
+                                    fetchAudioFile(from: aiAudioPath) { url in
+                                        if let audioURL = url {
+                                            print("AI Audio File URL: \(audioURL)")
+                                            DispatchQueue.main.async {
+                                                self.aiAudioURL = audioURL
+                                            }
+                                            VoiceRecorderController.shared.aiaudioFileURL = audioURL
+                                        } else {
+                                            print("Failed to fetch audio file URL")
+                                        }
+                                    }
+                                }
+                        
+                            
+                            
+                            VStack {
+                                Text("Display Text")
+                                    .bold()
+                                    .underline()
+                                
+                                Text(buildAttributedText(display: display, wordErrorData: wordErrorData))
+                                    .lineLimit(nil)
+                                    .multilineTextAlignment(.leading)
+                                    .padding()
+                                    .background(Color(UIColor.systemGray6))
+                                    .cornerRadius(10)
+                                    .padding(.horizontal)
                             }
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            
+                            
                         }
                         .padding(.top, 20) // Optional padding
                         
-                        // Second Text Field with Playback Control
+                        Divider()
+                        
                         HStack(alignment: .top) {
-                            Text(buildTranscriptionText(transcription: transcription, wordErrorData: wordErrorData))
-                                .lineLimit(nil)
-                                .multilineTextAlignment(.leading)
-                                .padding()
-                                .background(Color(UIColor.systemGray6))
-                                .cornerRadius(10)
-                                .padding(.horizontal)
-                            
-                            Spacer() // Push the PlaybackView to the right
                             
                             PlaybackView(voiceRecorderController: VoiceRecorderController.shared, fileURL: userAudioURL ?? URL(string: "https://example.com/placeholder.wav")!)
                                 .onAppear {
@@ -82,7 +99,27 @@ struct AssessmentView: View {
                                         }
                                     }
                                 }
+                            
+                            
+                            VStack {
+                                Text("Transcription Text")
+                                    .bold()
+                                    .underline()
+                                
+                                Text(buildTranscriptionText(transcription: transcription, wordErrorData: wordErrorData))
+                                    .lineLimit(nil)
+                                    .multilineTextAlignment(.leading)
+                                    .padding()
+                                    .background(Color(UIColor.systemGray6))
+                                    .cornerRadius(10)
+                                    .padding(.horizontal)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            
+                            Spacer()
+                            
                         }
+                        
                         .padding(.top, 20) // Optional padding
                     }
                 }
@@ -131,7 +168,6 @@ struct AssessmentView: View {
                     .font(.title2) // Increased font size
                     .fontWeight(.semibold) // Make the text semi-bold for emphasis
                     .multilineTextAlignment(.center) // Center align text
-                    .padding() // Add some padding around the text
                     .frame(maxWidth: .infinity) // Ensure it takes full width
                     .foregroundColor(.primary) // Use primary color for better visibility
                     .padding(.horizontal) // Add horizontal padding for spacing
@@ -176,18 +212,9 @@ struct AssessmentView: View {
                 missingBreak: Double(errorTypeCounts["MissingBreak"] ?? 0),
                 monotone: Double(errorTypeCounts["Monotone"] ?? 0)
             )
-            
-            Task {
-                await voiceRecorderController.submitTextToSpeechAI(testText: display)
-            }
-            
-            print("THIS IS \(userAudioPath)")
+          
         }
-        .onChange(of: display) { newValue in
-            Task {
-                await voiceRecorderController.submitTextToSpeechAI(testText: newValue)
-            }
-        }
+        
     }
     
     // Fetch audio from Firebase Storage using the path

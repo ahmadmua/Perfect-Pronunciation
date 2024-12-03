@@ -302,6 +302,7 @@ struct ItemsListView: View {
     @State private var errorTypeCountsList: [[String: Int]] = [] // List of errorTypeCount dictionaries
     @State private var wordErrorDataList: [[(word: String, errorType: String)]] = [] // List of error data for each assessment
     @State private var userAudioPaths: [String] = []
+    @State private var aiAudioPaths: [String] = []
 
     var body: some View {
         NavigationView {
@@ -317,6 +318,7 @@ struct ItemsListView: View {
                             display: display.indices.contains(index) ? display[index] : "",
                             transcription: transcription.indices.contains(index) ? transcription[index] : "",
                             userAudioPath: userAudioPaths.indices.contains(index) ? userAudioPaths[index] : "",
+                            aiAudioPath: aiAudioPaths.indices.contains(index) ? aiAudioPaths[index] : "",
                             errorTypeCounts: errorTypeCountsList.indices.contains(index) ? errorTypeCountsList[index] : [:],
                             wordErrorData: wordErrorDataList.indices.contains(index) ? wordErrorDataList[index] : []
                         )
@@ -378,6 +380,13 @@ struct ItemsListView: View {
                         self.userAudioPaths.append(userAudioDataPath)
                     } else {
                         self.userAudioPaths.append("") // Fallback in case no audio path is available
+                    }
+                    
+                    if let voiceGalleryAudioDataPath = document.get("voiceGalleryAudioPath") as? String {
+                       
+                        self.aiAudioPaths.append(voiceGalleryAudioDataPath)
+                    } else {
+                        self.aiAudioPaths.append("") // Fallback in case no audio path is available
                     }
      
 

@@ -160,17 +160,11 @@ class VoiceRecorderController: NSObject, ObservableObject, PlaybackDelegate {
 
             // Upload user and AI audio files to Firebase
             dataHelper.uploadUserLessonData(assessmentData: resultJson, userAudio: userAudio, voiceGalleryAudio: aiAudio)
+   
         } catch {
             print("Error during assessment: \(error.localizedDescription)")
         }
         
-        self.dataHelper.fetchAndAddDayAndTimestampToAssessment { success in
-                                           if success {
-                                               //print("DayOfWeek and Timestamp were successfully added/updated.")
-                                           } else {
-                                               print("Failed to update DayOfWeek and Timestamp.")
-                                           }
-                                       }
     }
 
     func submitTextToSpeechAI(testText: String) async {

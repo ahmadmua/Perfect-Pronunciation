@@ -301,9 +301,9 @@ struct Homepage: View {
 
     
 }
-
-struct Homepage_Previews: PreviewProvider {
-    static var previews: some View {
-        Homepage()
-    }
-}
+//
+//struct Homepage_Previews: PreviewProvider {
+//    static var previews: some View {
+//        Homepage()
+//    }
+//}

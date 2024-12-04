@@ -10,12 +10,12 @@ import SwiftUI
 struct WeeklyLesson: View {
     //models
     @ObservedObject var audioPlayer: AudioPlayBackController
-    @ObservedObject var audioAnalysisData : AudioAPIController
+//    @ObservedObject var audioAnalysisData : AudioAPIController
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
     @ObservedObject var voiceRecorderController  =  VoiceRecorderController.shared
     @ObservedObject var model = LessonController()
-    private let openAIService = OpenAIService()
+//    private let openAIService = OpenAIService()
     
     //toast
     @State private var showToast = false // State for showing the toast
@@ -69,13 +69,6 @@ struct WeeklyLesson: View {
                         
                         Task {
                             await voiceRecorderController.submitTestAudio(testText: singleString, lessonType: lessonType)
-                        }
-
-
-                        
-                        //give currency
-                        model.findUserDifficulty {
-                            currModel.updateUserCurrency(difficulty: model.difficulty!)
                         }
                         
                         //return to the main screen when timer is done
@@ -229,7 +222,10 @@ struct WeeklyLesson: View {
         .alert("+Currency \n\n You completed the weekly game! Please come back or hit the refresh button shortly to receive your results on the leaderboard!", isPresented: $showingResultAlert) {
             
             Button("OK", role: .cancel) {
-                
+                //give currency
+                model.findUserDifficulty {
+                    currModel.updateUserCurrency(difficulty: model.difficulty!)
+                }
             }
             
         }//alert

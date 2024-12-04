@@ -26,7 +26,7 @@ class OpenAIService {
 
     init() {
         self.remoteConfig = RemoteConfig.remoteConfig()
-        // self.fetchAPIKey()
+         self.fetchAPIKey()
     }
 
     func fetchAPIKey() {
@@ -41,7 +41,7 @@ class OpenAIService {
             }
             
             self?.apiKey = self?.remoteConfig["open_api_key"].stringValue ?? "No API Key Found"
-            print("Fetched API Key: \(self?.apiKey ?? "No API Key")")
+            print("Fetched API Key: \(self?.apiKey ?? "No API Key OPEN AI")")
         }
     }
 

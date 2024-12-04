@@ -48,7 +48,7 @@ struct WeeklyGamePage: View {
                     //TEST
                     WeeklyLesson(
                         audioPlayer: AudioPlayBackController(),
-                        audioAnalysisData: AudioAPIController(),
+//                        audioAnalysisData: AudioAPIController(),
                         voiceRecorderController: VoiceRecorderController.shared
                     )
                     .navigationBarBackButtonHidden(true)

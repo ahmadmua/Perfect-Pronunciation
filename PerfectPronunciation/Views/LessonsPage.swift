@@ -372,7 +372,7 @@ struct LessonsPage: View {
     }//zstack
         .background(Color("Background"))
         .onAppear(){
-            openAIService.fetchAPIKey()
+//            openAIService.fetchAPIKey()
             
             model.findUserDifficulty{
                 print("USER DIFICULTY!! : \(model.difficulty!)")

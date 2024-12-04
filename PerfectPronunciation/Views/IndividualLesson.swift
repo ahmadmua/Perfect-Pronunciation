@@ -44,7 +44,7 @@ struct IndividualLesson: View {
     // Track whether the first question is loaded
     @State private var isFirstQuestionLoaded = false
     
-    private let openAIService = OpenAIService()
+//    private let openAIService = OpenAIService()
     
     var body: some View {
         ZStack {
@@ -191,7 +191,7 @@ struct IndividualLesson: View {
                             responseText = responseArray[4-counter]
                             
                         }
-                        openAIService.fetchAPIKey()
+//                        openAIService.fetchAPIKey()
                         model.findUserDifficulty {
                             print("User difficulty: \(model.difficulty ?? "Unknown")")
                             UserDefaults.standard.synchronize()

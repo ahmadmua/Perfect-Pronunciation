@@ -25,6 +25,7 @@ struct Homepage: View {
     @State private var showToast = false // State for showing the toast
     @State private var toastMessage = "" // Message to display in the toast
     
+    
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
     @ObservedObject var model = LessonController()
@@ -208,6 +209,7 @@ struct Homepage: View {
             .background(Color("Background"))
             .navigationBarBackButtonHidden(true)
             .onAppear {
+                
                 viewModel.objectWillChange.send()
                 
                 if let user = Auth.auth().currentUser {
@@ -218,9 +220,11 @@ struct Homepage: View {
                 
                 xpModel.getUserExperience()
                 xpModel.getUserLevel()
+                currModel.getUserCurrency()
+                
                 
                 model.findUserDifficulty {
-                    currModel.getUserCurrency()
+                    print("USER DIFICULTY!! : \(model.difficulty!)")
                 }
                 
                 // Check Achievement 1
@@ -288,14 +292,18 @@ struct Homepage: View {
                     }
                 }
             }
+
             
             ToastView(showToast: $toastModel.showToast, message: toastModel.toastMessage)
         }
     }
-}
+    
 
-struct Homepage_Previews: PreviewProvider {
-    static var previews: some View {
-        Homepage()
-    }
+    
 }
+//
+//struct Homepage_Previews: PreviewProvider {
+//    static var previews: some View {
+//        Homepage()
+//    }
+//}

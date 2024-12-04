@@ -15,10 +15,12 @@ struct ExperienceBarPage: View {
     @State private var isAnimatingCoin = false
     
     @State private var previousLevel: Int = 0
+    
+    @State private var userDifficulty: String? = nil
     // timer to wait for firebase
     @State var timeRemaining = 3
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    
+        
     var body: some View {
         VStack {
             Spacer()
@@ -37,7 +39,24 @@ struct ExperienceBarPage: View {
                     .frame(width: 50, height: 5)
                     .foregroundColor(Color("CustYell"))
             }
-            Text("+100 Currency")
+            
+            
+            if let difficulty = userDifficulty {
+                switch difficulty {
+                case "Beginner":
+                    Text("+100 Currency")
+                case "Intermediate":
+                    Text("+200 Currency")
+                case "Advanced":
+                    Text("+300 Currency")
+                default:
+                    Text("+ Currency")
+                }
+            }else{
+                Text ("Loading...")
+            }
+            
+            
             
             Spacer()
             
@@ -52,25 +71,22 @@ struct ExperienceBarPage: View {
                         timeRemaining -= 1
                     }
                     if timeRemaining == 1 {
-                        xpController.getUserExperience()
+                        xpController.getUserExperience() // Fetch user experience on view appear
                         xpController.getUserLevel()
+                        print("Current userLevel: \(xpController.userLevel)")
+                        //animation based on levelup (commented out)
+//                        if xpController.userLevel > previousLevel {
+                            isAnimatingText = true
+                            
+                            // Delay to reset the animation flag
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                isAnimatingText = false
+                            }
+//                        }
                     }
-                }
-                .onReceive(xpController.$userCalculatedLevel) { newValue in
-                    print("New Level: \(newValue)")
-                    if newValue > previousLevel {
-                        isAnimatingText = true
-                        
-                        previousLevel = newValue
-                        // Delay to reset the animation flag
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-                            isAnimatingText = false
-                        }
-                    }
-                    
                 }
                 .animation(.spring(), value: isAnimatingText)
-
+            
             
             // XP Bar
             GeometryReader { geometry in
@@ -94,6 +110,21 @@ struct ExperienceBarPage: View {
             Text("\(xpController.userXp) / 500 XP")
                 .font(.subheadline)
                 .padding(.top, 10)
+            //show the user how much xp they gain
+            if let difficulty = userDifficulty {
+                switch difficulty {
+                case "Beginner":
+                    Text("+100 XP")
+                case "Intermediate":
+                    Text("+200 XP")
+                case "Advanced":
+                    Text("+300 XP")
+                default:
+                    Text("+ XP")
+                }
+            }else{
+                Text ("Loading...")
+            }
             
             // Button to simulate gaining XP
             Button(action: {
@@ -120,11 +151,15 @@ struct ExperienceBarPage: View {
         .onAppear {
             self.isAnimatingCoin = true
             
-            previousLevel = xpController.userLevel
-            xpController.getUserExperience() // Fetch user experience on view appear
-            xpController.calculateUserLevel()
-            xpController.getUserLevel()
             
+            xpController.getUserExperience() // Fetch user experience on view appear
+            xpController.getUserLevel()
+            previousLevel = xpController.userLevel
+            
+            // Fetch user difficulty
+            xpController.getUserDifficultyForRewards { difficulty in
+                self.userDifficulty = difficulty
+            }
         }
     }
     
@@ -135,4 +170,6 @@ struct ExperienceBarPage: View {
         return totalWidth * xpProgress
     }
 }
+
+
 

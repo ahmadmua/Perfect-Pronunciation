@@ -132,5 +132,27 @@ class LeaderboardController: ObservableObject{
         return locales
     }
     
+    func calculateUserPercentile() -> Double? {
+        // check that leaderboard is not empty
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            guard !leagueFull.isEmpty else { return 0.0 }
+            
+            // users ranking in the leaderboard
+            let sortedLeaderboard = leagueFull.sorted { $0.experience > $1.experience }
+            guard let userIndex = sortedLeaderboard.firstIndex(where: { $0.id == userID }) else { return 0.0 }
+            
+            // percentile
+            let totalUsers = sortedLeaderboard.count
+            let usersBelow = totalUsers - (userIndex + 1)
+            let percentile = (Double(usersBelow) / Double(totalUsers)) * 100
+            
+            return 100 - percentile
+        } else {
+            // Handle the case where the user is not authenticated
+            print("User is not authenticated")
+            return 0.0
+        }
+    }
     
 }

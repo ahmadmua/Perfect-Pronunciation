@@ -19,6 +19,7 @@ struct WeeklyGamePage: View {
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
+    @State private var showHardWords = false
    // @ObservedObject var voiceRecorderController = VoiceRecorderController()
     
     @State private var showWeeklyLesson = false
@@ -47,7 +48,7 @@ struct WeeklyGamePage: View {
                     //TEST
                     WeeklyLesson(
                         audioPlayer: AudioPlayBackController(),
-                        audioAnalysisData: AudioAPIController(),
+//                        audioAnalysisData: AudioAPIController(),
                         voiceRecorderController: VoiceRecorderController.shared
                     )
                     .navigationBarBackButtonHidden(true)
@@ -57,7 +58,15 @@ struct WeeklyGamePage: View {
                 
                 Divider()
                 
+                Text("Click to explore your hard to pronounce words!")
+                    .onTapGesture {
+                        self.showHardWords = true
+                    }
+                    .sheet(isPresented: $showHardWords) {
+                        HardWordsView()
+                    }
                 
+                                
             }//vstack
             
         }//scroll view
@@ -68,6 +77,7 @@ struct WeeklyGamePage: View {
         
         
         VStack{
+            Spacer()
             
             HStack{
                 Spacer()

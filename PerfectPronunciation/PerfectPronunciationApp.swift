@@ -1,45 +1,46 @@
-//
-//  PerfectPronunciationApp.swift
-//  PerfectPronunciation
-//
-//  Created by Muaz on 2023-10-10.
-//
-
 import Firebase
 import FirebaseFirestore
+import FirebaseRemoteConfig
 import SwiftUI
-
 
 @main
 struct PerfectPronunciationApp: App {
     
     let fireDBHelper = DataHelper()
     @StateObject private var sharedData = SharedData()
-    let comparedAudioAnalysis = AudioAPIController()
+    @StateObject private var comparedAudioAnalysis = AudioAPIController()
     
     init() {
-        
+        // Configure Firebase
         FirebaseApp.configure()
         
+        // Initialize RemoteConfig
+        let remoteConfig = RemoteConfig.remoteConfig()
+        let settings = RemoteConfigSettings()
+        settings.minimumFetchInterval = 3600
+        remoteConfig.configSettings = settings
+        
+        // Fetch and activate RemoteConfig values (if needed)
+        remoteConfig.fetchAndActivate { (status, error) in
+            if let error = error {
+                print("Error fetching RemoteConfig: \(error.localizedDescription)")
+            } else {
+                print("RemoteConfig fetch and activate completed with status: \(status.rawValue)")
+            }
+        }
+
+        // Appearance setup for navigation bar
         let appearance = UINavigationBarAppearance()
         appearance.backgroundColor = UIColor.darkGray
-                UINavigationBar.appearance().standardAppearance = appearance
-                UINavigationBar.appearance().scrollEdgeAppearance = appearance
-                UINavigationBar.appearance().frame
-        
-        
-        
-//        fireDBHelper = FireDBHelper(database: Firestore.firestore())
+        UINavigationBar.appearance().standardAppearance = appearance
+        UINavigationBar.appearance().scrollEdgeAppearance = appearance
     }
     
     var body: some Scene {
         WindowGroup {
-            Login().environmentObject(fireDBHelper).environmentObject(sharedData).environmentObject(comparedAudioAnalysis)
-//            ContentView().environmentObject(fireDBHelper).environmentObject(userData)
-//            TestFirebaseView()
-            //Homepage()
-            //Homepage().environmentObject(fireDBHelper).environmentObject(sharedData)
-         // VoiceRecorder(audioRecorder: AudioController(), audioPlayer: AudioPlayBackController(), audioAnalysisData: AudioAPIController(), testText: "The blue bird, lays three blue eggs in her nest. The three eggs hatch and all the blue birds fly away. All the three little birds")
+            Login().environmentObject(fireDBHelper)
+                   .environmentObject(sharedData)
+                   .environmentObject(comparedAudioAnalysis)
         }
     }
 }

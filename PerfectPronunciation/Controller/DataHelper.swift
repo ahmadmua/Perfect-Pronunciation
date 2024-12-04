@@ -8,11 +8,14 @@
 import Foundation
 import Firebase
 import FirebaseAuth
+import FirebaseStorage
 
 class DataHelper: ObservableObject {
     
     @Published var averageAccuracy: Double = 0
     @Published var wordList = [String]()
+    @Published var harderWordList = [String]()
+//    private let openAIService = OpenAIService()
     
     
     init(){}
@@ -23,11 +26,11 @@ class DataHelper: ObservableObject {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-
+            
             userData.setDifficulty(difficulty: (selectedDifficulty))
             
             let updatedData = ["Difficulty": selectedDifficulty]
-
+            
             // Update the specific field in the user's document
             userDocRef.updateData(updatedData as [AnyHashable : Any]) { error in
                 if let error = error {
@@ -48,11 +51,11 @@ class DataHelper: ObservableObject {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-
+            
             userData.setCountry(country: selectedCountry)
             
             let updatedData = ["Country": userData.getCountry()]
-
+            
             // Update the specific field in the user's document
             userDocRef.updateData(updatedData) { error in
                 if let error = error {
@@ -69,83 +72,83 @@ class DataHelper: ObservableObject {
         selection = 1
     }
     
-//    func updateLanguage(selectedLanguage: String, userData: inout UserData, selection: inout Int?){
-//
-//        if let user = Auth.auth().currentUser {
-//            let userID = user.uid
-//            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-//
-//            userData.setLanguage(language: selectedLanguage)
-//
-//            let updatedData = ["Language": userData.getLanguage()]
-//
-//            // Update the specific field in the user's document
-//            userDocRef.updateData(updatedData) { error in
-//                if let error = error {
-//                    print("Error updating document: \(error)")
-//                } else {
-//                    print("Document updated successfully")
-//                }
-//            }
-//
-//        } else {
-//            // Handle the case where the user is not authenticated
-//        }
-//
-//        selection = 1
-//    }
+    //    func updateLanguage(selectedLanguage: String, userData: inout UserData, selection: inout Int?){
+    //
+    //        if let user = Auth.auth().currentUser {
+    //            let userID = user.uid
+    //            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+    //
+    //            userData.setLanguage(language: selectedLanguage)
+    //
+    //            let updatedData = ["Language": userData.getLanguage()]
+    //
+    //            // Update the specific field in the user's document
+    //            userDocRef.updateData(updatedData) { error in
+    //                if let error = error {
+    //                    print("Error updating document: \(error)")
+    //                } else {
+    //                    print("Document updated successfully")
+    //                }
+    //            }
+    //
+    //        } else {
+    //            // Handle the case where the user is not authenticated
+    //        }
+    //
+    //        selection = 1
+    //    }
     
-//    func addItemToUserDataCollection(itemName: String, dayOfWeek: String, accuracy: Float) {
-//        if let user = Auth.auth().currentUser {
-//            let userID = user.uid
-//            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-//            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
-//
-//            // Check if an item with the same name already exists
-//            let query = itemsCollectionRef.whereField("Name", isEqualTo: itemName)
-//
-//            query.getDocuments { (querySnapshot, error) in
-//                if let error = error {
-//                    print("Error querying for existing item: \(error)")
-//                } else if let snapshot = querySnapshot, !snapshot.isEmpty {
-//                    // Item with the same name already exists
-//                    print("Item with the same name already exists")
-//                    // Check if the current accuracy is higher than the stored accuracy
-//                    if let existingItemAccuracy = snapshot.documents.first?.data()["Accuracy"] as? Float,
-//                       accuracy > existingItemAccuracy {
-//                        // Update the existing item with the new accuracy
-//                        let documentID = snapshot.documents.first!.documentID
-//                        itemsCollectionRef.document(documentID).updateData(["Accuracy": accuracy]) { error in
-//                            if let error = error {
-//                                print("Error updating existing item: \(error)")
-//                            } else {
-//                                print("Existing item updated with higher accuracy")
-//                            }
-//                        }
-//                    } else {
-//                        print("Current accuracy is not higher than the stored accuracy. Item not updated.")
-//                    }
-//                } else {
-//                    // Item with the same name does not exist, add the new item
-//                    let itemData = [
-//                        "DayOfWeek": dayOfWeek,
-//                        "Timestamp": FieldValue.serverTimestamp(),
-//                    ] as [String : Any]
-//
-//                    // Add a new document to the "Items" subcollection
-//                    itemsCollectionRef.addDocument(data: itemData) { error in
-//                        if let error = error {
-//                            print("Error adding item to UserData subcollection: \(error)")
-//                        } else {
-//                            print("Item added to UserData subcollection successfully")
-//                        }
-//                    }
-//                }
-//            }
-//        } else {
-//            // Handle the case where the user is not authenticated
-//        }
-//    }
+    //    func addItemToUserDataCollection(itemName: String, dayOfWeek: String, accuracy: Float) {
+    //        if let user = Auth.auth().currentUser {
+    //            let userID = user.uid
+    //            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+    //            let itemsCollectionRef = userDocRef.collection("Items") // Subcollection for items
+    //
+    //            // Check if an item with the same name already exists
+    //            let query = itemsCollectionRef.whereField("Name", isEqualTo: itemName)
+    //
+    //            query.getDocuments { (querySnapshot, error) in
+    //                if let error = error {
+    //                    print("Error querying for existing item: \(error)")
+    //                } else if let snapshot = querySnapshot, !snapshot.isEmpty {
+    //                    // Item with the same name already exists
+    //                    print("Item with the same name already exists")
+    //                    // Check if the current accuracy is higher than the stored accuracy
+    //                    if let existingItemAccuracy = snapshot.documents.first?.data()["Accuracy"] as? Float,
+    //                       accuracy > existingItemAccuracy {
+    //                        // Update the existing item with the new accuracy
+    //                        let documentID = snapshot.documents.first!.documentID
+    //                        itemsCollectionRef.document(documentID).updateData(["Accuracy": accuracy]) { error in
+    //                            if let error = error {
+    //                                print("Error updating existing item: \(error)")
+    //                            } else {
+    //                                print("Existing item updated with higher accuracy")
+    //                            }
+    //                        }
+    //                    } else {
+    //                        print("Current accuracy is not higher than the stored accuracy. Item not updated.")
+    //                    }
+    //                } else {
+    //                    // Item with the same name does not exist, add the new item
+    //                    let itemData = [
+    //                        "DayOfWeek": dayOfWeek,
+    //                        "Timestamp": FieldValue.serverTimestamp(),
+    //                    ] as [String : Any]
+    //
+    //                    // Add a new document to the "Items" subcollection
+    //                    itemsCollectionRef.addDocument(data: itemData) { error in
+    //                        if let error = error {
+    //                            print("Error adding item to UserData subcollection: \(error)")
+    //                        } else {
+    //                            print("Item added to UserData subcollection successfully")
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        } else {
+    //            // Handle the case where the user is not authenticated
+    //        }
+    //    }
     
     func fetchAndAddDayAndTimestampToAssessment(completion: @escaping (Bool) -> Void) {
         guard let user = Auth.auth().currentUser else {
@@ -153,24 +156,24 @@ class DataHelper: ObservableObject {
             completion(false)
             return
         }
-
+        
         let userID = user.uid
         let userDocRef = Firestore.firestore().collection("UserData").document(userID)
         let lessonDataRef = userDocRef.collection("LessonData")
-
+        
         lessonDataRef.getDocuments { (querySnapshot, error) in
             if let error = error {
                 print("Error retrieving assessment data: \(error.localizedDescription)")
                 completion(false)
                 return
             }
-
+            
             guard let snapshot = querySnapshot else {
                 print("No documents found.")
                 completion(false)
                 return
             }
-
+            
             for document in snapshot.documents {
                 // Check if DayOfWeek and Timestamp already exist
                 if document["DayOfWeek"] == nil && document["Timestamp"] == nil {
@@ -183,7 +186,7 @@ class DataHelper: ObservableObject {
                         dateFormatter.dateFormat = "E" // Short day format, like "Mon"
                         let currentDayOfWeek = dateFormatter.string(from: Date())
                         
-          
+                        
                         let updatedData: [String: Any] = [
                             "ID" : UUID().uuidString,
                             "DayOfWeek": currentDayOfWeek,
@@ -212,45 +215,243 @@ class DataHelper: ObservableObject {
         }
     }
     
-
+    //    func uploadUserLessonData(assessmentData: PronunciationAssessmentResult, userAudio: URL, voiceGalleryAudio: URL) {
+    //        // Ensure the user is authenticated before proceeding
+    //        guard let user = Auth.auth().currentUser else {
+    //            print("User is not authenticated.")
+    //            return
+    //        }
+    //
+    //        // Get the authenticated user's unique ID
+    //        let userID = user.uid
+    //
+    //        do {
+    //            // Read the user audio file into memory as Data
+    //            let userAudioData = try Data(contentsOf: userAudio)
+    //            // Read the voice gallery audio file into memory as Data
+    //            let voiceGalleryAudioData = try Data(contentsOf: voiceGalleryAudio)
+    //
+    //            // Debug: Ensure data is successfully loaded
+    //            print("User audio data size: \(userAudioData.count) bytes")
+    //            print("Voice gallery audio data size: \(voiceGalleryAudioData.count) bytes")
+    //
+    //            // Ensure user audio data is not empty
+    //            guard !userAudioData.isEmpty else {
+    //                print("Error: User audio data is empty.")
+    //                return
+    //            }
+    //
+    //            // Ensure voice gallery audio data is not empty
+    //            guard !voiceGalleryAudioData.isEmpty else {
+    //                print("Error: Voice gallery audio data is empty.")
+    //                return
+    //            }
+    //
+    //            // Firebase Storage reference
+    //            let storage = Storage.storage()
+    //            let storageRef = storage.reference() // Root reference for Firebase Storage
+    //
+    //            // Create unique storage paths for the audio files
+    //            let userAudioRef = storageRef.child("userAudio/\(userID)/\(UUID().uuidString).wav") // Path for user audio
+    //            let voiceGalleryAudioRef = storageRef.child("voiceGalleryAudio/\(userID)/\(UUID().uuidString).wav") // Path for voice gallery audio
+    //
+    //            // Debug: Log the storage paths
+    //            print("User audio Firebase storage path: \(userAudioRef.fullPath)")
+    //            print("Voice gallery audio Firebase storage path: \(voiceGalleryAudioRef.fullPath)")
+    //
+    //            // Metadata for the files being uploaded (content type as audio/wav)
+    //            let metadata = StorageMetadata()
+    //            metadata.contentType = "audio/wav"
+    //
+    //            // Upload the user audio data to Firebase Storage
+    //            userAudioRef.putData(userAudioData, metadata: metadata) { metadata, error in
+    //                if let error = error {
+    //                    // Handle errors during the upload
+    //                    print("Failed to upload user audio: \(error.localizedDescription)")
+    //                    return
+    //                }
+    //
+    //                print("User audio uploaded successfully.")
+    //                // Get the download URL for the uploaded user audio
+    //                userAudioRef.downloadURL { url, error in
+    //                    if let error = error {
+    //                        // Handle errors while retrieving the download URL
+    //                        print("Failed to get user audio URL: \(error.localizedDescription)")
+    //                        return
+    //                    }
+    //
+    //                    guard let userAudioURL = url?.absoluteString else { return }
+    //                    print("User audio URL: \(userAudioURL)")
+    //
+    //                    // Upload the voice gallery audio data to Firebase Storage
+    //                    voiceGalleryAudioRef.putData(voiceGalleryAudioData, metadata: metadata) { metadata, error in
+    //                        if let error = error {
+    //                            // Handle errors during the upload
+    //                            print("Failed to upload voice gallery audio: \(error.localizedDescription)")
+    //                            return
+    //                        }
+    //
+    //                        print("Voice gallery audio uploaded successfully.")
+    //                        // Get the download URL for the uploaded voice gallery audio
+    //                        voiceGalleryAudioRef.downloadURL { url, error in
+    //                            if let error = error {
+    //                                // Handle errors while retrieving the download URL
+    //                                print("Failed to get voice gallery audio URL: \(error.localizedDescription)")
+    //                                return
+    //                            }
+    //
+    //                            guard let voiceGalleryAudioURL = url?.absoluteString else { return }
+    //                            print("Voice gallery audio URL: \(voiceGalleryAudioURL)")
+    //
+    //                            // Prepare data to save in Firestore
+    //                            var assessmentLessonData = assessmentData.toDictionary() ?? [:]
+    //                            assessmentLessonData["userAudioURL"] = userAudioURL // Save user audio URL
+    //                            assessmentLessonData["voiceGalleryAudioURL"] = voiceGalleryAudioURL // Save voice gallery audio URL
+    //
+    //                            // Save the data in Firestore under "UserData" collection
+    //                            Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
+    //                                .addDocument(data: assessmentLessonData) { error in
+    //                                    if let error = error {
+    //                                        // Handle errors while saving data to Firestore
+    //                                        print("Error adding pronunciation test data: \(error.localizedDescription)")
+    //                                    } else {
+    //                                        print("Pronunciation test data and audio files successfully uploaded.")
+    //                                    }
+    //                                }
+    //                        }
+    //                    }
+    //                }
+    //            }
+    //        } catch {
+    //            // Handle errors while reading the files into memory
+    //            print("Error reading file data: \(error.localizedDescription)")
+    //        }
+    //    }
+    
     func uploadUserLessonData(assessmentData: PronunciationAssessmentResult, userAudio: URL, voiceGalleryAudio: URL) {
+        // Ensure the user is authenticated before proceeding
         guard let user = Auth.auth().currentUser else {
             print("User is not authenticated.")
             return
         }
-
+        
+        // Get the authenticated user's unique ID
         let userID = user.uid
-
-        // Convert PronunciationAssessmentResult to dictionary
-        if var assessmentLessonData = assessmentData.toDictionary() {
+        
+        do {
+            // Read the user audio file into memory as Data
+            let userAudioData = try Data(contentsOf: userAudio)
+            // Read the voice gallery audio file into memory as Data
+            let voiceGalleryAudioData = try Data(contentsOf: voiceGalleryAudio)
             
-            do {
-                // Convert userAudio and voiceGalleryAudio to binary data
-                let userAudioData = try Data(contentsOf: userAudio).base64EncodedString()
-                let voiceGalleryAudioData = try Data(contentsOf: voiceGalleryAudio).base64EncodedString()
-
-                // Add the audio data to the dictionary
-                assessmentLessonData["userAudioData"] = userAudioData
-                assessmentLessonData["voiceGalleryAudioData"] = voiceGalleryAudioData
-
-                // Save assessment data and audio to Firestore in the user's LessonData
-                Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
-                    .addDocument(data: assessmentLessonData) { error in
+            // Debug: Ensure data is successfully loaded
+            print("User audio data size: \(userAudioData.count) bytes")
+            print("Voice gallery audio data size: \(voiceGalleryAudioData.count) bytes")
+            
+            // Ensure user audio data is not empty
+            guard !userAudioData.isEmpty else {
+                print("Error: User audio data is empty.")
+                return
+            }
+            
+            // Ensure voice gallery audio data is not empty
+            guard !voiceGalleryAudioData.isEmpty else {
+                print("Error: Voice gallery audio data is empty.")
+                return
+            }
+            
+            // Firebase Storage reference
+            let storage = Storage.storage()
+            let storageRef = storage.reference() // Root reference for Firebase Storage
+            
+            // Create unique storage paths for the audio files
+            let userAudioRef = storageRef.child("userAudio/\(userID)/\(UUID().uuidString).wav") // Path for user audio
+            let voiceGalleryAudioRef = storageRef.child("voiceGalleryAudio/\(userID)/\(UUID().uuidString).wav") // Path for voice gallery audio
+            
+            // Debug: Log the storage paths
+            print("User audio Firebase storage path: \(userAudioRef.fullPath)")
+            print("Voice gallery audio Firebase storage path: \(voiceGalleryAudioRef.fullPath)")
+            
+            // Metadata for the files being uploaded (content type as audio/wav)
+            let metadata = StorageMetadata()
+            metadata.contentType = "audio/wav"
+            
+            // Upload the user audio data to Firebase Storage
+            userAudioRef.putData(userAudioData, metadata: metadata) { metadata, error in
+                if let error = error {
+                    // Handle errors during the upload
+                    print("Failed to upload user audio: \(error.localizedDescription)")
+                    return
+                }
+                
+                print("User audio uploaded successfully.")
+                // Get the download URL for the uploaded user audio
+                userAudioRef.downloadURL { url, error in
+                    if let error = error {
+                        // Handle errors while retrieving the download URL
+                        print("Failed to get user audio URL: \(error.localizedDescription)")
+                        return
+                    }
+                    
+                    // Instead of saving the absolute URL, save the file path to Firestore
+                    let userAudioPath = userAudioRef.fullPath // Save the path instead of the URL
+                    print("User audio file path: \(userAudioPath)")
+                    
+                    // Upload the voice gallery audio data to Firebase Storage
+                    voiceGalleryAudioRef.putData(voiceGalleryAudioData, metadata: metadata) { metadata, error in
                         if let error = error {
-                            print("Error adding pronunciation test data: \(error.localizedDescription)")
-                        } else {
-                            print("Pronunciation test data and audio data successfully added with a unique ID.")
+                            // Handle errors during the upload
+                            print("Failed to upload voice gallery audio: \(error.localizedDescription)")
+                            return
+                        }
+                        
+                        print("Voice gallery audio uploaded successfully.")
+                        // Get the download URL for the uploaded voice gallery audio
+                        voiceGalleryAudioRef.downloadURL { url, error in
+                            if let error = error {
+                                // Handle errors while retrieving the download URL
+                                print("Failed to get voice gallery audio URL: \(error.localizedDescription)")
+                                return
+                            }
+                            
+                            // Instead of saving the absolute URL, save the file path to Firestore
+                            let voiceGalleryAudioPath = voiceGalleryAudioRef.fullPath // Save the path instead of the URL
+                            print("Voice gallery audio file path: \(voiceGalleryAudioPath)")
+                            
+                            // Prepare data to save in Firestore
+                            var assessmentLessonData = assessmentData.toDictionary() ?? [:]
+                            assessmentLessonData["userAudioPath"] = userAudioPath // Save user audio file path
+                            assessmentLessonData["voiceGalleryAudioPath"] = voiceGalleryAudioPath // Save voice gallery audio file path
+                            
+                            // Save the data in Firestore under "UserData" collection
+                            Firestore.firestore().collection("UserData").document(userID).collection("LessonData")
+                                .addDocument(data: assessmentLessonData) { error in
+                                    if let error = error {
+                                        // Handle errors while saving data to Firestore
+                                        print("Error adding pronunciation test data: \(error.localizedDescription)")
+                                    } else {
+                                        self.fetchAndAddDayAndTimestampToAssessment { success in
+                                            if success {
+                                                //print("DayOfWeek and Timestamp were successfully added/updated.")
+                                            } else {
+                                                print("Failed to update DayOfWeek and Timestamp.")
+                                            }
+                                        }
+                                        print("Pronunciation test data and audio files successfully uploaded.")
+                                    }
+                                }
                         }
                     }
-
-            } catch {
-                print("Failed to convert audio to data: \(error.localizedDescription)")
+                }
             }
-        } else {
-            print("Failed to convert PronunciationAssessmentResult to dictionary.")
+        } catch {
+            // Handle errors while reading the files into memory
+            print("Error reading file data: \(error.localizedDescription)")
         }
+        
+        
     }
-
+    
     
     func getItemsForDayOfWeek(dayOfWeek: String, completion: @escaping ([DocumentSnapshot]?, Error?) -> Void) {
         if let user = Auth.auth().currentUser {
@@ -279,28 +480,28 @@ class DataHelper: ObservableObject {
             completion(nil, error)
         }
     }
-
+    
     
     func getAvgAccuracyForDayOfWeek(weekDay: String, completion: @escaping (Double) -> Void) {
         var averageAccuracy: Double = 0
-
+        
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
-
+            
             // Create a query to filter documents where "DayOfWeek" is the provided weekDay and "lessonType" is "Individual"
             let filteredQuery = itemsCollectionRef
                 .whereField("DayOfWeek", isEqualTo: weekDay)
                 .whereField("lessonType", isEqualTo: "Individual")  // Add filter for lessonType
-
+            
             filteredQuery.getDocuments { (querySnapshot, error) in
                 if let error = error {
                     print("Error getting documents: \(error.localizedDescription)")
                 } else {
                     var totalAccuracy: Double = 0
                     var documentCount: Double = 0
-
+                    
                     for document in querySnapshot!.documents {
                         if let assessment = document["assessment"] as? [String: Any],
                            let nBest = assessment["NBest"] as? [[String: Any]],
@@ -309,41 +510,41 @@ class DataHelper: ObservableObject {
                             documentCount += 1
                         }
                     }
-
+                    
                     averageAccuracy = documentCount > 0 ? totalAccuracy / documentCount : 0
-
+                    
                     // Call the completion handler with the result
                     completion(averageAccuracy)
                 }
             }
         }
     }
-
+    
     
     func getAvgAccuracy(completion: @escaping (Double) -> Void) {
         var totalAccuracy: Double = 0
         var totalDocumentCount: Double = 0
-
+        
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
-
+            
             // Create an array of days
             let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-
+            
             // Iterate through each day
             for day in daysOfWeek {
                 let dayQuery = itemsCollectionRef
                     .whereField("DayOfWeek", isEqualTo: day)
                     .whereField("lessonType", isEqualTo: "Individual")
-
+                
                 dayQuery.getDocuments { (querySnapshot, error) in
                     if let error = error {
                         print("Error getting documents: \(error.localizedDescription)")
                     } else {
                         var documentCount: Double = 0
-
+                        
                         for document in querySnapshot!.documents {
                             if let assessment = document["assessment"] as? [String: Any],
                                let nBest = assessment["NBest"] as? [[String: Any]],
@@ -354,14 +555,14 @@ class DataHelper: ObservableObject {
                                 print("Document \(document.documentID) exists for \(day), but 'accuracy' field is missing or not a float.")
                             }
                         }
-
+                        
                         totalDocumentCount += documentCount
                         // Note: You might want to store the results for each day for further processing or reporting.
-
-                            // Calculate the overall average accuracy
-                            let averageAccuracy = totalDocumentCount > 0 ? totalAccuracy / totalDocumentCount : 0
-                            self.averageAccuracy = averageAccuracy
-                            completion(averageAccuracy)
+                        
+                        // Calculate the overall average accuracy
+                        let averageAccuracy = totalDocumentCount > 0 ? totalAccuracy / totalDocumentCount : 0
+                        self.averageAccuracy = averageAccuracy
+                        completion(averageAccuracy)
                         
                     }
                 }
@@ -371,20 +572,20 @@ class DataHelper: ObservableObject {
     
     func getPronunciationWordCount(completion: @escaping (Int) -> Void) {
         var accuracyCount = 0
-
+        
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
-
+            
             // Create an array of days
             let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-
+            
             // Iterate through each day
             for day in daysOfWeek {
                 let dayQuery = itemsCollectionRef.whereField("DayOfWeek", isEqualTo: day)
                     .whereField("lessonType", isEqualTo: "Individual")
-
+                
                 dayQuery.getDocuments { (querySnapshot, error) in
                     if let error = error {
                         print("Error getting documents: \(error.localizedDescription)")
@@ -398,12 +599,12 @@ class DataHelper: ObservableObject {
                                 print("Document \(document.documentID) exists for \(day), but 'accuracy' field is missing or not a float.")
                             }
                         }
-
+                        
                     }
-
                     
-                   
-                        completion(accuracyCount)
+                    
+                    
+                    completion(accuracyCount)
                     
                 }
             }
@@ -416,20 +617,20 @@ class DataHelper: ObservableObject {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
-
+            
             // Delete contents of word list
             self.wordList = []
-
+            
             // Create an array of days
             let daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-
+            
             // Iterate through each day
             for day in daysOfWeek {
                 // Perform a query to filter documents for the current day and lessonType
                 let dayQuery = itemsCollectionRef
                     .whereField("DayOfWeek", isEqualTo: day)
                     .whereField("lessonType", isEqualTo: "Individual")
-
+                
                 dayQuery.getDocuments { (querySnapshot, error) in
                     if let error = error {
                         print("Error fetching items for \(day): \(error)")
@@ -447,6 +648,7 @@ class DataHelper: ObservableObject {
                                     // Add the name of the word to the list
                                     if let name = nBest.first?["Display"] as? String {
                                         self.wordList.append(name)
+                                        self.harderWordList.append(name)
                                     }
                                 }
                             } else {
@@ -462,8 +664,8 @@ class DataHelper: ObservableObject {
             completion(nil, error)
         }
     }
-
-
+    
+    
     //update the userData to reflect the users score for the weekly challenge
     func updateWeeklyCompletion(score: Double){
         
@@ -477,20 +679,20 @@ class DataHelper: ObservableObject {
                     // Access from UserData in firebase
                     if var item = document.data()?["WeeklyChallengeComplete"] as? Double {
                         
-
-                            print("weekly complete UPDATE CONTROLLER UPDATE : \(item)")
-                            
-                            item = score
-                            
-                            // Update the specific field in the user's document
-                            userDocRef.updateData(["WeeklyChallengeComplete" : item]) { error in
-                                if let error = error {
-                                    print("Error updating document: \(error)")
-                                } else {
-                                    print("Document updated successfully")
-                                }
+                        
+                        print("weekly complete UPDATE CONTROLLER UPDATE : \(item)")
+                        
+                        item = score
+                        
+                        // Update the specific field in the user's document
+                        userDocRef.updateData(["WeeklyChallengeComplete" : item]) { error in
+                            if let error = error {
+                                print("Error updating document: \(error)")
+                            } else {
+                                print("Document updated successfully")
                             }
-                            
+                        }
+                        
                     }else{
                         print("Document exists,")
                         
@@ -514,7 +716,7 @@ class DataHelper: ObservableObject {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
-
+            
             // Assuming you have a timestamp field in your documents (e.g., "timestamp")
             itemsCollectionRef.order(by: "Timestamp", descending: true).limit(to: 1).getDocuments { (querySnapshot, error) in
                 if let error = error {
@@ -526,7 +728,7 @@ class DataHelper: ObservableObject {
                         completion(nil)
                         return
                     }
-
+                    
                     // Extracting AccuracyScore from the new structure
                     if let lessonType = document["lessonType"] as? String, lessonType == "WeeklyChallenge",
                        let assessment = document["assessment"] as? [String: Any],
@@ -567,49 +769,49 @@ class DataHelper: ObservableObject {
     }
     
     func getAccuracy(atIndex index: Int, completion: @escaping (Double?) -> Void) {
-          if let user = Auth.auth().currentUser {
-              let userID = user.uid
-              let userDocRef = Firestore.firestore().collection("UserData").document(userID)
-              let itemsCollectionRef = userDocRef.collection("LessonData")
-
-              itemsCollectionRef.getDocuments { (querySnapshot, error) in
-                  if let error = error {
-                      print("Error getting documents: \(error.localizedDescription)")
-                      completion(nil)
-                  } else {
-                      let documentCount = querySnapshot?.documents.count ?? 0
-
-                      guard documentCount > 0 else {
-                          print("No documents found.")
-                          completion(nil)
-                          return
-                      }
-
-                      let validIndex = max(0, min(index, documentCount - 1))
-                      let selectedDocument = querySnapshot!.documents[validIndex]
-
-                      if let assessment = selectedDocument["assessment"] as? [String: Any],
-                         let nBest = assessment["NBest"] as? [[String: Any]],
-                         let accuracyScore = nBest.first?["PronScore"] as? Double {
-                          completion(accuracyScore)
-                      } else {
-                          print("Selected document does not have 'AccuracyScore' or the structure is not correct.")
-                          completion(nil)
-                      }
-                  }
-              }
-          }
-      }
+        if let user = Auth.auth().currentUser {
+            let userID = user.uid
+            let userDocRef = Firestore.firestore().collection("UserData").document(userID)
+            let itemsCollectionRef = userDocRef.collection("LessonData")
+            
+            itemsCollectionRef.getDocuments { (querySnapshot, error) in
+                if let error = error {
+                    print("Error getting documents: \(error.localizedDescription)")
+                    completion(nil)
+                } else {
+                    let documentCount = querySnapshot?.documents.count ?? 0
+                    
+                    guard documentCount > 0 else {
+                        print("No documents found.")
+                        completion(nil)
+                        return
+                    }
+                    
+                    let validIndex = max(0, min(index, documentCount - 1))
+                    let selectedDocument = querySnapshot!.documents[validIndex]
+                    
+                    if let assessment = selectedDocument["assessment"] as? [String: Any],
+                       let nBest = assessment["NBest"] as? [[String: Any]],
+                       let accuracyScore = nBest.first?["PronScore"] as? Double {
+                        completion(accuracyScore)
+                    } else {
+                        print("Selected document does not have 'AccuracyScore' or the structure is not correct.")
+                        completion(nil)
+                    }
+                }
+            }
+        }
+    }
     
     
-
+    
     
     func getMostRecentFourAccuracies(completion: @escaping ([Double]?) -> Void) {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
-
+            
             itemsCollectionRef.whereField("lessonType", isEqualTo: "Individual").limit(to: 4).getDocuments { (querySnapshot, error) in
                 if let error = error {
                     print("Error getting documents: \(error.localizedDescription)")
@@ -625,7 +827,7 @@ class DataHelper: ObservableObject {
                             return nil
                         }
                     } ?? []
-
+                    
                     if !accuracies.isEmpty {
                         // Call the completion handler with the most recent accuracies
                         completion(accuracies)
@@ -640,10 +842,10 @@ class DataHelper: ObservableObject {
             completion(nil)
         }
     }
-
-
-
-
+    
+    
+    
+    
     // Function to get accuracy at a specific index from the most recent 4 accuracies
     func getAccuracyAtIndex(index: Int, completion: @escaping (Double?) -> Void) {
         getMostRecentFourAccuracies { accuracies in
@@ -651,31 +853,31 @@ class DataHelper: ObservableObject {
                 completion(nil)
                 return
             }
-
+            
             let accuracyAtIndex = accuracies[index]
             completion(accuracyAtIndex)
         }
     }
-
+    
     func getMostRecentFourNames(completion: @escaping ([String]?) -> Void) {
         if let user = Auth.auth().currentUser {
             let userID = user.uid
             let userDocRef = Firestore.firestore().collection("UserData").document(userID)
             let itemsCollectionRef = userDocRef.collection("LessonData") // Subcollection for items
-
+            
             itemsCollectionRef.order(by: "Timestamp", descending: true).getDocuments { (querySnapshot, error) in
                 if let error = error {
                     print("Error getting documents: \(error.localizedDescription)")
                     completion(nil)
                 } else {
                     let names: [String] = querySnapshot?.documents.compactMap { document in
-                        guard let name = document["Name"] as? String else {
+                        guard let name = document["Timestamp"] as? String else {
                             print("Invalid 'Name' field in document.")
                             return nil
                         }
                         return name
                     } ?? []
-
+                    
                     if !names.isEmpty {
                         // Call the completion handler with the most recent 4 names
                         completion(names)
@@ -687,7 +889,7 @@ class DataHelper: ObservableObject {
             }
         }
     }
-
+    
     // Function to get name at a specific index from the most recent 4 names
     func getNameAtIndex(index: Int, completion: @escaping (String?) -> Void) {
         getMostRecentFourNames { names in
@@ -695,7 +897,7 @@ class DataHelper: ObservableObject {
                 completion(nil)
                 return
             }
-
+            
             let nameAtIndex = names[index]
             completion(nameAtIndex)
         }

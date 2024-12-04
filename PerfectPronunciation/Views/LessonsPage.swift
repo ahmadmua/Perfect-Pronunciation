@@ -11,12 +11,14 @@ import Combine
 struct LessonsPage: View {
     //controllers
     @ObservedObject var model = LessonController()
+    @ObservedObject var currModel = CurrencyController()
     //navigation to other pages
     @State private var showLesson = false
     @State private var showWeekly = false
     @State private var showAchievement = false
     @State private var showStore = false
     @State private var showHome = false
+    @State private var showHardWords = false
     //lesson nav
     @State private var phonetics = false
     @State private var food1 = false
@@ -24,6 +26,9 @@ struct LessonsPage: View {
     @State private var conversation = false
     @State private var numbers = false
     @State private var direction = false
+    @State private var christmas = false
+    
+    @State private var xmasUnlock = 0
     //lesson name
     @State private var lessonName = ""
     //openai
@@ -35,6 +40,16 @@ struct LessonsPage: View {
     
     var body: some View {
         ScrollView{
+            Text("Click to explore your hard to pronounce words!")
+                .padding(.top, 15)
+                .onTapGesture {
+                    self.showHardWords = true
+                }
+                .sheet(isPresented: $showHardWords) {
+                    HardWordsView()
+                }
+
+            
             Grid{
                 VStack{
                     GridRow{
@@ -207,6 +222,45 @@ struct LessonsPage: View {
                     .padding()
                 }//Directions vstack
                 
+                VStack{//seasonal
+                    GridRow{
+                        Text("Seasonal - Christmas")
+                    }//grid row 1
+                    
+                    Divider()
+                    
+                    GridRow{
+                        
+                        Button(action: {
+                            //go to lesson
+                            print("xmas btn press")
+    
+                            self.lessonName = "Christmas"
+                            self.christmas.toggle()
+                            
+                            fetchOpenAiResponse()
+                            
+                        }){
+                            Image(systemName: "gift.fill")
+                                .font(.system(size: 50, weight: .light))
+                        }//btn
+                        .disabled(xmasUnlock == 1)
+                        .navigationDestination(isPresented: $christmas){
+                            IndividualLesson(
+                                voiceRecorderController: VoiceRecorderController.shared, // Singleton instance
+                                lessonName: $lessonName,
+                                responseText: $responseText,
+                                responseArray: $responseArray
+                            )
+                            .navigationBarBackButtonHidden(true)
+                        }
+                        .buttonStyle(.borderless)
+                        
+                        
+                    }//grid row directions
+                    .padding()
+                }//seasonal
+                
             }//grid
             .background(Color("Background"))
             .padding(.vertical, 30)
@@ -318,7 +372,7 @@ struct LessonsPage: View {
     }//zstack
         .background(Color("Background"))
         .onAppear(){
-            openAIService.fetchAPIKey()
+//            openAIService.fetchAPIKey()
             
             model.findUserDifficulty{
                 print("USER DIFICULTY!! : \(model.difficulty!)")
@@ -327,13 +381,33 @@ struct LessonsPage: View {
                 UserDefaults.standard.synchronize()
                 
             }
+            
+            //bought items
+            currModel.checkBuyChristmas()
+            
+            DispatchQueue.main.async{
+                
+                print("PURCHASED : \(currModel.xMasLessonPurchase)")
+                
+                print(UserDefaults.standard.bool(forKey: "xMasLessonAvailable"))
+                
+                if(UserDefaults.standard.bool(forKey: "xMasLessonAvailable") == false){
+                    self.xmasUnlock = 1
+                    
+                }else{
+                    self.xmasUnlock = 0
+                }
+                
+                print("COUNT USES : \(self.xmasUnlock)")
+            }
         }
             
 
     }//body view
     
     func fetchOpenAiResponse() {
-        openAIService.fetchMultipleOpenAIResponses(prompt: "You are a language Teacher. I am an english language learner. Please Create a unique and \(model.difficulty!) sentence about \(lessonName) to perfect my pronunciation as an English learner. Ensure that this sentence is new and unique. Only give me the language learning sentence and nothing else.") { result in
+        print("DEBUG: model.difficulty = \(String(describing: model.difficulty))")
+        openAIService.fetchMultipleOpenAIResponses(prompt: "You are a language Teacher. I am an english language learner. Please Create a unique and \(model.difficulty ?? "easy to intermediate") sentence about \(lessonName) to perfect my pronunciation as an English learner. Ensure that this sentence is new and unique. Only give me the language learning sentence and nothing else.") { result in
             switch result {
             case .success(let responses):
                 print("Got 5 responses:")

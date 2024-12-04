@@ -12,17 +12,17 @@ import FirebaseAuth
 import Foundation
 
 class SharedData: ObservableObject {
-    @Published var selectedDay: String = "Mo"
+    @Published var selectedDay: String
 
-//    init() {
-//        let currentDate = Date()
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "E"
-//        
-//        let fullDayAbbreviation = dateFormatter.string(from: currentDate)
-//        
-//        self.selectedDay = String(fullDayAbbreviation.prefix(2))
-//    }
+    init() {
+        let currentDate = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "E"
+        
+        let fullDayAbbreviation = dateFormatter.string(from: currentDate)
+        
+        self.selectedDay = String(fullDayAbbreviation.prefix(2))
+    }
 }
 
 
@@ -120,46 +120,12 @@ struct Details: View {
                     Text("\(calculateAccuracyOutput())")
                     .bold()
                     
-//                    Image(systemName: "arrow.clockwise")
-//                        .resizable()
-//                        .frame(width: 24, height: 24)
-//                        .foregroundColor(.blue)
-//                        .onTapGesture {
-//                            updatedAdjustedDifficulty()
-//                        }
-//                        .padding(.leading)
-                    
                 }
-
-//                Text("Previous Difficulty: \(initialDifficulty)")
-//                    .font(.headline)
                     
 
                 Text("Adjusted Difficulty: \(updatedDifficulty)")
                     .font(.headline)
                    
-
-
-
-            
-
-            
-//            Button(action: {
-//                fireDBHelper.updateDifficulty(selectedDifficulty: expectedDifficulty, userData: &userData, selection: &selection)
-//                showingAlert2 = true
-//                //fireDBHelper.addItemToUserDataCollection(itemName: "TestWord", dayOfWeek: "Thu", accuracy: 98.42)
-//            }) {
-//                Text("Reset Difficulty")
-//                    .modifier(CustomTextM(fontName: "MavenPro-Bold", fontSize: 16, fontColor: Color.black))
-//                    .frame(height: 56, alignment: .leading)
-//                    .frame(width: 200)
-//                    .background(Color.yellow)
-//                    .cornerRadius(10)
-//            }
-//            .alert(self.msg, isPresented: $showingAlert2) {
-//                Button("OK", role: .cancel) {
-//                }
-//            }
         }
 
         .navigationBarBackButtonHidden(true)
@@ -206,35 +172,63 @@ struct Details: View {
             // Calculate the accuracy output
             let accuracyOutput = calculateAccuracyOutput()
 
-            // Determine updated difficulty based on accuracy
+            // Initialize updatedDifficulty to the current difficulty
+            updatedDifficulty = userDifficulty
+
+            // Check current difficulty and update accordingly
             if userDifficulty == self.difficulty[0] { // Beginner
-                if accuracyOutput == feedbackMsg[0] { // Great
-                    updatedDifficulty = self.difficulty[2] // Skip Intermediate, move to Advanced
-                } else {
-                    updatedDifficulty = self.difficulty[0] // Remain Beginner
-                }
-            } else if userDifficulty == self.difficulty[1] { // Intermediate
-                if accuracyOutput == feedbackMsg[0] { // Great
-                    updatedDifficulty = self.difficulty[2] // Move to Advanced
-                } else { // Needs Improvement
-                    updatedDifficulty = self.difficulty[0] // Move to Beginner
-                }
-            } else if userDifficulty == self.difficulty[2] { // Advanced
-                if accuracyOutput == feedbackMsg[0] { // Great
-                    updatedDifficulty = self.difficulty[2] // Remain Advanced
-                } else { // Needs Improvement
+                if accuracyOutput == feedbackMsg[0] { // "Great"
                     updatedDifficulty = self.difficulty[1] // Move to Intermediate
+                    return // Exit immediately to prevent further updates
                 }
             }
 
-            // Update Firestore with the new expected difficulty
-            fireDBHelper.updateDifficulty(
-                selectedDifficulty: updatedDifficulty,
-                userData: &userData,
-                selection: &selection
-            )
+            if userDifficulty == self.difficulty[1] { // Intermediate
+                if accuracyOutput == feedbackMsg[0] { // "Great"
+                    updatedDifficulty = self.difficulty[2] // Move to Advanced
+                    fireDBHelper.updateDifficulty(
+                        selectedDifficulty: updatedDifficulty,
+                        userData: &userData,
+                        selection: &selection
+                    )
+                    return // Exit immediately to prevent further updates
+                } else if accuracyOutput == feedbackMsg[1] { // "Needs Improvement"
+                    updatedDifficulty = self.difficulty[0] // Move to Beginner
+                    fireDBHelper.updateDifficulty(
+                        selectedDifficulty: updatedDifficulty,
+                        userData: &userData,
+                        selection: &selection
+                    )
+                    return // Exit immediately to prevent further updates
+                }
+            }
+
+            if userDifficulty == self.difficulty[2] { // Advanced
+                if accuracyOutput == feedbackMsg[1] { // "Needs Improvement"
+                    updatedDifficulty = self.difficulty[1] // Move to Intermediate
+                    fireDBHelper.updateDifficulty(
+                        selectedDifficulty: updatedDifficulty,
+                        userData: &userData,
+                        selection: &selection
+                    )
+                    return // Exit immediately to prevent further updates
+                }
+            }
+
+            // If no changes occurred, no need to update Firestore
+            if updatedDifficulty != userDifficulty {
+                fireDBHelper.updateDifficulty(
+                    selectedDifficulty: updatedDifficulty,
+                    userData: &userData,
+                    selection: &selection
+                )
+            }
         }
     }
+
+
+
+
 
 
     
@@ -307,6 +301,8 @@ struct ItemsListView: View {
     @State private var transcription: [String] = []
     @State private var errorTypeCountsList: [[String: Int]] = [] // List of errorTypeCount dictionaries
     @State private var wordErrorDataList: [[(word: String, errorType: String)]] = [] // List of error data for each assessment
+    @State private var userAudioPaths: [String] = []
+    @State private var aiAudioPaths: [String] = []
 
     var body: some View {
         NavigationView {
@@ -321,9 +317,10 @@ struct ItemsListView: View {
                             pronScores: pronScores.indices.contains(index) ? pronScores[index] : 0.0,
                             display: display.indices.contains(index) ? display[index] : "",
                             transcription: transcription.indices.contains(index) ? transcription[index] : "",
+                            userAudioPath: userAudioPaths.indices.contains(index) ? userAudioPaths[index] : "",
+                            aiAudioPath: aiAudioPaths.indices.contains(index) ? aiAudioPaths[index] : "",
                             errorTypeCounts: errorTypeCountsList.indices.contains(index) ? errorTypeCountsList[index] : [:],
                             wordErrorData: wordErrorDataList.indices.contains(index) ? wordErrorDataList[index] : []
-                            // Pass the specific error data for this assessment
                         )
                 ) {
                     Text(items[index])
@@ -368,21 +365,37 @@ struct ItemsListView: View {
                 self.confidence.removeAll()
                 self.pronScores.removeAll()
                 self.display.removeAll()
-                self.transcription.removeAll() // Clear transcription data
+                self.transcription.removeAll()
                 self.errorTypeCountsList.removeAll()
                 self.wordErrorDataList.removeAll()
-                
+                self.userAudioPaths.removeAll()
+
                 // Loop through documents
                 for document in documents {
                     var errorTypeCount: [String: Int] = [:] // Dictionary to store counts of error types
                     var wordErrorData: [(word: String, errorType: String)] = [] // Temporary array for word errors
                     
+                    if let userAudioDataPath = document.get("userAudioPath") as? String {
+                        // The Firestore field "userAudioPath" already contains the full path, no need to add "userAudio/\(userID)/"
+                        self.userAudioPaths.append(userAudioDataPath)
+                    } else {
+                        self.userAudioPaths.append("") // Fallback in case no audio path is available
+                    }
+                    
+                    if let voiceGalleryAudioDataPath = document.get("voiceGalleryAudioPath") as? String {
+                       
+                        self.aiAudioPaths.append(voiceGalleryAudioDataPath)
+                    } else {
+                        self.aiAudioPaths.append("") // Fallback in case no audio path is available
+                    }
+     
+
                     // Fetch transcription
                     if let transcriptionText = document.get("transcription") as? [String: Any],
                        let displayText = transcriptionText["DisplayText"] as? String {
                         self.transcription.append(displayText)
                     }
-                    
+
                     // Check for the assessment dictionary
                     if let assessment = document.get("assessment") as? [String: Any],
                        let nBestArray = assessment["NBest"] as? [[String: Any]] {
@@ -417,7 +430,20 @@ struct ItemsListView: View {
                                 self.confidence.append(confidence)
                             }
                             if let pronScore = nBest["PronScore"] as? Double {
-                                self.items.append("Score: \(pronScore)%")
+                                // Create score string
+                                var scoreString = "Score: \(pronScore)%"
+                                
+                                // Append the timestamp if it exists
+                                if let timestamp = document.get("Timestamp") as? Timestamp {
+                                    let dateFormatter = DateFormatter()
+                                    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss" // Format for date and time only
+                                    let timestampString = dateFormatter.string(from: timestamp.dateValue())
+                                    scoreString += " | \(timestampString)"
+                                }
+
+                                // Append the score string with timestamp to items
+                                self.items.append(scoreString)
+                                
                                 self.pronScores.append(pronScore)
                             }
                             if let display = nBest["Display"] as? String {
@@ -425,18 +451,18 @@ struct ItemsListView: View {
                             }
                         }
                     }
-                    
+
                     // Append the errorTypeCount and wordErrorData for this document
                     self.errorTypeCountsList.append(errorTypeCount)
                     self.wordErrorDataList.append(wordErrorData) // Store the error data for this assessment
                 }
-                
+
                 // Print the contents of the wordErrorData
                 print("Word Error Data: \(self.wordErrorDataList)")
-                
+
                 // Print or use the errorTypeCount dictionary as needed
                 print("Error Type Counts: \(self.errorTypeCountsList)")
-                
+
                 // Print transcriptions for debugging
                 print("Transcriptions: \(self.transcription)")
             } else if let error = error {
@@ -444,6 +470,8 @@ struct ItemsListView: View {
             }
         }
     }
+
+
 
     
     

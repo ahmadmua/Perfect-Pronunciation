@@ -10,10 +10,12 @@ import SwiftUI
 struct WeeklyLesson: View {
     //models
     @ObservedObject var audioPlayer: AudioPlayBackController
-    @ObservedObject var audioAnalysisData : AudioAPIController
+//    @ObservedObject var audioAnalysisData : AudioAPIController
     @ObservedObject var currModel = CurrencyController()
     @ObservedObject var xpModel = ExperienceController()
     @ObservedObject var voiceRecorderController  =  VoiceRecorderController.shared
+    @ObservedObject var model = LessonController()
+//    private let openAIService = OpenAIService()
     
     //toast
     @State private var showToast = false // State for showing the toast
@@ -32,11 +34,14 @@ struct WeeklyLesson: View {
     
     var lessonType : String = "WeeklyChallenge"
     
+    @State private var singleString : String = ""
+    
     //time limit timer
     @State var timeRemaining = 15
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     @State private var items: [String] = []
+    @State private var responseArray : [String] = []
     
     //state for recorder
     enum RecorderState {
@@ -60,16 +65,11 @@ struct WeeklyLesson: View {
                         voiceRecorderController.stopRecording()
                         
                         // MARK: - Nick provide integration here
-                        let singleString = fireDBHelper.wordList.joined()
+                        singleString = fireDBHelper.wordList.joined()
                         
                         Task {
-                            await VoiceRecorderController.shared.submitTestAudio(testText: singleString, lessonType: lessonType)
+                            await voiceRecorderController.submitTestAudio(testText: singleString, lessonType: lessonType)
                         }
-
-
-                        
-                        //give xp and currency
-                        currModel.updateUserCurrency()
                         
                         //return to the main screen when timer is done
                         self.showingResultAlert = true
@@ -105,7 +105,6 @@ struct WeeklyLesson: View {
                         print("Error: \(error)")
                     }
                 }
-
             }
             
             Spacer()
@@ -209,6 +208,10 @@ struct WeeklyLesson: View {
                     }
                 
                 print("COUNT USES : \(self.countUses)")
+                    
+                    Task {
+                        await voiceRecorderController.submitTextToSpeechAI(testText: singleString)
+                    }
                 
             }            
                         
@@ -219,7 +222,10 @@ struct WeeklyLesson: View {
         .alert("+Currency \n\n You completed the weekly game! Please come back or hit the refresh button shortly to receive your results on the leaderboard!", isPresented: $showingResultAlert) {
             
             Button("OK", role: .cancel) {
-                
+                //give currency
+                model.findUserDifficulty {
+                    currModel.updateUserCurrency(difficulty: model.difficulty!)
+                }
             }
             
         }//alert

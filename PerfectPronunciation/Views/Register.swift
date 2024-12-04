@@ -156,7 +156,9 @@ struct Register: View {
                     "Numbers" : false,
                     "Directions" : false,
                     "Food1" : false,
-                    "Food2" : false
+                    "Food2" : false,
+                    "Christmas" : false
+                    
                  ],
                  "LessonQuestions": [
                     "Conversation" : [
@@ -178,6 +180,10 @@ struct Register: View {
                     "Food2" : [
                         "Difficulty" : "",
                         "Questions" : ""
+                    ],
+                    "Christmas" : [
+                        "Difficulty" : "",
+                        "Questions" : ""
                     ]
                  ],
                  "Achievements": [
@@ -195,10 +201,13 @@ struct Register: View {
                     "Achievement 5" : false
                  ],
                  "Items": [
-                    "TimeIncrease" : false
+                    "TimeIncrease" : false,
+                    "ChristmasLesson" : false,
+                    "LevelBoost" : false,
+                    "WeeklyChallengeWager" : false
                  ],
                  "Username" : email.components(separatedBy: "@").first ?? "",
-                    "IP": userIP // Store the user's IP address here
+                    "IP": [userIP]
                 ]
             )
             

@@ -10,6 +10,9 @@ import SwiftUI
 struct LeagueLeaderboard: View {
     @ObservedObject var leaderboardModel = LeaderboardController()
     @EnvironmentObject var fireDBHelper: DataHelper
+    @ObservedObject var xpModel = ExperienceController()
+    
+    @State private var userPercentile: Double = 0.0
     
     var body: some View {
         VStack {
@@ -39,13 +42,19 @@ struct LeagueLeaderboard: View {
                     }
                 }
                 .padding()
-            }
+            }//top 3 players
             
             Divider().padding(.vertical)
+            
+            //percentile
+            Text("You are in the top \(String(format: "%.0f", userPercentile))% of Language earners! \n You have earned a total of \(xpModel.userTotalXp) XP")
+                .multilineTextAlignment(.center)
+                    
             
             // List displaying the rest of the leaderboard
             List(leaderboardModel.leagueFull) { content in
                 HStack {
+                    
                     Text("\(leaderboardModel.getFlagForCountry(fullCountryName: content.country)) \(content.userName)")
                         .font(.headline)
                         .foregroundColor(.white)
@@ -61,9 +70,19 @@ struct LeagueLeaderboard: View {
                 .cornerRadius(10)
             }
             .listStyle(.plain)
+
         }
         .onAppear {
             leaderboardModel.getLeagueLeaderboard()
+            xpModel.getTotalUserExperience()
+
+            
+            if let percentile = leaderboardModel.calculateUserPercentile() {
+                self.userPercentile = percentile
+                print("User is in the \(percentile)th percentile")
+            } else {
+                print("User not found or leaderboard is empty")
+            }
         }
         .navigationTitle("Leage Leaderboard")
         .navigationBarTitleDisplayMode(.inline)

@@ -7,5 +7,6 @@ target 'PerfectPronunciation' do
 
   # Pods for PerfectPronunciation
 pod 'InstantSearchVoiceOverlay'
+pod 'Firebase/Functions'
 
 end

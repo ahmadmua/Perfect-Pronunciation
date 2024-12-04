@@ -15,6 +15,9 @@ class LessonController : ObservableObject{
     @Published var openAiResponseText: String?
     private var cancellable: AnyCancellable?
 
+    init() {
+        findUserDifficulty{}
+    }
     
     func findUserDifficulty(completion: @escaping () -> Void){
         //get reference to database

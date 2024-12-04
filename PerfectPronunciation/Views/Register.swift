@@ -203,11 +203,11 @@ struct Register: View {
                  "Items": [
                     "TimeIncrease" : false,
                     "ChristmasLesson" : false,
-                    "LevelBoost" : false,//dont really need this one as the level up happens right on the store page
+                    "LevelBoost" : false,
                     "WeeklyChallengeWager" : false
                  ],
                  "Username" : email.components(separatedBy: "@").first ?? "",
-                    "IP": [userIP] // Store the user's IP address here
+                    "IP": [userIP]
                 ]
             )
             

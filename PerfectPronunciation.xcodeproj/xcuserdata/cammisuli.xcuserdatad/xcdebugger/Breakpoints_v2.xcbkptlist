@@ -18,5 +18,51 @@
             endingLineNumber = "126">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "C40A4C75-ACD7-493E-A85B-29DBA4E033CA"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PerfectPronunciation/Controller/VoiceRecorderController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "147"
+            endingLineNumber = "147"
+            landmarkName = "submitTestAudio(testText:lessonType:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "C40A4C75-ACD7-493E-A85B-29DBA4E033CA - 3a27aa06376745bd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for PerfectPronunciation.VoiceRecorderController.submitTestAudio(testText: Swift.String, lessonType: Swift.String) async -&gt; ()"
+                  moduleName = "PerfectPronunciation.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cammisuli/Documents/GitHub/Perfect-Pronunciation/PerfectPronunciation/Controller/VoiceRecorderController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "147"
+                  endingLineNumber = "147">
+               </Location>
+               <Location
+                  uuid = "C40A4C75-ACD7-493E-A85B-29DBA4E033CA - 3a27aa06376745bd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "(1) suspend resume partial function for PerfectPronunciation.VoiceRecorderController.submitTestAudio(testText: Swift.String, lessonType: Swift.String) async -&gt; ()"
+                  moduleName = "PerfectPronunciation.debug.dylib"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/cammisuli/Documents/GitHub/Perfect-Pronunciation/PerfectPronunciation/Controller/VoiceRecorderController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "147"
+                  endingLineNumber = "147">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

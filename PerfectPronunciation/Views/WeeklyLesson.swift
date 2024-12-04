@@ -34,6 +34,8 @@ struct WeeklyLesson: View {
     
     var lessonType : String = "WeeklyChallenge"
     
+    @State private var singleString : String = ""
+    
     //time limit timer
     @State var timeRemaining = 15
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -63,7 +65,7 @@ struct WeeklyLesson: View {
                         voiceRecorderController.stopRecording()
                         
                         // MARK: - Nick provide integration here
-                        let singleString = fireDBHelper.wordList.joined()
+                        singleString = fireDBHelper.wordList.joined()
                         
                         Task {
                             await voiceRecorderController.submitTestAudio(testText: singleString, lessonType: lessonType)
@@ -96,14 +98,14 @@ struct WeeklyLesson: View {
             Divider()
             Spacer()
             
-            List(fireDBHelper.harderWordList, id: \.self) { item in
+            List(fireDBHelper.wordList, id: \.self) { item in
                 Text(item)
             }
             .onAppear{
                 
                 fireDBHelper.getHardWords() { (documents, error) in
                     if documents != nil {
-                        let items = fireDBHelper.harderWordList
+                        let items = fireDBHelper.wordList
                         self.items = items
                     } else if let error = error {
                         // Handle the error
@@ -213,6 +215,10 @@ struct WeeklyLesson: View {
                     }
                 
                 print("COUNT USES : \(self.countUses)")
+                    
+                    Task {
+                        await voiceRecorderController.submitTextToSpeechAI(testText: singleString)
+                    }
                 
             }            
                         

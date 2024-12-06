@@ -165,7 +165,7 @@ struct IndividualLesson: View {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.system(size: 50, weight: .light))
                     }
-                    //.disabled(!canContinue)
+//                    .disabled(!canContinue)
                     .navigationDestination(isPresented: $showNext) {
                         IndividualLesson(
                             lessonName: $lessonName,
